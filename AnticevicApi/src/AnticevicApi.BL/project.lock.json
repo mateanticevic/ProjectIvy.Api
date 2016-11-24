@@ -1907,7 +1907,7 @@
           "lib/netstandard1.3/System.Xml.XDocument.dll": {}
         }
       },
-      "AnticevicApi.Common/0.1.0": {
+      "AnticevicApi.Common/0.1.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
@@ -1920,11 +1920,11 @@
           "netstandard1.6/AnticevicApi.Common.dll": {}
         }
       },
-      "AnticevicApi.DL/0.1.0": {
+      "AnticevicApi.DL/0.1.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
-          "AnticevicApi.Model": "1.0.0",
+          "AnticevicApi.Model": "0.1.1",
           "Microsoft.EntityFrameworkCore": "1.1.0",
           "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0",
           "NETStandard.Library": "1.6.1"
@@ -1936,7 +1936,7 @@
           "netstandard1.6/AnticevicApi.DL.dll": {}
         }
       },
-      "AnticevicApi.Extensions/0.1.0": {
+      "AnticevicApi.Extensions/0.1.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
@@ -1949,11 +1949,11 @@
           "netstandard1.6/AnticevicApi.Extensions.dll": {}
         }
       },
-      "AnticevicApi.Model/0.1.0": {
+      "AnticevicApi.Model/0.1.1": {
         "type": "project",
         "framework": ".NETStandard,Version=v1.6",
         "dependencies": {
-          "AnticevicApi.Extensions": "1.0.0",
+          "AnticevicApi.Extensions": "0.1.1",
           "Microsoft.EntityFrameworkCore": "1.1.0",
           "NETStandard.Library": "1.6.1"
         },
@@ -6129,22 +6129,22 @@
         "ref/xamarinwatchos10/_._"
       ]
     },
-    "AnticevicApi.Common/0.1.0": {
+    "AnticevicApi.Common/0.1.1": {
       "type": "project",
       "path": "../AnticevicApi.Common/project.json",
       "msbuildProject": "../AnticevicApi.Common/AnticevicApi.Common.xproj"
     },
-    "AnticevicApi.DL/0.1.0": {
+    "AnticevicApi.DL/0.1.1": {
       "type": "project",
       "path": "../AnticevicApi.DL/project.json",
       "msbuildProject": "../AnticevicApi.DL/AnticevicApi.DL.xproj"
     },
-    "AnticevicApi.Extensions/0.1.0": {
+    "AnticevicApi.Extensions/0.1.1": {
       "type": "project",
       "path": "../AnticevicApi.Extensions/project.json",
       "msbuildProject": "../AnticevicApi.Extensions/AnticevicApi.Extensions.xproj"
     },
-    "AnticevicApi.Model/0.1.0": {
+    "AnticevicApi.Model/0.1.1": {
       "type": "project",
       "path": "../AnticevicApi.Model/project.json",
       "msbuildProject": "../AnticevicApi.Model/AnticevicApi.Model.xproj"
@@ -6152,9 +6152,9 @@
   },
   "projectFileDependencyGroups": {
     "": [
-      "AnticevicApi.Common >= 1.0.0-*",
-      "AnticevicApi.DL >= 1.0.0-*",
-      "AnticevicApi.Extensions >= 1.0.0-*",
+      "AnticevicApi.Common >= 0.1.1",
+      "AnticevicApi.DL >= 0.1.1",
+      "AnticevicApi.Extensions >= 0.1.1",
       "GeoCoordinate.NetStandard1 >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 1.1.0",
       "NETStandard.Library >= 1.6.1"

@@ -1,10 +1,10 @@
 {
-  "version": "0.1.0-*",
+  "version": "0.1.1-*",
 
   "dependencies": {
-    "AnticevicApi.Common": "1.0.0-*",
-    "AnticevicApi.DL": "1.0.0-*",
-    "AnticevicApi.Extensions": "1.0.0-*",
+    "AnticevicApi.Common": "0.1.1",
+    "AnticevicApi.DL": "0.1.1",
+    "AnticevicApi.Extensions": "0.1.1",
     "GeoCoordinate.NetStandard1": "1.0.0",
     "Microsoft.EntityFrameworkCore": "1.1.0",
     "NETStandard.Library": "1.6.1"

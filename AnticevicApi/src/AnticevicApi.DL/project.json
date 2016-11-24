@@ -1,8 +1,8 @@
 {
-  "version": "0.1.0-*",
+  "version": "0.1.1-*",
 
   "dependencies": {
-    "AnticevicApi.Model": "1.0.0-*",
+    "AnticevicApi.Model": "0.1.1",
     "Microsoft.EntityFrameworkCore": "1.1.0",
     "Microsoft.EntityFrameworkCore.SqlServer": "1.1.0",
     "NETStandard.Library": "1.6.1"

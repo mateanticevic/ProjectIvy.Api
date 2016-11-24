@@ -28,6 +28,9 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<Project> Projects { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<TaskChange> TaskChanges { get; set; }
+        public DbSet<TaskPriority> TaskPriorities { get; set; }
+        public DbSet<TaskStatus> TaskStatuses { get; set; }
+        public DbSet<TaskType> TaskTypes { get; set; }
         public DbSet<Tracking> Trackings { get; set; }
         public DbSet<TrackingDistance> TrackingDistances { get; set; }
         public DbSet<UniqueLocation> UniqueLocations { get; set; }
