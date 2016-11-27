@@ -1,9 +1,15 @@
-﻿using AnticevicApi.DL.DbContexts;
+﻿using AnticevicApi.BL.MapExtensions;
+using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
+using AnticevicApi.DL.Helpers;
+using AnticevicApi.Model.Binding.Task;
+using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Model.View.Task;
+using Database = AnticevicApi.Model.Database.Main;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace AnticevicApi.BL.Handlers
 {
@@ -14,7 +20,32 @@ namespace AnticevicApi.BL.Handlers
 
         }
 
-        public IEnumerable<Task> GetTasks(string projectValueId)
+        public string Create(TaskBinding binding)
+        {
+            using (var db = new MainContext())
+            {
+                var entity = binding.ToEntity();
+                entity.Created = DateTime.Now;
+                entity.Modified = DateTime.Now;
+                entity.ValueId = (Convert.ToInt32(TaskHelper.LastValueId(entity.ProjectId)) + 1).ToString();
+
+                var taskChange = new Database.Org.TaskChange()
+                {
+                    Timestamp = DateTime.Now,
+                    Task = entity,
+                    TaskStatusId = TaskStatuses.New.Key,
+                    TaskPriorityId = TaskPriorities.GetId(binding.PriorityId)
+                };
+
+                db.Tasks.Add(entity);
+                db.TaskChanges.Add(taskChange);
+                db.SaveChanges();
+
+                return entity.ValueId;
+            }
+        }
+
+        public IEnumerable<Task> Get(string projectValueId)
         {
             using (var db = new MainContext())
             {
@@ -39,7 +70,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public IEnumerable<Task> GetBy(string statusValueId, string priorityValueId, string typeValueId)
+        public IEnumerable<Task> Get(string statusValueId, string priorityValueId, string typeValueId)
         {
             using (var db = new MainContext())
             {
@@ -47,15 +78,20 @@ namespace AnticevicApi.BL.Handlers
                 int? statusId = db.TaskStatuses.SingleOrDefault(x => x.ValueId == statusValueId)?.Id;
                 int? typeId = db.TaskTypes.SingleOrDefault(x => x.ValueId == typeValueId)?.Id;
 
+                db.TaskStatuses.SingleOrDefault(x => x.ValueId == "new");
+
                 var q = db.Projects.WhereUser(UserId)
-                                   .Join(db.Tasks, x => x.Id, x => x.ProjectId, (project, task) => task)
-                                   .GroupJoin(db.TaskChanges, x => x.Id, x => x.TaskId, (t1, t2) => new { Task = t1, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() });
+                                   .Join(db.Tasks, x => x.Id, x => x.ProjectId, (project, task) => new { Project = project, Task = task })
+                                   .GroupJoin(db.TaskChanges, x => x.Task.Id, x => x.TaskId, (tp, t2) => new { Task = tp.Task, Project = tp.Project, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() });
 
                 q = priorityId.HasValue ? q.Where(x => x.LastChange.TaskPriorityId == priorityId) : q;
                 q = statusId.HasValue ? q.Where(x => x.LastChange.TaskStatusId == statusId) : q;
                 q = typeId.HasValue ? q.Where(x => x.Task.TaskTypeId == typeId) : q;
 
-                return q.ToList().Select(x => new Task(x.Task, x.LastChange));
+                q = q.OrderByDescending(x => x.Task.DueDate)
+                     .ThenByDescending(x => x.Task.Created);
+
+                return q.ToList().Select(x => new Task(x.Task, x.LastChange, x.Project.ValueId));
             }
         }
     }

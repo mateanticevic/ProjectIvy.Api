@@ -10,7 +10,7 @@ namespace AnticevicApi.Controllers
         [HttpGet]
         public IEnumerable<Task> Get(string status, string priority, string type)
         {
-            return TaskHandler.GetBy(status, priority, type);
+            return TaskHandler.Get(status, priority, type);
         }
     }
 }
