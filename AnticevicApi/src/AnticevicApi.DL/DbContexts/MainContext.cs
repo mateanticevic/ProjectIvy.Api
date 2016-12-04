@@ -25,6 +25,7 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<Income> Incomes { get; set; }
         public DbSet<IncomeSource> IncomeSources { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<Poi> Pois { get; set; }
         public DbSet<PoiCategory> PoiCategories { get; set; }
         public DbSet<PoiList> PoiLists { get; set; }
         public DbSet<Project> Projects { get; set; }
@@ -90,6 +91,14 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<Income>()
                         .HasOne(x => x.IncomeSource)
                         .WithMany(x => x.Incomes);
+
+            modelBuilder.Entity<Poi>()
+                        .HasOne(x => x.PoiList)
+                        .WithMany(x => x.Pois);
+
+            modelBuilder.Entity<Poi>()
+                        .HasOne(x => x.PoiCategory)
+                        .WithMany(x => x.Pois);
 
             modelBuilder.Entity<Task>()
                         .HasOne(x => x.Project)

@@ -20,5 +20,12 @@ namespace AnticevicApi.Controllers
         {
             return PoiHandler.GetLists();
         }
+
+        [HttpGet]
+        [Route("list/{listValueId}/pois")]
+        public IEnumerable<Poi> GetPois(string listValueId)
+        {
+            return PoiHandler.GetByList(listValueId);
+        }
     }
 }
