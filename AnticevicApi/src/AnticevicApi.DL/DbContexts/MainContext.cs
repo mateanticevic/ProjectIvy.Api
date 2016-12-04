@@ -13,9 +13,9 @@ namespace AnticevicApi.DL.DbContexts
     public class MainContext : DbContext
     {
         public DbSet<AccessToken> AccessTokens { get; set; }
+        public DbSet<Airport> Airports { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
-        public DbSet<Airport> Airports { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarLog> CarLogs { get; set; }
         public DbSet<Currency> Currencies { get; set; }
@@ -25,6 +25,7 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<Income> Incomes { get; set; }
         public DbSet<IncomeSource> IncomeSources { get; set; }
         public DbSet<Movie> Movies { get; set; }
+        public DbSet<PoiCategory> PoiCategories { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<TaskChange> TaskChanges { get; set; }

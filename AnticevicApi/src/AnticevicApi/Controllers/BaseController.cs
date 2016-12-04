@@ -13,6 +13,7 @@ namespace AnticevicApi.Controllers
         private ExpenseTypeHandler _expenseTypeHandler;
         private IncomeHandler _incomeHandler;
         private MovieHandler _movieHandler;
+        private PoiHandler _poiHandler;
         private ProjectHandler _projectHandler;
         private SecurityHandler _securityHandler;
         private TaskHandler _taskHandler;
@@ -114,6 +115,19 @@ namespace AnticevicApi.Controllers
                 }
 
                 return _incomeHandler;
+            }
+        }
+
+        public PoiHandler PoiHandler
+        {
+            get
+            {
+                if (_poiHandler == null)
+                {
+                    _poiHandler = new PoiHandler(AccessToken.UserId);
+                }
+
+                return _poiHandler;
             }
         }
 
