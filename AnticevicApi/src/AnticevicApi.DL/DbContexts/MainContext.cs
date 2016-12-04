@@ -26,6 +26,7 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<IncomeSource> IncomeSources { get; set; }
         public DbSet<Movie> Movies { get; set; }
         public DbSet<PoiCategory> PoiCategories { get; set; }
+        public DbSet<PoiList> PoiLists { get; set; }
         public DbSet<Project> Projects { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<TaskChange> TaskChanges { get; set; }

@@ -9,9 +9,16 @@ namespace AnticevicApi.Controllers
     {
         [HttpGet]
         [Route("categories")]
-        public IEnumerable<PoiCategory> Get()
+        public IEnumerable<PoiCategory> GetCategories()
         {
             return PoiHandler.GetCategories();
+        }
+
+        [HttpGet]
+        [Route("lists")]
+        public IEnumerable<PoiList> GetLists()
+        {
+            return PoiHandler.GetLists();
         }
     }
 }
