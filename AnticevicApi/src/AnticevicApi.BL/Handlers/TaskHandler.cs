@@ -74,24 +74,21 @@ namespace AnticevicApi.BL.Handlers
         {
             using (var db = new MainContext())
             {
-                int? priorityId = db.TaskPriorities.SingleOrDefault(x => x.ValueId == priorityValueId)?.Id;
-                int? statusId = db.TaskStatuses.SingleOrDefault(x => x.ValueId == statusValueId)?.Id;
-                int? typeId = db.TaskTypes.SingleOrDefault(x => x.ValueId == typeValueId)?.Id;
+                var tasks = db.Projects.WhereUser(UserId)
+                                       .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })
+                                       .GroupJoin(db.TaskChanges, x => x.Task.Id, x => x.TaskId, (tp, t2) => new { Task = tp.Task, Project = tp.Project, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() })
+                                       .Join(db.TaskStatuses, x => x.LastChange.TaskStatusId, x => x.Id, (tc, Status) => new { tc.Project, tc.LastChange, tc.Task, Status })
+                                       .Join(db.TaskPriorities, x => x.LastChange.TaskPriorityId, x => x.Id, (t, Priority) => new { t.Project, t.LastChange, t.Task, t.Status, Priority })
+                                       .Join(db.TaskTypes, x => x.Task.TaskTypeId, x => x.Id, (t, Type) => new { t.Project, t.LastChange, t.Task, t.Priority, Type, t.Status });
 
-                db.TaskStatuses.SingleOrDefault(x => x.ValueId == "new");
+                tasks = string.IsNullOrEmpty(statusValueId) ? tasks : tasks.Where(x => x.Status.ValueId == statusValueId);
+                tasks = string.IsNullOrEmpty(priorityValueId) ? tasks : tasks.Where(x => x.Priority.ValueId == priorityValueId);
+                tasks = string.IsNullOrEmpty(typeValueId) ? tasks : tasks.Where(x => x.Task.Type.ValueId == typeValueId);
 
-                var q = db.Projects.WhereUser(UserId)
-                                   .Join(db.Tasks, x => x.Id, x => x.ProjectId, (project, task) => new { Project = project, Task = task })
-                                   .GroupJoin(db.TaskChanges, x => x.Task.Id, x => x.TaskId, (tp, t2) => new { Task = tp.Task, Project = tp.Project, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() });
+                tasks = tasks.OrderByDescending(x => x.Task.DueDate)
+                             .ThenByDescending(x => x.Task.Created);
 
-                q = priorityId.HasValue ? q.Where(x => x.LastChange.TaskPriorityId == priorityId) : q;
-                q = statusId.HasValue ? q.Where(x => x.LastChange.TaskStatusId == statusId) : q;
-                q = typeId.HasValue ? q.Where(x => x.Task.TaskTypeId == typeId) : q;
-
-                q = q.OrderByDescending(x => x.Task.DueDate)
-                     .ThenByDescending(x => x.Task.Created);
-
-                return q.ToList().Select(x => new Task(x.Task, x.LastChange, x.Project.ValueId));
+                return tasks.ToList().Select(x => new Task(x.Task, x.LastChange, x.Project.ValueId));
             }
         }
     }
