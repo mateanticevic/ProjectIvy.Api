@@ -1,9 +1,9 @@
 {
-  "version": "0.1.1",
+  "version": "0.2.0",
   "dependencies": {
-    "AnticevicApi.BL": "0.1.1",
-    "AnticevicApi.DL": "0.1.1",
-    "AnticevicApi.Utilities": "1.0.0-*",
+    "AnticevicApi.BL": "0.2.0",
+    "AnticevicApi.DL": "0.2.0",
+    "AnticevicApi.Utilities": "0.2.0",
     "Microsoft.ApplicationInsights.AspNetCore": "1.0.2",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.AspNetCore.Mvc.Formatters.Xml": "1.1.0",
