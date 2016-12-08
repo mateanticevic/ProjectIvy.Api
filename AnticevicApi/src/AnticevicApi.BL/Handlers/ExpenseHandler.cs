@@ -2,6 +2,7 @@
 using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Helpers;
+using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
@@ -9,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Constants;
 
 namespace AnticevicApi.BL.Handlers
 {
@@ -101,6 +102,28 @@ namespace AnticevicApi.BL.Handlers
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date >= from && x.Date.Date <= to)
                                   .Count();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes)
+        {
+            using (var db = new MainContext())
+            {
+                var q = db.Expenses.WhereUser(UserId)
+                                   .Where(x => x.ExpenseType.ValueId == typeValueId);
+
+                if(timeGroupingTypes == TimeGroupingTypes.Year)
+                {
+                    return q.GroupBy(x => x.Date.Year)
+                            .Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key, 1, 1), x.Sum(y => y.Ammount)))
+                            .ToList();
+                }
+                else
+                {
+                    return q.GroupBy(x => new { x.Date.Year, x.Date.Month })
+                            .Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Sum(y => y.Ammount)))
+                            .ToList();
+                }
             }
         }
 

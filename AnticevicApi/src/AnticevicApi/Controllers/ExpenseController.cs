@@ -6,6 +6,7 @@ using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
+using AnticevicApi.Model.Constants;
 
 namespace AnticevicApi.Controllers
 {
@@ -44,6 +45,20 @@ namespace AnticevicApi.Controllers
         public decimal GetSum([FromQuery] DateTime from, [FromQuery] DateTime to)
         {
             return ExpenseHandler.GetSum(new FilteredBinding(from, to));
+        }
+
+        [HttpGet]
+        [Route("sum/month")]
+        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedByMonthSum([FromQuery] string type)
+        {
+            return ExpenseHandler.GetGroupedSum(type, TimeGroupingTypes.Month);
+        }
+
+        [HttpGet]
+        [Route("sum/year")]
+        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedByYearSum([FromQuery] string type)
+        {
+            return ExpenseHandler.GetGroupedSum(type, TimeGroupingTypes.Year);
         }
 
         [HttpGet]
