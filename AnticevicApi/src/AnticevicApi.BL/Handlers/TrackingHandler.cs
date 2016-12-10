@@ -4,10 +4,12 @@ using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Model.View.Tracking;
+using AnticevicApi.Utilities.Geo;
 using GeoCoordinatePortable;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Xml.Linq;
 
 namespace AnticevicApi.BL.Handlers
 {
@@ -112,6 +114,24 @@ namespace AnticevicApi.BL.Handlers
                                               .WhereTimestampInclusive(binding);
 
                 return query.Count();
+            }
+        }
+
+        public bool ImportFromKml(XDocument kml)
+        {
+            var trackings = KmlHandler.ParseKml(kml);
+
+            using (var db = new MainContext())
+            {
+                foreach (var t in trackings)
+                {
+                    t.UserId = UserId;
+                }
+
+                db.Trackings.AddRange(trackings);
+                db.SaveChanges();
+
+                return true;
             }
         }
     }

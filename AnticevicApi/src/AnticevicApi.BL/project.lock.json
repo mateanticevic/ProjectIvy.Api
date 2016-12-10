@@ -1963,6 +1963,20 @@
         "runtime": {
           "netstandard1.6/AnticevicApi.Model.dll": {}
         }
+      },
+      "AnticevicApi.Utilities/0.2.0": {
+        "type": "project",
+        "framework": ".NETStandard,Version=v1.6",
+        "dependencies": {
+          "AnticevicApi.Model": "0.2.0",
+          "NETStandard.Library": "1.6.1"
+        },
+        "compile": {
+          "netstandard1.6/AnticevicApi.Utilities.dll": {}
+        },
+        "runtime": {
+          "netstandard1.6/AnticevicApi.Utilities.dll": {}
+        }
       }
     }
   },
@@ -6148,13 +6162,19 @@
       "type": "project",
       "path": "../AnticevicApi.Model/project.json",
       "msbuildProject": "../AnticevicApi.Model/AnticevicApi.Model.xproj"
+    },
+    "AnticevicApi.Utilities/0.2.0": {
+      "type": "project",
+      "path": "../AnticevicApi.Utilities/project.json",
+      "msbuildProject": "../AnticevicApi.Utilities/AnticevicApi.Utilities.xproj"
     }
   },
   "projectFileDependencyGroups": {
     "": [
       "AnticevicApi.Common >= 0.2.0",
       "AnticevicApi.DL >= 0.2.0",
-      "AnticevicApi.Extensions >= 0.1.1",
+      "AnticevicApi.Extensions >= 0.2.0",
+      "AnticevicApi.Utilities >= 0.2.0",
       "GeoCoordinate.NetStandard1 >= 1.0.0",
       "Microsoft.EntityFrameworkCore >= 1.1.0",
       "NETStandard.Library >= 1.6.1"

@@ -65,6 +65,14 @@ namespace AnticevicApi.DL.DbContexts
                         .HasOne(x => x.User)
                         .WithMany(x => x.Trackings);
 
+            modelBuilder.Entity<Tracking>()
+                        .Property(x => x.Latitude)
+                        .HasColumnType("numeric(9, 6)");
+
+            modelBuilder.Entity<Tracking>()
+                        .Property(x => x.Longitude)
+                        .HasColumnType("numeric(9, 6)");
+
             modelBuilder.Entity<Expense>()
                         .HasOne(x => x.ExpenseType)
                         .WithMany(x => x.Expenses);

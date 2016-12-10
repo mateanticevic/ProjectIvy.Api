@@ -13,3 +13,6 @@
 /AnticevicApi/src/AnticevicApi.Model/obj
 /AnticevicApi/src/AnticevicApi.Utilities/obj
 /AnticevicApi/src/AnticevicApi/project.lock.json
+/AnticevicApi/src/AnticevicApi.Tests/bin
+/AnticevicApi/src/AnticevicApi.Tests/obj
+/AnticevicApi/src/AnticevicApi.Tests/project.lock.json

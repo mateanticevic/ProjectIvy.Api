@@ -6,6 +6,8 @@ using AnticevicApi.Utilities.Geo;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System;
+using System.Xml.Linq;
+using System.Reflection.Metadata;
 
 namespace AnticevicApi.Controllers
 {
@@ -65,6 +67,15 @@ namespace AnticevicApi.Controllers
         public bool Put([FromBody] TrackingBinding binding)
         {
             return TrackingHandler.Create(binding);
+        }
+
+        [HttpPut]
+        [Route("kml")]
+        public bool PutKml([FromBody] string kmlRaw)
+        {
+            var kml = XDocument.Parse(kmlRaw);
+
+            return TrackingHandler.ImportFromKml(kml);
         }
 
         #endregion

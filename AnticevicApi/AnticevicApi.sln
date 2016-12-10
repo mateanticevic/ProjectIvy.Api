@@ -24,6 +24,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Common", "src\
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Utilities", "src\AnticevicApi.Utilities\AnticevicApi.Utilities.xproj", "{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Tests", "src\AnticevicApi.Tests\AnticevicApi.Tests.xproj", "{960E7F01-7EB0-413A-BB09-12FE85359A00}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,10 @@ Global
 		{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{960E7F01-7EB0-413A-BB09-12FE85359A00}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{960E7F01-7EB0-413A-BB09-12FE85359A00}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{960E7F01-7EB0-413A-BB09-12FE85359A00}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{960E7F01-7EB0-413A-BB09-12FE85359A00}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -70,5 +76,6 @@ Global
 		{11DA1A83-7AF5-475A-BC7D-1848DE47A96B} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{A363F585-049A-42D2-9FC1-1001222E45F6} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
+		{960E7F01-7EB0-413A-BB09-12FE85359A00} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 	EndGlobalSection
 EndGlobal
