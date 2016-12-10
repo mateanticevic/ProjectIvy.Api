@@ -1,13 +1,13 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
-using AnticevicApi.Model.View.Airport;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Airport;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Airport
 {
-    public class AirportHandler : Handler
+    public class AirportHandler : Handler, IAirportHandler
     {
         public AirportHandler()
         {
@@ -18,7 +18,7 @@ namespace AnticevicApi.BL.Handlers
         {
         }
 
-        public IEnumerable<Airport> Get(bool onlyVisited = false)
+        public IEnumerable<View.Airport> Get(bool onlyVisited = false)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -36,7 +36,7 @@ namespace AnticevicApi.BL.Handlers
 
                 var visitedAirports = destinationAirports.Union(originAirports).Distinct();
 
-                return visitedAirports.Select(x => new Airport(x));
+                return visitedAirports.Select(x => new View.Airport(x));
             }
         }
     }

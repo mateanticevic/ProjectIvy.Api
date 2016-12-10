@@ -1,4 +1,4 @@
-﻿using AnticevicApi.BL.Handlers;
+﻿using AnticevicApi.BL.Handlers.Expense;
 using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
@@ -15,9 +15,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ExpenseController : BaseController
     {
-        public ExpenseController(IOptions<AppSettings> options) : base(options)
+        public ExpenseController(IOptions<AppSettings> options, IExpenseHandler expenseHandler) : base(options)
         {
-
+            ExpenseHandler = expenseHandler;
         }
 
         #region Delete

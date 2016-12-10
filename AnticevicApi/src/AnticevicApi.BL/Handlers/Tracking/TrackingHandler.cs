@@ -3,21 +3,17 @@ using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
-using AnticevicApi.Model.View.Tracking;
 using AnticevicApi.Utilities.Geo;
 using GeoCoordinatePortable;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using View = AnticevicApi.Model.View.Tracking;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Tracking
 {
-    public class TrackingHandler : Handler
+    public class TrackingHandler : Handler, ITrackingHandler
     {
-        public TrackingHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-        }
-
         public bool Create(TrackingBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
@@ -32,7 +28,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public IEnumerable<Tracking> Get(FilteredBinding binding)
+        public IEnumerable<View.Tracking> Get(FilteredBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -40,7 +36,7 @@ namespace AnticevicApi.BL.Handlers
                                    .WhereTimestampInclusive(binding)
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
-                                   .Select(x => new Tracking(x));
+                                   .Select(x => new View.Tracking(x));
             }
         }
 
@@ -92,7 +88,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public TrackingCurrent GetLast()
+        public View.TrackingCurrent GetLast()
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -100,13 +96,13 @@ namespace AnticevicApi.BL.Handlers
                                            .OrderByDescending(x => x.Timestamp)
                                            .FirstOrDefault();
 
-                return new TrackingCurrent(tracking);
+                return new View.TrackingCurrent(tracking);
             }
         }
 
         public int GetUniqueCount(FilteredBinding binding)
         {
-            using (var db = new MainContext(""))
+            using (var db = new MainContext(ConnectionString))
             {
                 var query = db.UniqueLocations.WhereUser(UserId)
                                               .WhereTimestampInclusive(binding);
@@ -119,7 +115,7 @@ namespace AnticevicApi.BL.Handlers
         {
             var trackings = KmlHandler.ParseKml(kml);
 
-            using (var db = new MainContext(""))
+            using (var db = new MainContext(ConnectionString))
             {
                 foreach (var t in trackings)
                 {

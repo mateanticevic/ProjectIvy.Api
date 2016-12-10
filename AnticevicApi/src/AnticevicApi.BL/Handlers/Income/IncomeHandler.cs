@@ -1,21 +1,17 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
-using AnticevicApi.Model.View.Income;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using View = AnticevicApi.Model.View.Income;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Income
 {
-    public class IncomeHandler : Handler
+    public class IncomeHandler : Handler, IIncomeHandler
     {
-        public IncomeHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-        }
-
-        public IEnumerable<Income> Get(FilteredPagedBinding binding)
+        public IEnumerable<View.Income> Get(FilteredPagedBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -26,7 +22,7 @@ namespace AnticevicApi.BL.Handlers
                                         .WhereTimestampInclusive(binding)
                                         .Page(binding);
 
-                return incomes.ToList().Select(x => new Income(x));
+                return incomes.ToList().Select(x => new View.Income(x));
             }
         }
 
@@ -41,7 +37,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public IEnumerable<AmountInCurrency> GetSum(DateTime from, DateTime to)
+        public IEnumerable<View.AmountInCurrency> GetSum(DateTime from, DateTime to)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -51,7 +47,7 @@ namespace AnticevicApi.BL.Handlers
                                       .ToList()
                                       .GroupBy(x => x.Currency);
 
-                return query.Select(x => new AmountInCurrency(x.Sum(y => y.Ammount), x.Key));
+                return query.Select(x => new View.AmountInCurrency(x.Sum(y => y.Ammount), x.Key));
             }
         }
     }

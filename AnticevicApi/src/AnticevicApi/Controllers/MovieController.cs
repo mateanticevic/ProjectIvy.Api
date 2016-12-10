@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Movie;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.View.Movie;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class MovieController : BaseController
     {
-        public MovieController(IOptions<AppSettings> options) : base(options)
+        public MovieController(IOptions<AppSettings> options, IMovieHandler movieHandler) : base(options)
         {
-
+            MovieHandler = movieHandler;
         }
 
         #region Get

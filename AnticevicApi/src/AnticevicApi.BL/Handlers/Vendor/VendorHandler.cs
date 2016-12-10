@@ -1,18 +1,13 @@
 ﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Vendor;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Vendor
 {
-    public class VendorHandler : Handler
+    public class VendorHandler : Handler, IVendorHandler
     {
-        public VendorHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
-
-        public IEnumerable<Vendor> Get(string contains)
+        public IEnumerable<View.Vendor> Get(string contains)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -22,7 +17,7 @@ namespace AnticevicApi.BL.Handlers
                 vendors = string.IsNullOrEmpty(contains) ? vendors : vendors.Where(x => x.Name.Contains(contains) || x.ValueId.Contains(contains));
 
                 return vendors.ToList()
-                              .Select(x => new Vendor(x));
+                              .Select(x => new View.Vendor(x));
             }
         }
     }

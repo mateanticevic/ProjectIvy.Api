@@ -2,6 +2,7 @@
 {
     public interface IHasValueId
     {
+        int Id { get; set; }
         string ValueId { get; set; }
     }
 }

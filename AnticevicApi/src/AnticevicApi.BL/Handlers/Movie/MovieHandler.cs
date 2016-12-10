@@ -1,20 +1,15 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
-using AnticevicApi.Model.View.Movie;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Movie;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Movie
 {
-    public class MovieHandler : Handler
+    public class MovieHandler : Handler, IMovieHandler
     {
-        public MovieHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
-
-        public IEnumerable<Movie> Get(FilteredPagedBinding binding)
+        public IEnumerable<View.Movie> Get(FilteredPagedBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -24,7 +19,7 @@ namespace AnticevicApi.BL.Handlers
                                       .Page(binding.ToPagedBinding());
 
                 return movies.ToList()
-                             .Select(x => new Movie(x));
+                             .Select(x => new View.Movie(x));
             }
         }
 

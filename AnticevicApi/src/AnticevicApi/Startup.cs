@@ -1,4 +1,16 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Airport;
+using AnticevicApi.BL.Handlers.Application;
+using AnticevicApi.BL.Handlers.Car;
+using AnticevicApi.BL.Handlers.Currency;
+using AnticevicApi.BL.Handlers.Expense;
+using AnticevicApi.BL.Handlers.Income;
+using AnticevicApi.BL.Handlers.Movie;
+using AnticevicApi.BL.Handlers.Poi;
+using AnticevicApi.BL.Handlers.Project;
+using AnticevicApi.BL.Handlers.Task;
+using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.Handlers.Vendor;
+using AnticevicApi.Config;
 using AnticevicApi.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -33,6 +45,22 @@ namespace AnticevicApi
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.Configure<AppSettings>(Configuration);
+
+            services.AddScoped<IApplicationHandler, ApplicationHandler>();
+            services.AddScoped<IAirportHandler, AirportHandler>();
+            services.AddScoped<ICarHandler, CarHandler>();
+            services.AddScoped<ICurrencyHandler, CurrencyHandler>();
+            services.AddScoped<IExpenseHandler, ExpenseHandler>();
+            services.AddScoped<IExpenseTypeHandler, ExpenseTypeHandler>();
+            services.AddScoped<ICarHandler, CarHandler>();
+            services.AddScoped<IIncomeHandler, IncomeHandler>();
+            services.AddScoped<IMovieHandler, MovieHandler>();
+            services.AddScoped<IPoiHandler, PoiHandler>();
+            services.AddScoped<IProjectHandler, ProjectHandler>();
+            services.AddScoped<ITaskHandler, TaskHandler>();
+            services.AddScoped<ITrackingHandler, TrackingHandler>();
+            services.AddScoped<IVendorHandler, VendorHandler>();
+
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();

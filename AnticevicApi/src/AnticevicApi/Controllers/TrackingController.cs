@@ -1,5 +1,4 @@
-﻿using AnticevicApi.BL.Handlers;
-using AnticevicApi.Config;
+﻿using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Model.View.Tracking;
@@ -9,15 +8,16 @@ using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
+using AnticevicApi.BL.Handlers.Tracking;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class TrackingController : BaseController
     {
-        public TrackingController(IOptions<AppSettings> options) : base(options)
+        public TrackingController(IOptions<AppSettings> options, ITrackingHandler trackingHandler) : base(options)
         {
-
+            TrackingHandler = trackingHandler;
         }
 
         #region Get

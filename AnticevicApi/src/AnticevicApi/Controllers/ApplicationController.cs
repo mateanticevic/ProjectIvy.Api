@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Application;
+using AnticevicApi.Config;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
@@ -8,9 +9,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ApplicationController : BaseController
     {
-        public ApplicationController(IOptions<AppSettings> options) : base(options)
+        public ApplicationController(IOptions<AppSettings> options, IApplicationHandler applicationHandler) : base(options)
         {
-
+            ApplicationHandler = applicationHandler;
         }
 
         [HttpGet]

@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Income;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.View.Income;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class IncomeController : BaseController
     {
-        public IncomeController(IOptions<AppSettings> options) : base(options)
+        public IncomeController(IOptions<AppSettings> options, IIncomeHandler incomeHandler) : base(options)
         {
-
+            IncomeHandler = incomeHandler;
         }
 
         #region Get

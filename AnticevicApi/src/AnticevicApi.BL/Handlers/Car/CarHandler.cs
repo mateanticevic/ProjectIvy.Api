@@ -7,19 +7,15 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Car
 {
-    public class CarHandler : Handler
+    public class CarHandler : Handler, ICarHandler
     {
-        public CarHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-        }
-
         public DateTime CreateLog(CarLogBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
-                var entity = binding.ToEntity();
+                var entity = binding.ToEntity(db);
 
                 db.CarLogs.Add(entity);
                 db.SaveChanges();

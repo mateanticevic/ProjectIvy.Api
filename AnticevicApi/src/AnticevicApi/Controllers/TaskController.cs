@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Task;
+using AnticevicApi.Config;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -9,9 +10,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class TaskController : BaseController
     {
-        public TaskController(IOptions<AppSettings> options) : base(options)
+        public TaskController(IOptions<AppSettings> options, ITaskHandler taskHandler) : base(options)
         {
-
+            TaskHandler = taskHandler;
         }
 
         #region Get

@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Car;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.View.Car;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class CarController : BaseController
     {
-        public CarController(IOptions<AppSettings> options) : base(options)
+        public CarController(IOptions<AppSettings> options, ICarHandler carHandler) : base(options)
         {
-
+            CarHandler = carHandler;
         }
 
         #region Get

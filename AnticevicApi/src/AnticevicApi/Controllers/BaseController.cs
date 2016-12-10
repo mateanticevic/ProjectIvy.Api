@@ -1,4 +1,16 @@
-﻿using AnticevicApi.BL.Handlers;
+﻿using AnticevicApi.BL.Handlers.Airport;
+using AnticevicApi.BL.Handlers.Application;
+using AnticevicApi.BL.Handlers.Car;
+using AnticevicApi.BL.Handlers.Currency;
+using AnticevicApi.BL.Handlers.Expense;
+using AnticevicApi.BL.Handlers.Income;
+using AnticevicApi.BL.Handlers.Movie;
+using AnticevicApi.BL.Handlers.Poi;
+using AnticevicApi.BL.Handlers.Project;
+using AnticevicApi.BL.Handlers.Task;
+using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.Handlers.Vendor;
+using AnticevicApi.BL.Handlers;
 using AnticevicApi.Config;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -8,165 +20,35 @@ namespace AnticevicApi.Controllers
 {
     public abstract class BaseController : Controller
     {
-        private AirportHandler _airportHandler;
-        private ApplicationHandler _applicationHandler;
-        private CarHandler _carHandler;
-        private CurrencyHandler _currencyHandler;
-        private ExpenseHandler _expenseHandler;
-        private ExpenseTypeHandler _expenseTypeHandler;
-        private IncomeHandler _incomeHandler;
-        private MovieHandler _movieHandler;
-        private PoiHandler _poiHandler;
-        private ProjectHandler _projectHandler;
+        private IAirportHandler _airportHandler;
+        private IApplicationHandler _applicationHandler;
+        private ICarHandler _carHandler;
+        private ICurrencyHandler _currencyHandler;
+        private IExpenseHandler _expenseHandler;
+        private IExpenseTypeHandler _expenseTypeHandler;
+        private IIncomeHandler _incomeHandler;
+        private IMovieHandler _movieHandler;
+        private IPoiHandler _poiHandler;
+        private IProjectHandler _projectHandler;
         private SecurityHandler _securityHandler;
-        private TaskHandler _taskHandler;
-        private TrackingHandler _trackingHandler;
-        private VendorHandler _vendorHandler;
+        private ITaskHandler _taskHandler;
+        private ITrackingHandler _trackingHandler;
+        private IVendorHandler _vendorHandler;
 
-        public BaseController(IOptions<AppSettings> optionsAccessor)
+        public BaseController(IOptions<AppSettings> settingsAccessor)
         {
-            Settings = optionsAccessor.Value;
+            Settings = settingsAccessor.Value;
         }
 
         protected AppSettings Settings { get; set; }
 
         #region Handlers
 
-        protected ApplicationHandler ApplicationHandler
-        {
-            get
-            {
-                if (_applicationHandler == null)
-                {
-                    _applicationHandler = new ApplicationHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _applicationHandler;
-            }
-        }
-
         protected AccessToken AccessToken
         {
             get
             {
                 return (AccessToken)HttpContext.Items["AccessToken"];
-            }
-        }
-
-        protected AirportHandler AirportHandler
-        {
-            get
-            {
-                if(_airportHandler == null)
-                {
-                    _airportHandler = new AirportHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _airportHandler;
-            }
-        }
-
-        protected CarHandler CarHandler
-        {
-            get
-            {
-                if (_carHandler == null)
-                {
-                    _carHandler = new CarHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _carHandler;
-            }
-        }
-
-        protected CurrencyHandler CurrencyHandler
-        {
-            get
-            {
-                if (_currencyHandler == null)
-                {
-                    _currencyHandler = new CurrencyHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _currencyHandler;
-            }
-        }
-
-        protected ExpenseHandler ExpenseHandler
-        {
-            get
-            {
-                if (_expenseHandler == null)
-                {
-                    _expenseHandler = new ExpenseHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _expenseHandler;
-            }
-        }
-
-        protected ExpenseTypeHandler ExpenseTypeHandler
-        {
-            get
-            {
-                if (_expenseTypeHandler == null)
-                {
-                    _expenseTypeHandler = new ExpenseTypeHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _expenseTypeHandler;
-            }
-        }
-
-        protected MovieHandler MovieHandler
-        {
-            get
-            {
-                if (_movieHandler == null)
-                {
-                    _movieHandler = new MovieHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _movieHandler;
-            }
-        }
-
-        protected IncomeHandler IncomeHandler
-        {
-            get
-            {
-                if (_incomeHandler == null)
-                {
-                    _incomeHandler = new IncomeHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _incomeHandler;
-            }
-        }
-
-        protected PoiHandler PoiHandler
-        {
-            get
-            {
-                if (_poiHandler == null)
-                {
-                    _poiHandler = new PoiHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _poiHandler;
-            }
-        }
-
-        protected ProjectHandler ProjectHandler
-        {
-            get
-            {
-                if (_projectHandler == null)
-                {
-                    _projectHandler = new ProjectHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _projectHandler;
             }
         }
 
@@ -183,42 +65,172 @@ namespace AnticevicApi.Controllers
             }
         }
 
-        protected TaskHandler TaskHandler
+        protected IAirportHandler AirportHandler
         {
             get
             {
-                if (_taskHandler == null)
-                {
-                    _taskHandler = new TaskHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
+                _airportHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _airportHandler;
+            }
+            set
+            {
+                _airportHandler = value;
+            }
+        }
 
+        protected IApplicationHandler ApplicationHandler
+        {
+            get
+            {
+                _applicationHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _applicationHandler;
+            }
+            set
+            {
+                _applicationHandler = value;
+            }
+        }
+
+        protected ICarHandler CarHandler
+        {
+            get
+            {
+                _carHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _carHandler;
+            }
+            set
+            {
+                _carHandler = value;
+            }
+        }
+
+        protected ICurrencyHandler CurrencyHandler
+        {
+            get
+            {
+                _currencyHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _currencyHandler;
+            }
+            set
+            {
+                _currencyHandler = value;
+            }
+        }
+
+        protected IExpenseHandler ExpenseHandler
+        {
+            get
+            {
+                _expenseHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _expenseHandler;
+            }
+            set
+            {
+                _expenseHandler = value;
+            }
+        }
+
+        protected IExpenseTypeHandler ExpenseTypeHandler
+        {
+            get
+            {
+                _expenseTypeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _expenseTypeHandler;
+            }
+            set
+            {
+                _expenseTypeHandler = value;
+            }
+        }
+
+        protected IIncomeHandler IncomeHandler
+        {
+            get
+            {
+                _incomeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _incomeHandler;
+            }
+            set
+            {
+                _incomeHandler = value;
+            }
+        }
+
+        protected IMovieHandler MovieHandler
+        {
+            get
+            {
+                _movieHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _movieHandler;
+            }
+            set
+            {
+                _movieHandler = value;
+            }
+        }
+
+        protected IPoiHandler PoiHandler
+        {
+            get
+            {
+                _poiHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _poiHandler;
+            }
+            set
+            {
+                _poiHandler = value;
+            }
+        }
+
+        protected IProjectHandler ProjectHandler
+        {
+            get
+            {
+                _projectHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _projectHandler;
+            }
+            set
+            {
+                _projectHandler = value;
+            }
+        }
+
+        protected ITaskHandler TaskHandler
+        {
+            get
+            {
+                _taskHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 return _taskHandler;
             }
-        }
-
-        protected TrackingHandler TrackingHandler
-        {
-            get
+            set
             {
-                if (_trackingHandler == null)
-                {
-                    _trackingHandler = new TrackingHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
-
-                return _trackingHandler;
+                _taskHandler = value;
             }
         }
 
-        protected VendorHandler VendorHandler
+        protected ITrackingHandler TrackingHandler
         {
             get
             {
-                if (_vendorHandler == null)
-                {
-                    _vendorHandler = new VendorHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
-                }
+                _trackingHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                return _trackingHandler;
+            }
+            set
+            {
+                _trackingHandler = value;
+            }
+        }
 
+        protected IVendorHandler VendorHandler
+        {
+            get
+            {
+                _vendorHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 return _vendorHandler;
+            }
+            set
+            {
+                _vendorHandler = value;
             }
         }
 

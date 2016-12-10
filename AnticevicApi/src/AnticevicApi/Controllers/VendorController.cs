@@ -1,4 +1,4 @@
-﻿using AnticevicApi.BL.Handlers;
+﻿using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Config;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.Vendor;
@@ -12,9 +12,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class VendorController : BaseController
     {
-        public VendorController(IOptions<AppSettings> options) : base(options)
+        public VendorController(IOptions<AppSettings> options, IVendorHandler vendorHandler) : base(options)
         {
-
+            VendorHandler = vendorHandler;
         }
 
         #region Get

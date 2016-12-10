@@ -1,20 +1,14 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
-using AnticevicApi.Model.View.Poi;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Poi;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Poi
 {
-    public class PoiHandler : Handler
+    public class PoiHandler : Handler, IPoiHandler
     {
-        public PoiHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
-
-        public IEnumerable<Poi> GetByList(string listValueId)
+        public IEnumerable<View.Poi> GetByList(string listValueId)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -23,29 +17,29 @@ namespace AnticevicApi.BL.Handlers
                                   .Where(x => x.List.UserId == UserId && x.List.ValueId == listValueId)
                                   .Join(db.PoiCategories, x => x.Poi.PoiCategoryId, x => x.Id, (PoiList, Category) => new { PoiList.Poi, Category })
                                   .ToList()
-                                  .Select(x => new Poi(x.Poi));
+                                  .Select(x => new View.Poi(x.Poi));
                                                     
             }
         }
 
-        public IEnumerable<PoiCategory> GetCategories()
+        public IEnumerable<View.PoiCategory> GetCategories()
         {
             using (var db = new MainContext(ConnectionString))
             {
                 return db.PoiCategories.OrderBy(x => x.Name)
                                        .ToList()
-                                       .Select(x => new PoiCategory(x));
+                                       .Select(x => new View.PoiCategory(x));
             }
         }
 
-        public IEnumerable<PoiList> GetLists()
+        public IEnumerable<View.PoiList> GetLists()
         {
             using (var db = new MainContext(ConnectionString))
             {
                 return db.PoiLists.WhereUser(UserId)
                                   .OrderBy(x => x.Name)
                                   .ToList()
-                                  .Select(x => new PoiList(x));
+                                  .Select(x => new View.PoiList(x));
             }
         }
     }

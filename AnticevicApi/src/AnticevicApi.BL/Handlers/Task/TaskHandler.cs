@@ -4,30 +4,25 @@ using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Helpers;
 using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.Constants.Database;
-using AnticevicApi.Model.View.Task;
 using Database = AnticevicApi.Model.Database.Main;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using View = AnticevicApi.Model.View.Task;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Task
 {
-    public class TaskHandler : Handler
+    public class TaskHandler : Handler, ITaskHandler
     {
-        public TaskHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
-
         public string Create(TaskBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
-                var entity = binding.ToEntity();
+                var entity = binding.ToEntity(db);
                 entity.Created = DateTime.Now;
                 entity.Modified = DateTime.Now;
-                entity.ValueId = (Convert.ToInt32(TaskHelper.LastValueId(entity.ProjectId)) + 1).ToString();
+                entity.ValueId = db.Tasks.NextValueId(entity.ProjectId).ToString();
 
                 var taskChange = new Database.Org.TaskChange()
                 {
@@ -45,7 +40,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public IEnumerable<Task> Get(string projectValueId)
+        public IEnumerable<View.Task> Get(string projectValueId)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -53,11 +48,11 @@ namespace AnticevicApi.BL.Handlers
                                   .SingleOrDefault(projectValueId)
                                   .Tasks
                                   .ToList()
-                                  .Select(x => new Task(x));
+                                  .Select(x => new View.Task(x));
             }
         }
 
-        public Task Get(string projectValueId, string taskValueId)
+        public View.Task Get(string projectValueId, string taskValueId)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -66,11 +61,11 @@ namespace AnticevicApi.BL.Handlers
                                    .Include(x => x.Changes)
                                    .SingleOrDefault(x => x.ValueId == taskValueId && x.ProjectId == projectId);
 
-                return new Task(task);
+                return new View.Task(task);
             }
         }
 
-        public IEnumerable<Task> Get(string statusValueId, string priorityValueId, string typeValueId)
+        public IEnumerable<View.Task> Get(string statusValueId, string priorityValueId, string typeValueId)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -88,7 +83,7 @@ namespace AnticevicApi.BL.Handlers
                 tasks = tasks.OrderByDescending(x => x.Task.DueDate)
                              .ThenByDescending(x => x.Task.Created);
 
-                return tasks.ToList().Select(x => new Task(x.Task, x.LastChange, x.Project.ValueId));
+                return tasks.ToList().Select(x => new View.Task(x.Task, x.LastChange, x.Project.ValueId));
             }
         }
     }

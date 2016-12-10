@@ -1,30 +1,25 @@
 ﻿using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
-using AnticevicApi.DL.Helpers;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.Constants;
-using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using View = AnticevicApi.Model.View.Expense;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Expense
 {
-    public class ExpenseHandler : Handler
+    public class ExpenseHandler : Handler, IExpenseHandler
     {
-        public ExpenseHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-        }
-
         public string Create(ExpenseBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
-                var entity = binding.ToEntity();
+                var entity = binding.ToEntity(db);
                 entity.UserId = UserId;
 
                 db.Expenses.Add(entity);
@@ -50,17 +45,17 @@ namespace AnticevicApi.BL.Handlers
 
         #region Get
 
-        public PaginatedView<Expense> Get(DateTime? from, DateTime? to, string expenseTypeValueId, string vendorValueId, int? page = 0, int? pageSize = 10)
+        public PaginatedView<View.Expense> Get(DateTime? from, DateTime? to, string expenseTypeValueId, string vendorValueId, int? page = 0, int? pageSize = 10)
         {
             page = page.HasValue ? page : 0;
             pageSize = pageSize.HasValue ? pageSize : 10;
 
-            var view = new PaginatedView<Expense>();
+            var view = new PaginatedView<View.Expense>();
 
             using (var db = new MainContext(ConnectionString))
             {
-                int? expenseTypeId = ExpenseTypeHelper.GetId(expenseTypeValueId);
-                int? vendorId = VendorHelper.GetId(vendorValueId);
+                int? expenseTypeId = db.ExpenseTypes.GetId(expenseTypeValueId);
+                int? vendorId = db.Vendors.GetId(vendorValueId);
 
                 var result = db.Expenses.Include(x => x.ExpenseType)
                                         .Include(x => x.Currency)
@@ -79,20 +74,20 @@ namespace AnticevicApi.BL.Handlers
                                .ThenByDescending(x => x.Id)
                                .Page(page, pageSize);
 
-                view.Items = result.ToList().Select(x => new Expense(x));
+                view.Items = result.ToList().Select(x => new View.Expense(x));
 
                 return view;
             }
         }
 
-        public IEnumerable<Expense> GetByDate(DateTime date)
+        public IEnumerable<View.Expense> GetByDate(DateTime date)
         {
             using (var db = new MainContext(ConnectionString))
             {
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date == date)
                                   .ToList()
-                                  .Select(x => new Expense(x));
+                                  .Select(x => new View.Expense(x));
             }
         }
 
@@ -138,7 +133,7 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public IEnumerable<Expense> GetByVendor(string valueId, DateTime? from = null, DateTime? to = null)
+        public IEnumerable<View.Expense> GetByVendor(string valueId, DateTime? from = null, DateTime? to = null)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -153,11 +148,11 @@ namespace AnticevicApi.BL.Handlers
                 expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
                 expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
 
-                return expenses.ToList().Select(x => new Expense(x));
+                return expenses.ToList().Select(x => new View.Expense(x));
             }
         }
 
-        public IEnumerable<Expense> GetByType(string valueId, DateTime? from = null, DateTime? to = null)
+        public IEnumerable<View.Expense> GetByType(string valueId, DateTime? from = null, DateTime? to = null)
         {
             using (var db = new MainContext(ConnectionString))
             {
@@ -172,7 +167,7 @@ namespace AnticevicApi.BL.Handlers
                 expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
                 expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
 
-                return expenses.ToList().Select(x => new Expense(x));
+                return expenses.ToList().Select(x => new View.Expense(x));
             }
         }
 
@@ -184,7 +179,7 @@ namespace AnticevicApi.BL.Handlers
             {
                 var entity = db.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.ValueId);
 
-                entity = binding.ToEntity(entity);
+                entity = binding.ToEntity(db, entity);
                 db.SaveChanges();
 
                 return true;

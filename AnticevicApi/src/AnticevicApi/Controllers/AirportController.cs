@@ -1,4 +1,4 @@
-﻿using AnticevicApi.BL.Handlers;
+﻿using AnticevicApi.BL.Handlers.Airport;
 using AnticevicApi.Config;
 using AnticevicApi.Model.View.Airport;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +11,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class AirportController : BaseController
     {
-        public AirportController(IOptions<AppSettings> options) : base(options)
+        public AirportController(IOptions<AppSettings> options, IAirportHandler airportHandler) : base(options)
         {
-
+            AirportHandler = airportHandler;
         }
 
         [HttpGet]

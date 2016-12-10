@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Poi;
+using AnticevicApi.Config;
 using AnticevicApi.Model.View.Poi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -9,9 +10,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class PoiController : BaseController
     {
-        public PoiController(IOptions<AppSettings> options) : base(options)
+        public PoiController(IOptions<AppSettings> options, IPoiHandler poiHandler) : base(options)
         {
-
+            PoiHandler = poiHandler;
         }
 
         #region Get

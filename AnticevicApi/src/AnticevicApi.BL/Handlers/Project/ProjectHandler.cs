@@ -1,26 +1,21 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
-using AnticevicApi.Model.View.Project;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Project;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Project
 {
-    public class ProjectHandler : Handler
+    public class ProjectHandler : Handler, IProjectHandler
     {
-        public ProjectHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-
-        }
-
-        public IEnumerable<Project> Get()
+        public IEnumerable<View.Project> Get()
         {
             using (var db = new MainContext(ConnectionString))
             {
                 return db.Projects.WhereUser(UserId)
                                   .OrderBy(x => x.Name)
                                   .ToList()
-                                  .Select(x => new Project(x));
+                                  .Select(x => new View.Project(x));
             }
         }
     }

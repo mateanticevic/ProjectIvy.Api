@@ -3,14 +3,10 @@ using AnticevicApi.Model.View.ExpenseType;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AnticevicApi.BL.Handlers
+namespace AnticevicApi.BL.Handlers.Expense
 {
-    public class ExpenseTypeHandler : Handler
+    public class ExpenseTypeHandler : Handler, IExpenseTypeHandler
     {
-        public ExpenseTypeHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
-        }
-
         public IEnumerable<ExpenseType> Get()
         {
             using (var db = new MainContext(ConnectionString))

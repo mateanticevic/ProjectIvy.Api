@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Expense;
+using AnticevicApi.Config;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.ExpenseType;
 using Microsoft.AspNetCore.Mvc;
@@ -11,9 +12,9 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ExpenseTypeController : BaseController
     {
-        public ExpenseTypeController(IOptions<AppSettings> options) : base(options)
+        public ExpenseTypeController(IOptions<AppSettings> options, IExpenseTypeHandler expenseTypeHandler) : base(options)
         {
-
+            ExpenseTypeHandler = expenseTypeHandler;
         }
 
         #region Get
