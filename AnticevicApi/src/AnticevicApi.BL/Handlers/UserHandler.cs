@@ -7,14 +7,14 @@ namespace AnticevicApi.BL.Handlers
 {
     public class UserHandler : Handler
     {
-        public UserHandler(int userId)
+        public UserHandler(string connectionString, int userId) : base(connectionString, userId)
         {
             UserId = userId;
         }
 
         public User Get(string username)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var userEntity = db.Users.Include(x => x.UserRoles)
                                     .ThenInclude(x => x.Role)

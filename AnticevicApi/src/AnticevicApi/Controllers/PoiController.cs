@@ -1,5 +1,7 @@
-﻿using AnticevicApi.Model.View.Poi;
+﻿using AnticevicApi.Config;
+using AnticevicApi.Model.View.Poi;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
@@ -7,6 +9,13 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class PoiController : BaseController
     {
+        public PoiController(IOptions<AppSettings> options) : base(options)
+        {
+
+        }
+
+        #region Get
+
         [HttpGet]
         [Route("categories")]
         public IEnumerable<PoiCategory> GetCategories()
@@ -27,5 +36,7 @@ namespace AnticevicApi.Controllers
         {
             return PoiHandler.GetByList(listValueId);
         }
+
+        #endregion
     }
 }

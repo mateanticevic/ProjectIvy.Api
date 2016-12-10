@@ -1,18 +1,25 @@
 ﻿using AnticevicApi.BL.Handlers;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
-using AnticevicApi.Model.Constants;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class ExpenseController : BaseController
     {
+        public ExpenseController(IOptions<AppSettings> options) : base(options)
+        {
+
+        }
+
         #region Delete
 
         [HttpDelete]

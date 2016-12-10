@@ -7,14 +7,13 @@ namespace AnticevicApi.BL.Handlers
 {
     public class ExpenseTypeHandler : Handler
     {
-        public ExpenseTypeHandler(int userId)
+        public ExpenseTypeHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public IEnumerable<ExpenseType> Get()
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.ExpenseTypes.OrderBy(x => x.TypeDescription)
                                       .ToList()

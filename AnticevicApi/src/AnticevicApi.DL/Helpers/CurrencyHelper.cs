@@ -7,7 +7,7 @@ namespace AnticevicApi.DL.Helpers
     {
         public static int GetId(string code)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(""))
             {
                 return db.Currencies.SingleOrDefault(x => x.Code == code)
                                     .Id;

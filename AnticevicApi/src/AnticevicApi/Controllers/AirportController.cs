@@ -1,7 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers;
-using AnticevicApi.Model.Database.Main.Security;
+using AnticevicApi.Config;
 using AnticevicApi.Model.View.Airport;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,6 +11,11 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class AirportController : BaseController
     {
+        public AirportController(IOptions<AppSettings> options) : base(options)
+        {
+
+        }
+
         [HttpGet]
         public IEnumerable<Airport> Get([FromQuery] bool onlyVisited)
         {

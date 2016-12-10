@@ -8,14 +8,14 @@ namespace AnticevicApi.BL.Handlers
 {
     public class ProjectHandler : Handler
     {
-        public ProjectHandler(int userId) : base(userId)
+        public ProjectHandler(string connectionString, int userId) : base(connectionString, userId)
         {
 
         }
 
         public IEnumerable<Project> Get()
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Projects.WhereUser(UserId)
                                   .OrderBy(x => x.Name)

@@ -8,7 +8,7 @@ namespace AnticevicApi.DL.Helpers
     {
         public static AccessToken Get(string token)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext("Server=sql.anticevic.net;Database=AnticevicApi;Trusted_Connection=True;"))
             {
                 return db.AccessTokens.SingleOrDefault(x => x.Token == token);
             }
@@ -16,7 +16,7 @@ namespace AnticevicApi.DL.Helpers
 
         public static int Insert(AccessToken token)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext("Server=sql.anticevic.net;Database=AnticevicApi;Trusted_Connection=True;"))
             {
                 db.AccessTokens.Add(token);
                 db.SaveChanges();

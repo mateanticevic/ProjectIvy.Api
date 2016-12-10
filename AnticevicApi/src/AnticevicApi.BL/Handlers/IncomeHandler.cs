@@ -11,14 +11,13 @@ namespace AnticevicApi.BL.Handlers
 {
     public class IncomeHandler : Handler
     {
-        public IncomeHandler(int userId)
+        public IncomeHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public IEnumerable<Income> Get(FilteredPagedBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var incomes = db.Incomes.WhereUser(UserId)
                                         .Include(x => x.Currency)
@@ -33,7 +32,7 @@ namespace AnticevicApi.BL.Handlers
 
         public int GetCount(DateTime from, DateTime to)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var query = db.Incomes.WhereUser(UserId)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to);
@@ -44,7 +43,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<AmountInCurrency> GetSum(DateTime from, DateTime to)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var query = db.Incomes.WhereUser(UserId)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to)

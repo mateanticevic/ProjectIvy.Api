@@ -15,14 +15,14 @@ namespace AnticevicApi.BL.Handlers
 {
     public class TaskHandler : Handler
     {
-        public TaskHandler(int userId) : base(userId)
+        public TaskHandler(string connectionString, int userId) : base(connectionString, userId)
         {
 
         }
 
         public string Create(TaskBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = binding.ToEntity();
                 entity.Created = DateTime.Now;
@@ -47,7 +47,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<Task> Get(string projectValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Projects.Include(x => x.Tasks)
                                   .SingleOrDefault(projectValueId)
@@ -59,7 +59,7 @@ namespace AnticevicApi.BL.Handlers
 
         public Task Get(string projectValueId, string taskValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 int projectId = db.Projects.WhereUser(UserId).SingleOrDefault(x => x.ValueId == projectValueId).Id;
                 var task = db.Tasks.Include(x => x.Related)
@@ -72,7 +72,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<Task> Get(string statusValueId, string priorityValueId, string typeValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var tasks = db.Projects.WhereUser(UserId)
                                        .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })

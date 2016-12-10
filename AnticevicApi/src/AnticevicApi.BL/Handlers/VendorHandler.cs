@@ -5,11 +5,16 @@ using System.Linq;
 
 namespace AnticevicApi.BL.Handlers
 {
-    public class VendorHandler
+    public class VendorHandler : Handler
     {
-        public static IEnumerable<Vendor> Get(string contains)
+        public VendorHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            using (var db = new MainContext())
+
+        }
+
+        public IEnumerable<Vendor> Get(string contains)
+        {
+            using (var db = new MainContext(ConnectionString))
             {
                 var vendors = db.Vendors.OrderBy(x => x.Name)
                                         .AsEnumerable();

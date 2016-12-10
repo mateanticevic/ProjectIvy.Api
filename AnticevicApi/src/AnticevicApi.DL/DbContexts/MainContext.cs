@@ -12,6 +12,11 @@ namespace AnticevicApi.DL.DbContexts
 {
     public class MainContext : DbContext
     {
+        public MainContext(string connectionString)
+        {
+            ConnectionString = connectionString;
+        }
+
         public DbSet<AccessToken> AccessTokens { get; set; }
         public DbSet<Airport> Airports { get; set; }
         public DbSet<Application> Applications { get; set; }
@@ -40,9 +45,11 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<User> Users { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
 
+        public string ConnectionString { get; private set; }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Server=sql.anticevic.net;Database=AnticevicApi;Trusted_Connection=True;");
+            optionsBuilder.UseSqlServer(ConnectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

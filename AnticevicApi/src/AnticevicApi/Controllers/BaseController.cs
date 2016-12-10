@@ -1,6 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AnticevicApi.Controllers
 {
@@ -9,6 +11,7 @@ namespace AnticevicApi.Controllers
         private AirportHandler _airportHandler;
         private ApplicationHandler _applicationHandler;
         private CarHandler _carHandler;
+        private CurrencyHandler _currencyHandler;
         private ExpenseHandler _expenseHandler;
         private ExpenseTypeHandler _expenseTypeHandler;
         private IncomeHandler _incomeHandler;
@@ -18,21 +21,31 @@ namespace AnticevicApi.Controllers
         private SecurityHandler _securityHandler;
         private TaskHandler _taskHandler;
         private TrackingHandler _trackingHandler;
+        private VendorHandler _vendorHandler;
 
-        public ApplicationHandler ApplicationHandler
+        public BaseController(IOptions<AppSettings> optionsAccessor)
+        {
+            Settings = optionsAccessor.Value;
+        }
+
+        protected AppSettings Settings { get; set; }
+
+        #region Handlers
+
+        protected ApplicationHandler ApplicationHandler
         {
             get
             {
                 if (_applicationHandler == null)
                 {
-                    _applicationHandler = new ApplicationHandler(AccessToken.UserId);
+                    _applicationHandler = new ApplicationHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _applicationHandler;
             }
         }
 
-        public AccessToken AccessToken
+        protected AccessToken AccessToken
         {
             get
             {
@@ -40,147 +53,175 @@ namespace AnticevicApi.Controllers
             }
         }
 
-        public AirportHandler AirportHandler
+        protected AirportHandler AirportHandler
         {
             get
             {
                 if(_airportHandler == null)
                 {
-                    _airportHandler = new AirportHandler(AccessToken.UserId);
+                    _airportHandler = new AirportHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _airportHandler;
             }
         }
 
-        public CarHandler CarHandler
+        protected CarHandler CarHandler
         {
             get
             {
                 if (_carHandler == null)
                 {
-                    _carHandler = new CarHandler(AccessToken.UserId);
+                    _carHandler = new CarHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _carHandler;
             }
         }
 
-        public ExpenseHandler ExpenseHandler
+        protected CurrencyHandler CurrencyHandler
+        {
+            get
+            {
+                if (_currencyHandler == null)
+                {
+                    _currencyHandler = new CurrencyHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                }
+
+                return _currencyHandler;
+            }
+        }
+
+        protected ExpenseHandler ExpenseHandler
         {
             get
             {
                 if (_expenseHandler == null)
                 {
-                    _expenseHandler = new ExpenseHandler(AccessToken.UserId);
+                    _expenseHandler = new ExpenseHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _expenseHandler;
             }
         }
 
-        public ExpenseTypeHandler ExpenseTypeHandler
+        protected ExpenseTypeHandler ExpenseTypeHandler
         {
             get
             {
                 if (_expenseTypeHandler == null)
                 {
-                    _expenseTypeHandler = new ExpenseTypeHandler(AccessToken.UserId);
+                    _expenseTypeHandler = new ExpenseTypeHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _expenseTypeHandler;
             }
         }
 
-        public MovieHandler MovieHandler
+        protected MovieHandler MovieHandler
         {
             get
             {
                 if (_movieHandler == null)
                 {
-                    _movieHandler = new MovieHandler(AccessToken.UserId);
+                    _movieHandler = new MovieHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _movieHandler;
             }
         }
 
-        public IncomeHandler IncomeHandler
+        protected IncomeHandler IncomeHandler
         {
             get
             {
                 if (_incomeHandler == null)
                 {
-                    _incomeHandler = new IncomeHandler(AccessToken.UserId);
+                    _incomeHandler = new IncomeHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _incomeHandler;
             }
         }
 
-        public PoiHandler PoiHandler
+        protected PoiHandler PoiHandler
         {
             get
             {
                 if (_poiHandler == null)
                 {
-                    _poiHandler = new PoiHandler(AccessToken.UserId);
+                    _poiHandler = new PoiHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _poiHandler;
             }
         }
 
-        public ProjectHandler ProjectHandler
+        protected ProjectHandler ProjectHandler
         {
             get
             {
                 if (_projectHandler == null)
                 {
-                    _projectHandler = new ProjectHandler(AccessToken.UserId);
+                    _projectHandler = new ProjectHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _projectHandler;
             }
         }
 
-        public SecurityHandler SecurityHandler
+        protected SecurityHandler SecurityHandler
         {
             get
             {
                 if (_securityHandler == null)
                 {
-                    _securityHandler = new SecurityHandler(AccessToken.UserId);
+                    _securityHandler = new SecurityHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _securityHandler;
             }
         }
 
-        public TaskHandler TaskHandler
+        protected TaskHandler TaskHandler
         {
             get
             {
                 if (_taskHandler == null)
                 {
-                    _taskHandler = new TaskHandler(AccessToken.UserId);
+                    _taskHandler = new TaskHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _taskHandler;
             }
         }
 
-        public TrackingHandler TrackingHandler
+        protected TrackingHandler TrackingHandler
         {
             get
             {
                 if (_trackingHandler == null)
                 {
-                    _trackingHandler = new TrackingHandler(AccessToken.UserId);
+                    _trackingHandler = new TrackingHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
                 }
 
                 return _trackingHandler;
             }
         }
+
+        protected VendorHandler VendorHandler
+        {
+            get
+            {
+                if (_vendorHandler == null)
+                {
+                    _vendorHandler = new VendorHandler(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                }
+
+                return _vendorHandler;
+            }
+        }
+
+        #endregion
     }
 }

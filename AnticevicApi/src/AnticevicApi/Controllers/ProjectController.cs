@@ -1,7 +1,9 @@
-﻿using AnticevicApi.Model.Binding.Task;
+﻿using AnticevicApi.Config;
+using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.View.Project;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
@@ -9,6 +11,13 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ProjectController : BaseController
     {
+        public ProjectController(IOptions<AppSettings> options) : base(options)
+        {
+
+        }
+
+        #region Get
+
         [HttpGet]
         public IEnumerable<Project> Get()
         {
@@ -36,5 +45,7 @@ namespace AnticevicApi.Controllers
             binding.ProjectId = valueId;
             return TaskHandler.Create(binding);
         }
+
+        #endregion
     }
 }

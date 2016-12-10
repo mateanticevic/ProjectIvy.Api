@@ -9,7 +9,7 @@ namespace AnticevicApi.DL.Helpers
     {
         public static User Get(string username)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(""))
             {
                 return db.Users.Include(x => x.UserRoles)
                                .ThenInclude(x => x.Role)

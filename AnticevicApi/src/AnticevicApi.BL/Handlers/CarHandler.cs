@@ -11,14 +11,13 @@ namespace AnticevicApi.BL.Handlers
 {
     public class CarHandler : Handler
     {
-        public CarHandler(int userId)
+        public CarHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public DateTime CreateLog(CarLogBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = binding.ToEntity();
 
@@ -31,7 +30,7 @@ namespace AnticevicApi.BL.Handlers
 
         public int GetLogCount(string carValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Cars.WhereUser(UserId)
                                     .Include(x => x.CarLogs)
@@ -43,7 +42,7 @@ namespace AnticevicApi.BL.Handlers
 
         public CarLog GetLatestLog(string carValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var carLog = db.Cars.WhereUser(UserId)
                                     .Include(x => x.CarLogs)

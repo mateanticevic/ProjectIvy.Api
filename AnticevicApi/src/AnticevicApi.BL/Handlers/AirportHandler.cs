@@ -14,14 +14,13 @@ namespace AnticevicApi.BL.Handlers
 
         }
 
-        public AirportHandler(int userId)
+        public AirportHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public IEnumerable<Airport> Get(bool onlyVisited = false)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var destinationAirports = db.Flights.WhereUser(UserId)
                                                     .Include(x => x.DestinationAirport)

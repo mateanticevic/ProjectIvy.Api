@@ -7,7 +7,7 @@ namespace AnticevicApi.DL.Helpers
     {
         public static int GetId(string valueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(""))
             {
                 return db.Projects.SingleOrDefault(x => x.ValueId == valueId)
                                   .Id;

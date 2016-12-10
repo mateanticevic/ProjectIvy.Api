@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Middleware;
+﻿using AnticevicApi.Config;
+using AnticevicApi.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,8 @@ namespace AnticevicApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            services.Configure<AppSettings>(Configuration);
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();

@@ -6,9 +6,8 @@ namespace AnticevicApi.BL.Handlers
 {
     public class SecurityHandler : Handler
     {
-        public SecurityHandler(int userId)
+        public SecurityHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public string IssueToken(string username, string password)

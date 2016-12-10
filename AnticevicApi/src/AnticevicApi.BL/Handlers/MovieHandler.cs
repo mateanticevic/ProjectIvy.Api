@@ -9,14 +9,14 @@ namespace AnticevicApi.BL.Handlers
 {
     public class MovieHandler : Handler
     {
-        public MovieHandler(int userId) : base(userId)
+        public MovieHandler(string connectionString, int userId) : base(connectionString, userId)
         {
 
         }
 
         public IEnumerable<Movie> Get(FilteredPagedBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var movies = db.Movies.WhereUser(UserId)
                                       .WhereTimestampInclusive(binding)
@@ -30,7 +30,7 @@ namespace AnticevicApi.BL.Handlers
 
         public int GetCount(FilteredBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var userMovies = db.Movies.WhereUser(UserId)
                                           .WhereTimestampInclusive(binding);

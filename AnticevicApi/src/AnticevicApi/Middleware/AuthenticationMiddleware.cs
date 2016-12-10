@@ -5,10 +5,10 @@ using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
 
 namespace AnticevicApi.Middleware
 {
@@ -43,7 +43,7 @@ namespace AnticevicApi.Middleware
 
                 httpContext.User.AddIdentity(claimIdentity);
 
-                var y = new UserHandler(1).Get("mate");
+                var y = new UserHandler("Server=sql.anticevic.net;Database=AnticevicApi;Trusted_Connection=True;", 1).Get("mate");
 
                 return _next(httpContext);
             }

@@ -7,11 +7,13 @@
 
         }
 
-        public Handler(int userId)
+        public Handler(string connectionString, int userId)
         {
+            ConnectionString = connectionString;
             UserId = userId;
         }
 
-        public int UserId { get; set; }
+        protected string ConnectionString { get; set; }
+        protected int UserId { get; set; }
     }
 }

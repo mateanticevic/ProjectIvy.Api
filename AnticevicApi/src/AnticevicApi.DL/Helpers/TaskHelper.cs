@@ -7,7 +7,7 @@ namespace AnticevicApi.DL.Helpers
     {
         public static string LastValueId(int projectId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(""))
             {
                 return db.Tasks.Where(x => x.ProjectId == projectId)
                                .OrderByDescending(x => x.ValueId.Count())

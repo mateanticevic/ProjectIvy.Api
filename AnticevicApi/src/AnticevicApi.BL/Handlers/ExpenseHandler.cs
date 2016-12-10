@@ -4,26 +4,25 @@ using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Helpers;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using AnticevicApi.Model.Constants;
 
 namespace AnticevicApi.BL.Handlers
 {
     public class ExpenseHandler : Handler
     {
-        public ExpenseHandler(int userId)
+        public ExpenseHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            UserId = userId;
         }
 
         public string Create(ExpenseBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = binding.ToEntity();
                 entity.UserId = UserId;
@@ -37,7 +36,7 @@ namespace AnticevicApi.BL.Handlers
 
         public bool Delete(string valueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = db.Expenses.WhereUser(UserId)
                                         .SingleOrDefault(x => x.ValueId == valueId);
@@ -49,6 +48,8 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
+        #region Get
+
         public PaginatedView<Expense> Get(DateTime? from, DateTime? to, string expenseTypeValueId, string vendorValueId, int? page = 0, int? pageSize = 10)
         {
             page = page.HasValue ? page : 0;
@@ -56,7 +57,7 @@ namespace AnticevicApi.BL.Handlers
 
             var view = new PaginatedView<Expense>();
 
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 int? expenseTypeId = ExpenseTypeHelper.GetId(expenseTypeValueId);
                 int? vendorId = VendorHelper.GetId(vendorValueId);
@@ -86,7 +87,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<Expense> GetByDate(DateTime date)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date == date)
@@ -97,7 +98,7 @@ namespace AnticevicApi.BL.Handlers
 
         public int GetCount(DateTime from, DateTime to)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date >= from && x.Date.Date <= to)
@@ -107,7 +108,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var q = db.Expenses.WhereUser(UserId)
                                    .Where(x => x.ExpenseType.ValueId == typeValueId);
@@ -129,7 +130,7 @@ namespace AnticevicApi.BL.Handlers
 
         public decimal GetSum(FilteredBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date >= binding.From && x.Date.Date <= binding.To)
@@ -139,7 +140,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<Expense> GetByVendor(string valueId, DateTime? from = null, DateTime? to = null)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
 
@@ -158,7 +159,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<Expense> GetByType(string valueId, DateTime? from = null, DateTime? to = null)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
 
@@ -175,9 +176,11 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
+        #endregion
+
         public bool Update(ExpenseBinding binding)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = db.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.ValueId);
 

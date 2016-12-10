@@ -9,14 +9,14 @@ namespace AnticevicApi.BL.Handlers
 {
     public class PoiHandler : Handler
     {
-        public PoiHandler(int userId) : base(userId)
+        public PoiHandler(string connectionString, int userId) : base(connectionString, userId)
         {
 
         }
 
         public IEnumerable<Poi> GetByList(string listValueId)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.PoiLists.WhereUser(UserId)
                                   .Join(db.Pois, x => x.Id, x => x.PoiListId, (List, Poi) => new { List, Poi })
@@ -30,7 +30,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<PoiCategory> GetCategories()
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.PoiCategories.OrderBy(x => x.Name)
                                        .ToList()
@@ -40,7 +40,7 @@ namespace AnticevicApi.BL.Handlers
 
         public IEnumerable<PoiList> GetLists()
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.PoiLists.WhereUser(UserId)
                                   .OrderBy(x => x.Name)

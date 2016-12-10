@@ -5,11 +5,16 @@ using System.Linq;
 
 namespace AnticevicApi.BL.Handlers
 {
-    public class CurrencyHandler
+    public class CurrencyHandler : Handler
     {
-        public static IEnumerable<Currency> Get()
+        public CurrencyHandler(string connectionString, int userId) : base(connectionString, userId)
         {
-            using (var db = new MainContext())
+
+        }
+
+        public IEnumerable<Currency> Get()
+        {
+            using (var db = new MainContext(ConnectionString))
             {
                 return db.Currencies.OrderBy(x => x.Name)
                                     .ToList()
@@ -17,9 +22,9 @@ namespace AnticevicApi.BL.Handlers
             }
         }
 
-        public static Currency Get(string code)
+        public Currency Get(string code)
         {
-            using (var db = new MainContext())
+            using (var db = new MainContext(ConnectionString))
             {
                 var entity = db.Currencies.SingleOrDefault(x => x.Code == code);
 
