@@ -3,15 +3,16 @@ using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.View.Car;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class CarController : BaseController
+    public class CarController : BaseController<CarController>
     {
-        public CarController(IOptions<AppSettings> options, ICarHandler carHandler) : base(options)
+        public CarController(IOptions<AppSettings> options, ILogger<CarController> logger, ICarHandler carHandler) : base(options, logger)
         {
             CarHandler = carHandler;
         }

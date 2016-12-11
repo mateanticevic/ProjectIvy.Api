@@ -5,16 +5,17 @@ using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.View.Project;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class ProjectController : BaseController
+    public class ProjectController : BaseController<ProjectController>
     {
-        public ProjectController(IOptions<AppSettings> options, IProjectHandler projectHandler,
-                                                                ITaskHandler taskHandler) : base(options)
+        public ProjectController(IOptions<AppSettings> options, ILogger<ProjectController> logger, IProjectHandler projectHandler,
+                                                                                                   ITaskHandler taskHandler) : base(options, logger)
         {
             ProjectHandler = projectHandler;
             TaskHandler = taskHandler;

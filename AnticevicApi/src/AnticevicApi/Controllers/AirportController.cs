@@ -2,6 +2,7 @@
 using AnticevicApi.Config;
 using AnticevicApi.Model.View.Airport;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,9 +10,9 @@ using System.Linq;
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class AirportController : BaseController
+    public class AirportController : BaseController<AirportController>
     {
-        public AirportController(IOptions<AppSettings> options, IAirportHandler airportHandler) : base(options)
+        public AirportController(IOptions<AppSettings> options, ILogger<AirportController> logger, IAirportHandler airportHandler) : base(options, logger)
         {
             AirportHandler = airportHandler;
         }

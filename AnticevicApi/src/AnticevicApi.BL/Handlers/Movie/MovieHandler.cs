@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
+using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Movie;

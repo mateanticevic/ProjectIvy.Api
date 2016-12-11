@@ -3,6 +3,7 @@ using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.View.Movie;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
@@ -10,9 +11,9 @@ using System;
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class MovieController : BaseController
+    public class MovieController : BaseController<MovieController>
     {
-        public MovieController(IOptions<AppSettings> options, IMovieHandler movieHandler) : base(options)
+        public MovieController(IOptions<AppSettings> options, ILogger<MovieController> logger, IMovieHandler movieHandler) : base(options, logger)
         {
             MovieHandler = movieHandler;
         }
@@ -29,6 +30,7 @@ namespace AnticevicApi.Controllers
         [Route("count")]
         public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
+            Logger.LogInformation(nameof(GetCount));
             return MovieHandler.GetCount(new FilteredBinding(from, to));
         }
 

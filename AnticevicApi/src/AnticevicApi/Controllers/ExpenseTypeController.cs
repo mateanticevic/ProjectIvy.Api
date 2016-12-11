@@ -3,6 +3,7 @@ using AnticevicApi.Config;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.ExpenseType;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
@@ -10,9 +11,9 @@ using System;
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class ExpenseTypeController : BaseController
+    public class ExpenseTypeController : BaseController<ExpenseTypeController>
     {
-        public ExpenseTypeController(IOptions<AppSettings> options, IExpenseTypeHandler expenseTypeHandler) : base(options)
+        public ExpenseTypeController(IOptions<AppSettings> options, ILogger<ExpenseTypeController> logger, IExpenseTypeHandler expenseTypeHandler) : base(options, logger)
         {
             ExpenseTypeHandler = expenseTypeHandler;
         }

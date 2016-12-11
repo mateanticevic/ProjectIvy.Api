@@ -2,15 +2,16 @@
 using AnticevicApi.Config;
 using AnticevicApi.Model.View.Currency;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class CurrencyController : BaseController
+    public class CurrencyController : BaseController<CurrencyController>
     {
-        public CurrencyController(IOptions<AppSettings> options, ICurrencyHandler currencyHandler) : base(options)
+        public CurrencyController(IOptions<AppSettings> options, ILogger<CurrencyController> logger, ICurrencyHandler currencyHandler) : base(options, logger)
         {
             CurrencyHandler = currencyHandler;
         }

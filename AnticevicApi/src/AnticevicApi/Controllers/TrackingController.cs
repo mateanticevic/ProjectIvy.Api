@@ -1,21 +1,22 @@
-﻿using AnticevicApi.Config;
+﻿using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Model.View.Tracking;
 using AnticevicApi.Utilities.Geo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
-using AnticevicApi.BL.Handlers.Tracking;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class TrackingController : BaseController
+    public class TrackingController : BaseController<TrackingController>
     {
-        public TrackingController(IOptions<AppSettings> options, ITrackingHandler trackingHandler) : base(options)
+        public TrackingController(IOptions<AppSettings> options, ILogger<TrackingController> logger, ITrackingHandler trackingHandler) : base(options, logger)
         {
             TrackingHandler = trackingHandler;
         }

@@ -2,15 +2,16 @@
 using AnticevicApi.Config;
 using AnticevicApi.Model.View.Poi;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
-    public class PoiController : BaseController
+    public class PoiController : BaseController<PoiController>
     {
-        public PoiController(IOptions<AppSettings> options, IPoiHandler poiHandler) : base(options)
+        public PoiController(IOptions<AppSettings> options, ILogger<PoiController> logger, IPoiHandler poiHandler) : base(options, logger)
         {
             PoiHandler = poiHandler;
         }

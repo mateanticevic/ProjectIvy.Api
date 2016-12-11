@@ -15,10 +15,11 @@ using AnticevicApi.Config;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Logging;
 
 namespace AnticevicApi.Controllers
 {
-    public abstract class BaseController : Controller
+    public abstract class BaseController<TController> : Controller
     {
         private IAirportHandler _airportHandler;
         private IApplicationHandler _applicationHandler;
@@ -34,13 +35,22 @@ namespace AnticevicApi.Controllers
         private ITaskHandler _taskHandler;
         private ITrackingHandler _trackingHandler;
         private IVendorHandler _vendorHandler;
+        private IOptions<AppSettings> options;
 
-        public BaseController(IOptions<AppSettings> settingsAccessor)
+        public BaseController(IOptions<AppSettings> settingsAccessor, ILogger<TController> logger)
         {
+            Logger = logger;
             Settings = settingsAccessor.Value;
         }
 
+        public BaseController(IOptions<AppSettings> options)
+        {
+            this.options = options;
+        }
+
         protected AppSettings Settings { get; set; }
+
+        protected ILogger<TController> Logger { get; private set; } 
 
         #region Handlers
 
@@ -69,7 +79,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _airportHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _airportHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _airportHandler;
             }
             set
@@ -82,7 +92,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _applicationHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _applicationHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _applicationHandler;
             }
             set
@@ -95,7 +105,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _carHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _carHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _carHandler;
             }
             set
@@ -108,7 +118,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _currencyHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _currencyHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _currencyHandler;
             }
             set
@@ -121,7 +131,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _expenseHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _expenseHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _expenseHandler;
             }
             set
@@ -134,7 +144,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _expenseTypeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _expenseTypeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _expenseTypeHandler;
             }
             set
@@ -147,7 +157,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _incomeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _incomeHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _incomeHandler;
             }
             set
@@ -160,7 +170,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _movieHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _movieHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _movieHandler;
             }
             set
@@ -173,7 +183,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _poiHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _poiHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _poiHandler;
             }
             set
@@ -186,7 +196,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _projectHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _projectHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _projectHandler;
             }
             set
@@ -199,7 +209,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _taskHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _taskHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _taskHandler;
             }
             set
@@ -212,7 +222,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _trackingHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _trackingHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _trackingHandler;
             }
             set
@@ -225,7 +235,7 @@ namespace AnticevicApi.Controllers
         {
             get
             {
-                _vendorHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId);
+                _vendorHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
                 return _vendorHandler;
             }
             set
