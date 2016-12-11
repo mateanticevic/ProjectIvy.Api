@@ -47,16 +47,16 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("count")]
-        public int Delete([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), from, to);
 
-            return ExpenseHandler.GetCount(from, to);
+            return ExpenseHandler.GetCount(new FilteredBinding(from, to));
         }
 
         [HttpGet]
         [Route("sum")]
-        public decimal GetSum([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public decimal GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), from, to);
 

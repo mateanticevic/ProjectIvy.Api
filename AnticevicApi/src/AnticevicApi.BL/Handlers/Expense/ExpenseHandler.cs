@@ -91,13 +91,16 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public int GetCount(DateTime from, DateTime to)
+        public int GetCount(FilteredBinding binding)
         {
             using (var db = new MainContext(ConnectionString))
             {
-                return db.Expenses.WhereUser(UserId)
-                                  .Where(x => x.Date.Date >= from && x.Date.Date <= to)
-                                  .Count();
+                var expenses = db.Expenses.WhereUser(UserId);
+
+                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
+                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
+
+                return expenses.Count();
             }
         }
 
@@ -127,9 +130,12 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = new MainContext(ConnectionString))
             {
-                return db.Expenses.WhereUser(UserId)
-                                  .Where(x => x.Date.Date >= binding.From && x.Date.Date <= binding.To)
-                                  .Sum(x => x.Ammount);
+                var expenses = db.Expenses.WhereUser(UserId);
+
+                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
+                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
+
+                return expenses.Sum(x => x.Ammount);
             }
         }
 
