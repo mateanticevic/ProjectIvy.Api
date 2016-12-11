@@ -16,3 +16,9 @@
 /AnticevicApi/src/AnticevicApi.Tests/bin
 /AnticevicApi/src/AnticevicApi.Tests/obj
 /AnticevicApi/src/AnticevicApi.Tests/project.lock.json
+/AnticevicApi/src/AnticevicApi.BL/project.lock.json
+/AnticevicApi/src/AnticevicApi.Common/project.lock.json
+/AnticevicApi/src/AnticevicApi.DL/project.lock.json
+/AnticevicApi/src/AnticevicApi.Extensions/project.lock.json
+/AnticevicApi/src/AnticevicApi.Model/project.lock.json
+/AnticevicApi/src/AnticevicApi.Utilities/project.lock.json

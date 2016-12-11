@@ -1,8 +1,8 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
 
   "dependencies": {
-    "AnticevicApi.Extensions": "0.2.0",
+    "AnticevicApi.Extensions": "0.3.0",
     "Microsoft.EntityFrameworkCore": "1.1.0",
     "NETStandard.Library": "1.6.1"
   },
