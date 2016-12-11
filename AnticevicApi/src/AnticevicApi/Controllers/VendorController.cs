@@ -1,5 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Config;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.Vendor;
 using Microsoft.AspNetCore.Mvc;
@@ -23,6 +24,8 @@ namespace AnticevicApi.Controllers
         [HttpGet]
         public IEnumerable<Vendor> Get([FromQuery] string contains)
         {
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), contains);
+
             return VendorHandler.Get(contains);
         }
 
@@ -30,6 +33,8 @@ namespace AnticevicApi.Controllers
         [Route("{valueId}/expense")]
         public IEnumerable<Expense> GetExpenses(string valueId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
         {
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetExpenses), valueId, from, to);
+
             return ExpenseHandler.GetByVendor(valueId, from, to);
         }
 

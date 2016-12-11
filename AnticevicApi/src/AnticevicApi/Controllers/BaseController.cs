@@ -12,10 +12,11 @@ using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.BL.Handlers;
 using AnticevicApi.Config;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace AnticevicApi.Controllers
 {
@@ -39,13 +40,10 @@ namespace AnticevicApi.Controllers
 
         public BaseController(IOptions<AppSettings> settingsAccessor, ILogger<TController> logger)
         {
+            logger.LogInformation((int)LogEvent.ControllerInstance, nameof(LogEvent.ControllerInstance));
+
             Logger = logger;
             Settings = settingsAccessor.Value;
-        }
-
-        public BaseController(IOptions<AppSettings> options)
-        {
-            this.options = options;
         }
 
         protected AppSettings Settings { get; set; }

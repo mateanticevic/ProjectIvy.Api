@@ -1,5 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.Config;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -21,6 +22,8 @@ namespace AnticevicApi.Controllers
         [HttpGet]
         public IEnumerable<Task> Get(string status, string priority, string type)
         {
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), status, priority, type);
+
             return TaskHandler.Get(status, priority, type);
         }
 

@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Movie;
 using AnticevicApi.Config;
 using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Movie;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -23,6 +24,8 @@ namespace AnticevicApi.Controllers
         [HttpGet]
         public IEnumerable<Movie> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
         {
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to);
+
             return MovieHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
         }
 
@@ -30,7 +33,8 @@ namespace AnticevicApi.Controllers
         [Route("count")]
         public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            Logger.LogInformation(nameof(GetCount));
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCount), from, to);
+
             return MovieHandler.GetCount(new FilteredBinding(from, to));
         }
 

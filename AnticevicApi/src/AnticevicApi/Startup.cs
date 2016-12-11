@@ -12,6 +12,7 @@ using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Config;
 using AnticevicApi.Middleware;
+using AnticevicApi.Model.Constants;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -73,17 +74,15 @@ namespace AnticevicApi
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
 
+            var logger = loggerFactory.CreateLogger(nameof(Startup));
+            logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
+
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
             app.UseApplicationInsightsRequestTelemetry();
-
             app.UseApplicationInsightsExceptionTelemetry();
-
             app.UseAuthenticationMiddleware();
-
-            app.UseMvc();
-
-            
+            app.UseMvc();          
         }
     }
 }
