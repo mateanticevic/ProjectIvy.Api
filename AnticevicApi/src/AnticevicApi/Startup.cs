@@ -9,6 +9,7 @@ using AnticevicApi.BL.Handlers.Poi;
 using AnticevicApi.BL.Handlers.Project;
 using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Config;
 using AnticevicApi.Middleware;
@@ -62,7 +63,7 @@ namespace AnticevicApi
             services.AddScoped<ITaskHandler, TaskHandler>();
             services.AddScoped<ITrackingHandler, TrackingHandler>();
             services.AddScoped<IVendorHandler, VendorHandler>();
-
+            services.AddScoped<IUserHandler, UserHandler>();
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();

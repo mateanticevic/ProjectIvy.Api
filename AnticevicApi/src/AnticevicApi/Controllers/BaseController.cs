@@ -9,6 +9,7 @@ using AnticevicApi.BL.Handlers.Poi;
 using AnticevicApi.BL.Handlers.Project;
 using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.BL.Handlers;
 using AnticevicApi.Config;
@@ -36,6 +37,8 @@ namespace AnticevicApi.Controllers
         private ITaskHandler _taskHandler;
         private ITrackingHandler _trackingHandler;
         private IVendorHandler _vendorHandler;
+        private IUserHandler _userHandler;
+
         private IOptions<AppSettings> options;
 
         public BaseController(IOptions<AppSettings> settingsAccessor, ILogger<TController> logger)
@@ -239,6 +242,19 @@ namespace AnticevicApi.Controllers
             set
             {
                 _vendorHandler = value;
+            }
+        }
+
+        protected IUserHandler UserHandler
+        {
+            get
+            {
+                _userHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
+                return _userHandler;
+            }
+            set
+            {
+                _userHandler = value;
             }
         }
 

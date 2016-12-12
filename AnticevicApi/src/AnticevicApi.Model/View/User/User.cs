@@ -10,12 +10,18 @@ namespace AnticevicApi.Model.View.User
         {
             FirstName = x.FirstName;
             LastName = x.LastName;
+            Email = x.Email;
+            Username = x.Username;
             Roles = x.UserRoles.Select(y => new Role.Role(y.Role));
         }
 
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
+
+        public string Email { get; set; }
+
+        public string Username { get; set; }
 
         public IEnumerable<Role.Role> Roles { get; set; }
     }

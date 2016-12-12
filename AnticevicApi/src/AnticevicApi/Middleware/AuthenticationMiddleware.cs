@@ -43,8 +43,6 @@ namespace AnticevicApi.Middleware
 
                 httpContext.User.AddIdentity(claimIdentity);
 
-                var y = new UserHandler("Server=sql.anticevic.net;Database=AnticevicApi;Trusted_Connection=True;", 1).Get("mate");
-
                 return _next(httpContext);
             }
             catch(Exception e)
