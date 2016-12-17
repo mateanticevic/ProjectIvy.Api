@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Airport;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.View.Airport;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

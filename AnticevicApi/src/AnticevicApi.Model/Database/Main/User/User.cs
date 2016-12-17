@@ -20,6 +20,8 @@ namespace AnticevicApi.Model.Database.Main.User
 
         public string Username { get; set; }
 
+        public string LastFmUsername { get; set; }
+
         public ICollection<UserRole> UserRoles { get; set; }
 
         public ICollection<Tracking.Tracking> Trackings { get; set; }

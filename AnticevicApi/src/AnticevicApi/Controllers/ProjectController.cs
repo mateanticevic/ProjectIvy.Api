@@ -1,6 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Project;
 using AnticevicApi.BL.Handlers.Task;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.View.Project;
 using AnticevicApi.Model.View.Task;

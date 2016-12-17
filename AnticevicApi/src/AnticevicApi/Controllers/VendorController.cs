@@ -1,5 +1,4 @@
 ﻿using AnticevicApi.BL.Handlers.Vendor;
-using AnticevicApi.Config;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.Vendor;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
+using AnticevicApi.Common.Configuration;
 
 namespace AnticevicApi.Controllers
 {

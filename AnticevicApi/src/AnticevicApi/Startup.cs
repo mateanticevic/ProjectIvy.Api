@@ -11,9 +11,12 @@ using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
-using AnticevicApi.Config;
+using AnticevicApi.BL.Services.LastFm;
+using AnticevicApi.Common.Configuration;
+using AnticevicApi.Extensions;
 using AnticevicApi.Middleware;
 using AnticevicApi.Model.Constants;
+using LastFm = AnticevicApi.DL.Services.LastFm;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -27,10 +30,9 @@ namespace AnticevicApi
     {
         public Startup(IHostingEnvironment env)
         {
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+            var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+                                                    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                                                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
             if (env.IsEnvironment("Development"))
             {
@@ -43,11 +45,16 @@ namespace AnticevicApi
 
         public IConfigurationRoot Configuration { get; }
 
+        protected AppSettings Settings { get; private set; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(Configuration);
 
             services.Configure<AppSettings>(Configuration);
+
+            services.AddSingletonFactory<LastFm.IUserHelper, LastFm.UserFactory>();
+            services.AddScopedFactory<ILastFmHandler, LastFmFactory>();
 
             services.AddScoped<IApplicationHandler, ApplicationHandler>();
             services.AddScoped<IAirportHandler, AirportHandler>();

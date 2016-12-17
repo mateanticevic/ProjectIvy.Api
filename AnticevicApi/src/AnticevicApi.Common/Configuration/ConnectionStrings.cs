@@ -1,4 +1,4 @@
-﻿namespace AnticevicApi.Config
+﻿namespace AnticevicApi.Common.Configuration
 {
     public class ConnectionStrings
     {

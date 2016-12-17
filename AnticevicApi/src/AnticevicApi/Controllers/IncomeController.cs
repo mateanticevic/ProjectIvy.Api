@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Income;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.View.Income;
 using Microsoft.AspNetCore.Mvc;

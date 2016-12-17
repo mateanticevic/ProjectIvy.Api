@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Car;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.View.Car;
 using Microsoft.AspNetCore.Mvc;

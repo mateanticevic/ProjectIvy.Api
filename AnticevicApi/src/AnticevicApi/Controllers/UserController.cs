@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.User;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.View.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

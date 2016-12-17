@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Expense;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.ExpenseType;

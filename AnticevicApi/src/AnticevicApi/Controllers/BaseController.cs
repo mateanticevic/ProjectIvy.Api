@@ -12,7 +12,8 @@ using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.BL.Handlers;
-using AnticevicApi.Config;
+using AnticevicApi.BL.Services.LastFm;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -38,6 +39,8 @@ namespace AnticevicApi.Controllers
         private ITrackingHandler _trackingHandler;
         private IVendorHandler _vendorHandler;
         private IUserHandler _userHandler;
+
+        private ILastFmHandler _lastFmHandler;
 
         private IOptions<AppSettings> options;
 
@@ -255,6 +258,23 @@ namespace AnticevicApi.Controllers
             set
             {
                 _userHandler = value;
+            }
+        }
+
+        #endregion
+
+        #region Services
+
+        protected ILastFmHandler LastFmHandler
+        {
+            get
+            {
+                _lastFmHandler.Initialize(Settings.ConnectionStrings.Main, AccessToken.UserId, Logger);
+                return _lastFmHandler;
+            }
+            set
+            {
+                _lastFmHandler = value;
             }
         }
 

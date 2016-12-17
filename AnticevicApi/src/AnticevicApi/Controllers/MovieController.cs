@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Movie;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Movie;

@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Model.View.Tracking;

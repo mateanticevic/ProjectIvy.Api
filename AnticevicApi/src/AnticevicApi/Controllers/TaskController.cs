@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Task;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;

@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Application;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;

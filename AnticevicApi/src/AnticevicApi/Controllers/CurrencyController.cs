@@ -1,5 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Currency;
-using AnticevicApi.Config;
+using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.View.Currency;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;

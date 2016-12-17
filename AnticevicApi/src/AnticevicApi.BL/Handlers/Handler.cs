@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using AnticevicApi.DL.DbContexts;
+using Microsoft.Extensions.Logging;
 
 namespace AnticevicApi.BL.Handlers
 {
@@ -31,5 +32,10 @@ namespace AnticevicApi.BL.Handlers
         public int UserId { get; set; }
         public bool IsInitialized { get; private set; }
         public ILogger Logger { get; private set; }
+
+        protected MainContext GetMainContext()
+        {
+            return new MainContext(ConnectionString);
+        }
     }
 }
