@@ -1,5 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers;
 using AnticevicApi.DL.Services.LastFm;
+using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.View.Services.LastFm;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,6 +26,19 @@ namespace AnticevicApi.BL.Services.LastFm
 
                 var info = await _userHelper.GetTotalCount(username);
                 return info.PlayCount;
+            }
+        }
+
+        public async Task<IEnumerable<Track>> GetTracks(FilteredPagedBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+                                          .LastFmUsername;
+
+                var tracks = await _userHelper.GetTracks(username, binding);
+
+                return tracks.Select(x => new Track(x));
             }
         }
     }

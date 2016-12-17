@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Model.Services.LastFm;
+﻿using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Services.LastFm;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -42,6 +43,25 @@ namespace AnticevicApi.DL.Services.LastFm
             var infoObject = JObject.Parse(json).SelectToken("user");
 
             return infoObject.ToObject<Info>();
+        }
+
+        public async Task<IEnumerable<Track>> GetTracks(string username, FilteredPagedBinding filter)
+        {
+            var hc = new HttpClient();
+
+            string url = _url.SetMethod(ApiMethod.User.GetRecentTracks)
+                             .SetUsername(username)
+                             .SetFrom(filter.From)
+                             .SetTo(filter.To)
+                             .SetPage(filter.Page)
+                             .SetPageSize(filter.PageSize);
+
+            var json = await hc.GetStringAsync(url);
+
+            var tracks = JObject.Parse(json).SelectToken("recenttracks")
+                                            .SelectToken("track");
+
+            return tracks.ToObject<IEnumerable<Track>>();
         }
     }
 }

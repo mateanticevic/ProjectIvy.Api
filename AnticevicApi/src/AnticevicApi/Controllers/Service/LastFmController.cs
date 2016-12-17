@@ -1,9 +1,13 @@
 ﻿using AnticevicApi.BL.Services.LastFm;
 using AnticevicApi.Common.Configuration;
+using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.View.Services.LastFm;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using System;
 
 namespace AnticevicApi.Controllers.Service
 {
@@ -20,6 +24,13 @@ namespace AnticevicApi.Controllers.Service
         public async Task<int> GetCount()
         {
             return await LastFmHandler.GetTotalCount();
+        }
+
+        [HttpGet]
+        [Route("tracks")]
+        public async Task<IEnumerable<Track>> GetTracks([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page, [FromQuery] int? pageSize)
+        {
+            return await LastFmHandler.GetTracks(new FilteredPagedBinding(from, to, page, pageSize));
         }
     }
 }

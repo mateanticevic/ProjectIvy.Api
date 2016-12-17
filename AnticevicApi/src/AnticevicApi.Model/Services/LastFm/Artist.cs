@@ -1,8 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace AnticevicApi.Model.Services.LastFm
 {
@@ -10,5 +6,16 @@ namespace AnticevicApi.Model.Services.LastFm
     {
         [JsonProperty("name")]
         public string Name { get; set; }
+
+        [JsonProperty("#text")]
+        public string Text { get; set; }
+
+        public string ArtistName
+        {
+            get
+            {
+                return string.IsNullOrEmpty(Name) ? Text : Name;
+            }
+        }
     }
 }
