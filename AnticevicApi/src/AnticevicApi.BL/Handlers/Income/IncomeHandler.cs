@@ -20,7 +20,7 @@ namespace AnticevicApi.BL.Handlers.Income
         {
             using (var db = GetMainContext())
             {
-                var incomes = db.Incomes.WhereUser(UserId)
+                var incomes = db.Incomes.WhereUser(User.Id)
                                         .Include(x => x.Currency)
                                         .Include(x => x.IncomeSource)
                                         .OrderByDescending(x => x.Timestamp)
@@ -35,7 +35,7 @@ namespace AnticevicApi.BL.Handlers.Income
         {
             using (var db = GetMainContext())
             {
-                var query = db.Incomes.WhereUser(UserId)
+                var query = db.Incomes.WhereUser(User.Id)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to);
 
                 return query.Count();
@@ -46,7 +46,7 @@ namespace AnticevicApi.BL.Handlers.Income
         {
             using (var db = GetMainContext())
             {
-                var query = db.Incomes.WhereUser(UserId)
+                var query = db.Incomes.WhereUser(User.Id)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to)
                                       .Include(x => x.Currency)
                                       .ToList()

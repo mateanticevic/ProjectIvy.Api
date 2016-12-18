@@ -1,4 +1,5 @@
 ﻿using AnticevicApi.Model.Database.Main.Security;
+using AnticevicApi.Model.Database.Main.User;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace AnticevicApi.Cache
@@ -13,6 +14,16 @@ namespace AnticevicApi.Cache
         public static void Set(AccessToken token)
         {
             CacheHandler.Instance.Cache.Set($"Token.{token.Token}", token);
+        }
+
+        public static User GetUser(string token)
+        {
+            return CacheHandler.Instance.Cache.Get<User>($"User.{token}");
+        }
+
+        public static void SetUser(User user, string token)
+        {
+            CacheHandler.Instance.Cache.Set($"User.{token}", user);
         }
     }
 }

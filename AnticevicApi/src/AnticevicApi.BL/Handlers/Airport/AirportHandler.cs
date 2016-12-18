@@ -1,5 +1,4 @@
-﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,13 +17,13 @@ namespace AnticevicApi.BL.Handlers.Airport
         {
             using (var db = GetMainContext())
             {
-                var destinationAirports = db.Flights.WhereUser(UserId)
+                var destinationAirports = db.Flights.WhereUser(User.Id)
                                                     .Include(x => x.DestinationAirport)
                                                     .Select(x => x.DestinationAirport)
                                                     .Distinct()
                                                     .ToList();
 
-                var originAirports = db.Flights.WhereUser(UserId)
+                var originAirports = db.Flights.WhereUser(User.Id)
                                                .Include(x => x.OriginAirport)
                                                .Select(x => x.OriginAirport)
                                                .Distinct()

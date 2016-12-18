@@ -1,8 +1,6 @@
-﻿using AnticevicApi.BL.Handlers;
+﻿using AnticevicApi.BL.Handlers.Security;
 using AnticevicApi.Cache;
-using AnticevicApi.DL.Helpers;
 using AnticevicApi.Model.Constants.Database;
-using AnticevicApi.Model.Database.Main.Security;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
@@ -15,10 +13,12 @@ namespace AnticevicApi.Middleware
     public class AuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ISecurityHandler _securityHandler;
 
-        public AuthenticationMiddleware(RequestDelegate next)
+        public AuthenticationMiddleware(RequestDelegate next, ISecurityHandler securityHandler)
         {
             _next = next;
+            _securityHandler = securityHandler;
         }
 
         public Task Invoke(HttpContext httpContext)
@@ -27,15 +27,14 @@ namespace AnticevicApi.Middleware
             {
                 string token = httpContext.Request.Headers.SingleOrDefault(x => x.Key == "Authorization").Value;
 
-                var accessToken = TokenCache.Get(token);
+                var user = TokenCache.GetUser(token);
 
-                if (accessToken == null)
+                if (user == null)
                 {
-                    accessToken = AccessTokenHelper.Get(token);
-                    TokenCache.Set(accessToken);
+                    user = _securityHandler.GetUser(token);
+                    TokenCache.SetUser(user, token);
                 }
-
-                httpContext.Items.Add(nameof(AccessToken), accessToken);
+                httpContext.Items.Add("User", user);
 
                 var claimIdentity = new ClaimsIdentity();
 

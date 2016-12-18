@@ -60,7 +60,7 @@ namespace AnticevicApi.BL.Handlers.Task
         {
             using (var db = GetMainContext())
             {
-                int projectId = db.Projects.WhereUser(UserId).SingleOrDefault(x => x.ValueId == projectValueId).Id;
+                int projectId = db.Projects.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == projectValueId).Id;
                 var task = db.Tasks.Include(x => x.Related)
                                    .Include(x => x.Changes)
                                    .SingleOrDefault(x => x.ValueId == taskValueId && x.ProjectId == projectId);
@@ -73,7 +73,7 @@ namespace AnticevicApi.BL.Handlers.Task
         {
             using (var db = GetMainContext())
             {
-                var tasks = db.Projects.WhereUser(UserId)
+                var tasks = db.Projects.WhereUser(User.Id)
                                        .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })
                                        .GroupJoin(db.TaskChanges, x => x.Task.Id, x => x.TaskId, (tp, t2) => new { Task = tp.Task, Project = tp.Project, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() })
                                        .Join(db.TaskStatuses, x => x.LastChange.TaskStatusId, x => x.Id, (tc, Status) => new { tc.Project, tc.LastChange, tc.Task, Status })

@@ -1,11 +1,10 @@
-﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Constants;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 using View = AnticevicApi.Model.View.Movie;
 
 namespace AnticevicApi.BL.Handlers.Movie
@@ -21,7 +20,7 @@ namespace AnticevicApi.BL.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var movies = db.Movies.WhereUser(UserId)
+                var movies = db.Movies.WhereUser(User.Id)
                                       .WhereTimestampInclusive(binding)
                                       .OrderByDescending(x => x.Timestamp)
                                       .Page(binding.ToPagedBinding());
@@ -37,7 +36,7 @@ namespace AnticevicApi.BL.Handlers.Movie
             {
                 using (var db = GetMainContext())
                 {
-                    var userMovies = db.Movies.WhereUser(UserId)
+                    var userMovies = db.Movies.WhereUser(User.Id)
                                               .WhereTimestampInclusive(binding);
 
                     return userMovies.Count();

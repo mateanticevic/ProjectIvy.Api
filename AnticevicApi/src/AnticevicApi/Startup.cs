@@ -24,6 +24,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using AnticevicApi.BL.Handlers;
+using AnticevicApi.BL.Handlers.Security;
 
 namespace AnticevicApi
 {
@@ -57,26 +58,24 @@ namespace AnticevicApi
 
             services.AddSingletonFactory<LastFm.IUserHelper, LastFm.UserFactory>();
 
-            //services.AddScoped<IHandlerContext<LastFmHandler>, HandlerContext<LastFmHandler>>();
-            //services.AddScoped<ILastFmHandler, LastFmHandler>();
-
             services.AddHandler<ILastFmHandler, LastFmHandler>();
 
-            services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
+            services.AddHandler<IApplicationHandler, ApplicationHandler>();
+            services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
-            services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
             services.AddHandler<IMovieHandler, MovieHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
             services.AddHandler<IProjectHandler, ProjectHandler>();
+            services.AddHandler<ISecurityHandler, SecurityHandler>();
             services.AddHandler<ITaskHandler, TaskHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
-            services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
+            services.AddHandler<IVendorHandler, VendorHandler>();
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();

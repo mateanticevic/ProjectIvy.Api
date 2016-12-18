@@ -17,7 +17,7 @@ namespace AnticevicApi.BL.Handlers.Project
         {
             using (var db = GetMainContext())
             {
-                return db.Projects.WhereUser(UserId)
+                return db.Projects.WhereUser(User.Id)
                                   .OrderBy(x => x.Name)
                                   .ToList()
                                   .Select(x => new View.Project(x));

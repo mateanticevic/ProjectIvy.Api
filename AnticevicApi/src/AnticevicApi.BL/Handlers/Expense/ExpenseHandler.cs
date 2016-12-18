@@ -24,7 +24,7 @@ namespace AnticevicApi.BL.Handlers.Expense
             using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
-                entity.UserId = UserId;
+                entity.User.Id = User.Id;
 
                 db.Expenses.Add(entity);
                 db.SaveChanges();
@@ -37,7 +37,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var entity = db.Expenses.WhereUser(UserId)
+                var entity = db.Expenses.WhereUser(User.Id)
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
                 db.Expenses.Remove(entity);
@@ -64,7 +64,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                 var result = db.Expenses.Include(x => x.ExpenseType)
                                         .Include(x => x.Currency)
                                         .Include(x => x.Vendor)
-                                        .WhereUser(UserId);
+                                        .WhereUser(User.Id);
 
                 result = from.HasValue ? result.Where(x => x.Date >= from) : result;
                 result = to.HasValue ? result.Where(x => x.Date <= to) : result;
@@ -88,7 +88,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                return db.Expenses.WhereUser(UserId)
+                return db.Expenses.WhereUser(User.Id)
                                   .Where(x => x.Date.Date == date)
                                   .ToList()
                                   .Select(x => new View.Expense(x));
@@ -99,7 +99,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var expenses = db.Expenses.WhereUser(UserId);
+                var expenses = db.Expenses.WhereUser(User.Id);
 
                 expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
                 expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
@@ -112,7 +112,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var q = db.Expenses.WhereUser(UserId)
+                var q = db.Expenses.WhereUser(User.Id)
                                    .Where(x => x.ExpenseType.ValueId == typeValueId);
 
                 if(timeGroupingTypes == TimeGroupingTypes.Year)
@@ -134,7 +134,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var expenses = db.Expenses.WhereUser(UserId);
+                var expenses = db.Expenses.WhereUser(User.Id);
 
                 expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
                 expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
@@ -153,7 +153,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                                  .ThenInclude(x => x.Currency)
                                  .SingleOrDefault(x => x.ValueId == valueId)
                                  .Expenses
-                                 .WhereUser(UserId);
+                                 .WhereUser(User.Id);
 
                 expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
                 expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
@@ -172,7 +172,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                                  .ThenInclude(x => x.Currency)
                                  .SingleOrDefault(x => x.ValueId == valueId)
                                  .Expenses
-                                 .WhereUser(UserId);
+                                 .WhereUser(User.Id);
 
                 expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
                 expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
@@ -187,7 +187,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var entity = db.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.ValueId);
+                var entity = db.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.ValueId);
 
                 entity = binding.ToEntity(db, entity);
                 db.SaveChanges();

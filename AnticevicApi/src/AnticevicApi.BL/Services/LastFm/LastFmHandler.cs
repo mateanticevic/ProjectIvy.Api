@@ -21,7 +21,7 @@ namespace AnticevicApi.BL.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+                string username = db.Users.SingleOrDefault(x => x.Id == User.Id)
                                           .LastFmUsername;
 
                 var info = await _userHelper.GetTotalCount(username);
@@ -33,7 +33,7 @@ namespace AnticevicApi.BL.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+                string username = db.Users.SingleOrDefault(x => x.Id == User.Id)
                                           .LastFmUsername;
 
                 var tracks = await _userHelper.GetTracks(username, binding);

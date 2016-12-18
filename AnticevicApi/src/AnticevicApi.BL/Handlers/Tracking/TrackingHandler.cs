@@ -24,7 +24,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
             using (var db = GetMainContext())
             {
                 var tracking = binding.ToEntity();
-                tracking.UserId = UserId;
+                tracking.User.Id = User.Id;
 
                 db.Trackings.Add(tracking);
                 db.SaveChanges();
@@ -37,7 +37,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                return db.Trackings.WhereUser(UserId)
+                return db.Trackings.WhereUser(User.Id)
                                    .WhereTimestampInclusive(binding)
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
@@ -49,7 +49,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                var userTrackings = db.Trackings.WhereUser(UserId)
+                var userTrackings = db.Trackings.WhereUser(User.Id)
                                                 .WhereTimestampInclusive(binding);
 
                 return userTrackings.Count();
@@ -60,11 +60,11 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                int total = db.TrackingDistances.WhereUser(UserId)
+                int total = db.TrackingDistances.WhereUser(User.Id)
                                                 .WhereTimestampInclusive(binding)
                                                 .Sum(x => x.DistanceInMeters);
 
-                var lastDate = db.TrackingDistances.WhereUser(UserId)
+                var lastDate = db.TrackingDistances.WhereUser(User.Id)
                                                    .OrderByDescending(x => x.Timestamp)
                                                    .FirstOrDefault()
                                                    .Timestamp;
@@ -74,7 +74,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
                     var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
 
                     //TODO: Include last tracking from previous date
-                    var trackings = db.Trackings.WhereUser(UserId)
+                    var trackings = db.Trackings.WhereUser(User.Id)
                                                 .Where(x => x.Timestamp > from && x.Timestamp < binding.To.Value.AddDays(1))
                                                 .OrderBy(x => x.Timestamp)
                                                 .ToList()
@@ -97,7 +97,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                var tracking = db.Trackings.WhereUser(UserId)
+                var tracking = db.Trackings.WhereUser(User.Id)
                                            .OrderByDescending(x => x.Timestamp)
                                            .FirstOrDefault();
 
@@ -109,7 +109,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                var query = db.UniqueLocations.WhereUser(UserId)
+                var query = db.UniqueLocations.WhereUser(User.Id)
                                               .WhereTimestampInclusive(binding);
 
                 return query.Count();
@@ -124,7 +124,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
             {
                 foreach (var t in trackings)
                 {
-                    t.UserId = UserId;
+                    t.User.Id = User.Id;
                 }
 
                 db.Trackings.AddRange(trackings);

@@ -26,7 +26,7 @@ namespace AnticevicApi.BL.Handlers.User
 
         public View.User Get(int? id = null)
         {
-            id = id.HasValue ? id : UserId;
+            id = id.HasValue ? id : User.Id;
 
             using (var db = GetMainContext())
             {

@@ -33,7 +33,7 @@ namespace AnticevicApi.BL.Handlers.Car
         {
             using (var db = GetMainContext())
             {
-                return db.Cars.WhereUser(UserId)
+                return db.Cars.WhereUser(User.Id)
                                     .Include(x => x.CarLogs)
                                     .SingleOrDefault(x => x.ValueId == carValueId)
                                     .CarLogs
@@ -45,7 +45,7 @@ namespace AnticevicApi.BL.Handlers.Car
         {
             using (var db = GetMainContext())
             {
-                var carLog = db.Cars.WhereUser(UserId)
+                var carLog = db.Cars.WhereUser(User.Id)
                                     .Include(x => x.CarLogs)
                                     .SingleOrDefault(x => x.ValueId == carValueId)
                                     .CarLogs

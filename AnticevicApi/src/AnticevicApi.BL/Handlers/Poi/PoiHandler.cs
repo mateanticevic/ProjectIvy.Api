@@ -16,9 +16,9 @@ namespace AnticevicApi.BL.Handlers.Poi
         {
             using (var db = GetMainContext())
             {
-                return db.PoiLists.WhereUser(UserId)
+                return db.PoiLists.WhereUser(User.Id)
                                   .Join(db.Pois, x => x.Id, x => x.PoiListId, (List, Poi) => new { List, Poi })
-                                  .Where(x => x.List.UserId == UserId && x.List.ValueId == listValueId)
+                                  .Where(x => x.List.User.Id == User.Id && x.List.ValueId == listValueId)
                                   .Join(db.PoiCategories, x => x.Poi.PoiCategoryId, x => x.Id, (PoiList, Category) => new { PoiList.Poi, Category })
                                   .ToList()
                                   .Select(x => new View.Poi(x.Poi));
@@ -40,7 +40,7 @@ namespace AnticevicApi.BL.Handlers.Poi
         {
             using (var db = GetMainContext())
             {
-                return db.PoiLists.WhereUser(UserId)
+                return db.PoiLists.WhereUser(User.Id)
                                   .OrderBy(x => x.Name)
                                   .ToList()
                                   .Select(x => new View.PoiList(x));
