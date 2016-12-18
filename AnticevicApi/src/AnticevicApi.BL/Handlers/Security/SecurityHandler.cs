@@ -28,6 +28,11 @@ namespace AnticevicApi.BL.Handlers.Security
             {
                 var user = db.Users.SingleOrDefault(x => x.Username == username);
 
+                if(!PasswordHelper.IsValid(password, user.PasswordHash))
+                {
+                    throw new NotImplementedException();
+                }
+
                 string token = TokenHelper.Generate();
 
                 var accessToken = new AccessToken()
