@@ -1,17 +1,17 @@
-﻿using AnticevicApi.Common.Configuration;
+﻿using AnticevicApi.BL.Handlers.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using System;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class TokenController : BaseController<TaskController>
     {
-        public TokenController(ILogger<TaskController> logger) : base(logger)
-        {
+        private readonly ISecurityHandler _securityHandler;
 
+        public TokenController(ILogger<TaskController> logger, ISecurityHandler securityHandler) : base(logger)
+        {
+            _securityHandler = securityHandler;
         }
 
         #region Get
@@ -19,7 +19,7 @@ namespace AnticevicApi.Controllers
         [HttpPost]
         public string PostToken([FromQuery] string username, [FromQuery] string password)
         {
-            throw new NotImplementedException();
+            return _securityHandler.CreateToken(username, password);
         }
 
         #endregion
