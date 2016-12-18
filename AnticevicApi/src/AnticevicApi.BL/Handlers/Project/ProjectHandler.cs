@@ -6,11 +6,16 @@ using View = AnticevicApi.Model.View.Project;
 
 namespace AnticevicApi.BL.Handlers.Project
 {
-    public class ProjectHandler : Handler, IProjectHandler
+    public class ProjectHandler : Handler<ProjectHandler>, IProjectHandler
     {
+        public ProjectHandler(IHandlerContext<ProjectHandler> context) : base(context)
+        {
+
+        }
+
         public IEnumerable<View.Project> Get()
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.Projects.WhereUser(UserId)
                                   .OrderBy(x => x.Name)

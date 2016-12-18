@@ -1,8 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Application;
-using AnticevicApi.Common.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
@@ -10,16 +8,18 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ApplicationController : BaseController<AirportController>
     {
-        public ApplicationController(IOptions<AppSettings> options, ILogger<AirportController> logger, IApplicationHandler applicationHandler) : base(options, logger)
+        private readonly IApplicationHandler _applicationHandler;
+
+        public ApplicationController(ILogger<AirportController> logger, IApplicationHandler applicationHandler) : base(logger)
         {
-            ApplicationHandler = applicationHandler;
+            _applicationHandler = applicationHandler;
         }
 
         [HttpGet]
         [Route("{valueId}/settings")]
         public Dictionary<string, object> GetSettings(string valueId)
         {
-            return ApplicationHandler.GetSettings(valueId);
+            return _applicationHandler.GetSettings(valueId);
         }
     }
 }

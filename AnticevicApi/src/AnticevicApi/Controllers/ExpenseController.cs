@@ -1,5 +1,4 @@
 ﻿using AnticevicApi.BL.Handlers.Expense;
-using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.Constants;
@@ -7,7 +6,6 @@ using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
 
@@ -16,9 +14,11 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ExpenseController : BaseController<ExpenseController>
     {
-        public ExpenseController(IOptions<AppSettings> options, ILogger<ExpenseController> logger, IExpenseHandler expenseHandler) : base(options, logger)
+        private readonly IExpenseHandler _expenseHandler;
+
+        public ExpenseController(ILogger<ExpenseController> logger, IExpenseHandler expenseHandler) : base(logger)
         {
-            ExpenseHandler = expenseHandler;
+            _expenseHandler = expenseHandler;
         }
 
         #region Delete
@@ -29,7 +29,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), valueId);
 
-            return ExpenseHandler.Delete(valueId);
+            return _expenseHandler.Delete(valueId);
         }
 
         #endregion
@@ -42,7 +42,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to, page, pageSize, expenseTypeValueId, vendorValueId);
 
-            return ExpenseHandler.Get(from, to, expenseTypeValueId, vendorValueId, page, pageSize);
+            return _expenseHandler.Get(from, to, expenseTypeValueId, vendorValueId, page, pageSize);
         }
 
         [HttpGet]
@@ -51,7 +51,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), from, to);
 
-            return ExpenseHandler.GetCount(new FilteredBinding(from, to));
+            return _expenseHandler.GetCount(new FilteredBinding(from, to));
         }
 
         [HttpGet]
@@ -60,7 +60,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), from, to);
 
-            return ExpenseHandler.GetSum(new FilteredBinding(from, to));
+            return _expenseHandler.GetSum(new FilteredBinding(from, to));
         }
 
         [HttpGet]
@@ -69,7 +69,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), type);
 
-            return ExpenseHandler.GetGroupedSum(type, TimeGroupingTypes.Month);
+            return _expenseHandler.GetGroupedSum(type, TimeGroupingTypes.Month);
         }
 
         [HttpGet]
@@ -78,7 +78,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), type);
 
-            return ExpenseHandler.GetGroupedSum(type, TimeGroupingTypes.Year);
+            return _expenseHandler.GetGroupedSum(type, TimeGroupingTypes.Year);
         }
 
         [HttpGet]
@@ -87,7 +87,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetByDate), date);
 
-            return ExpenseHandler.GetByDate(date);
+            return _expenseHandler.GetByDate(date);
         }
 
         #endregion
@@ -101,7 +101,7 @@ namespace AnticevicApi.Controllers
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Put), binding);
 
             binding.ValueId = valueId;
-            return ExpenseHandler.Update(binding);
+            return _expenseHandler.Update(binding);
         }
 
         #endregion
@@ -114,7 +114,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Put), binding);
 
-            return ExpenseHandler.Create(binding);
+            return _expenseHandler.Create(binding);
         }
 
         #endregion

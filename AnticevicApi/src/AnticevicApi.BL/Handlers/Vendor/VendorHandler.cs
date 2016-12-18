@@ -1,15 +1,18 @@
-﻿using AnticevicApi.DL.DbContexts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Vendor;
 
 namespace AnticevicApi.BL.Handlers.Vendor
 {
-    public class VendorHandler : Handler, IVendorHandler
+    public class VendorHandler : Handler<VendorHandler>, IVendorHandler
     {
+        public VendorHandler(IHandlerContext<VendorHandler> context) : base(context)
+        {
+        }
+
         public IEnumerable<View.Vendor> Get(string contains)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var vendors = db.Vendors.OrderBy(x => x.Name)
                                         .AsEnumerable();

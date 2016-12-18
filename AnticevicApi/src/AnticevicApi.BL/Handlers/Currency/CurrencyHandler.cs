@@ -1,15 +1,18 @@
-﻿using AnticevicApi.DL.DbContexts;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Currency;
 
 namespace AnticevicApi.BL.Handlers.Currency
 {
-    public class CurrencyHandler : Handler, ICurrencyHandler
+    public class CurrencyHandler : Handler<CurrencyHandler>, ICurrencyHandler
     {
+        public CurrencyHandler(IHandlerContext<CurrencyHandler> context) : base(context)
+        {
+        }
+
         public IEnumerable<View.Currency> Get()
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.Currencies.OrderBy(x => x.Name)
                                     .ToList()
@@ -19,7 +22,7 @@ namespace AnticevicApi.BL.Handlers.Currency
 
         public View.Currency Get(string code)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var entity = db.Currencies.SingleOrDefault(x => x.Code == code);
 

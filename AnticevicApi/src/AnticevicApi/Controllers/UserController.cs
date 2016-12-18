@@ -1,24 +1,24 @@
 ﻿using AnticevicApi.BL.Handlers.User;
-using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.View.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class UserController : BaseController<UserController>
     {
-        public UserController(IOptions<AppSettings> options, ILogger<UserController> logger, IUserHandler userHandler) : base(options, logger)
+        private readonly IUserHandler _userHandler;
+
+        public UserController(ILogger<UserController> logger, IUserHandler userHandler) : base(logger)
         {
-            UserHandler = userHandler;
+            _userHandler = userHandler;
         }
 
         [HttpGet]
         public User Get()
         {
-            return UserHandler.Get();
+            return _userHandler.Get();
         }
     }
 }

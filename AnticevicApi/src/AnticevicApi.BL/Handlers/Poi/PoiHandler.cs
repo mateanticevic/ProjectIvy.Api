@@ -1,16 +1,20 @@
-﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Poi;
 
 namespace AnticevicApi.BL.Handlers.Poi
 {
-    public class PoiHandler : Handler, IPoiHandler
+    public class PoiHandler : Handler<PoiHandler>, IPoiHandler
     {
+        public PoiHandler(IHandlerContext<PoiHandler> context) : base(context)
+        {
+
+        }
+
         public IEnumerable<View.Poi> GetByList(string listValueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.PoiLists.WhereUser(UserId)
                                   .Join(db.Pois, x => x.Id, x => x.PoiListId, (List, Poi) => new { List, Poi })
@@ -24,7 +28,7 @@ namespace AnticevicApi.BL.Handlers.Poi
 
         public IEnumerable<View.PoiCategory> GetCategories()
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.PoiCategories.OrderBy(x => x.Name)
                                        .ToList()
@@ -34,7 +38,7 @@ namespace AnticevicApi.BL.Handlers.Poi
 
         public IEnumerable<View.PoiList> GetLists()
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.PoiLists.WhereUser(UserId)
                                   .OrderBy(x => x.Name)

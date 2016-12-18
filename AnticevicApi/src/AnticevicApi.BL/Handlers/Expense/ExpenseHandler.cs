@@ -1,5 +1,4 @@
 ﻿using AnticevicApi.BL.MapExtensions;
-using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
@@ -13,11 +12,16 @@ using View = AnticevicApi.Model.View.Expense;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
-    public class ExpenseHandler : Handler, IExpenseHandler
+    public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     {
+        public ExpenseHandler(IHandlerContext<ExpenseHandler> context) : base(context)
+        {
+
+        }
+
         public string Create(ExpenseBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
                 entity.UserId = UserId;
@@ -31,7 +35,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public bool Delete(string valueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var entity = db.Expenses.WhereUser(UserId)
                                         .SingleOrDefault(x => x.ValueId == valueId);
@@ -52,7 +56,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
             var view = new PaginatedView<View.Expense>();
 
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 int? expenseTypeId = db.ExpenseTypes.GetId(expenseTypeValueId);
                 int? vendorId = db.Vendors.GetId(vendorValueId);
@@ -82,7 +86,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public IEnumerable<View.Expense> GetByDate(DateTime date)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.Expenses.WhereUser(UserId)
                                   .Where(x => x.Date.Date == date)
@@ -93,7 +97,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public int GetCount(FilteredBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var expenses = db.Expenses.WhereUser(UserId);
 
@@ -106,7 +110,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var q = db.Expenses.WhereUser(UserId)
                                    .Where(x => x.ExpenseType.ValueId == typeValueId);
@@ -128,7 +132,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public decimal GetSum(FilteredBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var expenses = db.Expenses.WhereUser(UserId);
 
@@ -141,7 +145,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public IEnumerable<View.Expense> GetByVendor(string valueId, DateTime? from = null, DateTime? to = null)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
 
@@ -160,7 +164,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public IEnumerable<View.Expense> GetByType(string valueId, DateTime? from = null, DateTime? to = null)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
 
@@ -181,7 +185,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public bool Update(ExpenseBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var entity = db.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.ValueId);
 

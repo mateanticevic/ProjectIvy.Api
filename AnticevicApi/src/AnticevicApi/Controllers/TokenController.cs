@@ -2,13 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class TokenController : BaseController<TaskController>
     {
-        public TokenController(IOptions<AppSettings> options, ILogger<TaskController> logger) : base(options, logger)
+        public TokenController(ILogger<TaskController> logger) : base(logger)
         {
 
         }
@@ -18,7 +19,7 @@ namespace AnticevicApi.Controllers
         [HttpPost]
         public string PostToken([FromQuery] string username, [FromQuery] string password)
         {
-            return SecurityHandler.IssueToken(username, password);
+            throw new NotImplementedException();
         }
 
         #endregion

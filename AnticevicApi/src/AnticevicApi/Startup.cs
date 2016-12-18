@@ -23,6 +23,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using AnticevicApi.BL.Handlers;
 
 namespace AnticevicApi
 {
@@ -34,7 +35,7 @@ namespace AnticevicApi
                                                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                                                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            if (env.IsEnvironment("Development"))
+            if (env.IsDevelopment())
             {
                 builder.AddApplicationInsightsSettings(developerMode: true);
             }
@@ -51,26 +52,31 @@ namespace AnticevicApi
         {
             services.AddApplicationInsightsTelemetry(Configuration);
 
-            services.Configure<AppSettings>(Configuration);
+            services.AddLogging()
+                    .Configure<AppSettings>(Configuration);
 
             services.AddSingletonFactory<LastFm.IUserHelper, LastFm.UserFactory>();
-            services.AddScopedFactory<ILastFmHandler, LastFmFactory>();
 
-            services.AddScoped<IApplicationHandler, ApplicationHandler>();
-            services.AddScoped<IAirportHandler, AirportHandler>();
-            services.AddScoped<ICarHandler, CarHandler>();
-            services.AddScoped<ICurrencyHandler, CurrencyHandler>();
-            services.AddScoped<IExpenseHandler, ExpenseHandler>();
-            services.AddScoped<IExpenseTypeHandler, ExpenseTypeHandler>();
-            services.AddScoped<ICarHandler, CarHandler>();
-            services.AddScoped<IIncomeHandler, IncomeHandler>();
-            services.AddScoped<IMovieHandler, MovieHandler>();
-            services.AddScoped<IPoiHandler, PoiHandler>();
-            services.AddScoped<IProjectHandler, ProjectHandler>();
-            services.AddScoped<ITaskHandler, TaskHandler>();
-            services.AddScoped<ITrackingHandler, TrackingHandler>();
-            services.AddScoped<IVendorHandler, VendorHandler>();
-            services.AddScoped<IUserHandler, UserHandler>();
+            //services.AddScoped<IHandlerContext<LastFmHandler>, HandlerContext<LastFmHandler>>();
+            //services.AddScoped<ILastFmHandler, LastFmHandler>();
+
+            services.AddHandler<ILastFmHandler, LastFmHandler>();
+
+            services.AddHandler<IApplicationHandler, ApplicationHandler>();
+            services.AddHandler<IAirportHandler, AirportHandler>();
+            services.AddHandler<ICarHandler, CarHandler>();
+            services.AddHandler<ICurrencyHandler, CurrencyHandler>();
+            services.AddHandler<IExpenseHandler, ExpenseHandler>();
+            services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
+            services.AddHandler<ICarHandler, CarHandler>();
+            services.AddHandler<IIncomeHandler, IncomeHandler>();
+            services.AddHandler<IMovieHandler, MovieHandler>();
+            services.AddHandler<IPoiHandler, PoiHandler>();
+            services.AddHandler<IProjectHandler, ProjectHandler>();
+            services.AddHandler<ITaskHandler, TaskHandler>();
+            services.AddHandler<ITrackingHandler, TrackingHandler>();
+            services.AddHandler<IVendorHandler, VendorHandler>();
+            services.AddHandler<IUserHandler, UserHandler>();
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();
@@ -84,6 +90,11 @@ namespace AnticevicApi
 
             var logger = loggerFactory.CreateLogger(nameof(Startup));
             logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
+
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 

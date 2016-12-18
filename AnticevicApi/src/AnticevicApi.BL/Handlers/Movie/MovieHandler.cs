@@ -10,11 +10,16 @@ using View = AnticevicApi.Model.View.Movie;
 
 namespace AnticevicApi.BL.Handlers.Movie
 {
-    public class MovieHandler : Handler, IMovieHandler
+    public class MovieHandler : Handler<MovieHandler>, IMovieHandler
     {
+        public MovieHandler(IHandlerContext<MovieHandler> context) : base(context)
+        {
+
+        }
+
         public IEnumerable<View.Movie> Get(FilteredPagedBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var movies = db.Movies.WhereUser(UserId)
                                       .WhereTimestampInclusive(binding)
@@ -30,7 +35,7 @@ namespace AnticevicApi.BL.Handlers.Movie
         {
             try
             {
-                using (var db = new MainContext(ConnectionString))
+                using (var db = GetMainContext())
                 {
                     var userMovies = db.Movies.WhereUser(UserId)
                                               .WhereTimestampInclusive(binding);

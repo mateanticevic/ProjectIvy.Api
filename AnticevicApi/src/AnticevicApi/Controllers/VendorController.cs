@@ -1,22 +1,25 @@
-﻿using AnticevicApi.BL.Handlers.Vendor;
+﻿using AnticevicApi.BL.Handlers.Expense;
+using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.Vendor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
-using AnticevicApi.Common.Configuration;
 
 namespace AnticevicApi.Controllers
 {
     [Route("[controller]")]
     public class VendorController : BaseController<VendorController>
     {
-        public VendorController(IOptions<AppSettings> options, ILogger<VendorController> logger, IVendorHandler vendorHandler) : base(options, logger)
+        private readonly IExpenseHandler _expenseHandler;
+        private readonly IVendorHandler _vendorHandler;
+
+        public VendorController(ILogger<VendorController> logger, IVendorHandler vendorHandler, IExpenseHandler expenseHandler) : base(logger)
         {
-            VendorHandler = vendorHandler;
+            _expenseHandler = expenseHandler;
+            _vendorHandler = vendorHandler;
         }
 
         #region Get
@@ -26,7 +29,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), contains);
 
-            return VendorHandler.Get(contains);
+            return _vendorHandler.Get(contains);
         }
 
         [HttpGet]
@@ -35,7 +38,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetExpenses), valueId, from, to);
 
-            return ExpenseHandler.GetByVendor(valueId, from, to);
+            return _expenseHandler.GetByVendor(valueId, from, to);
         }
 
         #endregion

@@ -12,11 +12,16 @@ using View = AnticevicApi.Model.View.Task;
 
 namespace AnticevicApi.BL.Handlers.Task
 {
-    public class TaskHandler : Handler, ITaskHandler
+    public class TaskHandler : Handler<TaskHandler>, ITaskHandler
     {
+        public TaskHandler(IHandlerContext<TaskHandler> context) : base(context)
+        {
+
+        }
+
         public string Create(TaskBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
                 entity.Created = DateTime.Now;
@@ -41,7 +46,7 @@ namespace AnticevicApi.BL.Handlers.Task
 
         public IEnumerable<View.Task> Get(string projectValueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.Projects.Include(x => x.Tasks)
                                   .SingleOrDefault(projectValueId)
@@ -53,7 +58,7 @@ namespace AnticevicApi.BL.Handlers.Task
 
         public View.Task Get(string projectValueId, string taskValueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 int projectId = db.Projects.WhereUser(UserId).SingleOrDefault(x => x.ValueId == projectValueId).Id;
                 var task = db.Tasks.Include(x => x.Related)
@@ -66,7 +71,7 @@ namespace AnticevicApi.BL.Handlers.Task
 
         public IEnumerable<View.Task> Get(string statusValueId, string priorityValueId, string typeValueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var tasks = db.Projects.WhereUser(UserId)
                                        .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })

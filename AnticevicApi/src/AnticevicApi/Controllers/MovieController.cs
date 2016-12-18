@@ -1,11 +1,9 @@
 ﻿using AnticevicApi.BL.Handlers.Movie;
-using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Movie;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
 
@@ -14,9 +12,11 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class MovieController : BaseController<MovieController>
     {
-        public MovieController(IOptions<AppSettings> options, ILogger<MovieController> logger, IMovieHandler movieHandler) : base(options, logger)
+        private readonly IMovieHandler _movieHandler;
+
+        public MovieController(ILogger<MovieController> logger, IMovieHandler movieHandler) : base(logger)
         {
-            MovieHandler = movieHandler;
+            _movieHandler = movieHandler;
         }
 
         #region Get
@@ -26,7 +26,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to);
 
-            return MovieHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
+            return _movieHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
         }
 
         [HttpGet]
@@ -35,7 +35,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCount), from, to);
 
-            return MovieHandler.GetCount(new FilteredBinding(from, to));
+            return _movieHandler.GetCount(new FilteredBinding(from, to));
         }
 
         #endregion

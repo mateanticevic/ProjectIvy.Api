@@ -23,7 +23,8 @@
       "version": "1.1.0",
       "type": "platform"
     },
-    "AnticevicApi.Common": "0.3.0"
+    "AnticevicApi.Common": "0.3.0",
+    "Microsoft.AspNetCore.Diagnostics": "1.0.0"
   },
 
   "tools": {

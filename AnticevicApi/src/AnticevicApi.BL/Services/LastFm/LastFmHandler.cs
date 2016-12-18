@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace AnticevicApi.BL.Services.LastFm
 {
-    public class LastFmHandler : Handler, ILastFmHandler
+    public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     {
         private readonly IUserHelper _userHelper;
 
-        public LastFmHandler(IUserHelper userHelper)
+        public LastFmHandler(IHandlerContext<LastFmHandler> context, IUserHelper userHelper) : base(context)
         {
             _userHelper = userHelper;
         }

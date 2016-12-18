@@ -7,11 +7,16 @@ using System.Linq;
 
 namespace AnticevicApi.BL.Handlers.Application
 {
-    public class ApplicationHandler : Handler, IApplicationHandler
+    public class ApplicationHandler : Handler<ApplicationHandler>, IApplicationHandler
     {
+        public ApplicationHandler(IHandlerContext<ApplicationHandler> context) : base(context)
+        {
+
+        }
+
         public Dictionary<string, object> GetSettings(string applicationValueId)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 return db.Applications.Include(x => x.Settings)
                                       .SingleOrDefault(applicationValueId)

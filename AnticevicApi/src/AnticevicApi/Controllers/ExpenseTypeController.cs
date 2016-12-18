@@ -1,11 +1,9 @@
 ﻿using AnticevicApi.BL.Handlers.Expense;
-using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View.ExpenseType;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System;
 
@@ -14,9 +12,13 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class ExpenseTypeController : BaseController<ExpenseTypeController>
     {
-        public ExpenseTypeController(IOptions<AppSettings> options, ILogger<ExpenseTypeController> logger, IExpenseTypeHandler expenseTypeHandler) : base(options, logger)
+        private readonly IExpenseHandler _expenseHandler;
+        private readonly IExpenseTypeHandler _expenseTypeHandler;
+
+        public ExpenseTypeController(ILogger<ExpenseTypeController> logger, IExpenseHandler expenseHandler, IExpenseTypeHandler expenseTypeHandler) : base(logger)
         {
-            ExpenseTypeHandler = expenseTypeHandler;
+            _expenseHandler = expenseHandler;
+            _expenseTypeHandler = expenseTypeHandler;
         }
 
         #region Get
@@ -26,7 +28,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get));
 
-            return ExpenseTypeHandler.Get();
+            return _expenseTypeHandler.Get();
         }
 
         [HttpGet]
@@ -35,7 +37,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetExpenses), valueId, from, to);
 
-            return ExpenseHandler.GetByType(valueId, from, to);
+            return _expenseHandler.GetByType(valueId, from, to);
         }
 
         #endregion

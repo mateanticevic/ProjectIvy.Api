@@ -7,20 +7,16 @@ using View = AnticevicApi.Model.View.Airport;
 
 namespace AnticevicApi.BL.Handlers.Airport
 {
-    public class AirportHandler : Handler, IAirportHandler
+    public class AirportHandler : Handler<AirportHandler>, IAirportHandler
     {
-        public AirportHandler()
+        public AirportHandler(IHandlerContext<AirportHandler> context) : base(context)
         {
 
-        }
-
-        public AirportHandler(string connectionString, int userId) : base(connectionString, userId)
-        {
         }
 
         public IEnumerable<View.Airport> Get(bool onlyVisited = false)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var destinationAirports = db.Flights.WhereUser(UserId)
                                                     .Include(x => x.DestinationAirport)

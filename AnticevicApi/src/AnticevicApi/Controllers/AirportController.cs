@@ -12,22 +12,24 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class AirportController : BaseController<AirportController>
     {
-        public AirportController(IOptions<AppSettings> options, ILogger<AirportController> logger, IAirportHandler airportHandler) : base(options, logger)
+        private readonly IAirportHandler _airportHandler;
+
+        public AirportController(IOptions<AppSettings> options, ILogger<AirportController> logger, IAirportHandler airportHandler) : base(logger)
         {
-            AirportHandler = airportHandler;
+            _airportHandler = airportHandler;
         }
 
         [HttpGet]
         public IEnumerable<Airport> Get([FromQuery] bool onlyVisited)
         {
-            return AirportHandler.Get(onlyVisited);
+            return _airportHandler.Get(onlyVisited);
         }
 
         [HttpGet]
         [Route("count")]
         public int GetCount([FromQuery] bool onlyVisited)
         {
-            return AirportHandler.Get(onlyVisited).Count();
+            return _airportHandler.Get(onlyVisited).Count();
         }
     }
 }

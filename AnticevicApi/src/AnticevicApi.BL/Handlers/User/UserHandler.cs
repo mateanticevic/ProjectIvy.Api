@@ -5,11 +5,16 @@ using View = AnticevicApi.Model.View.User;
 
 namespace AnticevicApi.BL.Handlers.User
 {
-    public class UserHandler : Handler, IUserHandler
+    public class UserHandler : Handler<UserHandler>, IUserHandler
     {
+        public UserHandler(IHandlerContext<UserHandler> context) : base(context)
+        {
+
+        }
+
         public View.User Get(string username)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var userEntity = db.Users.Include(x => x.UserRoles)
                                          .ThenInclude(x => x.Role)
@@ -23,7 +28,7 @@ namespace AnticevicApi.BL.Handlers.User
         {
             id = id.HasValue ? id : UserId;
 
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var userEntity = db.Users.Include(x => x.UserRoles)
                                          .ThenInclude(x => x.Role)

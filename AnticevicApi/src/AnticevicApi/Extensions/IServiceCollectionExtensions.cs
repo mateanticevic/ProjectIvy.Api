@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Extensions.Factory;
+﻿using AnticevicApi.BL.Handlers;
+using AnticevicApi.Extensions.Factory;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 
@@ -6,6 +7,14 @@ namespace AnticevicApi.Extensions
 {
     public static class IServiceCollectionExtensions
     {
+        public static IServiceCollection AddHandler<THandlerInterface, THandler>(this IServiceCollection collection) where THandler : Handler<THandler>, THandlerInterface where THandlerInterface : class
+        {
+            collection.AddScoped<IHandlerContext<THandler>, HandlerContext<THandler>>();
+            collection.AddScoped<THandlerInterface, THandler>();
+
+            return collection;
+        }
+
         public static IServiceCollection AddSingletonFactory<T, TFactory>(this IServiceCollection collection) where T : class where TFactory : class, IServiceFactory<T>
         {
             collection.AddTransient<TFactory>();

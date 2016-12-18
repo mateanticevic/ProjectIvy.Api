@@ -9,11 +9,16 @@ using View = AnticevicApi.Model.View.Income;
 
 namespace AnticevicApi.BL.Handlers.Income
 {
-    public class IncomeHandler : Handler, IIncomeHandler
+    public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
     {
+        public IncomeHandler(IHandlerContext<IncomeHandler> context) : base(context)
+        {
+
+        }
+
         public IEnumerable<View.Income> Get(FilteredPagedBinding binding)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var incomes = db.Incomes.WhereUser(UserId)
                                         .Include(x => x.Currency)
@@ -28,7 +33,7 @@ namespace AnticevicApi.BL.Handlers.Income
 
         public int GetCount(DateTime from, DateTime to)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var query = db.Incomes.WhereUser(UserId)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to);
@@ -39,7 +44,7 @@ namespace AnticevicApi.BL.Handlers.Income
 
         public IEnumerable<View.AmountInCurrency> GetSum(DateTime from, DateTime to)
         {
-            using (var db = new MainContext(ConnectionString))
+            using (var db = GetMainContext())
             {
                 var query = db.Incomes.WhereUser(UserId)
                                       .Where(x => x.Timestamp >= from && x.Timestamp <= to)

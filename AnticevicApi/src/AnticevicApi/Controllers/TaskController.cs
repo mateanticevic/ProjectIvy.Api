@@ -1,10 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers.Task;
-using AnticevicApi.Common.Configuration;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers
@@ -12,9 +10,11 @@ namespace AnticevicApi.Controllers
     [Route("[controller]")]
     public class TaskController : BaseController<TaskController>
     {
-        public TaskController(IOptions<AppSettings> options, ILogger<TaskController> logger, ITaskHandler taskHandler) : base(options, logger)
+        private readonly ITaskHandler _taskHandler;
+
+        public TaskController(ILogger<TaskController> logger, ITaskHandler taskHandler) : base(logger)
         {
-            TaskHandler = taskHandler;
+            _taskHandler = taskHandler;
         }
 
         #region Get
@@ -24,7 +24,7 @@ namespace AnticevicApi.Controllers
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), status, priority, type);
 
-            return TaskHandler.Get(status, priority, type);
+            return _taskHandler.Get(status, priority, type);
         }
 
         #endregion

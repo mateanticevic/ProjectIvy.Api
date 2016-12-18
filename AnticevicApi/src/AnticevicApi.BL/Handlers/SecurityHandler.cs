@@ -4,7 +4,7 @@ using System;
 
 namespace AnticevicApi.BL.Handlers
 {
-    public class SecurityHandler : Handler
+    public class SecurityHandler : Handler<SecurityHandler>
     {
         public SecurityHandler(string connectionString, int userId) : base(connectionString, userId)
         {
