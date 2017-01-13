@@ -24,7 +24,7 @@ namespace AnticevicApi.BL.Handlers.Expense
             using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
-                entity.User.Id = User.Id;
+                entity.UserId = User.Id;
 
                 db.Expenses.Add(entity);
                 db.SaveChanges();

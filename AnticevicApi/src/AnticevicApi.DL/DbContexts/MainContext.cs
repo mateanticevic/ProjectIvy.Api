@@ -1,6 +1,9 @@
 ﻿using AnticevicApi.Model.Database.Main.App;
 using AnticevicApi.Model.Database.Main.Common;
 using AnticevicApi.Model.Database.Main.Finance;
+using AnticevicApi.Model.Database.Main.Inv;
+using AnticevicApi.Model.Database.Main.Log;
+using AnticevicApi.Model.Database.Main.Net;
 using AnticevicApi.Model.Database.Main.Org;
 using AnticevicApi.Model.Database.Main.Security;
 using AnticevicApi.Model.Database.Main.Tracking;
@@ -21,9 +24,13 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<Airport> Airports { get; set; }
         public DbSet<Application> Applications { get; set; }
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
+        public DbSet<BrowserLog> BrowserLogs { get; set; }
         public DbSet<Car> Cars { get; set; }
         public DbSet<CarLog> CarLogs { get; set; }
         public DbSet<Currency> Currencies { get; set; }
+        public DbSet<Domain> Domains { get; set; }
+        public DbSet<Device> Devices { get; set; }
+        public DbSet<DeviceType> DeviceTypes { get; set; }
         public DbSet<Expense> Expenses { get; set; }
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
         public DbSet<Flight> Flights { get; set; }
@@ -44,6 +51,7 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<UniqueLocation> UniqueLocations { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<WebSite> WebSites { get; set; }
 
         public string ConnectionString { get; private set; }
 
@@ -162,6 +170,22 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<RelatedTask>()
                         .HasOne(x => x.Related)
                         .WithMany(x => x.Related);
+
+            modelBuilder.Entity<Device>()
+                        .HasOne(x => x.DeviceType)
+                        .WithMany(x => x.Devices);
+
+            modelBuilder.Entity<Domain>()
+                        .HasOne(x => x.WebSite)
+                        .WithMany(x => x.Domains);
+
+            modelBuilder.Entity<BrowserLog>()
+                        .HasOne(x => x.Device)
+                        .WithMany(x => x.BrowserLogs);
+
+            modelBuilder.Entity<BrowserLog>()
+                        .HasOne(x => x.Domain)
+                        .WithMany(x => x.BrowserLogs);
         }
     }
 }

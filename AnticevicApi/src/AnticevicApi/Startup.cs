@@ -7,10 +7,12 @@ using AnticevicApi.BL.Handlers.Income;
 using AnticevicApi.BL.Handlers.Movie;
 using AnticevicApi.BL.Handlers.Poi;
 using AnticevicApi.BL.Handlers.Project;
+using AnticevicApi.BL.Handlers.Security;
 using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
+using AnticevicApi.BL.Handlers;
 using AnticevicApi.BL.Services.LastFm;
 using AnticevicApi.Common.Configuration;
 using AnticevicApi.Extensions;
@@ -23,8 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using AnticevicApi.BL.Handlers;
-using AnticevicApi.BL.Handlers.Security;
+using AnticevicApi.BL.Handlers.Device;
 
 namespace AnticevicApi
 {
@@ -65,6 +66,7 @@ namespace AnticevicApi
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
+            services.AddHandler<IDeviceHandler, DeviceHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
