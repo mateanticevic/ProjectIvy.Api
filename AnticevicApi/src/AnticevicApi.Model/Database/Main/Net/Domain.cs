@@ -13,9 +13,9 @@ namespace AnticevicApi.Model.Database.Main.Net
 
         public string ValueId { get; set; }
 
-        public int WebSiteId { get; set; }
+        public int WebId { get; set; }
 
-        public WebSite WebSite { get; set; }
+        public Web Web { get; set; }
 
         public ICollection<BrowserLog> BrowserLogs { get; set; }
     }

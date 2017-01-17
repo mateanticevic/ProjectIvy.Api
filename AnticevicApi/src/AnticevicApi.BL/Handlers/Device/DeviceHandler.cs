@@ -1,7 +1,9 @@
 ﻿using AnticevicApi.Model.Binding.Device;
 using AnticevicApi.Model.Database.Main.Log;
 using AnticevicApi.Model.Database.Main.Net;
+using Microsoft.Extensions.Logging;
 using System.Linq;
+using System;
 
 namespace AnticevicApi.BL.Handlers.Device
 {
@@ -14,46 +16,54 @@ namespace AnticevicApi.BL.Handlers.Device
 
         public bool CreateBrowserLog(BrowserLogBinding binding)
         {
-            using (var db = GetMainContext())
+            try
             {
-                int deviceId = db.Devices.SingleOrDefault(x => x.ValueId == binding.DeviceId).Id;
-
-                int? domainId = db.Domains.SingleOrDefault(x => x.ValueId == binding.Domain)?.Id;
-                if(!domainId.HasValue)
+                using (var db = GetMainContext())
                 {
-                    var webSite = new WebSite()
+                    int deviceId = db.Devices.SingleOrDefault(x => x.ValueId == binding.DeviceId).Id;
+
+                    int? domainId = db.Domains.SingleOrDefault(x => x.ValueId == binding.Domain)?.Id;
+                    if (!domainId.HasValue)
                     {
-                        Name = binding.Domain,
-                        ValueId = binding.Domain
+                        var webSite = new Model.Database.Main.Net.Web()
+                        {
+                            Name = binding.Domain,
+                            ValueId = binding.Domain
+                        };
+
+                        db.Webs.Add(webSite);
+
+                        var domain = new Domain()
+                        {
+                            ValueId = binding.Domain,
+                            WebId = webSite.Id
+                        };
+
+                        db.Domains.Add(domain);
+
+                        domainId = domain.Id;
+                    }
+
+                    var browserLog = new BrowserLog()
+                    {
+                        DeviceId = deviceId,
+                        DomainId = domainId.Value,
+                        TimestampStart = binding.Start,
+                        TimestampEnd = binding.End,
+                        IsSecured = binding.IsSecured
                     };
 
-                    db.WebSites.Add(webSite);
+                    db.BrowserLogs.Add(browserLog);
 
-                    var domain = new Domain()
-                    {
-                        ValueId = binding.Domain,
-                        WebSiteId = webSite.Id
-                    };
+                    db.SaveChanges();
 
-                    db.Domains.Add(domain);
-
-                    domainId = domain.Id;
+                    return true;
                 }
-
-                var browserLog = new BrowserLog()
-                {
-                    DeviceId = deviceId,
-                    DomainId = domainId.Value,
-                    TimestampStart = binding.Start,
-                    TimestampEnd = binding.End,
-                    IsSecured = binding.IsSecured
-                };
-
-                db.BrowserLogs.Add(browserLog);
-
-                db.SaveChanges();
-
-                return true;
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(1, e, "");
+                throw;
             }
         }
     }

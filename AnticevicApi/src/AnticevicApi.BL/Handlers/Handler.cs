@@ -3,6 +3,7 @@ using AnticevicApi.DL.DbContexts;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using System.Data.SqlClient;
 
 namespace AnticevicApi.BL.Handlers
 {
@@ -24,6 +25,11 @@ namespace AnticevicApi.BL.Handlers
         protected MainContext GetMainContext()
         {
             return new MainContext(Settings.Value.ConnectionStrings.Main);
+        }
+
+        protected SqlConnection GetSqlConnection()
+        {
+            return new SqlConnection(Settings.Value.ConnectionStrings.Main);
         }
     }
 }

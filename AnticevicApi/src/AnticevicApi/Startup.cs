@@ -2,6 +2,7 @@
 using AnticevicApi.BL.Handlers.Application;
 using AnticevicApi.BL.Handlers.Car;
 using AnticevicApi.BL.Handlers.Currency;
+using AnticevicApi.BL.Handlers.Device;
 using AnticevicApi.BL.Handlers.Expense;
 using AnticevicApi.BL.Handlers.Income;
 using AnticevicApi.BL.Handlers.Movie;
@@ -12,7 +13,6 @@ using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
-using AnticevicApi.BL.Handlers;
 using AnticevicApi.BL.Services.LastFm;
 using AnticevicApi.Common.Configuration;
 using AnticevicApi.Extensions;
@@ -25,7 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using AnticevicApi.BL.Handlers.Device;
+using AnticevicApi.BL.Handlers.Web;
 
 namespace AnticevicApi
 {
@@ -78,6 +78,7 @@ namespace AnticevicApi
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
+            services.AddHandler<IWebHandler, WebHandler>();
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();

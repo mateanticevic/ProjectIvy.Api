@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 namespace AnticevicApi.Model.Database.Main.Net
 {
-    [Table(nameof(WebSite), Schema = "Net")]
-    public class WebSite : IHasValueId, IHasName
+    [Table(nameof(Web), Schema = "Net")]
+    public class Web : IHasValueId, IHasName
     {
         [Key]
         public int Id { get; set; }

@@ -51,7 +51,7 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<UniqueLocation> UniqueLocations { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Vendor> Vendors { get; set; }
-        public DbSet<WebSite> WebSites { get; set; }
+        public DbSet<Web> Webs { get; set; }
 
         public string ConnectionString { get; private set; }
 
@@ -176,7 +176,7 @@ namespace AnticevicApi.DL.DbContexts
                         .WithMany(x => x.Devices);
 
             modelBuilder.Entity<Domain>()
-                        .HasOne(x => x.WebSite)
+                        .HasOne(x => x.Web)
                         .WithMany(x => x.Domains);
 
             modelBuilder.Entity<BrowserLog>()
