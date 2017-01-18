@@ -9,5 +9,7 @@ namespace AnticevicApi.BL.Handlers.Web
         IEnumerable<WebTime> GetTimeSummed(FilteredPagedBinding binding, string deviceId);
 
         int GetTimeTotal(FilteredBinding binding, string deviceValueId);
+
+        IEnumerable<TimeByDay> GetTimeTotalByDay(FilteredBinding binding, string deviceValueId);
     }
 }

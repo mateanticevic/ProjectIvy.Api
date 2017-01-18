@@ -40,6 +40,15 @@ namespace AnticevicApi.Controllers
             return _webHandler.GetTimeTotal(new FilteredBinding(from, to), deviceId);
         }
 
+        [HttpGet]
+        [Route("time/total/byday")]
+        public IEnumerable<TimeByDay> GetTimeTotalByDay([FromQuery] string deviceId,
+                                  [FromQuery] DateTime? from,
+                                  [FromQuery] DateTime? to)
+        {
+            return _webHandler.GetTimeTotalByDay(new FilteredBinding(from, to), deviceId);
+        }
+
         #endregion
     }
 }

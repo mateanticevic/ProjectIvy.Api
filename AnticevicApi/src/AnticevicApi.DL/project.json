@@ -19,7 +19,8 @@
   "buildOptions": {
     "embed": [
       "/Sql/Main/GetWebTimeSum.sql",
-      "/Sql/Main/GetWebTimeTotal.sql"
+      "/Sql/Main/GetWebTimeTotal.sql",
+      "/Sql/Main/GetWebTimeTotalByDay.sql"
     ]
   }
 }

@@ -46,5 +46,23 @@ namespace AnticevicApi.BL.Handlers.Web
                 return db.ExecuteScalar<int>(SqlLoader.Load(MainSnippets.GetWebTimeTotal), parameters);
             }
         }
+
+        public IEnumerable<TimeByDay> GetTimeTotalByDay(FilteredBinding binding, string deviceValueId)
+        {
+            using (var db = GetSqlConnection())
+            {
+                var parameters = new
+                {
+                    DeviceValueId = deviceValueId,
+                    From = binding.From,
+                    To = binding.To,
+                    UserId = User.Id
+                };
+
+                var command = new CommandDefinition(SqlLoader.Load(MainSnippets.GetWebTimeTotalByDay), parameters);
+
+                return db.Query<TimeByDay>(command);
+            }
+        }
     }
 }

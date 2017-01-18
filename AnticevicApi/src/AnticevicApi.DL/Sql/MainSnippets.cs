@@ -7,6 +7,7 @@
 
         public static string GetWebTimeSum = Build(nameof(GetWebTimeSum));
         public static string GetWebTimeTotal = Build(nameof(GetWebTimeTotal));
+        public static string GetWebTimeTotalByDay = Build(nameof(GetWebTimeTotalByDay));
 
         private static string Build(string name)
         {
