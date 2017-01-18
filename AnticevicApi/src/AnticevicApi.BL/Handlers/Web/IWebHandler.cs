@@ -7,5 +7,7 @@ namespace AnticevicApi.BL.Handlers.Web
     public interface IWebHandler
     {
         IEnumerable<WebTime> GetTimeSummed(FilteredPagedBinding binding, string deviceId);
+
+        int GetTimeTotal(FilteredBinding binding, string deviceValueId);
     }
 }

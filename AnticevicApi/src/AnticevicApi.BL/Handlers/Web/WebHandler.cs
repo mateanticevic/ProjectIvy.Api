@@ -31,5 +31,20 @@ namespace AnticevicApi.BL.Handlers.Web
                 return db.Query<WebTime>(command);
             }
         }
+
+        public int GetTimeTotal(FilteredBinding binding, string deviceValueId)
+        {
+            using (var db = GetSqlConnection())
+            {
+                var parameters = new
+                {
+                    DeviceValueId = deviceValueId,
+                    From = binding.From,
+                    To = binding.To,
+                    UserId = User.Id
+                };
+                return db.ExecuteScalar<int>(SqlLoader.Load(MainSnippets.GetWebTimeTotal), parameters);
+            }
+        }
     }
 }

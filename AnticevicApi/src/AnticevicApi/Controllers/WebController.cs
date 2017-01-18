@@ -31,6 +31,15 @@ namespace AnticevicApi.Controllers
             return _webHandler.GetTimeSummed(new FilteredPagedBinding(from, to, page, pageSize), deviceId);
         }
 
+        [HttpGet]
+        [Route("time/total")]
+        public int GetTimeTotal([FromQuery] string deviceId,
+                                          [FromQuery] DateTime? from,
+                                          [FromQuery] DateTime? to)
+        {
+            return _webHandler.GetTimeTotal(new FilteredBinding(from, to), deviceId);
+        }
+
         #endregion
     }
 }

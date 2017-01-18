@@ -6,6 +6,7 @@
         private const string _sufix = ".sql";
 
         public static string GetWebTimeSum = Build(nameof(GetWebTimeSum));
+        public static string GetWebTimeTotal = Build(nameof(GetWebTimeTotal));
 
         private static string Build(string name)
         {

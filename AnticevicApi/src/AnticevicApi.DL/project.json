@@ -17,6 +17,9 @@
   },
 
   "buildOptions": {
-    "embed": [ "/Sql/Main/GetWebTimeSum.sql" ]
+    "embed": [
+      "/Sql/Main/GetWebTimeSum.sql",
+      "/Sql/Main/GetWebTimeTotal.sql"
+    ]
   }
 }
