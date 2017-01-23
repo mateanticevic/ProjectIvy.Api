@@ -1,5 +1,7 @@
-﻿using AnticevicApi.BL.Handlers.Device;
+﻿using AnticevicApi.BL.Exceptions;
+using AnticevicApi.BL.Handlers.Device;
 using AnticevicApi.Model.Binding.Device;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -17,11 +19,19 @@ namespace AnticevicApi.Controllers
 
         [HttpPut]
         [Route("{deviceId}/browserLog")]
-        public bool PutBrowserLog([FromBody] BrowserLogBinding binding, string deviceId)
+        public StatusCodeResult PutBrowserLog([FromBody] BrowserLogBinding binding, string deviceId)
         {
-            binding.DeviceId = deviceId;
-
-            return _deviceHandler.CreateBrowserLog(binding);
+            try
+            {
+                binding.DeviceId = deviceId;
+                _deviceHandler.CreateBrowserLog(binding);
+                return new StatusCodeResult(StatusCodes.Status201Created);
+            }
+            catch (ResourceExistsException e)
+            {
+                Logger.LogInformation($"Resource {e.ResourceName} exists.", deviceId, binding);
+                return new StatusCodeResult(StatusCodes.Status409Conflict);
+            }
         }
     }
 }

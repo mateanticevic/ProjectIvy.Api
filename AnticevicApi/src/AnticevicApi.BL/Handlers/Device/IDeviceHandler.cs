@@ -4,6 +4,6 @@ namespace AnticevicApi.BL.Handlers.Device
 {
     public interface IDeviceHandler
     {
-        bool CreateBrowserLog(BrowserLogBinding binding);
+        void CreateBrowserLog(BrowserLogBinding binding);
     }
 }

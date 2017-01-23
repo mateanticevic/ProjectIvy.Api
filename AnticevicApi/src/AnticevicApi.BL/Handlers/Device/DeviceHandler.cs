@@ -1,9 +1,9 @@
-﻿using AnticevicApi.Model.Binding.Device;
+﻿using AnticevicApi.BL.Exceptions;
+using AnticevicApi.Model.Binding.Device;
 using AnticevicApi.Model.Database.Main.Log;
 using AnticevicApi.Model.Database.Main.Net;
-using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System;
 
 namespace AnticevicApi.BL.Handlers.Device
 {
@@ -14,7 +14,7 @@ namespace AnticevicApi.BL.Handlers.Device
 
         }
 
-        public bool CreateBrowserLog(BrowserLogBinding binding)
+        public void CreateBrowserLog(BrowserLogBinding binding)
         {
             try
             {
@@ -56,14 +56,11 @@ namespace AnticevicApi.BL.Handlers.Device
                     db.BrowserLogs.Add(browserLog);
 
                     db.SaveChanges();
-
-                    return true;
                 }
             }
-            catch (Exception e)
+            catch (DbUpdateException e)
             {
-                Logger.LogError(1, e, "");
-                throw;
+                throw new ResourceExistsException(nameof(BrowserLog));
             }
         }
     }
