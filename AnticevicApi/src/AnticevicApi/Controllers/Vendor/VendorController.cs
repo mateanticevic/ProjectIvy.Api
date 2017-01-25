@@ -1,14 +1,14 @@
 ﻿using AnticevicApi.BL.Handlers.Expense;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.Model.Constants;
-using AnticevicApi.Model.View.Expense;
-using AnticevicApi.Model.View.Vendor;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using ViewExpense = AnticevicApi.Model.View.Expense;
+using ViewVendor = AnticevicApi.Model.View.Vendor;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Vendor
 {
     [Route("[controller]")]
     public class VendorController : BaseController<VendorController>
@@ -25,7 +25,7 @@ namespace AnticevicApi.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<Vendor> Get([FromQuery] string contains)
+        public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), contains);
 
@@ -34,7 +34,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("{valueId}/expense")]
-        public IEnumerable<Expense> GetExpenses(string valueId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
+        public IEnumerable<ViewExpense.Expense> GetExpenses(string valueId, [FromQuery] DateTime? from = null, [FromQuery] DateTime? to = null)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetExpenses), valueId, from, to);
 

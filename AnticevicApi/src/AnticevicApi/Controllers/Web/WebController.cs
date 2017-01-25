@@ -1,12 +1,12 @@
 ﻿using AnticevicApi.BL.Handlers.Web;
 using AnticevicApi.Model.Binding.Common;
-using AnticevicApi.Model.View.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using View = AnticevicApi.Model.View.Web;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Web
 {
     [Route("[controller]")]
     public class WebController : BaseController<WebController>
@@ -22,7 +22,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("time/sum")]
-        public IEnumerable<WebTime> GetTimeSummed([FromQuery] string deviceId,
+        public IEnumerable<View.WebTime> GetTimeSummed([FromQuery] string deviceId,
                                                   [FromQuery] DateTime? from,
                                                   [FromQuery] DateTime? to,
                                                   [FromQuery] int? page = null,
@@ -42,7 +42,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("time/total/byday")]
-        public IEnumerable<TimeByDay> GetTimeTotalByDay([FromQuery] string deviceId,
+        public IEnumerable<View.TimeByDay> GetTimeTotalByDay([FromQuery] string deviceId,
                                   [FromQuery] DateTime? from,
                                   [FromQuery] DateTime? to)
         {

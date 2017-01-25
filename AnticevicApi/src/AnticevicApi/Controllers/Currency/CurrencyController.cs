@@ -1,10 +1,10 @@
 ﻿using AnticevicApi.BL.Handlers.Currency;
-using AnticevicApi.Model.View.Currency;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using View = AnticevicApi.Model.View.Currency;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Currency
 {
     [Route("[controller]")]
     public class CurrencyController : BaseController<CurrencyController>
@@ -18,7 +18,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("")]
-        public IEnumerable<Currency> Get()
+        public IEnumerable<View.Currency> Get()
         {
             return _currencyHandler.Get();
         }

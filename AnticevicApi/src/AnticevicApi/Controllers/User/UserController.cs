@@ -1,9 +1,9 @@
 ﻿using AnticevicApi.BL.Handlers.User;
-using AnticevicApi.Model.View.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using View = AnticevicApi.Model.View.User;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.User
 {
     [Route("[controller]")]
     public class UserController : BaseController<UserController>
@@ -16,7 +16,7 @@ namespace AnticevicApi.Controllers
         }
 
         [HttpGet]
-        public User Get()
+        public View.User Get()
         {
             return _userHandler.Get();
         }

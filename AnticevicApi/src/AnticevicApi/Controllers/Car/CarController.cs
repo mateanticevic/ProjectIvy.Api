@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Car
 {
     [Route("[controller]")]
     public class CarController : BaseController<CarController>

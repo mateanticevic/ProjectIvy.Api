@@ -1,11 +1,11 @@
 ﻿using AnticevicApi.BL.Handlers.Poi;
 using AnticevicApi.Model.Constants;
-using AnticevicApi.Model.View.Poi;
+using View = AnticevicApi.Model.View.Poi;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Poi
 {
     [Route("[controller]")]
     public class PoiController : BaseController<PoiController>
@@ -21,7 +21,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("categories")]
-        public IEnumerable<PoiCategory> GetCategories()
+        public IEnumerable<View.PoiCategory> GetCategories()
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCategories));
 
@@ -30,7 +30,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("lists")]
-        public IEnumerable<PoiList> GetLists()
+        public IEnumerable<View.PoiList> GetLists()
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetLists));
 
@@ -39,7 +39,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("list/{listValueId}/pois")]
-        public IEnumerable<Poi> GetPois(string listValueId)
+        public IEnumerable<View.Poi> GetPois(string listValueId)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetPois), listValueId);
 

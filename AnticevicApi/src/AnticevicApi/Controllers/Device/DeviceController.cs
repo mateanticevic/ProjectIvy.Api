@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Device
 {
     [Route("[controller]")]
     public class DeviceController : BaseController<DeviceController>

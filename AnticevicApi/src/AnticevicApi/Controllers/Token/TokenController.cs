@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Token
 {
     [Route("[controller]")]
-    public class TokenController : BaseController<TaskController>
+    public class TokenController : BaseController<TokenController>
     {
         private readonly ISecurityHandler _securityHandler;
 
-        public TokenController(ILogger<TaskController> logger, ISecurityHandler securityHandler) : base(logger)
+        public TokenController(ILogger<TokenController> logger, ISecurityHandler securityHandler) : base(logger)
         {
             _securityHandler = securityHandler;
         }

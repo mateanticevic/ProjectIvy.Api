@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Version
 {
-    [Route("version")]
+    [Route("[controller]")]
     public class VersionController : BaseController<VersionController>
     {
         public VersionController(ILogger<VersionController> logger) : base(logger)

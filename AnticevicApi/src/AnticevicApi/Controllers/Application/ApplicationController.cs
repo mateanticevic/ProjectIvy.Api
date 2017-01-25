@@ -3,14 +3,14 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Application
 {
     [Route("[controller]")]
-    public class ApplicationController : BaseController<AirportController>
+    public class ApplicationController : BaseController<ApplicationController>
     {
         private readonly IApplicationHandler _applicationHandler;
 
-        public ApplicationController(ILogger<AirportController> logger, IApplicationHandler applicationHandler) : base(logger)
+        public ApplicationController(ILogger<ApplicationController> logger, IApplicationHandler applicationHandler) : base(logger)
         {
             _applicationHandler = applicationHandler;
         }

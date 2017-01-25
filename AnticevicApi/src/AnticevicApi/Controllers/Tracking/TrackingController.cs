@@ -1,15 +1,15 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
-using AnticevicApi.Model.View.Tracking;
 using AnticevicApi.Utilities.Geo;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
+using View = AnticevicApi.Model.View.Tracking;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Tracking
 {
     [Route("[controller]")]
     public class TrackingController : BaseController<TrackingController>
@@ -24,7 +24,7 @@ namespace AnticevicApi.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<Tracking> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        public IEnumerable<View.Tracking> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             return _trackingHandler.Get(new FilteredBinding(from, to));
         }
@@ -40,7 +40,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("last")]
-        public TrackingCurrent GetLast()
+        public View.TrackingCurrent GetLast()
         {
             return _trackingHandler.GetLast();
         }

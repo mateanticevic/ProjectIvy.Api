@@ -2,14 +2,14 @@
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.Constants;
-using AnticevicApi.Model.View.Expense;
 using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using View = AnticevicApi.Model.View.Expense;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Expense
 {
     [Route("[controller]")]
     public class ExpenseController : BaseController<ExpenseController>
@@ -38,7 +38,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("")]
-        public PaginatedView<Expense> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page, [FromQuery] int? pageSize, [FromQuery] string expenseTypeValueId, [FromQuery] string vendorValueId)
+        public PaginatedView<View.Expense> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page, [FromQuery] int? pageSize, [FromQuery] string expenseTypeValueId, [FromQuery] string vendorValueId)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to, page, pageSize, expenseTypeValueId, vendorValueId);
 
@@ -83,7 +83,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("{date:datetime}")]
-        public IEnumerable<Expense> GetByDate(DateTime date)
+        public IEnumerable<View.Expense> GetByDate(DateTime date)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetByDate), date);
 

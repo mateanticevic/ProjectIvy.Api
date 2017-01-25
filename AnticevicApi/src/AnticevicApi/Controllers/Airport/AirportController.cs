@@ -1,13 +1,13 @@
 ﻿using AnticevicApi.BL.Handlers.Airport;
 using AnticevicApi.Common.Configuration;
-using AnticevicApi.Model.View.Airport;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
+using View = AnticevicApi.Model.View.Airport;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Airport
 {
     [Route("[controller]")]
     public class AirportController : BaseController<AirportController>
@@ -20,7 +20,7 @@ namespace AnticevicApi.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Airport> Get([FromQuery] bool onlyVisited)
+        public IEnumerable<View.Airport> Get([FromQuery] bool onlyVisited)
         {
             return _airportHandler.Get(onlyVisited);
         }

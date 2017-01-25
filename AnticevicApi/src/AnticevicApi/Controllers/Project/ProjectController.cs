@@ -1,13 +1,13 @@
 ﻿using AnticevicApi.BL.Handlers.Project;
 using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.Model.Binding.Task;
-using AnticevicApi.Model.View.Project;
-using AnticevicApi.Model.View.Task;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using ViewProject = AnticevicApi.Model.View.Project;
+using ViewTask = AnticevicApi.Model.View.Task;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Project
 {
     [Route("[controller]")]
     public class ProjectController : BaseController<ProjectController>
@@ -24,21 +24,21 @@ namespace AnticevicApi.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<Project> Get()
+        public IEnumerable<ViewProject.Project> Get()
         {
             return _projectHandler.Get();
         }
 
         [HttpGet]
         [Route("{valueId}/tasks")]
-        public IEnumerable<Task> GetTasks(string valueId)
+        public IEnumerable<ViewTask.Task> GetTasks(string valueId)
         {
             return _taskHandler.Get(valueId);
         }
 
         [HttpGet]
         [Route("{valueId}/task/{taskValueId}")]
-        public Task GetTask(string valueId, string taskValueId)
+        public ViewTask.Task GetTask(string valueId, string taskValueId)
         {
             return _taskHandler.Get(valueId, taskValueId);
         }

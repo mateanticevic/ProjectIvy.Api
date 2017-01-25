@@ -1,12 +1,12 @@
 ﻿using AnticevicApi.BL.Handlers.Income;
 using AnticevicApi.Model.Binding.Common;
-using AnticevicApi.Model.View.Income;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
+using View = AnticevicApi.Model.View.Income;
 
-namespace AnticevicApi.Controllers
+namespace AnticevicApi.Controllers.Income
 {
     [Route("[controller]")]
     public class IncomeController : BaseController<IncomeController>
@@ -21,7 +21,7 @@ namespace AnticevicApi.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<Income> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
+        public IEnumerable<View.Income> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
         {
             return _incomeHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
         }
@@ -35,7 +35,7 @@ namespace AnticevicApi.Controllers
 
         [HttpGet]
         [Route("sum")]
-        public IEnumerable<AmountInCurrency> Get([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public IEnumerable<View.AmountInCurrency> Get([FromQuery] DateTime from, [FromQuery] DateTime to)
         {
             return _incomeHandler.GetSum(from, to);
         }
