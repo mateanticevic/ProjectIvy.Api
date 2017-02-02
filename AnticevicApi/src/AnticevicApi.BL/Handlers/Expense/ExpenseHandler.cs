@@ -1,9 +1,11 @@
 ﻿using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.Extensions;
+using AnticevicApi.DL.Sql;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -130,16 +132,24 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public decimal GetSum(FilteredBinding binding)
+        public decimal GetSum(FilteredBinding binding, string currencyCode)
         {
             using (var db = GetMainContext())
             {
-                var expenses = db.Expenses.WhereUser(User.Id);
+                int targetCurrencyId = string.IsNullOrEmpty(currencyCode) ? db.Users.SingleOrDefault(x => x.Id == User.Id).DefaultCurrencyId
+                                                                          : db.Currencies.SingleOrDefault(x => x.Code == currencyCode).Id;
 
-                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
-                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
-
-                return expenses.Sum(x => x.Ammount);
+                using (var sql = GetSqlConnection())
+                {
+                    var parameters = new
+                    {
+                        TargetCurrencyId = targetCurrencyId,
+                        From = binding.From,
+                        To = binding.To,
+                        UserId = User.Id
+                    };
+                    return Math.Round(sql.ExecuteScalar<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);
+                }
             }
         }
 

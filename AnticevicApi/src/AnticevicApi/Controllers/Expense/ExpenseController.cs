@@ -56,11 +56,11 @@ namespace AnticevicApi.Controllers.Expense
 
         [HttpGet]
         [Route("sum")]
-        public decimal GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        public decimal GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), from, to);
 
-            return _expenseHandler.GetSum(new FilteredBinding(from, to));
+            return _expenseHandler.GetSum(new FilteredBinding(from, to), currencyCode);
         }
 
         [HttpGet]

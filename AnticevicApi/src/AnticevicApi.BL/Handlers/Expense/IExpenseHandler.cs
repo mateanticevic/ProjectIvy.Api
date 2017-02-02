@@ -18,7 +18,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         IEnumerable<View.Expense> GetByVendor(string valueId, DateTime? from = default(DateTime?), DateTime? to = default(DateTime?));
         int GetCount(FilteredBinding binding);
         IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes);
-        decimal GetSum(FilteredBinding binding);
+        decimal GetSum(FilteredBinding binding, string currencyCode);
         bool Update(ExpenseBinding binding);
     }
 }

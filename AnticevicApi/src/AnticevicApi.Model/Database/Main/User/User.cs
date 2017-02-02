@@ -10,6 +10,10 @@ namespace AnticevicApi.Model.Database.Main.User
         [Key]
         public int Id { get; set; }
 
+        public int DefaultCurrencyId { get; set; }
+
+        public int DefaultLanguageId { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
