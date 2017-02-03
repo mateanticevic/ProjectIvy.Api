@@ -1,4 +1,5 @@
 ﻿using AnticevicApi.BL.Handlers.Task;
+using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -20,11 +21,11 @@ namespace AnticevicApi.Controllers.Task
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Task> Get(string status, string priority, string type)
+        public IEnumerable<View.Task> Get(TaskGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), status, priority, type);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 
-            return _taskHandler.Get(status, priority, type);
+            return _taskHandler.Get(binding);
         }
 
         #endregion

@@ -1,5 +1,4 @@
 ﻿using AnticevicApi.BL.MapExtensions;
-using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.Constants.Database;
@@ -69,10 +68,12 @@ namespace AnticevicApi.BL.Handlers.Task
             }
         }
 
-        public IEnumerable<View.Task> Get(string statusValueId, string priorityValueId, string typeValueId)
+        public IEnumerable<View.Task> Get(TaskGetBinding binding)
         {
             using (var db = GetMainContext())
             {
+                var projectValueIds = binding.Projects.Split(',');
+
                 var tasks = db.Projects.WhereUser(User.Id)
                                        .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })
                                        .GroupJoin(db.TaskChanges, x => x.Task.Id, x => x.TaskId, (tp, t2) => new { Task = tp.Task, Project = tp.Project, LastChange = t2.OrderByDescending(y => y.Timestamp).FirstOrDefault() })
@@ -80,9 +81,10 @@ namespace AnticevicApi.BL.Handlers.Task
                                        .Join(db.TaskPriorities, x => x.LastChange.TaskPriorityId, x => x.Id, (t, Priority) => new { t.Project, t.LastChange, t.Task, t.Status, Priority })
                                        .Join(db.TaskTypes, x => x.Task.TaskTypeId, x => x.Id, (t, Type) => new { t.Project, t.LastChange, t.Task, t.Priority, Type, t.Status });
 
-                tasks = string.IsNullOrEmpty(statusValueId) ? tasks : tasks.Where(x => x.Status.ValueId == statusValueId);
-                tasks = string.IsNullOrEmpty(priorityValueId) ? tasks : tasks.Where(x => x.Priority.ValueId == priorityValueId);
-                tasks = string.IsNullOrEmpty(typeValueId) ? tasks : tasks.Where(x => x.Task.Type.ValueId == typeValueId);
+                tasks = string.IsNullOrEmpty(binding.Status) ? tasks : tasks.Where(x => x.Status.ValueId == binding.Status);
+                tasks = string.IsNullOrEmpty(binding.Priority) ? tasks : tasks.Where(x => x.Priority.ValueId == binding.Priority);
+                tasks = string.IsNullOrEmpty(binding.Type) ? tasks : tasks.Where(x => x.Task.Type.ValueId == binding.Type);
+                tasks = string.IsNullOrEmpty(binding.Projects) ? tasks : tasks.Where(x => projectValueIds.Contains(x.Project.ValueId));
 
                 tasks = tasks.OrderByDescending(x => x.Task.DueDate)
                              .ThenByDescending(x => x.Task.Created);
