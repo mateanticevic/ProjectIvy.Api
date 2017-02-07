@@ -11,7 +11,6 @@ namespace AnticevicApi.BL.Handlers.Application
     {
         public ApplicationHandler(IHandlerContext<ApplicationHandler> context) : base(context)
         {
-
         }
 
         public Dictionary<string, object> GetSettings(string applicationValueId)

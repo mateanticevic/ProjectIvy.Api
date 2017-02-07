@@ -9,7 +9,6 @@ namespace AnticevicApi.BL.Handlers.User
     {
         public UserHandler(IHandlerContext<UserHandler> context) : base(context)
         {
-
         }
 
         public View.User Get(string username)

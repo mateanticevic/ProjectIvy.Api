@@ -10,13 +10,13 @@ namespace AnticevicApi.Model.Binding.Common
             PageSize = pageSize.HasValue ? pageSize : 10;
         }
 
+        public int? Page { get; set; }
+
+        public int? PageSize { get; set; }
+
         public PagedBinding ToPagedBinding()
         {
             return new PagedBinding(Page, PageSize);
         }
-
-        public int? Page { get; set; }
-
-        public int? PageSize { get; set; }
     }
 }

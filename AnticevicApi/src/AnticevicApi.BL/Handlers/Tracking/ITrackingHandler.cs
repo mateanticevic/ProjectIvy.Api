@@ -9,11 +9,17 @@ namespace AnticevicApi.BL.Handlers.Tracking
     public interface ITrackingHandler : IHandler
     {
         bool Create(TrackingBinding binding);
+
         IEnumerable<Model.View.Tracking.Tracking> Get(FilteredBinding binding);
+
         int GetCount(FilteredBinding binding);
+
         int GetDistance(FilteredBinding binding);
+
         View.TrackingCurrent GetLast();
+
         int GetUniqueCount(FilteredBinding binding);
+
         bool ImportFromKml(XDocument kml);
     }
 }

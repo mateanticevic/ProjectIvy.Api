@@ -2,17 +2,20 @@
 {
     public static class MainSnippets
     {
-        private const string _prefix = "AnticevicApi.DL.Sql.Main.";
-        private const string _sufix = ".sql";
+        private const string Prefix = "AnticevicApi.DL.Sql.Main.";
+        private const string Sufix = ".sql";
 
-        public static string GetExpenseSumInDefaultCurrency = Build(nameof(GetExpenseSumInDefaultCurrency));
-        public static string GetWebTimeSum = Build(nameof(GetWebTimeSum));
-        public static string GetWebTimeTotal = Build(nameof(GetWebTimeTotal));
-        public static string GetWebTimeTotalByDay = Build(nameof(GetWebTimeTotalByDay));
+        public static string GetExpenseSumInDefaultCurrency { get; } = Build(nameof(GetExpenseSumInDefaultCurrency));
+
+        public static string GetWebTimeSum { get; } = Build(nameof(GetWebTimeSum));
+
+        public static string GetWebTimeTotal { get; } = Build(nameof(GetWebTimeTotal));
+
+        public static string GetWebTimeTotalByDay { get; } = Build(nameof(GetWebTimeTotalByDay));
 
         private static string Build(string name)
         {
-            return _prefix + name + _sufix;
+            return Prefix + name + Sufix;
         }
     }
 }

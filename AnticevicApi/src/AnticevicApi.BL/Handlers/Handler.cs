@@ -18,8 +18,11 @@ namespace AnticevicApi.BL.Handlers
         }
 
         public HttpContext HttpContext { get; set; }
+
         public ILogger Logger { get; set; }
+
         public IOptions<AppSettings> Settings { get; set; }
+
         protected Model.Database.Main.User.User User { get; private set; }
 
         protected MainContext GetMainContext()

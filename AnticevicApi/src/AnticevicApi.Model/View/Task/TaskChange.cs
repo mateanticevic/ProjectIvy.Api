@@ -14,7 +14,9 @@ namespace AnticevicApi.Model.View.Task
         }
 
         public DateTime Timestamp { get; set; }
+
         public TaskPriority Priority { get; set; }
+
         public TaskStatus Status { get; set; }
     }
 }

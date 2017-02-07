@@ -13,6 +13,7 @@ namespace AnticevicApi.Model.View.Services.LastFm
             Title = track.Name;
             Timestamp = DateTimeHelper.FromUnix(track.Date.Unix);
         }
+
         public Artist Artist { get; set; }
 
         public Images Images { get; set; }

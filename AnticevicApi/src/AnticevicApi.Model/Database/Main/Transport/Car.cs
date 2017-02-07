@@ -10,9 +10,13 @@ namespace AnticevicApi.Model.Database.Main.Transport
     {
         [Key]
         public int Id { get; set; }
+
         public string Model { get; set; }
+
         public string ValueId { get; set; }
+
         public short ProductionYear { get; set; }
+
         public ICollection<CarLog> CarLogs { get; set; }
     }
 }

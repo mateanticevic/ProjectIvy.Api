@@ -9,8 +9,11 @@ namespace AnticevicApi.Model.Database.Main.Org
     {
         [Key]
         public int Id { get; set; }
+
         public string ValueId { get; set; }
+
         public string Name { get; set; }
+
         public ICollection<Task> Tasks { get; set; }
     }
 }

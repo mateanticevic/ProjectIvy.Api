@@ -11,9 +11,13 @@ namespace AnticevicApi.Model.View.ExpenseType
             ValueId = x.ValueId;
             Name = x.TypeDescription;
         }
+
         public string Icon { get; set; }
+
         public string IconUrl { get; set; }
+
         public string Name { get; set; }
+
         public string ValueId { get; set; }
     }
 }

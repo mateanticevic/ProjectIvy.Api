@@ -12,7 +12,9 @@ namespace AnticevicApi.Model.View.Poi
         }
 
         public string Name { get; set; }
+
         public string ValueId { get; set; }
+
         public string Icon { get; set; }
     }
 }

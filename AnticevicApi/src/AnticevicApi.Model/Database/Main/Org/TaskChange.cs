@@ -9,13 +9,19 @@ namespace AnticevicApi.Model.Database.Main.Org
     {
         [Key]
         public int Id { get; set; }
+
         public int TaskId { get; set; }
+
         public int TaskPriorityId { get; set; }
+
         public int TaskStatusId { get; set; }
+
         public DateTime Timestamp { get; set; }
 
         public TaskPriority Priority { get; set; }
+
         public TaskStatus Status { get; set; }
+
         public Task Task { get; set; }
     }
 }

@@ -18,7 +18,7 @@ namespace AnticevicApi.Extensions.BuiltInTypes
 
         public static T DefaultIfNull<T>(this T o) where T : class, new()
         {
-            if(o == null)
+            if (o == null)
             {
                 o = new T();
             }

@@ -4,9 +4,11 @@
     {
         public static class User
         {
-            private const string _prefix = "user.";
-            public const string GetInfo = _prefix + "getInfo";
-            public const string GetRecentTracks = _prefix + "getRecentTracks";
+            public const string GetInfo = Prefix + "getInfo";
+
+            public const string GetRecentTracks = Prefix + "getRecentTracks";
+
+            private const string Prefix = "user.";
         }
     }
 }

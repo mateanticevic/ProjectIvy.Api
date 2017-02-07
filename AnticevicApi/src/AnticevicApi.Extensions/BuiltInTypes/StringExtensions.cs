@@ -5,7 +5,7 @@
         public static object ToProperType(this string value)
         {
             int integer;
-            if(int.TryParse(value, out integer))
+            if (int.TryParse(value, out integer))
             {
                 return integer;
             }

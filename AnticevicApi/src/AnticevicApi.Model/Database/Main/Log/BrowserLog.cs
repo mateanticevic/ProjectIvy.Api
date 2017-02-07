@@ -11,13 +11,19 @@ namespace AnticevicApi.Model.Database.Main.Log
     {
         [Key]
         public int Id { get; set; }
+
         public int DeviceId { get; set; }
+
         public int DomainId { get; set; }
+
         public DateTime TimestampEnd { get; set; }
+
         public DateTime TimestampStart { get; set; }
+
         public bool IsSecured { get; set; }
 
         public Device Device { get; set; }
+
         public Domain Domain { get; set; }
     }
 }

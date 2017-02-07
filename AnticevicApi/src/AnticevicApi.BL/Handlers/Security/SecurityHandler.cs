@@ -28,7 +28,7 @@ namespace AnticevicApi.BL.Handlers.Security
             {
                 var user = db.Users.SingleOrDefault(x => x.Username == username);
 
-                if(!PasswordHelper.IsValid(password, user.PasswordHash))
+                if (!PasswordHelper.IsValid(password, user.PasswordHash))
                 {
                     throw new NotImplementedException();
                 }

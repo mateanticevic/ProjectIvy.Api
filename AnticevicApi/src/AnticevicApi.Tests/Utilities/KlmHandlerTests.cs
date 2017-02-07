@@ -12,9 +12,9 @@ namespace AnticevicApi.Tests.Utilities
         {
             var rawKlm = File.ReadAllText(@"..\Data\SampleMovement.klm");
 
-            var xDoc = XDocument.Parse(rawKlm);
+            var document = XDocument.Parse(rawKlm);
 
-            var trackings = KmlHandler.ParseKml(xDoc);
+            var trackings = KmlHandler.ParseKml(document);
         }
     }
 }

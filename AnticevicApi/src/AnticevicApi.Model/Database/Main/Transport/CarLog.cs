@@ -9,9 +9,13 @@ namespace AnticevicApi.Model.Database.Main.Transport
     {
         [Key]
         public int Id { get; set; }
+
         public int CarId { get; set; }
+
         public Car Car { get; set; }
+
         public int Odometer { get; set; }
+
         public DateTime Timestamp { get; set; }
     }
 }

@@ -10,7 +10,6 @@ namespace AnticevicApi.BL.Handlers.Project
     {
         public ProjectHandler(IHandlerContext<ProjectHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<View.Project> Get()

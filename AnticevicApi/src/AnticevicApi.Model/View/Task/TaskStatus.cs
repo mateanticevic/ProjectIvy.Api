@@ -11,6 +11,7 @@ namespace AnticevicApi.Model.View.Task
         }
 
         public string Name { get; set; }
+
         public string ValueId { get; set; }
     }
 }

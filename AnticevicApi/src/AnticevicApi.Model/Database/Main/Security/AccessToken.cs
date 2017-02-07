@@ -9,9 +9,13 @@ namespace AnticevicApi.Model.Database.Main.Security
     {
         [Key]
         public int Id { get; set; }
+
         public bool IsActive { get; set; }
+
         public string Token { get; set; }
+
         public DateTime ValidFrom { get; set; }
+
         public DateTime ValidUntil { get; set; }
     }
 }

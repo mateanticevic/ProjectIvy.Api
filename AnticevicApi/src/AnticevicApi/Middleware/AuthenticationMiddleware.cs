@@ -1,12 +1,10 @@
 ﻿using AnticevicApi.BL.Handlers.Security;
 using AnticevicApi.Cache;
 using AnticevicApi.Model.Constants.Database;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using System;
 
 namespace AnticevicApi.Middleware
 {
@@ -34,6 +32,7 @@ namespace AnticevicApi.Middleware
                     user = _securityHandler.GetUser(token);
                     TokenCache.SetUser(user, token);
                 }
+
                 httpContext.Items.Add("User", user);
 
                 var claimIdentity = new ClaimsIdentity();
@@ -44,18 +43,10 @@ namespace AnticevicApi.Middleware
 
                 return _next(httpContext);
             }
-            catch(Exception e)
+            catch
             {
                 return _next(httpContext);
             }
-        }
-    }
-
-    public static class AuthenticationMiddlewareExtensions
-    {
-        public static IApplicationBuilder UseAuthenticationMiddleware(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<AuthenticationMiddleware>();
         }
     }
 }

@@ -10,7 +10,6 @@ namespace AnticevicApi.BL.Handlers.Airport
     {
         public AirportHandler(IHandlerContext<AirportHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<View.Airport> Get(bool onlyVisited = false)

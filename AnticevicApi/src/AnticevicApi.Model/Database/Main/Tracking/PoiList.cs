@@ -9,7 +9,9 @@ namespace AnticevicApi.Model.Database.Main.Tracking
     {
         [Key]
         public int Id { get; set; }
+
         public string ValueId { get; set; }
+
         public string Name { get; set; }
 
         public ICollection<Poi> Pois { get; set; }

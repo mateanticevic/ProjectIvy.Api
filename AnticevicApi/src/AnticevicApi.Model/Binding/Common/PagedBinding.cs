@@ -4,7 +4,6 @@
     {
         public PagedBinding()
         {
-
         }
 
         public PagedBinding(int? page, int? pageSize)
@@ -14,6 +13,7 @@
         }
 
         public int? Page { get; set; }
+
         public int? PageSize { get; set; }
     }
 }

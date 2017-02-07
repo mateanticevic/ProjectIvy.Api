@@ -11,7 +11,7 @@ namespace AnticevicApi.BL.MapExtensions
     {
         public static Expense ToEntity(this ExpenseBinding binding, MainContext db, Expense entity = null)
         {
-            if(entity == null)
+            if (entity == null)
             {
                 entity = new Expense();
             }

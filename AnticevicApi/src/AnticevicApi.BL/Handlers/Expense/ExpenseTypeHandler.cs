@@ -8,7 +8,6 @@ namespace AnticevicApi.BL.Handlers.Expense
     {
         public ExpenseTypeHandler(IHandlerContext<ExpenseTypeHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<ExpenseType> Get()

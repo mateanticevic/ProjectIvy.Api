@@ -10,7 +10,7 @@ namespace AnticevicApi.BL.MapExtensions
     {
         public static CarLog ToEntity(this CarLogBinding binding, MainContext db, CarLog entity = null)
         {
-            if(entity == null)
+            if (entity == null)
             {
                 entity = new CarLog();
             }

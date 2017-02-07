@@ -13,7 +13,6 @@ namespace AnticevicApi.BL.Handlers.Car
     {
         public CarHandler(IHandlerContext<CarHandler> context) : base(context)
         {
-
         }
 
         public DateTime CreateLog(CarLogBinding binding)

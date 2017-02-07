@@ -9,7 +9,6 @@ namespace AnticevicApi.BL.Handlers.Poi
     {
         public PoiHandler(IHandlerContext<PoiHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<View.Poi> GetByList(string listValueId)
@@ -21,8 +20,7 @@ namespace AnticevicApi.BL.Handlers.Poi
                                   .Where(x => x.List.User.Id == User.Id && x.List.ValueId == listValueId)
                                   .Join(db.PoiCategories, x => x.Poi.PoiCategoryId, x => x.Id, (PoiList, Category) => new { PoiList.Poi, Category })
                                   .ToList()
-                                  .Select(x => new View.Poi(x.Poi));
-                                                    
+                                  .Select(x => new View.Poi(x.Poi));           
             }
         }
 

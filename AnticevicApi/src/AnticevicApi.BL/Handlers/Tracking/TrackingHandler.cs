@@ -1,5 +1,4 @@
 ﻿using AnticevicApi.BL.MapExtensions;
-using AnticevicApi.DL.DbContexts;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
@@ -16,7 +15,6 @@ namespace AnticevicApi.BL.Handlers.Tracking
     {
         public TrackingHandler(IHandlerContext<TrackingHandler> context) : base(context)
         {
-
         }
 
         public bool Create(TrackingBinding binding)
@@ -69,11 +67,11 @@ namespace AnticevicApi.BL.Handlers.Tracking
                                                    .FirstOrDefault()
                                                    .Timestamp;
 
-                if(lastDate < binding.To.Value.Date)
+                if (lastDate < binding.To.Value.Date)
                 {
                     var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
 
-                    //TODO: Include last tracking from previous date
+                    // TODO: Include last tracking from previous date
                     var trackings = db.Trackings.WhereUser(User.Id)
                                                 .Where(x => x.Timestamp > from && x.Timestamp < binding.To.Value.AddDays(1))
                                                 .OrderBy(x => x.Timestamp)
@@ -83,7 +81,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
                     double sum = 0;
                     for (int i = 0; i < trackings.Count() - 1; i++)
                     {
-                        sum += trackings[i].GetDistanceTo(trackings[i+1]);
+                        sum += trackings[i].GetDistanceTo(trackings[i + 1]);
                     }
 
                     total += (int)sum;

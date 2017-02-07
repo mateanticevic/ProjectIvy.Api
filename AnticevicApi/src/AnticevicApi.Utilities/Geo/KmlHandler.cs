@@ -10,24 +10,24 @@ namespace AnticevicApi.Utilities.Geo
     {
         public static IEnumerable<Tracking> ParseKml(XDocument kml)
         {
-            XNamespace ns = kml.Root.Name.Namespace;
-            XNamespace nsGx = XNamespace.Get("http://www.google.com/kml/ext/2.2");
+            XNamespace rootNamespace = kml.Root.Name.Namespace;
+            XNamespace namespaceKml = XNamespace.Get("http://www.google.com/kml/ext/2.2");
 
-            var placemark = kml.Root.Element(ns + "Document")
-                                     .Element(ns + "Placemark");
+            var placemark = kml.Root.Element(rootNamespace + "Document")
+                                     .Element(rootNamespace + "Placemark");
 
-            var track = placemark.Element(nsGx + "Track");
+            var track = placemark.Element(namespaceKml + "Track");
 
-            var timestamps = track.Elements(ns + "when")
+            var timestamps = track.Elements(rootNamespace + "when")
                                   .Select(x => x.Value)
                                   .ToList();
-            var coords = track.Elements(nsGx + "coord")
+            var coords = track.Elements(namespaceKml + "coord")
                               .Select(x => x.Value.Replace(".", ","))
                               .ToList();
 
-            if(timestamps.Count() != coords.Count())
+            if (timestamps.Count() != coords.Count())
             {
-                //TODO: Replace with appropriate exception
+                // TODO: Replace with appropriate exception
                 throw new Exception("Coordinates don't match timestamps.");
             }
 

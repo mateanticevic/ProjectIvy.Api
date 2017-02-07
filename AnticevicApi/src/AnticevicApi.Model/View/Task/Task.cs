@@ -27,15 +27,25 @@ namespace AnticevicApi.Model.View.Task
         }
 
         public DateTime Created { get; set; }
+
         public DateTime Modified { get; set; }
+
         public DateTime? DueDate { get; set; }
+
         public IEnumerable<Task> Related { get; set; }
+
         public IEnumerable<TaskChange> Changes { get; set; }
+
         public string Description { get; set; }
+
         public string Name { get; set; }
+
         public string ProjectValueId { get; set; }
+
         public string ValueId { get; set; }
+
         public TaskChange LastChange { get; set; }
+
         public TaskType Type { get; set; }
     }
 }

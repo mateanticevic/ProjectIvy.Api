@@ -12,8 +12,9 @@ namespace AnticevicApi.Common.Helpers
 
         public static long ToUnix(DateTime dateTime)
         {
-            DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
-            TimeSpan span = (dateTime - epoch);
+            var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);
+            TimeSpan span = dateTime - epoch;
+
             return (long)span.TotalSeconds;
         }
     }

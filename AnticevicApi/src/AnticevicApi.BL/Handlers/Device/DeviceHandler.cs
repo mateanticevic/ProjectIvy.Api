@@ -11,7 +11,6 @@ namespace AnticevicApi.BL.Handlers.Device
     {
         public DeviceHandler(IHandlerContext<DeviceHandler> context) : base(context)
         {
-
         }
 
         public void CreateBrowserLog(BrowserLogBinding binding)
@@ -58,7 +57,7 @@ namespace AnticevicApi.BL.Handlers.Device
                     db.SaveChanges();
                 }
             }
-            catch (DbUpdateException e)
+            catch (DbUpdateException)
             {
                 throw new ResourceExistsException(nameof(BrowserLog));
             }

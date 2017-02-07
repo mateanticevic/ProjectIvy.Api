@@ -18,7 +18,6 @@ namespace AnticevicApi.BL.Handlers.Expense
     {
         public ExpenseHandler(IHandlerContext<ExpenseHandler> context) : base(context)
         {
-
         }
 
         public string Create(ExpenseBinding binding)
@@ -117,7 +116,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                 var q = db.Expenses.WhereUser(User.Id)
                                    .Where(x => x.ExpenseType.ValueId == typeValueId);
 
-                if(timeGroupingTypes == TimeGroupingTypes.Year)
+                if (timeGroupingTypes == TimeGroupingTypes.Year)
                 {
                     return q.GroupBy(x => x.Date.Year)
                             .Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key, 1, 1), x.Sum(y => y.Ammount)))

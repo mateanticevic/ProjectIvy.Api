@@ -13,7 +13,6 @@ namespace AnticevicApi.BL.Handlers.Movie
     {
         public MovieHandler(IHandlerContext<MovieHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<View.Movie> Get(FilteredPagedBinding binding)
@@ -48,7 +47,6 @@ namespace AnticevicApi.BL.Handlers.Movie
 
                 throw;
             }
-
         }
     }
 }

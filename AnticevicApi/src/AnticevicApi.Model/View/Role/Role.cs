@@ -11,6 +11,7 @@ namespace AnticevicApi.Model.View.Role
         }
 
         public string ValueId { get; set; }
+
         public string Name { get; set; }
     }
 }

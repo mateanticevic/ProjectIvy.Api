@@ -5,10 +5,18 @@ namespace AnticevicApi.Model.Constants.Database
 {
     public class TaskPriorities
     {
-        public static KeyValuePair<int, string> Normal = new KeyValuePair<int, string>(1, "normal");
-        public static KeyValuePair<int, string> Minor = new KeyValuePair<int, string>(2, "minor");
-        public static KeyValuePair<int, string> Important = new KeyValuePair<int, string>(3, "important");
-        public static KeyValuePair<int, string> Urgent = new KeyValuePair<int, string>(4, "urgent");
+        public static KeyValuePair<int, string> Normal { get; } = new KeyValuePair<int, string>(1, "normal");
+
+        public static KeyValuePair<int, string> Minor { get; } = new KeyValuePair<int, string>(2, "minor");
+
+        public static KeyValuePair<int, string> Important { get; } = new KeyValuePair<int, string>(3, "important");
+
+        public static KeyValuePair<int, string> Urgent { get; } = new KeyValuePair<int, string>(4, "urgent");
+
+        public static int GetId(string valueId)
+        {
+            return All().SingleOrDefault(x => x.Value == valueId).Key;
+        }
 
         private static IEnumerable<KeyValuePair<int, string>> All()
         {
@@ -19,11 +27,6 @@ namespace AnticevicApi.Model.Constants.Database
                 Important,
                 Urgent
             };
-        }
-
-        public static int GetId(string valueId)
-        {
-            return All().SingleOrDefault(x => x.Value == valueId).Key;
         }
     }
 }

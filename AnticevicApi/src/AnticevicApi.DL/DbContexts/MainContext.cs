@@ -21,36 +21,67 @@ namespace AnticevicApi.DL.DbContexts
         }
 
         public DbSet<AccessToken> AccessTokens { get; set; }
+
         public DbSet<Airport> Airports { get; set; }
+
         public DbSet<Application> Applications { get; set; }
+
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
+
         public DbSet<BrowserLog> BrowserLogs { get; set; }
+
         public DbSet<Car> Cars { get; set; }
+
         public DbSet<CarLog> CarLogs { get; set; }
+
         public DbSet<Currency> Currencies { get; set; }
+
         public DbSet<Domain> Domains { get; set; }
+
         public DbSet<Device> Devices { get; set; }
+
         public DbSet<DeviceType> DeviceTypes { get; set; }
+
         public DbSet<Expense> Expenses { get; set; }
+
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
+
         public DbSet<Flight> Flights { get; set; }
+
         public DbSet<Income> Incomes { get; set; }
+
         public DbSet<IncomeSource> IncomeSources { get; set; }
+
         public DbSet<Movie> Movies { get; set; }
+
         public DbSet<Poi> Pois { get; set; }
+
         public DbSet<PoiCategory> PoiCategories { get; set; }
+
         public DbSet<PoiList> PoiLists { get; set; }
+
         public DbSet<Project> Projects { get; set; }
+
         public DbSet<Task> Tasks { get; set; }
+
         public DbSet<TaskChange> TaskChanges { get; set; }
+
         public DbSet<TaskPriority> TaskPriorities { get; set; }
+
         public DbSet<TaskStatus> TaskStatuses { get; set; }
+
         public DbSet<TaskType> TaskTypes { get; set; }
+
         public DbSet<Tracking> Trackings { get; set; }
+
         public DbSet<TrackingDistance> TrackingDistances { get; set; }
+
         public DbSet<UniqueLocation> UniqueLocations { get; set; }
+
         public DbSet<User> Users { get; set; }
+
         public DbSet<Vendor> Vendors { get; set; }
+
         public DbSet<Web> Webs { get; set; }
 
         public string ConnectionString { get; private set; }

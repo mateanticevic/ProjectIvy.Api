@@ -13,7 +13,6 @@ namespace AnticevicApi.BL.Handlers.Income
     {
         public IncomeHandler(IHandlerContext<IncomeHandler> context) : base(context)
         {
-
         }
 
         public IEnumerable<View.Income> Get(FilteredPagedBinding binding)

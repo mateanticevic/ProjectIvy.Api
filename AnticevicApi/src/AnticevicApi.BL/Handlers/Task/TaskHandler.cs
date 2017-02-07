@@ -15,7 +15,6 @@ namespace AnticevicApi.BL.Handlers.Task
     {
         public TaskHandler(IHandlerContext<TaskHandler> context) : base(context)
         {
-
         }
 
         public string Create(TaskBinding binding)
