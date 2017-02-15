@@ -13,10 +13,10 @@ using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
+using AnticevicApi.BL.Handlers.Web;
 using AnticevicApi.BL.Services.LastFm;
 using AnticevicApi.Common.Configuration;
 using AnticevicApi.Extensions;
-using AnticevicApi.Middleware;
 using AnticevicApi.Model.Constants;
 using LastFm = AnticevicApi.DL.Services.LastFm;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +25,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using AnticevicApi.BL.Handlers.Web;
 
 namespace AnticevicApi
 {
@@ -100,8 +99,6 @@ namespace AnticevicApi
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
-            app.UseApplicationInsightsRequestTelemetry();
-            app.UseApplicationInsightsExceptionTelemetry();
             app.UseAuthenticationMiddleware();
             app.UseMvc();          
         }

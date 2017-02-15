@@ -42,6 +42,40 @@ namespace AnticevicApi.BL.Handlers.Task
             }
         }
 
+        public void CreateChange(PostTaskChangeBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                int taskId = db.Projects.Include(x => x.Tasks)
+                                        .WhereUser(User.Id)
+                                        .SingleOrDefault(x => x.ValueId == binding.ProjectId)
+                                        .Tasks
+                                        .SingleOrDefault(x => x.ValueId == binding.TaskId)
+                                        .Id;
+
+                var lastTaskChange = db.TaskChanges.Where(x => x.TaskId == taskId)
+                                                   .OrderByDescending(x => x.Timestamp)
+                                                   .FirstOrDefault();
+
+                int priorityId = lastTaskChange.TaskPriorityId;
+                int statusId = lastTaskChange.TaskStatusId;
+
+                priorityId = string.IsNullOrEmpty(binding.PriorityId) ? priorityId : db.TaskPriorities.SingleOrDefault(x => x.ValueId == binding.PriorityId).Id;
+                statusId = string.IsNullOrEmpty(binding.StatusId) ? statusId : db.TaskStatuses.SingleOrDefault(x => x.ValueId == binding.StatusId).Id;
+
+                var taskChange = new Database.Org.TaskChange()
+                {
+                    TaskId = taskId,
+                    TaskPriorityId = priorityId,
+                    TaskStatusId = statusId,
+                    Timestamp = DateTime.Now
+                };
+
+                db.TaskChanges.Add(taskChange);
+                db.SaveChanges();
+            }
+        }
+
         public IEnumerable<View.Task> Get(string projectValueId)
         {
             using (var db = GetMainContext())

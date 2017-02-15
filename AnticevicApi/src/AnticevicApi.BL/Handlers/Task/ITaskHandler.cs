@@ -8,6 +8,8 @@ namespace AnticevicApi.BL.Handlers.Task
     {
         string Create(TaskBinding binding);
 
+        void CreateChange(PostTaskChangeBinding binding);
+
         IEnumerable<View.Task> Get(string projectValueId);
 
         View.Task Get(string projectValueId, string taskValueId);
