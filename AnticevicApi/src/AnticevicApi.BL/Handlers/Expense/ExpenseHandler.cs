@@ -50,34 +50,33 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         #region Get
 
-        public PaginatedView<View.Expense> Get(DateTime? from, DateTime? to, string expenseTypeValueId, string vendorValueId, int? page = 0, int? pageSize = 10)
+        public PaginatedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            page = page.HasValue ? page : 0;
-            pageSize = pageSize.HasValue ? pageSize : 10;
-
             var view = new PaginatedView<View.Expense>();
 
             using (var db = GetMainContext())
             {
-                int? expenseTypeId = db.ExpenseTypes.GetId(expenseTypeValueId);
-                int? vendorId = db.Vendors.GetId(vendorValueId);
+                int? currencyId = db.Currencies.GetId(binding.CurrencyId);
+                int? expenseTypeId = db.ExpenseTypes.GetId(binding.TypeId);
+                int? vendorId = db.Vendors.GetId(binding.VendorId);
 
                 var result = db.Expenses.Include(x => x.ExpenseType)
                                         .Include(x => x.Currency)
                                         .Include(x => x.Vendor)
                                         .WhereUser(User.Id);
 
-                result = from.HasValue ? result.Where(x => x.Date >= from) : result;
-                result = to.HasValue ? result.Where(x => x.Date <= to) : result;
+                result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
+                result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
 
                 result = expenseTypeId.HasValue ? result.Where(x => x.ExpenseTypeId == expenseTypeId) : result;
                 result = vendorId.HasValue ? result.Where(x => x.VendorId == vendorId) : result;
+                result = currencyId.HasValue ? result.Where(x => x.CurrencyId == currencyId) : result;
 
-                view.Pages = (int)((result.Count() + pageSize - 1) / pageSize);
+                view.Pages = (result.Count() + binding.PageSize - 1) / binding.PageSize;
 
                 result = result.OrderByDescending(x => x.Date)
                                .ThenByDescending(x => x.Id)
-                               .Page(page, pageSize);
+                               .Page(binding.Page, binding.PageSize);
 
                 view.Items = result.ToList().Select(x => new View.Expense(x));
 

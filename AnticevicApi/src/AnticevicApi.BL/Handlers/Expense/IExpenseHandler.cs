@@ -14,7 +14,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         bool Delete(string valueId);
 
-        PaginatedView<View.Expense> Get(DateTime? from, DateTime? to, string expenseTypeValueId, string vendorValueId, int? page = 0, int? pageSize = 10);
+        PaginatedView<View.Expense> Get(ExpenseGetBinding binding);
 
         IEnumerable<View.Expense> GetByDate(DateTime date);
 

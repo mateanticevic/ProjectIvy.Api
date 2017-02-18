@@ -4,15 +4,18 @@ namespace AnticevicApi.Model.Binding.Common
 {
     public class FilteredPagedBinding : FilteredBinding
     {
-        public FilteredPagedBinding(DateTime? from, DateTime? to, int? page, int? pageSize) : base(from, to)
+        public FilteredPagedBinding()
         {
-            Page = page.HasValue ? page : 0;
-            PageSize = pageSize.HasValue ? pageSize : 10;
+
         }
 
-        public int? Page { get; set; }
+        public FilteredPagedBinding(DateTime? from, DateTime? to, int? page, int? pageSize) : base(from, to)
+        {
+        }
 
-        public int? PageSize { get; set; }
+        public int Page { get; set; } = 0;
+
+        public int PageSize { get; set; } = 10;
 
         public PagedBinding ToPagedBinding()
         {

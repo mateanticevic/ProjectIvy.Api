@@ -38,11 +38,11 @@ namespace AnticevicApi.Controllers.Expense
 
         [HttpGet]
         [Route("")]
-        public PaginatedView<View.Expense> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page, [FromQuery] int? pageSize, [FromQuery] string expenseTypeValueId, [FromQuery] string vendorValueId)
+        public PaginatedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to, page, pageSize, expenseTypeValueId, vendorValueId);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 
-            return _expenseHandler.Get(from, to, expenseTypeValueId, vendorValueId, page, pageSize);
+            return _expenseHandler.Get(binding);
         }
 
         [HttpGet]
