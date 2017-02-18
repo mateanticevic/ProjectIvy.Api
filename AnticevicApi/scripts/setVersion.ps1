@@ -1,6 +1,6 @@
 param([string]$version)
 
-$jsons = Get-ChildItem -Recurse project.json
+$jsons = Get-ChildItem ".." -Recurse project.json
 
 Foreach($json in $jsons)
 {
