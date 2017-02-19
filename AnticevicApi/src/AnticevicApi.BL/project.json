@@ -1,11 +1,11 @@
 {
-  "version": "0.7.0",
+  "version": "0.7.1",
 
   "dependencies": {
-    "AnticevicApi.Common": "0.7.0",
-    "AnticevicApi.DL": "0.7.0",
-    "AnticevicApi.Extensions": "0.7.0",
-    "AnticevicApi.Utilities": "0.7.0",
+    "AnticevicApi.Common": "0.7.1",
+    "AnticevicApi.DL": "0.7.1",
+    "AnticevicApi.Extensions": "0.7.1",
+    "AnticevicApi.Utilities": "0.7.1",
     "Dapper": "1.50.2",
     "GeoCoordinate.NetStandard1": "1.0.0",
     "Microsoft.AspNetCore.Http.Abstractions": "1.1.0",

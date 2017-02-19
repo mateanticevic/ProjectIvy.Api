@@ -105,7 +105,7 @@ namespace AnticevicApi.BL.Handlers.Task
         {
             using (var db = GetMainContext())
             {
-                var projectValueIds = binding.Projects.Split(',');
+                var projectValueIds = string.IsNullOrEmpty(binding.Projects) ? null : binding.Projects.Split(',');
 
                 var tasks = db.Projects.WhereUser(User.Id)
                                        .Join(db.Tasks, x => x.Id, x => x.ProjectId, (Project, Task) => new { Project, Task })
