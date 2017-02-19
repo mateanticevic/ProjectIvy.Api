@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace AnticevicApi.Model.Database.Main.User
 {
@@ -21,6 +22,8 @@ namespace AnticevicApi.Model.Database.Main.User
         public string Email { get; set; }
 
         public string PasswordHash { get; set; }
+
+        public DateTime PasswordModified { get; set; }
 
         public string Username { get; set; }
 

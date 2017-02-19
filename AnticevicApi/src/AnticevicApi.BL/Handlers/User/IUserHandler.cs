@@ -1,4 +1,5 @@
-﻿using View = AnticevicApi.Model.View.User;
+﻿using AnticevicApi.Model.Binding.User;
+using View = AnticevicApi.Model.View.User;
 
 namespace AnticevicApi.BL.Handlers.User
 {
@@ -7,5 +8,7 @@ namespace AnticevicApi.BL.Handlers.User
         View.User Get(string username);
 
         View.User Get(int? id = null);
+
+        void SetPassword(PasswordSetBinding binding);
     }
 }

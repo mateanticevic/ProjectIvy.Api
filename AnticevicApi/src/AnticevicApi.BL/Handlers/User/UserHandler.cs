@@ -1,6 +1,9 @@
-﻿using AnticevicApi.DL.DbContexts;
+﻿using AnticevicApi.Common.Helpers;
+using AnticevicApi.DL.Extensions;
+using AnticevicApi.Model.Binding.User;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using System;
 using View = AnticevicApi.Model.View.User;
 
 namespace AnticevicApi.BL.Handlers.User
@@ -34,6 +37,18 @@ namespace AnticevicApi.BL.Handlers.User
                                          .SingleOrDefault(x => x.Id == id);
 
                 return new View.User(userEntity);
+            }
+        }
+
+        public void SetPassword(PasswordSetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var userEntity = db.Users.GetById(User.Id);
+                userEntity.PasswordHash = PasswordHelper.GetHash(binding.Password);
+                userEntity.PasswordModified = DateTime.Now;
+
+                db.SaveChanges();
             }
         }
     }

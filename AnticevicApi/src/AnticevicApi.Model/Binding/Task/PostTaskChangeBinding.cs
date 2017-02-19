@@ -1,6 +1,6 @@
 ﻿namespace AnticevicApi.Model.Binding.Task
 {
-    public class PostTaskChangeBinding
+    public class TaskChangeBinding
     {
         public string PriorityId { get; set; }
         public string StatusId { get; set; }

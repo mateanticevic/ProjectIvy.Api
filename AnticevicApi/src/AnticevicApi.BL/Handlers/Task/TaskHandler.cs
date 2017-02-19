@@ -42,7 +42,7 @@ namespace AnticevicApi.BL.Handlers.Task
             }
         }
 
-        public void CreateChange(PostTaskChangeBinding binding)
+        public void CreateChange(TaskChangeBinding binding)
         {
             using (var db = GetMainContext())
             {

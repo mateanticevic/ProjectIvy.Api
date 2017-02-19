@@ -19,7 +19,7 @@ namespace AnticevicApi.Controllers.Project
 
         [HttpPost]
         [Route("{taskId}/change")]
-        public StatusCodeResult PostTaskChange([FromBody] PostTaskChangeBinding binding, string projectId, string taskId)
+        public StatusCodeResult PostTaskChange([FromBody] TaskChangeBinding binding, string projectId, string taskId)
         {
             try
             {
