@@ -1,8 +1,8 @@
 {
-  "version": "0.7.1",
+  "version": "0.8.0",
 
   "dependencies": {
-    "AnticevicApi.Model": "0.7.1",
+    "AnticevicApi.Model": "0.8.0",
     "NETStandard.Library": "1.6.1"
   },
 

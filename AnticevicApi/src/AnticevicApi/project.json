@@ -1,9 +1,9 @@
 {
-  "version": "0.7.1",
+  "version": "0.8.0",
   "dependencies": {
-    "AnticevicApi.BL": "0.7.1",
-    "AnticevicApi.DL": "0.7.1",
-    "AnticevicApi.Utilities": "0.7.1",
+    "AnticevicApi.BL": "0.8.0",
+    "AnticevicApi.DL": "0.8.0",
+    "AnticevicApi.Utilities": "0.8.0",
     "Microsoft.ApplicationInsights.AspNetCore": "2.0.0",
     "Microsoft.AspNetCore.Routing": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",
@@ -20,7 +20,7 @@
       "type": "platform",
       "version": "1.1.0"
     },
-    "AnticevicApi.Common": "0.7.1",
+    "AnticevicApi.Common": "0.8.0",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.1.1",
     "Microsoft.AspNetCore.Mvc.Formatters.Xml": "1.1.1",
