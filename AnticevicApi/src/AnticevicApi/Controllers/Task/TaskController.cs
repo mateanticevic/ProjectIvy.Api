@@ -3,9 +3,8 @@ using AnticevicApi.Model.Binding.Task;
 using AnticevicApi.Model.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using View = AnticevicApi.Model.View.Task;
+using ViewModel = AnticevicApi.Model.View.Task;
 
 namespace AnticevicApi.Controllers.Task
 {
@@ -22,11 +21,32 @@ namespace AnticevicApi.Controllers.Task
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Task> Get(TaskGetBinding binding)
+        public IEnumerable<ViewModel.Task> Get(TaskGetBinding binding)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 
             return _taskHandler.Get(binding);
+        }
+
+        [HttpGet]
+        [Route(nameof(ViewModel.Priority))]
+        public IEnumerable<ViewModel.Priority> GetPriorities()
+        {
+            return _taskHandler.GetPriorities();
+        }
+
+        [HttpGet]
+        [Route(nameof(ViewModel.Status))]
+        public IEnumerable<ViewModel.Status> GetStatuses()
+        {
+            return _taskHandler.GetStatuses();
+        }
+
+        [HttpGet]
+        [Route(nameof(ViewModel.Type))]
+        public IEnumerable<ViewModel.Type> GetTypes()
+        {
+            return _taskHandler.GetTypes();
         }
 
         #endregion

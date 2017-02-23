@@ -15,5 +15,12 @@ namespace AnticevicApi.BL.Handlers.Task
         View.Task Get(string projectValueId, string taskValueId);
 
         IEnumerable<View.Task> Get(TaskGetBinding binding);
+
+        IEnumerable<View.Priority> GetPriorities();
+
+        IEnumerable<View.Status> GetStatuses();
+
+        IEnumerable<View.Type> GetTypes();
+
     }
 }

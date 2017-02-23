@@ -76,6 +76,8 @@ namespace AnticevicApi.BL.Handlers.Task
             }
         }
 
+        #region Get
+
         public IEnumerable<View.Task> Get(string projectValueId)
         {
             using (var db = GetMainContext())
@@ -125,5 +127,40 @@ namespace AnticevicApi.BL.Handlers.Task
                 return tasks.ToList().Select(x => new View.Task(x.Task, x.LastChange, x.Project.ValueId));
             }
         }
+
+        public IEnumerable<View.Priority> GetPriorities()
+        {
+            using (var db = GetMainContext())
+            {
+                return db.TaskPriorities.OrderBy(x => x.Name)
+                                        .ToList()
+                                        .Select(x => new View.Priority(x));
+                                        
+            }
+        }
+
+        public IEnumerable<View.Status> GetStatuses()
+        {
+            using (var db = GetMainContext())
+            {
+                return db.TaskStatuses.OrderBy(x => x.Name)
+                                        .ToList()
+                                        .Select(x => new View.Status(x));
+
+            }
+        }
+
+        public IEnumerable<View.Type> GetTypes()
+        {
+            using (var db = GetMainContext())
+            {
+                return db.TaskTypes.OrderBy(x => x.Name)
+                                        .ToList()
+                                        .Select(x => new View.Type(x));
+
+            }
+        }
+
+        #endregion
     }
 }

@@ -2,9 +2,9 @@
 
 namespace AnticevicApi.Model.View.Task
 {
-    public class TaskPriority
+    public class Type
     {
-        public TaskPriority(DatabaseModel.Org.TaskPriority x)
+        public Type(DatabaseModel.Org.TaskType x)
         {
             Name = x.Name;
             ValueId = x.ValueId;

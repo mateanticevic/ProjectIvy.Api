@@ -2,9 +2,9 @@
 
 namespace AnticevicApi.Model.View.Task
 {
-    public class TaskType
+    public class Status
     {
-        public TaskType(DatabaseModel.Org.TaskType x)
+        public Status(DatabaseModel.Org.TaskStatus x)
         {
             Name = x.Name;
             ValueId = x.ValueId;

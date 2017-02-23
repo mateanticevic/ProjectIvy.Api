@@ -10,19 +10,19 @@ namespace AnticevicApi.Model.View.Task
     {
         public Task(DatabaseModel.Org.Task x)
         {
-            Changes = x.Changes?.OrderByDescending(y => y.Timestamp).Select(y => new TaskChange(y));
+            Changes = x.Changes?.OrderByDescending(y => y.Timestamp).Select(y => new Change(y));
             Created = x.Created;
             Description = x.Description;
             DueDate = x.DueDate;
             Modified = x.Modified;
             Name = x.Name;
-            Type = x.Type.ConvertTo(y => new TaskType(y));
+            Type = x.Type.ConvertTo(y => new Type(y));
             ValueId = x.ValueId;
         }
 
         public Task(DatabaseModel.Org.Task t, DatabaseModel.Org.TaskChange c, string projectValueId) : this(t)
         {
-            LastChange = new TaskChange(c);
+            LastChange = new Change(c);
             ProjectValueId = projectValueId;
         }
 
@@ -34,7 +34,7 @@ namespace AnticevicApi.Model.View.Task
 
         public IEnumerable<Task> Related { get; set; }
 
-        public IEnumerable<TaskChange> Changes { get; set; }
+        public IEnumerable<Change> Changes { get; set; }
 
         public string Description { get; set; }
 
@@ -44,8 +44,8 @@ namespace AnticevicApi.Model.View.Task
 
         public string ValueId { get; set; }
 
-        public TaskChange LastChange { get; set; }
+        public Change LastChange { get; set; }
 
-        public TaskType Type { get; set; }
+        public Type Type { get; set; }
     }
 }

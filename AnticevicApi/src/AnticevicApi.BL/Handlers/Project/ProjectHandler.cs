@@ -1,5 +1,4 @@
-﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Project;
