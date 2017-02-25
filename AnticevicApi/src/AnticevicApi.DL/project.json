@@ -19,6 +19,7 @@
   "buildOptions": {
     "embed": [
       "/Sql/Main/GetExpenseSumInDefaultCurrency.sql",
+      "/Sql/Main/GetIncomeSum.sql",
       "/Sql/Main/GetWebTimeSum.sql",
       "/Sql/Main/GetWebTimeTotal.sql",
       "/Sql/Main/GetWebTimeTotalByDay.sql"

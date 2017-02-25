@@ -35,9 +35,9 @@ namespace AnticevicApi.Controllers.Income
 
         [HttpGet]
         [Route("sum")]
-        public IEnumerable<View.AmountInCurrency> Get([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public decimal Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
         {
-            return _incomeHandler.GetSum(from, to);
+            return _incomeHandler.GetSum(new FilteredBinding(from, to), currencyCode);
         }
 
         #endregion

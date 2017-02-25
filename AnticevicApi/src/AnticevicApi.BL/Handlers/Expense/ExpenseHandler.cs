@@ -1,4 +1,5 @@
 ﻿using AnticevicApi.BL.MapExtensions;
+using AnticevicApi.DL.Extensions.Entities;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Sql;
 using AnticevicApi.Model.Binding.Common;
@@ -134,8 +135,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                int targetCurrencyId = string.IsNullOrEmpty(currencyCode) ? db.Users.SingleOrDefault(x => x.Id == User.Id).DefaultCurrencyId
-                                                                          : db.Currencies.SingleOrDefault(x => x.Code == currencyCode).Id;
+                int targetCurrencyId = db.GetCurrencyId(currencyCode, User.Id);
 
                 using (var sql = GetSqlConnection())
                 {

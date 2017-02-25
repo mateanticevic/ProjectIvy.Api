@@ -7,6 +7,9 @@
 
         public static string GetExpenseSumInDefaultCurrency { get; } = Build(nameof(GetExpenseSumInDefaultCurrency));
 
+        public static string GetIncomeSum { get; } = Build(nameof(GetIncomeSum));
+
+
         public static string GetWebTimeSum { get; } = Build(nameof(GetWebTimeSum));
 
         public static string GetWebTimeTotal { get; } = Build(nameof(GetWebTimeTotal));

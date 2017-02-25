@@ -1,7 +1,7 @@
-﻿--DECLARE @From DATE = '2016-04-01'
---DECLARE @To DATE = '2016-04-30'
+﻿--DECLARE @From DATE = '2014-04-01'
+--DECLARE @To DATE = '2018-04-30'
 --DECLARE @UserId INT = 1
---DECLARE @TargetCurrencyId INT = 3
+--DECLARE @TargetCurrencyId INT = 45
 
 DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 
@@ -62,5 +62,5 @@ LEFT JOIN Common.CurrencyRate crEurToParent ON crEurToParent.FromCurrencyId = @E
 							   AND crEurToParent.ToCurrencyId = e.ParentCurrencyId
 							   AND crEurToParent.Timestamp = (SELECT TOP 1 Timestamp FROM Common.CurrencyRate cr4 WHERE cr4.FromCurrencyId = @EURId AND cr4.ToCurrencyId = e.ParentCurrencyId AND cr4.Timestamp <= e.Date ORDER BY Timestamp DESC)
 WHERE
-	e.[Date] >= @From
-	AND e.[Date] <= @To
+	(@From IS NULL OR e.[Date] >= @From)
+	AND (@To IS NULL OR e.[Date] <= @To)

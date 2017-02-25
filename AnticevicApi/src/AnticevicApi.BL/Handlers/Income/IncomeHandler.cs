@@ -6,6 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using View = AnticevicApi.Model.View.Income;
+using AnticevicApi.DL.Sql;
+using Dapper;
+using AnticevicApi.DL.Extensions.Entities;
 
 namespace AnticevicApi.BL.Handlers.Income
 {
@@ -41,17 +44,23 @@ namespace AnticevicApi.BL.Handlers.Income
             }
         }
 
-        public IEnumerable<View.AmountInCurrency> GetSum(DateTime from, DateTime to)
+        public decimal GetSum(FilteredBinding binding, string currencyCode)
         {
             using (var db = GetMainContext())
             {
-                var query = db.Incomes.WhereUser(User.Id)
-                                      .Where(x => x.Timestamp >= from && x.Timestamp <= to)
-                                      .Include(x => x.Currency)
-                                      .ToList()
-                                      .GroupBy(x => x.Currency);
+                int targetCurrencyId = db.GetCurrencyId(currencyCode, User.Id);
 
-                return query.Select(x => new View.AmountInCurrency(x.Sum(y => y.Ammount), x.Key));
+                using (var sql = GetSqlConnection())
+                {
+                    var parameters = new
+                    {
+                        TargetCurrencyId = targetCurrencyId,
+                        From = binding.From,
+                        To = binding.To,
+                        UserId = User.Id
+                    };
+                    return Math.Round(sql.ExecuteScalar<decimal>(SqlLoader.Load(MainSnippets.GetIncomeSum), parameters), 2);
+                }
             }
         }
     }

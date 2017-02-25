@@ -11,6 +11,6 @@ namespace AnticevicApi.BL.Handlers.Income
 
         int GetCount(DateTime from, DateTime to);
 
-        IEnumerable<View.AmountInCurrency> GetSum(DateTime from, DateTime to);
+        decimal GetSum(FilteredBinding binding, string currencyCode);
     }
 }
