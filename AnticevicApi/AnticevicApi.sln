@@ -1,35 +1,32 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FD49CF1-7E25-46E7-9ABD-7FA9907DD528}"
-	ProjectSection(SolutionItems) = preProject
-		global.json = global.json
-	EndProjectSection
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi", "src\AnticevicApi\AnticevicApi.xproj", "{EC4A6C81-DCDB-4F12-9BD5-76DCA1A23146}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.BL", "src\AnticevicApi.BL\AnticevicApi.BL.xproj", "{C1D52306-AE37-4299-BD7B-A61405307139}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.DL", "src\AnticevicApi.DL\AnticevicApi.DL.xproj", "{17E941D2-B071-4E44-99F8-78C33534EC3A}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Model", "src\AnticevicApi.Model\AnticevicApi.Model.xproj", "{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Extensions", "src\AnticevicApi.Extensions\AnticevicApi.Extensions.xproj", "{11DA1A83-7AF5-475A-BC7D-1848DE47A96B}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Common", "src\AnticevicApi.Common\AnticevicApi.Common.xproj", "{A363F585-049A-42D2-9FC1-1001222E45F6}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Utilities", "src\AnticevicApi.Utilities\AnticevicApi.Utilities.xproj", "{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "AnticevicApi.Tests", "src\AnticevicApi.Tests\AnticevicApi.Tests.xproj", "{960E7F01-7EB0-413A-BB09-12FE85359A00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{607772D1-62BE-4F0F-A8EB-8E5AD8827085}"
 	ProjectSection(SolutionItems) = preProject
 		scripts\setVersion.ps1 = scripts\setVersion.ps1
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi", "src\AnticevicApi\AnticevicApi.csproj", "{EC4A6C81-DCDB-4F12-9BD5-76DCA1A23146}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.BL", "src\AnticevicApi.BL\AnticevicApi.BL.csproj", "{C1D52306-AE37-4299-BD7B-A61405307139}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.DL", "src\AnticevicApi.DL\AnticevicApi.DL.csproj", "{17E941D2-B071-4E44-99F8-78C33534EC3A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.Model", "src\AnticevicApi.Model\AnticevicApi.Model.csproj", "{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.Extensions", "src\AnticevicApi.Extensions\AnticevicApi.Extensions.csproj", "{11DA1A83-7AF5-475A-BC7D-1848DE47A96B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.Common", "src\AnticevicApi.Common\AnticevicApi.Common.csproj", "{A363F585-049A-42D2-9FC1-1001222E45F6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.Utilities", "src\AnticevicApi.Utilities\AnticevicApi.Utilities.csproj", "{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnticevicApi.Tests", "src\AnticevicApi.Tests\AnticevicApi.Tests.csproj", "{960E7F01-7EB0-413A-BB09-12FE85359A00}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
