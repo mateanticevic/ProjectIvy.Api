@@ -2,6 +2,7 @@
 using AnticevicApi.Cache;
 using AnticevicApi.Model.Constants.Database;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace AnticevicApi.Middleware
             }
             catch
             {
-                return _next(httpContext);
+                throw new UnauthorizedAccessException();
             }
         }
     }

@@ -99,6 +99,7 @@ namespace AnticevicApi
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 
+            app.UseExceptionHandlingMiddleware();
             app.UseAuthenticationMiddleware();
             app.UseMvc();          
         }
