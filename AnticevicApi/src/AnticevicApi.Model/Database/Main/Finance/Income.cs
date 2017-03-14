@@ -21,6 +21,8 @@ namespace AnticevicApi.Model.Database.Main.Finance
 
         public IncomeSource IncomeSource { get; set; }
 
+        public IncomeType IncomeType { get; set; }
+
         public DateTime Timestamp { get; set; }
     }
 }

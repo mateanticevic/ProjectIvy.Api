@@ -1,5 +1,4 @@
-﻿using AnticevicApi.DL.DbContexts;
-using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -25,6 +24,7 @@ namespace AnticevicApi.BL.Handlers.Income
                 var incomes = db.Incomes.WhereUser(User.Id)
                                         .Include(x => x.Currency)
                                         .Include(x => x.IncomeSource)
+                                        .Include(x => x.IncomeType)
                                         .OrderByDescending(x => x.Timestamp)
                                         .WhereTimestampInclusive(binding)
                                         .Page(binding);

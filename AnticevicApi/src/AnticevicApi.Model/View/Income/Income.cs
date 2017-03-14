@@ -12,6 +12,7 @@ namespace AnticevicApi.Model.View.Income
             Currency = x.ConvertTo(y => new Currency.Currency(y.Currency));
             Description = x.Description;
             Source = x.IncomeSource.ConvertTo(y => new IncomeSource(y));
+            Type = x.IncomeType.ConvertTo(y => new IncomeType(y));
             Timestamp = x.Timestamp;
         }
 
@@ -22,6 +23,8 @@ namespace AnticevicApi.Model.View.Income
         public string Description { get; set; }
 
         public IncomeSource Source { get; set; }
+
+        public IncomeType Type { get; set; }
 
         public DateTime Timestamp { get; set; }
     }
