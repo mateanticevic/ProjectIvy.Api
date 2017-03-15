@@ -1,5 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Security;
 using AnticevicApi.Cache;
+using AnticevicApi.Extensions;
 using AnticevicApi.Model.Constants.Database;
 using Microsoft.AspNetCore.Http;
 using System;
@@ -24,14 +25,14 @@ namespace AnticevicApi.Middleware
         {
             try
             {
-                string token = httpContext.Request.Headers.SingleOrDefault(x => x.Key == "Authorization").Value;
+                string authorizationToken = httpContext.GetAuthorizationToken();
 
-                var user = TokenCache.GetUser(token);
+                var user = TokenCache.GetUser(authorizationToken);
 
                 if (user == null)
                 {
-                    user = _securityHandler.GetUser(token);
-                    TokenCache.SetUser(user, token);
+                    user = _securityHandler.GetUser(authorizationToken);
+                    TokenCache.SetUser(user, authorizationToken);
                 }
 
                 httpContext.Items.Add("User", user);

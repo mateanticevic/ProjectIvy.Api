@@ -12,7 +12,7 @@ namespace AnticevicApi.Model.Database.Main.User
 
         public DateTime Timestamp { get; set; }
 
-        public int MyRating { get; set; }
+        public short MyRating { get; set; }
 
         public decimal Rating { get; set; }
 

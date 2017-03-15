@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
 using View = AnticevicApi.Model.View.Movie;
+using AnticevicApi.Model.Binding.Movie;
 
 namespace AnticevicApi.Controllers.Movie
 {
@@ -22,11 +23,11 @@ namespace AnticevicApi.Controllers.Movie
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Movie> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
+        public IEnumerable<View.Movie> Get([FromQuery] MovieGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), from, to);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 
-            return _movieHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
+            return _movieHandler.Get(binding);
         }
 
         [HttpGet]

@@ -1,6 +1,8 @@
 ﻿using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Database.Main;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace AnticevicApi.DL.Extensions
 {
@@ -33,6 +35,11 @@ namespace AnticevicApi.DL.Extensions
         public static T SingleOrDefault<T>(this IQueryable<T> query, string valueId) where T : IHasValueId
         {
             return query.SingleOrDefault(x => x.ValueId == valueId);
+        }
+
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, bool ifTrue, Expression<Func<T, bool>> condition)
+        {
+            return ifTrue ? queryable.Where(condition) : queryable;
         }
     }
 }
