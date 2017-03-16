@@ -1,13 +1,13 @@
 param([string]$version)
 
-$jsons = Get-ChildItem ".." -Recurse project.json
+$projects = Get-ChildItem ".." -Recurse *.csproj
 
-Foreach($json in $jsons)
+Foreach($project in $projects)
 {
-    $file = Get-Content $json.FullName
-    $file = $file -replace '"(version)": "([^"]+)",', ('"$1": "' + $version + '",')
-    $file = $file -replace '"(AnticevicApi.[^"]+)": "([^"]+)"', ('"$1": "' + $version + '"')
+    $file = Get-Content $project.FullName
+    $file = $file -replace '<Version>[0-9]+.[0-9]+.[0-9]+</Version>', ('<Version>' + $version + '</Version>')
+    $file = $file -replace '<VersionPrefix>[0-9]+.[0-9]+.[0-9]+</VersionPrefix>', ('<VersionPrefix>' + $version + '</VersionPrefix>')
 
     $Utf8NoBomEncoding = New-Object System.Text.UTF8Encoding $False
-    [System.IO.File]::WriteAllLines($json.FullName, $file, $Utf8NoBomEncoding)
+    [System.IO.File]::WriteAllLines($project.FullName, $file, $Utf8NoBomEncoding)
 }
