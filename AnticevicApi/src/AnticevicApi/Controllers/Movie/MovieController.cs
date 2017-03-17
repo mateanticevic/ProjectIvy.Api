@@ -32,11 +32,11 @@ namespace AnticevicApi.Controllers.Movie
 
         [HttpGet]
         [Route("count")]
-        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        public int GetCount([FromQuery] MovieGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCount), from, to);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCount), binding);
 
-            return _movieHandler.GetCount(new FilteredBinding(from, to));
+            return _movieHandler.GetCount(binding);
         }
 
         #endregion

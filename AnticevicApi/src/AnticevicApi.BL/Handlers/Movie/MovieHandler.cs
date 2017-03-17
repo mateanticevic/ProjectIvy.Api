@@ -1,13 +1,10 @@
 ﻿using AnticevicApi.DL.Extensions;
-using AnticevicApi.Model.Binding.Common;
-using AnticevicApi.Model.Constants;
-using Microsoft.Extensions.Logging;
+using AnticevicApi.DL.Extensions.Entities;
 using System.Collections.Generic;
 using System.Linq;
-using System;
-using View = AnticevicApi.Model.View.Movie;
 using AnticevicApi.Model.Binding.Movie;
-using AnticevicApi.Common.Extensions;
+using View = AnticevicApi.Model.View.Movie;
+using System;
 
 namespace AnticevicApi.BL.Handlers.Movie
 {
@@ -22,15 +19,7 @@ namespace AnticevicApi.BL.Handlers.Movie
             using (var db = GetMainContext())
             {
                 var movies = db.Movies.WhereUser(User.Id)
-                                      .WhereTimestampInclusive(binding)
-                                      .WhereIf(binding.RatingHigher.HasValue, x => x.Rating > binding.RatingHigher.Value)
-                                      .WhereIf(binding.RatingLower.HasValue, x => x.Rating < binding.RatingLower.Value)
-                                      .WhereIf(binding.RuntimeLonger.HasValue, x => x.Runtime > binding.RuntimeLonger.Value)
-                                      .WhereIf(binding.RuntimeShorter.HasValue, x => x.Runtime < binding.RuntimeShorter.Value)
-                                      .WhereIf(!string.IsNullOrEmpty(binding.Title), x => x.Title.Contains(binding.Title))
-                                      .WhereIf(!binding.MyRating.IsNullOrEmpty(), x => binding.MyRating.Contains(x.MyRating))
-                                      .WhereIf(!binding.Year.IsNullOrEmpty(), x => binding.Year.Contains(x.Year))
-                                      .OrderByDescending(x => x.Timestamp)
+                                      .Where(binding)
                                       .Page(binding.ToPagedBinding());
 
                 return movies.ToList()
@@ -38,23 +27,60 @@ namespace AnticevicApi.BL.Handlers.Movie
             }
         }
 
-        public int GetCount(FilteredBinding binding)
+        public int GetCount(MovieGetBinding binding)
         {
-            try
+            using (var db = GetMainContext())
             {
-                using (var db = GetMainContext())
-                {
-                    var userMovies = db.Movies.WhereUser(User.Id)
-                                              .WhereTimestampInclusive(binding);
+                var userMovies = db.Movies.WhereUser(User.Id)
+                                          .Where(binding);
 
-                    return userMovies.Count();
-                }
+                return userMovies.Count();
             }
-            catch (Exception e)
-            {
-                Logger.LogError((int)LogEvent.Exception, e, LogMessage.UnknownException);
+        }
 
-                throw;
+        public double GetMyRatingAverage(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var userMovies = db.Movies.WhereUser(User.Id)
+                                          .Where(binding);
+
+                double average = (double)userMovies.Sum(x => x.MyRating) / userMovies.Count();
+
+                return Math.Round(average, 1);
+            }
+        }
+
+        public double GetRatingAverage(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var userMovies = db.Movies.WhereUser(User.Id)
+                                          .Where(binding);
+
+                return Math.Round((double)userMovies.Average(x => x.Rating), 1);
+            }
+        }
+
+        public int GetRuntimeAverage(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var userMovies = db.Movies.WhereUser(User.Id)
+                                          .Where(binding);
+
+                return (int)userMovies.Average(x => x.Runtime);
+            }
+        }
+
+        public int GetSum(MovieGetBinding binding, Func<Model.Database.Main.User.Movie, int> selector)
+        {
+            using (var db = GetMainContext())
+            {
+                var userMovies = db.Movies.WhereUser(User.Id)
+                                          .Where(binding);
+
+                return userMovies.Sum(selector);
             }
         }
     }
