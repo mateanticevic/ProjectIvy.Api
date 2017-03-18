@@ -1,13 +1,13 @@
 ﻿using AnticevicApi.Model.Binding.Movie;
+using AnticevicApi.Model.View;
 using View = AnticevicApi.Model.View.Movie;
-using System.Collections.Generic;
 using System;
 
 namespace AnticevicApi.BL.Handlers.Movie
 {
     public interface IMovieHandler : IHandler
     {
-        IEnumerable<View.Movie> Get(MovieGetBinding binding);
+        PaginatedView<View.Movie> Get(MovieGetBinding binding);
 
         int GetCount(MovieGetBinding binding);
 

@@ -1,8 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers.Income;
 using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 using System;
 using View = AnticevicApi.Model.View.Income;
 
@@ -21,16 +21,16 @@ namespace AnticevicApi.Controllers.Income
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Income> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page = null, [FromQuery] int? pageSize = null)
+        public PaginatedView<View.Income> Get([FromQuery] FilteredPagedBinding binding)
         {
-            return _incomeHandler.Get(new FilteredPagedBinding(from, to, page, pageSize));
+            return _incomeHandler.Get(binding);
         }
 
         [HttpGet]
         [Route("count")]
-        public int GetCount([FromQuery] DateTime from, [FromQuery] DateTime to)
+        public int GetCount([FromQuery] FilteredBinding binding)
         {
-            return _incomeHandler.GetCount(from, to);
+            return _incomeHandler.GetCount(binding);
         }
 
         [HttpGet]

@@ -1,12 +1,10 @@
 ﻿using AnticevicApi.BL.Handlers.Movie;
-using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Constants;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System;
 using View = AnticevicApi.Model.View.Movie;
 using AnticevicApi.Model.Binding.Movie;
+using AnticevicApi.Model.View;
 
 namespace AnticevicApi.Controllers.Movie
 {
@@ -23,7 +21,7 @@ namespace AnticevicApi.Controllers.Movie
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Movie> Get([FromQuery] MovieGetBinding binding)
+        public PaginatedView<View.Movie> Get([FromQuery] MovieGetBinding binding)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 

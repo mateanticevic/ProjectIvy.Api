@@ -73,7 +73,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                 result = vendorId.HasValue ? result.Where(x => x.VendorId == vendorId) : result;
                 result = currencyId.HasValue ? result.Where(x => x.CurrencyId == currencyId) : result;
 
-                view.Pages = (result.Count() + binding.PageSize - 1) / binding.PageSize;
+                view.Count = result.Count();
 
                 result = result.OrderByDescending(x => x.Date)
                                .ThenByDescending(x => x.Id)

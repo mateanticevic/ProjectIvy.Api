@@ -4,8 +4,19 @@ namespace AnticevicApi.Model.View
 {
     public class PaginatedView<T>
     {
-        public IEnumerable<T> Items { get; set; }
+        public PaginatedView()
+        {
 
-        public int Pages { get; set; }
+        }
+
+        public PaginatedView(IEnumerable<T> items, long count)
+        {
+            Count = count;
+            Items = items;
+        }
+
+        public long Count { get; set; }
+
+        public IEnumerable<T> Items { get; set; }
     }
 }

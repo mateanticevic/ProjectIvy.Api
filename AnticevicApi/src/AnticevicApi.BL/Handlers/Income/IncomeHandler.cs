@@ -1,13 +1,13 @@
 ﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+using AnticevicApi.Model.View;
+using AnticevicApi.DL.Extensions.Entities;
+using AnticevicApi.DL.Sql;
+using Dapper;
 using System.Linq;
 using System;
 using View = AnticevicApi.Model.View.Income;
-using AnticevicApi.DL.Sql;
-using Dapper;
-using AnticevicApi.DL.Extensions.Entities;
 
 namespace AnticevicApi.BL.Handlers.Income
 {
@@ -17,28 +17,33 @@ namespace AnticevicApi.BL.Handlers.Income
         {
         }
 
-        public IEnumerable<View.Income> Get(FilteredPagedBinding binding)
-        {
-            using (var db = GetMainContext())
-            {
-                var incomes = db.Incomes.WhereUser(User.Id)
-                                        .Include(x => x.Currency)
-                                        .Include(x => x.IncomeSource)
-                                        .Include(x => x.IncomeType)
-                                        .OrderByDescending(x => x.Timestamp)
-                                        .WhereTimestampInclusive(binding)
-                                        .Page(binding);
-
-                return incomes.ToList().Select(x => new View.Income(x));
-            }
-        }
-
-        public int GetCount(DateTime from, DateTime to)
+        public PaginatedView<View.Income> Get(FilteredPagedBinding binding)
         {
             using (var db = GetMainContext())
             {
                 var query = db.Incomes.WhereUser(User.Id)
-                                      .Where(x => x.Timestamp >= from && x.Timestamp <= to);
+                                      .Include(x => x.Currency)
+                                      .Include(x => x.IncomeSource)
+                                      .Include(x => x.IncomeType)
+                                      .OrderByDescending(x => x.Timestamp)
+                                      .WhereTimestampInclusive(binding);
+
+                var items = query.Page(binding)
+                                 .ToList()
+                                 .Select(x => new View.Income(x));
+
+                var count = query.Count();
+
+                return new PaginatedView<View.Income>(items, count);
+            }
+        }
+
+        public int GetCount(FilteredBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var query = db.Incomes.WhereUser(User.Id)
+                                      .Where(x => x.Timestamp >= binding.From && x.Timestamp <= binding.To);
 
                 return query.Count();
             }

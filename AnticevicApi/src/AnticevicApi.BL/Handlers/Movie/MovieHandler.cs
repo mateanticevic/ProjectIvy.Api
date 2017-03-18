@@ -1,10 +1,10 @@
 ﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Extensions.Entities;
-using System.Collections.Generic;
 using System.Linq;
 using AnticevicApi.Model.Binding.Movie;
 using View = AnticevicApi.Model.View.Movie;
 using System;
+using AnticevicApi.Model.View;
 
 namespace AnticevicApi.BL.Handlers.Movie
 {
@@ -14,16 +14,20 @@ namespace AnticevicApi.BL.Handlers.Movie
         {
         }
 
-        public IEnumerable<View.Movie> Get(MovieGetBinding binding)
+        public PaginatedView<View.Movie> Get(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
-                var movies = db.Movies.WhereUser(User.Id)
-                                      .Where(binding)
-                                      .Page(binding.ToPagedBinding());
+                var query = db.Movies.WhereUser(User.Id)
+                                      .Where(binding);
 
-                return movies.ToList()
-                             .Select(x => new View.Movie(x));
+                var movies = query.Page(binding.ToPagedBinding())
+                                  .ToList()
+                                  .Select(x => new View.Movie(x));
+
+                int count = query.Count();
+
+                return new PaginatedView<View.Movie>(movies, count);
             }
         }
 
