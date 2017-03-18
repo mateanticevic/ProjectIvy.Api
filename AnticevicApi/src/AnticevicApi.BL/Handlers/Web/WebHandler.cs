@@ -1,5 +1,6 @@
 ﻿using AnticevicApi.DL.Sql;
 using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Binding.Web;
 using AnticevicApi.Model.View.Web;
 using Dapper;
 using System.Collections.Generic;
@@ -12,13 +13,13 @@ namespace AnticevicApi.BL.Handlers.Web
         {
         }
 
-        public IEnumerable<WebTime> GetTimeSummed(FilteredPagedBinding binding, string deviceValueId)
+        public IEnumerable<WebTime> GetTimeSummed(WebTimeGetPagedBinding binding)
         {
             using (var db = GetSqlConnection())
             {
                 var parameters = new
                 {
-                    DeviceValueId = deviceValueId,
+                    DeviceValueId = binding.DeviceId,
                     From = binding.From,
                     Page = binding.Page,
                     PageSize = binding.PageSize,
@@ -32,13 +33,16 @@ namespace AnticevicApi.BL.Handlers.Web
             }
         }
 
-        public int GetTimeTotal(FilteredBinding binding, string deviceValueId)
+        public int GetTimeSum(WebTimeGetBinding binding)
         {
             using (var db = GetSqlConnection())
             {
                 var parameters = new
                 {
-                    DeviceValueId = deviceValueId,
+                    DeviceValueId = binding.DeviceId,
+                    DomainValueId = binding.DomainId,
+                    WebValueId = binding.Webid,
+                    IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
                     UserId = User.Id
@@ -47,13 +51,16 @@ namespace AnticevicApi.BL.Handlers.Web
             }
         }
 
-        public IEnumerable<TimeByDay> GetTimeTotalByDay(FilteredBinding binding, string deviceValueId)
+        public IEnumerable<TimeByDay> GetTimeTotalByDay(WebTimeGetBinding binding)
         {
             using (var db = GetSqlConnection())
             {
                 var parameters = new
                 {
-                    DeviceValueId = deviceValueId,
+                    DeviceValueId = binding.DeviceId,
+                    DomainValueId = binding.DomainId,
+                    WebValueId = binding.Webid,
+                    IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
                     UserId = User.Id

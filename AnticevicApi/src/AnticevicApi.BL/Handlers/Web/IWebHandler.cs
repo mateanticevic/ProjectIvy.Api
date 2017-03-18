@@ -1,4 +1,5 @@
 ﻿using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Binding.Web;
 using AnticevicApi.Model.View.Web;
 using System.Collections.Generic;
 
@@ -6,10 +7,10 @@ namespace AnticevicApi.BL.Handlers.Web
 {
     public interface IWebHandler
     {
-        IEnumerable<WebTime> GetTimeSummed(FilteredPagedBinding binding, string deviceId);
+        IEnumerable<WebTime> GetTimeSummed(WebTimeGetPagedBinding binding);
 
-        int GetTimeTotal(FilteredBinding binding, string deviceValueId);
+        int GetTimeSum(WebTimeGetBinding binding);
 
-        IEnumerable<TimeByDay> GetTimeTotalByDay(FilteredBinding binding, string deviceValueId);
+        IEnumerable<TimeByDay> GetTimeTotalByDay(WebTimeGetBinding binding);
     }
 }

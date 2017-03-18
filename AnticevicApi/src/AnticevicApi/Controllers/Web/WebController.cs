@@ -2,6 +2,7 @@
 using AnticevicApi.Model.Binding.Common;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using AnticevicApi.Model.Binding.Web;
 using System.Collections.Generic;
 using System;
 using View = AnticevicApi.Model.View.Web;
@@ -22,31 +23,23 @@ namespace AnticevicApi.Controllers.Web
 
         [HttpGet]
         [Route("time/sum")]
-        public IEnumerable<View.WebTime> GetTimeSummed([FromQuery] string deviceId,
-                                                  [FromQuery] DateTime? from,
-                                                  [FromQuery] DateTime? to,
-                                                  [FromQuery] int? page = null,
-                                                  [FromQuery] int? pageSize = null)
+        public IEnumerable<View.WebTime> GetTimeSummed([FromQuery] WebTimeGetPagedBinding binding)
         {
-            return _webHandler.GetTimeSummed(new FilteredPagedBinding(from, to, page, pageSize), deviceId);
+            return _webHandler.GetTimeSummed(binding);
         }
 
         [HttpGet]
         [Route("time/total")]
-        public int GetTimeTotal([FromQuery] string deviceId,
-                                          [FromQuery] DateTime? from,
-                                          [FromQuery] DateTime? to)
+        public int GetTimeTotal([FromQuery] WebTimeGetBinding binding)
         {
-            return _webHandler.GetTimeTotal(new FilteredBinding(from, to), deviceId);
+            return _webHandler.GetTimeSum(binding);
         }
 
         [HttpGet]
         [Route("time/total/byday")]
-        public IEnumerable<View.TimeByDay> GetTimeTotalByDay([FromQuery] string deviceId,
-                                  [FromQuery] DateTime? from,
-                                  [FromQuery] DateTime? to)
+        public IEnumerable<View.TimeByDay> GetTimeTotalByDay([FromQuery] WebTimeGetBinding binding)
         {
-            return _webHandler.GetTimeTotalByDay(new FilteredBinding(from, to), deviceId);
+            return _webHandler.GetTimeTotalByDay(binding);
         }
 
         #endregion

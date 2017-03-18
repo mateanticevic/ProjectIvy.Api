@@ -12,7 +12,8 @@ FROM Log.BrowserLog bl
 JOIN Net.Domain d ON d.Id = bl.DomainId
 JOIN Net.Web w ON w.Id = d.WebId
 JOIN Inv.Device device ON device.Id = bl.DeviceId AND device.UserId = @UserId
-WHERE (@DeviceValueId IS NULL OR device.ValueId = @DeviceValueId)
+WHERE 1=1
+	AND ISNULL(@DeviceValueId, bl.DeviceId) = bl.DeviceId
 	AND (@From IS NULL OR @From < bl.TimestampStart)
 	AND (@To IS NULL OR @To > bl.TimestampEnd)
 GROUP BY w.ValueId
