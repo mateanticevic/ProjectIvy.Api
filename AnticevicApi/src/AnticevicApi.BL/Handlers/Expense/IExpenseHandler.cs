@@ -1,10 +1,10 @@
 ﻿using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
-using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View;
 using System.Collections.Generic;
 using System;
 using View = AnticevicApi.Model.View.Expense;
+using System.Threading.Tasks;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
@@ -24,9 +24,11 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         int GetCount(FilteredBinding binding);
 
-        IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes);
+        Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(string currencyValueId);
 
-        decimal GetSum(FilteredBinding binding, string currencyCode);
+        Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(string currencyValueId);
+
+        Task<decimal> GetSum(FilteredBinding binding, string currencyCode);
 
         bool Update(ExpenseBinding binding);
     }

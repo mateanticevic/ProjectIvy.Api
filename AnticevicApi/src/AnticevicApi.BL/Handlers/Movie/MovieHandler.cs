@@ -1,10 +1,10 @@
 ﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Extensions.Entities;
-using System.Linq;
 using AnticevicApi.Model.Binding.Movie;
+using AnticevicApi.Model.View;
+using System.Linq;
 using View = AnticevicApi.Model.View.Movie;
 using System;
-using AnticevicApi.Model.View;
 
 namespace AnticevicApi.BL.Handlers.Movie
 {
@@ -19,9 +19,10 @@ namespace AnticevicApi.BL.Handlers.Movie
             using (var db = GetMainContext())
             {
                 var query = db.Movies.WhereUser(User.Id)
-                                      .Where(binding);
+                                     .Where(binding);
 
-                var movies = query.Page(binding.ToPagedBinding())
+                var movies = query.OrderByDescending(x => x.Timestamp)
+                                  .Page(binding.ToPagedBinding())
                                   .ToList()
                                   .Select(x => new View.Movie(x));
 

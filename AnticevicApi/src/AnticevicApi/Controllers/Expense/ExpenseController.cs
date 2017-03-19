@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System;
 using View = AnticevicApi.Model.View.Expense;
+using System.Threading.Tasks;
 
 namespace AnticevicApi.Controllers.Expense
 {
@@ -56,29 +57,29 @@ namespace AnticevicApi.Controllers.Expense
 
         [HttpGet]
         [Route("sum")]
-        public decimal GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
+        public async Task<decimal> GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), from, to);
 
-            return _expenseHandler.GetSum(new FilteredBinding(from, to), currencyCode);
+            return await _expenseHandler.GetSum(new FilteredBinding(from, to), currencyCode);
         }
 
         [HttpGet]
         [Route("sum/month")]
-        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedByMonthSum([FromQuery] string type)
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] string currencyId)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), type);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), currencyId);
 
-            return _expenseHandler.GetGroupedSum(type, TimeGroupingTypes.Month);
+            return await _expenseHandler.GetGroupedByMonthSum(currencyId);
         }
 
         [HttpGet]
         [Route("sum/year")]
-        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedByYearSum([FromQuery] string type)
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] string currencyId)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), type);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), currencyId);
 
-            return _expenseHandler.GetGroupedSum(type, TimeGroupingTypes.Year);
+            return await _expenseHandler.GetGroupedByYearSum(currencyId);
         }
 
         [HttpGet]

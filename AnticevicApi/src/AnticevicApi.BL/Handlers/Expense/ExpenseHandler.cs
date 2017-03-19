@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System;
 using View = AnticevicApi.Model.View.Expense;
+using System.Threading.Tasks;
+using System.Collections;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
@@ -109,29 +111,57 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public IEnumerable<KeyValuePair<DateTime, decimal>> GetGroupedSum(string typeValueId, TimeGroupingTypes timeGroupingTypes)
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(string currencyValueId)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var q = db.Expenses.WhereUser(User.Id)
-                                   .Where(x => x.ExpenseType.ValueId == typeValueId);
+                var startDate = context.Expenses.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date;
+                var endDate = DateTime.Now;
 
-                if (timeGroupingTypes == TimeGroupingTypes.Year)
+                var periods = new List<FilteredBinding>();
+
+                foreach (var year in Enumerable.Range(startDate.Year, endDate.Year - startDate.Year + 1))
                 {
-                    return q.GroupBy(x => x.Date.Year)
-                            .Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key, 1, 1), x.Sum(y => y.Ammount)))
-                            .ToList();
+                    int startMonth = startDate.Year == year ? startDate.Month : 1;
+                    int endMonth = endDate.Year == year ? endDate.Month : 12;
+
+                    foreach (var month in Enumerable.Range(startMonth, endMonth - startMonth + 1))
+                    {
+                        var startOfMonth = new DateTime(year, month, 1);
+                        var endOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+
+                        periods.Add(new FilteredBinding(startOfMonth, endOfMonth));
+                    }
                 }
-                else
-                {
-                    return q.GroupBy(x => new { x.Date.Year, x.Date.Month })
-                            .Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Sum(y => y.Ammount)))
-                            .ToList();
-                }
+
+                var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(x, currencyValueId)));
+
+                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
+
+                return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month));
             }
         }
 
-        public decimal GetSum(FilteredBinding binding, string currencyCode)
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(string currencyValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int startYear = context.Expenses.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
+                int endYear = DateTime.Now.Year;
+
+                var years = Enumerable.Range(startYear, endYear - startYear + 1);
+
+                var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
+
+                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(x, currencyValueId)));
+
+                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
+
+                return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key));
+            }
+        }
+
+        public async Task<decimal> GetSum(FilteredBinding binding, string currencyCode)
         {
             using (var db = GetMainContext())
             {
