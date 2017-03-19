@@ -24,11 +24,11 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         int GetCount(FilteredBinding binding);
 
-        Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(string currencyValueId);
+        Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding);
 
-        Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(string currencyValueId);
+        Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(ExpenseSumGetBinding binding);
 
-        Task<decimal> GetSum(FilteredBinding binding, string currencyCode);
+        Task<decimal> GetSum(ExpenseSumGetBinding binding);
 
         bool Update(ExpenseBinding binding);
     }

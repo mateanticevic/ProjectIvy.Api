@@ -57,29 +57,29 @@ namespace AnticevicApi.Controllers.Expense
 
         [HttpGet]
         [Route("sum")]
-        public async Task<decimal> GetSum([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
+        public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), from, to);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), binding);
 
-            return await _expenseHandler.GetSum(new FilteredBinding(from, to), currencyCode);
+            return await _expenseHandler.GetSum(binding);
         }
 
         [HttpGet]
         [Route("sum/month")]
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] string currencyId)
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] ExpenseSumGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), currencyId);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), binding);
 
-            return await _expenseHandler.GetGroupedByMonthSum(currencyId);
+            return await _expenseHandler.GetGroupedByMonthSum(binding);
         }
 
         [HttpGet]
         [Route("sum/year")]
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] string currencyId)
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), currencyId);
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), binding);
 
-            return await _expenseHandler.GetGroupedByYearSum(currencyId);
+            return await _expenseHandler.GetGroupedByYearSum(binding);
         }
 
         [HttpGet]

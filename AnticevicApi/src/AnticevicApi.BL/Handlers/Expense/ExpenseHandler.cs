@@ -4,7 +4,6 @@ using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Sql;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
-using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +12,6 @@ using System.Linq;
 using System;
 using View = AnticevicApi.Model.View.Expense;
 using System.Threading.Tasks;
-using System.Collections;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
@@ -111,7 +109,7 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(string currencyValueId)
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -134,7 +132,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                     }
                 }
 
-                var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(x, currencyValueId)));
+                var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.Override(x))));
 
                 await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
 
@@ -142,7 +140,7 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(string currencyValueId)
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -153,7 +151,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
                 var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
-                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(x, currencyValueId)));
+                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.Override(x))));
 
                 await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
 
@@ -161,16 +159,18 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public async Task<decimal> GetSum(FilteredBinding binding, string currencyCode)
+        public async Task<decimal> GetSum(ExpenseSumGetBinding binding)
         {
             using (var db = GetMainContext())
             {
-                int targetCurrencyId = db.GetCurrencyId(currencyCode, User.Id);
+                int targetCurrencyId = db.GetCurrencyId(binding.CurrencyId, User.Id);
 
                 using (var sql = GetSqlConnection())
                 {
                     var parameters = new
                     {
+                        ExpenseTypeValueId = binding.TypeId,
+                        VendorValueId = binding.VendorId,
                         TargetCurrencyId = targetCurrencyId,
                         From = binding.From,
                         To = binding.To,

@@ -1,7 +1,9 @@
-﻿--DECLARE @From DATE = '2014-04-01'
---DECLARE @To DATE = '2018-04-30'
+﻿--DECLARE @From DATE = NULl
+--DECLARE @To DATE = NULL
 --DECLARE @UserId INT = 1
 --DECLARE @TargetCurrencyId INT = 45
+--DECLARE @ExpenseTypeValueId NVARCHAR(MAX) = NULL
+--DECLARE @VendorValueId NVARCHAR(MAX) = 'olimp'
 
 DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 
@@ -52,6 +54,8 @@ SELECT
 		END
 	)
 FROM Finance.Expense e
+JOIN Finance.ExpenseType et ON e.ExpenseTypeId = et.Id
+LEFT JOIN Finance.Vendor v ON v.Id = e.VendorId
 LEFT JOIN Common.CurrencyRate crEurToTarget ON crEurToTarget.FromCurrencyId = @EURId
 							   AND crEurToTarget.ToCurrencyId = @TargetCurrencyId
 							   AND crEurToTarget.Timestamp = (SELECT TOP 1 Timestamp FROM Common.CurrencyRate cr2 WHERE cr2.FromCurrencyId = @EURId AND cr2.ToCurrencyId = @TargetCurrencyId AND cr2.Timestamp <= e.Date ORDER BY Timestamp DESC)
@@ -61,6 +65,8 @@ LEFT JOIN Common.CurrencyRate crEurToOriginal ON crEurToOriginal.FromCurrencyId 
 LEFT JOIN Common.CurrencyRate crEurToParent ON crEurToParent.FromCurrencyId = @EURId
 							   AND crEurToParent.ToCurrencyId = e.ParentCurrencyId
 							   AND crEurToParent.Timestamp = (SELECT TOP 1 Timestamp FROM Common.CurrencyRate cr4 WHERE cr4.FromCurrencyId = @EURId AND cr4.ToCurrencyId = e.ParentCurrencyId AND cr4.Timestamp <= e.Date ORDER BY Timestamp DESC)
-WHERE
-	(@From IS NULL OR e.[Date] >= @From)
+WHERE 1=1
+	AND ISNULL(@ExpenseTypeValueId, et.ValueId) = et.ValueId
+	AND (ISNULL(@VendorValueId, v.ValueId) = v.ValueId OR (v.ValueId IS NULL AND @VendorValueId IS NULL))
+	AND (@From IS NULL OR e.[Date] >= @From)
 	AND (@To IS NULL OR e.[Date] <= @To)
