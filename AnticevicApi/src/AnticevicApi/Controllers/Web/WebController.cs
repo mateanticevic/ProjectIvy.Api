@@ -1,10 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers.Web;
-using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Binding.Web;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using AnticevicApi.Model.Binding.Web;
 using System.Collections.Generic;
-using System;
 using View = AnticevicApi.Model.View.Web;
 
 namespace AnticevicApi.Controllers.Web

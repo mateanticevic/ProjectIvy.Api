@@ -2,11 +2,22 @@
 using AnticevicApi.Model.Database.Main;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 
 namespace AnticevicApi.DL.Extensions
 {
     public static class UserEntityExtensions
     {
+        public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, int userId) where T : UserEntity
+        {
+            return collection.Where(x => x.UserId == userId);
+        }
+
+        public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, User user) where T : UserEntity
+        {
+            return collection.Where(x => x.UserId == user.Id);
+        }
+
         public static IEnumerable<T> WhereUser<T>(this ICollection<T> collection, int userId) where T : UserEntity
         {
             return collection.Where(x => x.UserId == userId);

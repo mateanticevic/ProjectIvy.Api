@@ -1,9 +1,13 @@
 ﻿using AnticevicApi.BL.Exceptions;
+using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Device;
+using AnticevicApi.Model.Binding.Log;
 using AnticevicApi.Model.Database.Main.Log;
 using AnticevicApi.Model.Database.Main.Net;
+using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using View = AnticevicApi.Model.View;
 
 namespace AnticevicApi.BL.Handlers.Device
 {
@@ -60,6 +64,33 @@ namespace AnticevicApi.BL.Handlers.Device
             catch (DbUpdateException)
             {
                 throw new ResourceExistsException(nameof(BrowserLog));
+            }
+        }
+
+        public PaginatedView<View.Device.BrowserLog> Get(LogBrowserGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int? deviceId = context.Devices.GetId(binding.DomainId);
+
+                var deviceIds = context.Devices.WhereUser(User).Select(x => x.Id).ToList();
+
+                int? domainId = context.Domains.GetId(binding.DomainId);
+                int? webId = context.Webs.GetId(binding.DomainId);
+
+                var r = context.BrowserLogs.Include(x => x.Domain)
+                                           .ThenInclude(x => x.Web)
+                                           .Where(x => deviceIds.Contains(x.DeviceId))
+                                           .WhereIf(domainId.HasValue, x => x.DomainId == domainId.Value)
+                                           .WhereIf(webId.HasValue, x => x.Domain.WebId == webId.Value)
+                                           .WhereIf(binding.From.HasValue, x => x.TimestampStart >= binding.From.Value)
+                                           .WhereIf(binding.To.HasValue, x => x.TimestampEnd <= binding.To.Value);
+
+                var items = r.Page(binding).ToList().Select(x => new View.Device.BrowserLog(x));
+
+                long count = r.Count();
+
+                return new PaginatedView<View.Device.BrowserLog>(items, count);
             }
         }
     }

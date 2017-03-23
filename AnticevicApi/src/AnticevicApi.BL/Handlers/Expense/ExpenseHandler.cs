@@ -176,7 +176,7 @@ namespace AnticevicApi.BL.Handlers.Expense
                         To = binding.To,
                         UserId = User.Id
                     };
-                    return Math.Round(sql.ExecuteScalar<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);
+                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);
                 }
             }
         }

@@ -16,7 +16,7 @@ namespace AnticevicApi.Controllers.Device
             _deviceHandler = deviceHandler;
         }
 
-        [HttpPut]
+        [HttpGet]
         [Route("{deviceId}/browserLog")]
         public StatusCodeResult PutBrowserLog([FromBody] BrowserLogBinding binding, string deviceId)
         {
