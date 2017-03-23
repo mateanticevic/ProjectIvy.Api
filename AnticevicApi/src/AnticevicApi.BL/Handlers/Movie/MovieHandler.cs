@@ -21,14 +21,14 @@ namespace AnticevicApi.BL.Handlers.Movie
                 var query = db.Movies.WhereUser(User.Id)
                                      .Where(binding);
 
-                var movies = query.OrderByDescending(x => x.Timestamp)
-                                  .Page(binding.ToPagedBinding())
-                                  .ToList()
-                                  .Select(x => new View.Movie(x));
+                var items = query.OrderBy(binding)
+                                 .Page(binding.ToPagedBinding())
+                                 .ToList()
+                                 .Select(x => new View.Movie(x));
 
                 int count = query.Count();
 
-                return new PaginatedView<View.Movie>(movies, count);
+                return new PaginatedView<View.Movie>(items, count);
             }
         }
 

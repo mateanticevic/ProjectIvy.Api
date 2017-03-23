@@ -17,5 +17,7 @@ namespace AnticevicApi.Model.Binding.Common
         public DateTime? From { get; set; }
 
         public DateTime? To { get; set; }
+
+        public bool OrderAscending { get; set; }
     }
 }

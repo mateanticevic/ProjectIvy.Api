@@ -8,6 +8,11 @@ namespace AnticevicApi.DL.Extensions
 {
     public static class IQueryableExtensions
     {
+        public static IOrderedQueryable<T> OrderBy<T,TKey>(this IQueryable<T> query, bool orderAscending, Expression<Func<T, TKey>> sortExpression)
+        {
+            return orderAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
+        }
+
         public static IQueryable<T> Page<T>(this IQueryable<T> query, FilteredPagedBinding binding)
         {
             return query.Page(binding.Page, binding.PageSize);
