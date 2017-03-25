@@ -11,7 +11,6 @@ namespace AnticevicApi.Model.Database.Main.Finance
         public Expense()
         {
             Modified = DateTime.Now;
-            ValueId = Guid.NewGuid().ToString().Substring(0, 8);
         }
 
         [Key]
