@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System;
 using ViewExpense = AnticevicApi.Model.View.Expense;
 using ViewExpenseType = AnticevicApi.Model.View.ExpenseType;
+using AnticevicApi.Model.Binding.ExpenseType;
 
 namespace AnticevicApi.Controllers
 {
@@ -24,11 +25,11 @@ namespace AnticevicApi.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<ViewExpenseType.ExpenseType> Get()
+        public IEnumerable<ViewExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get));
 
-            return _expenseTypeHandler.Get();
+            return _expenseTypeHandler.Get(binding);
         }
 
         [HttpGet]

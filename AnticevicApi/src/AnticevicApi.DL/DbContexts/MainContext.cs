@@ -123,6 +123,10 @@ namespace AnticevicApi.DL.DbContexts
                         .HasOne(x => x.ExpenseType)
                         .WithMany(x => x.Expenses);
 
+            modelBuilder.Entity<ExpenseType>()
+                        .HasOne(x => x.ParentType)
+                        .WithMany(x => x.Children);
+
             modelBuilder.Entity<Expense>()
                         .HasOne(x => x.Vendor)
                         .WithMany(x => x.Expenses);

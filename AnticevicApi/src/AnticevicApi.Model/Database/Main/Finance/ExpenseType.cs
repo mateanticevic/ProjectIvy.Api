@@ -18,6 +18,12 @@ namespace AnticevicApi.Model.Database.Main.Finance
 
         public string TypeDescription { get; set; }
 
+        public int? ParentTypeId { get; set; }
+
+        public ICollection<ExpenseType> Children { get; set; }
+
         public ICollection<Expense> Expenses { get; set; }
+
+        public ExpenseType ParentType { get; set; }
     }
 }
