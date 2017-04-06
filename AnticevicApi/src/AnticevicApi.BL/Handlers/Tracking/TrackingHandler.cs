@@ -73,7 +73,7 @@ namespace AnticevicApi.BL.Handlers.Tracking
 
                     // TODO: Include last tracking from previous date
                     var trackings = db.Trackings.WhereUser(User.Id)
-                                                .Where(x => x.Timestamp > from && x.Timestamp < binding.To.Value.AddDays(1))
+                                                .Where(x => x.Timestamp > from && x.Timestamp < binding.To.Value)
                                                 .OrderBy(x => x.Timestamp)
                                                 .ToList()
                                                 .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, (double)x.Altitude))
