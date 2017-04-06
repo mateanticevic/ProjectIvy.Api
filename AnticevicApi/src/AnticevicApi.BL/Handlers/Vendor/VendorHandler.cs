@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View.Vendor;
 
@@ -14,7 +15,8 @@ namespace AnticevicApi.BL.Handlers.Vendor
         {
             using (var db = GetMainContext())
             {
-                var vendors = db.Vendors.OrderBy(x => x.Name)
+                var vendors = db.Vendors.Include(x => x.City)
+                                        .OrderBy(x => x.Name)
                                         .AsEnumerable();
 
                 vendors = string.IsNullOrEmpty(contains) ? vendors : vendors.Where(x => x.Name.Contains(contains) || x.ValueId.Contains(contains));

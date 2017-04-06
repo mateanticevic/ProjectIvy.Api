@@ -45,7 +45,7 @@ namespace AnticevicApi.Middleware
 
                 return _next(httpContext);
             }
-            catch
+            catch(Exception e)
             {
                 throw new UnauthorizedAccessException();
             }

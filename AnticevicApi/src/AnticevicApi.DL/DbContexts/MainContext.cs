@@ -134,6 +134,10 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<Expense>()
                         .HasOne(x => x.Currency);
 
+            modelBuilder.Entity<Vendor>()
+                        .HasOne(x => x.City)
+                        .WithMany(x => x.Vendors);
+
             modelBuilder.Entity<Flight>()
                         .HasOne(x => x.DestinationAirport);
 
