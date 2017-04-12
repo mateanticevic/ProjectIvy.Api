@@ -160,6 +160,27 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum(ExpenseSumGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var result = context.Expenses.Include(x => x.ExpenseType)
+                                             .WhereUser(User.Id);
+
+                result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
+                result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
+
+                var types = result.Select(x => x.ExpenseType.ValueId).Distinct().ToList();
+
+                var tasks = types.Select(x => new KeyValuePair<string, Task<decimal>>(x, GetSum(binding.Override(x))));
+
+                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
+
+                return tasks.Select(x => new KeyValuePair<string, decimal>(x.Key, x.Value.Result))
+                            .OrderByDescending(x => x.Value);
+            }
+        }
+
         public async Task<decimal> GetSum(ExpenseSumGetBinding binding)
         {
             using (var db = GetMainContext())

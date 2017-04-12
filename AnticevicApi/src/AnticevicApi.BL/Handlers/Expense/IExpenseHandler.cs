@@ -28,6 +28,8 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(ExpenseSumGetBinding binding);
 
+        Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum(ExpenseSumGetBinding binding);
+
         Task<decimal> GetSum(ExpenseSumGetBinding binding);
 
         bool Update(ExpenseBinding binding);

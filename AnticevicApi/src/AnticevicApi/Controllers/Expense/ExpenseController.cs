@@ -83,6 +83,15 @@ namespace AnticevicApi.Controllers.Expense
         }
 
         [HttpGet]
+        [Route("sum/type")]
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding)
+        {
+            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByTypeSum), binding);
+
+            return await _expenseHandler.GetGroupedByTypeSum(binding);
+        }
+
+        [HttpGet]
         [Route("{date:datetime}")]
         public IEnumerable<View.Expense> GetByDate(DateTime date)
         {

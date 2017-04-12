@@ -5,7 +5,7 @@ using System;
 
 namespace AnticevicApi.Model.Database.Main.Finance
 {
-    [Table("Expense", Schema = "Finance")]
+    [Table(nameof(Expense), Schema = nameof(Finance))]
     public class Expense : UserEntity
     {
         public Expense()
