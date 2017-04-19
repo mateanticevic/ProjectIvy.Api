@@ -10,6 +10,8 @@ namespace AnticevicApi.BL.Handlers.Task
 
         void CreateChange(TaskChangeBinding binding);
 
+        void Delete(string projectValueId, string taskValueId);
+
         IEnumerable<View.Task> Get(string projectValueId);
 
         View.Task Get(string projectValueId, string taskValueId);

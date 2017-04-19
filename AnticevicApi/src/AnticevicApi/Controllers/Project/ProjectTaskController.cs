@@ -33,5 +33,14 @@ namespace AnticevicApi.Controllers.Project
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpDelete]
+        [Route("{taskId}")]
+        public StatusCodeResult DeleteTask(string projectId, string taskId)
+        {
+            _taskHandler.Delete(projectId, taskId);
+
+            return new StatusCodeResult(StatusCodes.Status200OK);
+        }
     }
 }

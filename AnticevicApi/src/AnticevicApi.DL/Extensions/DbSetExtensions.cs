@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.Model.Database.Main.Finance;
 using AnticevicApi.Model.Database.Main.Inv;
 using AnticevicApi.Model.Database.Main.Net;
+using AnticevicApi.Model.Database.Main.Org;
 using AnticevicApi.Model.Database.Main.Transport;
 using AnticevicApi.Model.Database.Main.User;
 using Microsoft.EntityFrameworkCore;
@@ -31,6 +32,11 @@ namespace AnticevicApi.DL.Extensions
         }
 
         public static int? GetId(this DbSet<Vendor> set, string valueId)
+        {
+            return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
+        }
+
+        public static int? GetId(this DbSet<Project> set, string valueId)
         {
             return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
         }

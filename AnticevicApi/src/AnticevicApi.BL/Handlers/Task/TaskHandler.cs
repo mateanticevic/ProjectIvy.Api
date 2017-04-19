@@ -76,6 +76,21 @@ namespace AnticevicApi.BL.Handlers.Task
             }
         }
 
+        public void Delete(string projectValueId, string taskValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int projectId = context.Projects.GetId(projectValueId).Value;
+                var task = context.Tasks.SingleOrDefault(x => x.ProjectId == projectId && x.ValueId == taskValueId);
+                var taskChanges = context.TaskChanges.Where(x => x.TaskId == task.Id);
+
+                context.TaskChanges.RemoveRange(taskChanges);
+                context.Tasks.Remove(task);
+
+                context.SaveChanges();
+            }
+        }
+
         #region Get
 
         public IEnumerable<View.Task> Get(string projectValueId)
