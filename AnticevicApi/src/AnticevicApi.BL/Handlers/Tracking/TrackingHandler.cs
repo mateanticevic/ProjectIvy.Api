@@ -7,6 +7,7 @@ using GeoCoordinatePortable;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using System;
 using View = AnticevicApi.Model.View.Tracking;
 
 namespace AnticevicApi.BL.Handlers.Tracking
@@ -66,6 +67,8 @@ namespace AnticevicApi.BL.Handlers.Tracking
                                                    .OrderByDescending(x => x.Timestamp)
                                                    .FirstOrDefault()
                                                    .Timestamp;
+
+                binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
 
                 if (lastDate < binding.To.Value.Date)
                 {

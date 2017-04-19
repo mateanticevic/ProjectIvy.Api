@@ -61,9 +61,9 @@ namespace AnticevicApi.Controllers.Tracking
 
         [HttpGet]
         [Route("distance")]
-        public int GetDistance([FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        public int GetDistance([FromQuery] FilteredBinding binding)
         {
-            return _trackingHandler.GetDistance(new FilteredBinding(from, to));
+            return _trackingHandler.GetDistance(binding);
         }
 
         #endregion
