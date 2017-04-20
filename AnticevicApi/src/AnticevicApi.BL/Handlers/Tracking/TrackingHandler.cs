@@ -9,6 +9,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System;
 using View = AnticevicApi.Model.View.Tracking;
+using AnticevicApi.DL.Extensions.Entities;
 
 namespace AnticevicApi.BL.Handlers.Tracking
 {
@@ -68,6 +69,20 @@ namespace AnticevicApi.BL.Handlers.Tracking
                                                    .FirstOrDefault()
                                                    .Timestamp;
 
+                if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
+                {
+                    var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
+
+                    total += db.Trackings.WhereUser(User.Id)
+                                         .Distance(binding.From.Value, to);
+                }
+
+                if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
+                {
+                    total += db.Trackings.WhereUser(User.Id)
+                                         .Distance(binding.To.Value.Date, binding.To.Value);
+                }
+
                 binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
 
                 if (lastDate < binding.To.Value.Date)
@@ -75,19 +90,8 @@ namespace AnticevicApi.BL.Handlers.Tracking
                     var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
 
                     // TODO: Include last tracking from previous date
-                    var trackings = db.Trackings.WhereUser(User.Id)
-                                                .Where(x => x.Timestamp > from && x.Timestamp < binding.To.Value)
-                                                .OrderBy(x => x.Timestamp)
-                                                .ToList()
-                                                .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, (double)x.Altitude))
-                                                .ToList();
-                    double sum = 0;
-                    for (int i = 0; i < trackings.Count() - 1; i++)
-                    {
-                        sum += trackings[i].GetDistanceTo(trackings[i + 1]);
-                    }
-
-                    total += (int)sum;
+                    total += db.Trackings.WhereUser(User.Id)
+                                         .Distance(from.Value, binding.To.Value);
                 }
 
                 return total;
