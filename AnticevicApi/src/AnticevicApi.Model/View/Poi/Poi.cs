@@ -5,7 +5,7 @@ namespace AnticevicApi.Model.View.Poi
 {
     public class Poi
     {
-        public Poi(DatabaseModel.Tracking.Poi x)
+        public Poi(DatabaseModel.Travel.Poi x)
         {
             Category = x.PoiCategory.ConvertTo(y => new PoiCategory(y));
             Latitude = x.Latitude;

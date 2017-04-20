@@ -25,6 +25,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using AnticevicApi.BL.Handlers.Trip;
 
 namespace AnticevicApi
 {
@@ -75,6 +76,7 @@ namespace AnticevicApi
             services.AddHandler<ISecurityHandler, SecurityHandler>();
             services.AddHandler<ITaskHandler, TaskHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
+            services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();

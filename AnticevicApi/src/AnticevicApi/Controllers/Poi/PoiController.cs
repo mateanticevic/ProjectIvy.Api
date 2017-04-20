@@ -19,32 +19,6 @@ namespace AnticevicApi.Controllers.Poi
 
         #region Get
 
-        [HttpGet]
-        [Route("categories")]
-        public IEnumerable<View.PoiCategory> GetCategories()
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCategories));
-
-            return _poiHandler.GetCategories();
-        }
-
-        [HttpGet]
-        [Route("lists")]
-        public IEnumerable<View.PoiList> GetLists()
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetLists));
-
-            return _poiHandler.GetLists();
-        }
-
-        [HttpGet]
-        [Route("list/{listValueId}/pois")]
-        public IEnumerable<View.Poi> GetPois(string listValueId)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetPois), listValueId);
-
-            return _poiHandler.GetByList(listValueId);
-        }
 
         #endregion
     }

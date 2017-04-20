@@ -8,6 +8,7 @@ using AnticevicApi.Model.Database.Main.Org;
 using AnticevicApi.Model.Database.Main.Security;
 using AnticevicApi.Model.Database.Main.Tracking;
 using AnticevicApi.Model.Database.Main.Transport;
+using AnticevicApi.Model.Database.Main.Travel;
 using AnticevicApi.Model.Database.Main.User;
 using Microsoft.EntityFrameworkCore;
 
@@ -58,8 +59,6 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<PoiCategory> PoiCategories { get; set; }
 
-        public DbSet<PoiList> PoiLists { get; set; }
-
         public DbSet<Project> Projects { get; set; }
 
         public DbSet<Task> Tasks { get; set; }
@@ -73,6 +72,12 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<TaskType> TaskTypes { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }
+
+        public DbSet<Trip> Trips { get; set; }
+
+        public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }
+
+        public DbSet<TripExpenseInclude> TripExpensesIncluded { get; set; }
 
         public DbSet<TrackingDistance> TrackingDistances { get; set; }
 
@@ -154,14 +159,6 @@ namespace AnticevicApi.DL.DbContexts
                         .HasOne(x => x.IncomeSource)
                         .WithMany(x => x.Incomes);
 
-            modelBuilder.Entity<Poi>()
-                        .HasOne(x => x.PoiList)
-                        .WithMany(x => x.Pois);
-
-            modelBuilder.Entity<Poi>()
-                        .HasOne(x => x.PoiCategory)
-                        .WithMany(x => x.Pois);
-
             modelBuilder.Entity<Task>()
                         .HasOne(x => x.Project)
                         .WithMany(x => x.Tasks);
@@ -225,6 +222,23 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<BrowserLog>()
                         .HasOne(x => x.Domain)
                         .WithMany(x => x.BrowserLogs);
+
+            modelBuilder.Entity<Poi>()
+                        .HasOne(x => x.PoiCategory)
+                        .WithMany(x => x.Pois);
+
+            modelBuilder.Entity<Poi>()
+                        .HasOne(x => x.PoiCategory)
+                        .WithMany(x => x.Pois);
+
+            modelBuilder.Entity<TripPoi>()
+                        .HasKey(x => new { x.PoiId, x.TripId });
+
+            modelBuilder.Entity<TripExpenseExclude>()
+                        .HasKey(x => new { x.ExpenseId, x.TripId });
+
+            modelBuilder.Entity<TripExpenseInclude>()
+                        .HasKey(x => new { x.ExpenseId, x.TripId });
         }
     }
 }

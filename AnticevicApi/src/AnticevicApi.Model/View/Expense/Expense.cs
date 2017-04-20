@@ -13,7 +13,6 @@ namespace AnticevicApi.Model.View.Expense
             Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
             Date = x.Date;
             ExpenseType = x.ExpenseType.ConvertTo(y => new ExpenseType.ExpenseType(y));
-            User = x.User.ConvertTo(y => new User.User(y));
             ValueId = x.ValueId;
             Vendor = x.Vendor.ConvertTo(y => new Vendor.Vendor(y));
         }
@@ -27,8 +26,6 @@ namespace AnticevicApi.Model.View.Expense
         public DateTime Date { get; set; }
 
         public ExpenseType.ExpenseType ExpenseType { get; set; }
-
-        public User.User User { get; set; }
 
         public string ValueId { get; set; }
 

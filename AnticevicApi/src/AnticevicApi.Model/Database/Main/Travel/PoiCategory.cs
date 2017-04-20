@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
-namespace AnticevicApi.Model.Database.Main.Tracking
+namespace AnticevicApi.Model.Database.Main.Travel
 {
-    [Table("PoiList", Schema = "Tracking")]
-    public class PoiList : UserEntity, IHasValueId
+    [Table(nameof(PoiCategory), Schema = nameof(Travel))]
+    public class PoiCategory : IHasValueId, IHasName
     {
         [Key]
         public int Id { get; set; }
