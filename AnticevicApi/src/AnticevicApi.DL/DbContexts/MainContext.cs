@@ -75,6 +75,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<Trip> Trips { get; set; }
 
+        public DbSet<TripCity> TripCities { get; set; }
+
         public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }
 
         public DbSet<TripExpenseInclude> TripExpensesIncluded { get; set; }
@@ -239,6 +241,14 @@ namespace AnticevicApi.DL.DbContexts
 
             modelBuilder.Entity<TripExpenseInclude>()
                         .HasKey(x => new { x.ExpenseId, x.TripId });
+
+            modelBuilder.Entity<TripCity>()
+                        .HasKey(x => new { x.CityId, x.TripId });
+
+            modelBuilder.Entity<Trip>()
+                        .HasMany(x => x.Cities)
+                        .WithOne(x => x.Trip);
+                        
         }
     }
 }

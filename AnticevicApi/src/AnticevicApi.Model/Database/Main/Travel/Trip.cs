@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
 
@@ -17,5 +18,7 @@ namespace AnticevicApi.Model.Database.Main.Travel
         public DateTime TimestampEnd { get; set; }
 
         public DateTime TimestampStart { get; set; }
+
+        public ICollection<TripCity> Cities { get; set; }
     }
 }

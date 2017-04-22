@@ -43,6 +43,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var trip = context.Trips.WhereUser(User.Id)
+                                        .Include($"{nameof(Model.Database.Main.Travel.Trip.Cities)}.{nameof(Model.Database.Main.Travel.TripCity.City)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
                 var excludedExpenseIds = context.TripExpensesExcluded.Where(x => x.TripId == trip.Id)
