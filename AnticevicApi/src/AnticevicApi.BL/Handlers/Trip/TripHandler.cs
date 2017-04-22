@@ -1,6 +1,9 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.DL.Extensions;
+using AnticevicApi.Model.Binding.Trip;
+using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using View = AnticevicApi.Model.View;
 
@@ -13,6 +16,26 @@ namespace AnticevicApi.BL.Handlers.Trip
         public TripHandler(IHandlerContext<TripHandler> context, ITrackingHandler trackingHandler) : base(context)
         {
             _trackingHandler = trackingHandler;
+        }
+
+        public PaginatedView<View.Trip.Trip> Get(TripGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var query = context.Trips.WhereUser(User.Id);
+
+                query = binding.From.HasValue ? query.Where(x => x.TimestampEnd > binding.From.Value) : query;
+                query = binding.To.HasValue ? query.Where(x => x.TimestampStart < binding.To.Value) : query;
+
+                int count = query.Count();
+
+                var items = query.OrderByDescending(x => x.TimestampStart)
+                                 .Page(binding)
+                                 .ToList()
+                                 .Select(x => new View.Trip.Trip(x));
+
+                return new PaginatedView<View.Trip.Trip>(items, count);
+            }
         }
 
         public View.Trip.Trip GetSingle(string valueId)

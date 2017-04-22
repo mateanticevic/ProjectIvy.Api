@@ -1,4 +1,6 @@
 ﻿using AnticevicApi.BL.Handlers.Trip;
+using AnticevicApi.Model.Binding.Trip;
+using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using View = AnticevicApi.Model.View.Trip;
@@ -16,6 +18,12 @@ namespace AnticevicApi.Controllers.Trip
         }
 
         #region Get
+
+        [HttpGet]
+        public PaginatedView<View.Trip> Get(TripGetBinding binding)
+        {
+            return _tripHandler.Get(binding);
+        }
 
         [HttpGet]
         [Route("{id}")]
