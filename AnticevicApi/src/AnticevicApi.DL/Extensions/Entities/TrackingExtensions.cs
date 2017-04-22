@@ -16,7 +16,7 @@ namespace AnticevicApi.DL.Extensions.Entities
             var filtered = trackings.Where(x => x.Timestamp >= from && x.Timestamp <= to)
                                     .OrderBy(x => x.Timestamp)
                                     .ToList()
-                                    .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, (double)x.Altitude))
+                                    .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, (double)(x.Altitude.HasValue ? x.Altitude : 0)))
                                     .ToList();
             double sum = 0;
             for (int i = 0; i < filtered.Count() - 1; i++)

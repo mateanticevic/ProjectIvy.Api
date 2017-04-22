@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Trip;
 using AnticevicApi.Model.Binding.Trip;
 using AnticevicApi.Model.View;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using View = AnticevicApi.Model.View.Trip;
@@ -33,5 +34,14 @@ namespace AnticevicApi.Controllers.Trip
         }
 
         #endregion
+
+        [HttpPost]
+        [Route("{tripId}/city/{cityId}")]
+        public StatusCodeResult PostCity(string tripId, string cityId)
+        {
+            _tripHandler.AddCityToTrip(tripId, cityId);
+
+            return new StatusCodeResult(StatusCodes.Status200OK);
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Trip;
+using AnticevicApi.Model.Database.Main.Travel;
 using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
@@ -16,6 +17,24 @@ namespace AnticevicApi.BL.Handlers.Trip
         public TripHandler(IHandlerContext<TripHandler> context, ITrackingHandler trackingHandler) : base(context)
         {
             _trackingHandler = trackingHandler;
+        }
+
+        public void AddCityToTrip(string tripValueId, string cityValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int tripId = context.Trips.GetId(tripValueId).Value;
+                int cityId = context.Cities.GetId(cityValueId).Value;
+
+                var tripCity = new TripCity()
+                {
+                    CityId = cityId,
+                    TripId = tripId
+                };
+
+                context.TripCities.Add(tripCity);
+                context.SaveChanges();
+            }
         }
 
         public PaginatedView<View.Trip.Trip> Get(TripGetBinding binding)

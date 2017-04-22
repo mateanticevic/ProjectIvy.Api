@@ -1,8 +1,10 @@
-﻿using AnticevicApi.Model.Database.Main.Finance;
+﻿using AnticevicApi.Model.Database.Main.Common;
+using AnticevicApi.Model.Database.Main.Finance;
 using AnticevicApi.Model.Database.Main.Inv;
 using AnticevicApi.Model.Database.Main.Net;
 using AnticevicApi.Model.Database.Main.Org;
 using AnticevicApi.Model.Database.Main.Transport;
+using AnticevicApi.Model.Database.Main.Travel;
 using AnticevicApi.Model.Database.Main.User;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -12,6 +14,11 @@ namespace AnticevicApi.DL.Extensions
     public static class DbSetExtensions
     {
         public static int? GetId(this DbSet<Car> set, string valueId)
+        {
+            return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
+        }
+
+        public static int? GetId(this DbSet<City> set, string valueId)
         {
             return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
         }
@@ -32,6 +39,11 @@ namespace AnticevicApi.DL.Extensions
         }
 
         public static int? GetId(this DbSet<Vendor> set, string valueId)
+        {
+            return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
+        }
+
+        public static int? GetId(this DbSet<Trip> set, string valueId)
         {
             return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
         }

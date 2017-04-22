@@ -35,6 +35,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<CarLog> CarLogs { get; set; }
 
+        public DbSet<City> Cities { get; set; }
+
         public DbSet<Currency> Currencies { get; set; }
 
         public DbSet<Domain> Domains { get; set; }
