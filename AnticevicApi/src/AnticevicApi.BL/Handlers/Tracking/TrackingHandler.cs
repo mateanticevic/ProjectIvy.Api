@@ -3,13 +3,12 @@ using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Utilities.Geo;
-using GeoCoordinatePortable;
+using AnticevicApi.DL.Extensions.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System;
 using View = AnticevicApi.Model.View.Tracking;
-using AnticevicApi.DL.Extensions.Entities;
 
 namespace AnticevicApi.BL.Handlers.Tracking
 {
@@ -60,9 +59,17 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                int total = db.TrackingDistances.WhereUser(User.Id)
-                                                .WhereTimestampInclusive(binding)
-                                                .Sum(x => x.DistanceInMeters);
+                int total = 0;
+
+                // Already calculated distance. By day.
+                {
+                    var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
+                    var to = binding.To.Value.Date;
+
+                    total = db.TrackingDistances.WhereUser(User.Id)
+                                                    .WhereTimestampFromInclusive(from, to)
+                                                    .Sum(x => x.DistanceInMeters);
+                }
 
                 var lastDate = db.TrackingDistances.WhereUser(User.Id)
                                                    .OrderByDescending(x => x.Timestamp)

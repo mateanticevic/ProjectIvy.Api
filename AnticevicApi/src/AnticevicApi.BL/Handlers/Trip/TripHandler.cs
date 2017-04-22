@@ -1,4 +1,5 @@
-﻿using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.DL.Extensions;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = AnticevicApi.Model.View;
@@ -7,8 +8,11 @@ namespace AnticevicApi.BL.Handlers.Trip
 {
     public class TripHandler : Handler<TripHandler>, ITripHandler
     {
-        public TripHandler(IHandlerContext<TripHandler> context) : base(context)
+        private readonly ITrackingHandler _trackingHandler;
+
+        public TripHandler(IHandlerContext<TripHandler> context, ITrackingHandler trackingHandler) : base(context)
         {
+            _trackingHandler = trackingHandler;
         }
 
         public View.Trip.Trip GetSingle(string valueId)
@@ -42,7 +46,8 @@ namespace AnticevicApi.BL.Handlers.Trip
 
                 var tripView = new View.Trip.Trip(trip)
                 {
-                    Expenses = expenses.Select(x => new View.Expense.Expense(x))
+                    Expenses = expenses.Select(x => new View.Expense.Expense(x)),
+                    Distance = _trackingHandler.GetDistance(new Model.Binding.Common.FilteredBinding(trip.TimestampStart, trip.TimestampEnd))
                 };
 
                 return tripView;

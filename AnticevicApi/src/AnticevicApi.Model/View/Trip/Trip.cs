@@ -22,6 +22,8 @@ namespace AnticevicApi.Model.View.Trip
 
         public DateTime TimestampStart { get; set; }
 
+        public int Distance { get; set; }
+
         public IEnumerable<Expense.Expense> Expenses { get; set; }
     }
 }

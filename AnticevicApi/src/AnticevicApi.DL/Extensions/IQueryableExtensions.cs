@@ -1,8 +1,8 @@
 ﻿using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Database.Main;
-using System;
-using System.Linq;
 using System.Linq.Expressions;
+using System.Linq;
+using System;
 
 namespace AnticevicApi.DL.Extensions
 {
@@ -31,8 +31,21 @@ namespace AnticevicApi.DL.Extensions
 
         public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, FilteredBinding binding) where T : IHasTimestamp
         {
-            query = binding?.From == null ? query : query.Where(x => x.Timestamp >= binding.From);
-            query = binding?.To == null ? query : query.Where(x => x.Timestamp <= binding.To);
+            return query.WhereTimestampInclusive(binding.From, binding.To);
+        }
+
+        public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
+        {
+            query = from == null ? query : query.Where(x => x.Timestamp >= from);
+            query = to == null ? query : query.Where(x => x.Timestamp <= to);
+
+            return query;
+        }
+
+        public static IQueryable<T> WhereTimestampFromInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
+        {
+            query = from == null ? query : query.Where(x => x.Timestamp >= from);
+            query = to == null ? query : query.Where(x => x.Timestamp < to);
 
             return query;
         }
