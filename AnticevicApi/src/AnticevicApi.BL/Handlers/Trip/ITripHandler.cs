@@ -8,6 +8,10 @@ namespace AnticevicApi.BL.Handlers.Trip
     {
         void AddCityToTrip(string tripValueId, string cityValueId);
 
+        void Create(TripBinding binding);
+
+        void Delete(string valueId);
+
         PaginatedView<View.Trip> Get(TripGetBinding binding);
 
         View.Trip GetSingle(string valueId);

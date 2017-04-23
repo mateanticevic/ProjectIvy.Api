@@ -1,13 +1,14 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Trip;
 using AnticevicApi.Model.Database.Main.Travel;
 using AnticevicApi.Model.View;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
 using Database = AnticevicApi.Model.Database.Main;
+using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using View = AnticevicApi.Model.View;
+using AnticevicApi.BL.Exceptions;
 
 namespace AnticevicApi.BL.Handlers.Trip
 {
@@ -35,6 +36,37 @@ namespace AnticevicApi.BL.Handlers.Trip
 
                 context.TripCities.Add(tripCity);
                 context.SaveChanges();
+            }
+        }
+
+        public void Create(TripBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var trip = binding.ToEntity();
+                trip.UserId = User.Id;
+
+                context.Trips.Add(trip);
+                context.SaveChanges();
+            }
+        }
+
+        public void Delete(string valueId)
+        {
+            try
+            {
+                using (var context = GetMainContext())
+                {
+                    var trip = context.Trips.WhereUser(User)
+                                            .SingleOrDefault(x => x.ValueId == valueId);
+
+                    context.Trips.Remove(trip);
+                    context.SaveChanges();
+                }
+            }
+            catch
+            {
+                throw new ResourceNotFoundException();
             }
         }
 

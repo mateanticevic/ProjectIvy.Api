@@ -36,6 +36,8 @@ namespace AnticevicApi.Middleware
                 statusCode = HttpStatusCode.Unauthorized;
             else if (e is ResourceExistsException)
                 statusCode = HttpStatusCode.Conflict;
+            else if (e is ResourceNotFoundException)
+                statusCode = HttpStatusCode.NotFound;
 
             var result = JsonConvert.SerializeObject(new { error = e.Message });
             context.Response.ContentType = "application/json";
