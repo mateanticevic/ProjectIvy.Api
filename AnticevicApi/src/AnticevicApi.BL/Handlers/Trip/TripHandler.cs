@@ -6,6 +6,7 @@ using AnticevicApi.Model.View;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using Database = AnticevicApi.Model.Database.Main;
 using View = AnticevicApi.Model.View;
 
 namespace AnticevicApi.BL.Handlers.Trip
@@ -41,10 +42,16 @@ namespace AnticevicApi.BL.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                var query = context.Trips.WhereUser(User.Id);
+                var query = context.Trips.WhereUser(User.Id)
+                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
+                                         .AsQueryable();
 
                 query = binding.From.HasValue ? query.Where(x => x.TimestampEnd > binding.From.Value) : query;
                 query = binding.To.HasValue ? query.Where(x => x.TimestampStart < binding.To.Value) : query;
+
+                int? cityId = context.Cities.GetId(binding.CityId);
+
+                query = cityId.HasValue ? query.Where(x => x.Cities.Select(y => y.CityId).Contains(cityId.Value)) : query;
 
                 int count = query.Count();
 
@@ -62,7 +69,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var trip = context.Trips.WhereUser(User.Id)
-                                        .Include($"{nameof(Model.Database.Main.Travel.Trip.Cities)}.{nameof(Model.Database.Main.Travel.TripCity.City)}")
+                                        .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
                 var excludedExpenseIds = context.TripExpensesExcluded.Where(x => x.TripId == trip.Id)
