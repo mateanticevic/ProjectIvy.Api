@@ -1,9 +1,9 @@
 ﻿using AnticevicApi.BL.MapExtensions;
+using AnticevicApi.DL.Extensions.Entities;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
 using AnticevicApi.Utilities.Geo;
-using AnticevicApi.DL.Extensions.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -57,6 +57,9 @@ namespace AnticevicApi.BL.Handlers.Tracking
 
         public int GetDistance(FilteredBinding binding)
         {
+            binding.From = binding.From.HasValue ? binding.From : DateTime.MinValue;
+            binding.To = binding.To.HasValue ? binding.To : DateTime.MaxValue;
+
             using (var db = GetMainContext())
             {
                 int total = 0;
