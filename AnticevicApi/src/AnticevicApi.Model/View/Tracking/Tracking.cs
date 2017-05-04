@@ -1,5 +1,4 @@
-﻿using AnticevicApi.Extensions.BuiltInTypes;
-using DatabaseModel = AnticevicApi.Model.Database.Main;
+﻿using DatabaseModel = AnticevicApi.Model.Database.Main;
 using System;
 
 namespace AnticevicApi.Model.View.Tracking
@@ -14,7 +13,6 @@ namespace AnticevicApi.Model.View.Tracking
             Lng = x.Longitude;
             Speed = x.Speed;
             Timestamp = x.Timestamp;
-            User = x.User.ConvertTo(y => new User.User(y));
         }
 
         public double? Accuracy { get; set; }
@@ -28,7 +26,5 @@ namespace AnticevicApi.Model.View.Tracking
         public double? Speed { get; set; }
 
         public DateTime Timestamp { get; set; }
-
-        public User.User User { get; set; }
     }
 }
