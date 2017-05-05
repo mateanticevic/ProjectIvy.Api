@@ -1,5 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Airport;
 using AnticevicApi.Common.Configuration;
+using AnticevicApi.Model.Binding.Airport;
+using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -20,16 +22,16 @@ namespace AnticevicApi.Controllers.Airport
         }
 
         [HttpGet]
-        public IEnumerable<View.Airport> Get([FromQuery] bool onlyVisited)
+        public PaginatedView<View.Airport> Get([FromQuery] AirportGetBinding binding)
         {
-            return _airportHandler.Get(onlyVisited);
+            return _airportHandler.Get(binding);
         }
 
         [HttpGet]
         [Route("count")]
-        public int GetCount([FromQuery] bool onlyVisited)
+        public long GetCount([FromQuery] AirportGetBinding binding)
         {
-            return _airportHandler.Get(onlyVisited).Count();
+            return _airportHandler.Count(binding);
         }
     }
 }
