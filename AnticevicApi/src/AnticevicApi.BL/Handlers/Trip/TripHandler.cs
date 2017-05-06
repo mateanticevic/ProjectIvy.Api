@@ -1,4 +1,5 @@
-﻿using AnticevicApi.BL.Handlers.Tracking;
+﻿using AnticevicApi.BL.Exceptions;
+using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Trip;
@@ -8,7 +9,6 @@ using Database = AnticevicApi.Model.Database.Main;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = AnticevicApi.Model.View;
-using AnticevicApi.BL.Exceptions;
 
 namespace AnticevicApi.BL.Handlers.Trip
 {
@@ -21,11 +21,11 @@ namespace AnticevicApi.BL.Handlers.Trip
             _trackingHandler = trackingHandler;
         }
 
-        public void AddCityToTrip(string tripValueId, string cityValueId)
+        public void AddCity(string tripValueId, string cityValueId)
         {
             using (var context = GetMainContext())
             {
-                int tripId = context.Trips.GetId(tripValueId).Value;
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
                 int cityId = context.Cities.GetId(cityValueId).Value;
 
                 var tripCity = new TripCity()
@@ -35,6 +35,33 @@ namespace AnticevicApi.BL.Handlers.Trip
                 };
 
                 context.TripCities.Add(tripCity);
+                context.SaveChanges();
+            }
+        }
+
+        public void AddExpense(string tripValueId, string expenseValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int expenseId = context.Expenses.WhereUser(User.Id).GetId(expenseValueId).Value;
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
+
+                var excludedExpense = context.TripExpensesExcluded.SingleOrDefault(x => x.TripId == tripId && x.ExpenseId == expenseId);
+                if (excludedExpense != null)
+                {
+                    context.TripExpensesExcluded.Remove(excludedExpense);
+                    context.SaveChanges();
+
+                    return;
+                }
+
+                var tripExpenseIncluded = new TripExpenseInclude()
+                {
+                    ExpenseId = expenseId,
+                    TripId = tripId
+                };
+
+                context.TripExpensesIncluded.Add(tripExpenseIncluded);
                 context.SaveChanges();
             }
         }
@@ -118,7 +145,7 @@ namespace AnticevicApi.BL.Handlers.Trip
                                                    .Include(x => x.Vendor);
 
                 var expensesWithExcluded = userExpenses.Where(x => trip.TimestampStart.Date <= x.Date && trip.TimestampEnd.Date >= x.Date)
-                                                           .Where(x => !excludedExpenseIds.Contains(x.Id));
+                                                       .Where(x => !excludedExpenseIds.Contains(x.Id));
 
                 var expensesIncluded = userExpenses.Where(x => includedExpenseIds.Contains(x.Id));
 
@@ -133,6 +160,54 @@ namespace AnticevicApi.BL.Handlers.Trip
                 };
 
                 return tripView;
+            }
+        }
+
+        public void RemoveCity(string tripValueId, string cityValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int cityId = context.Cities.GetId(cityValueId).Value;
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
+
+                var tripCity = context.TripCities.SingleOrDefault(x => x.CityId == cityId && x.TripId == tripId);
+
+                if (tripCity != null)
+                {
+                    context.TripCities.Remove(tripCity);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    throw new ResourceNotFoundException();
+                }
+            }
+        }
+
+        public void RemoveExpense(string tripValueId, string expenseValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int expenseId = context.Expenses.WhereUser(User.Id).GetId(expenseValueId).Value;
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
+
+                var includedExpense = context.TripExpensesIncluded.SingleOrDefault(x => x.TripId == tripId && x.ExpenseId == expenseId);
+                if (includedExpense != null)
+                {
+                    context.TripExpensesIncluded.Remove(includedExpense);
+                    context.SaveChanges();
+
+                    return;
+                }
+
+                var tripExpenseExcluded = new TripExpenseExclude()
+                {
+                    ExpenseId = expenseId,
+                    TripId = tripId
+                };
+
+                context.TripExpensesExcluded.Add(tripExpenseExcluded);
+                context.SaveChanges();
             }
         }
     }

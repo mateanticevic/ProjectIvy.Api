@@ -6,7 +6,7 @@ using System;
 namespace AnticevicApi.Model.Database.Main.Finance
 {
     [Table(nameof(Expense), Schema = nameof(Finance))]
-    public class Expense : UserEntity
+    public class Expense : UserEntity, IHasValueId
     {
         public Expense()
         {

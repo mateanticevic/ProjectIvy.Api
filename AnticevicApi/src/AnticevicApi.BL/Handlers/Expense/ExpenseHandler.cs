@@ -50,8 +50,6 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        #region Get
-
         public PaginatedView<View.Expense> Get(ExpenseGetBinding binding)
         {
             var view = new PaginatedView<View.Expense>();
@@ -240,8 +238,6 @@ namespace AnticevicApi.BL.Handlers.Expense
                 return expenses.ToList().Select(x => new View.Expense(x));
             }
         }
-
-        #endregion
 
         public bool Update(ExpenseBinding binding)
         {

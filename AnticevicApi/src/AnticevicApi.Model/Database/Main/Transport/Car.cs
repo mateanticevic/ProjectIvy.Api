@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnticevicApi.Model.Database.Main.Transport
 {
     [Table("Car", Schema = "Transport")]
-    public class Car : UserEntity
+    public class Car : UserEntity, IHasValueId
     {
         [Key]
         public int Id { get; set; }

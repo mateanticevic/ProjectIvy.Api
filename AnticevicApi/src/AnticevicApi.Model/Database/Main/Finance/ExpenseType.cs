@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace AnticevicApi.Model.Database.Main.Finance
 {
     [Table("ExpenseType", Schema = "Finance")]
-    public class ExpenseType
+    public class ExpenseType : IHasValueId
     {
         [Key]
         public int Id { get; set; }

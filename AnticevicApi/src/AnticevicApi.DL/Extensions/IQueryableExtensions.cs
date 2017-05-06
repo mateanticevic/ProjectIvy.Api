@@ -8,6 +8,11 @@ namespace AnticevicApi.DL.Extensions
 {
     public static class IQueryableExtensions
     {
+        public static int? GetId<T>(this IQueryable<T> query, string valueId) where T : class, IHasValueId
+        {
+            return query.SingleOrDefault(x => x.ValueId == valueId)?.Id;
+        }
+
         public static IOrderedQueryable<T> OrderBy<T,TKey>(this IQueryable<T> query, bool orderAscending, Expression<Func<T, TKey>> sortExpression)
         {
             return orderAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);

@@ -6,7 +6,9 @@ namespace AnticevicApi.BL.Handlers.Trip
 {
     public interface ITripHandler
     {
-        void AddCityToTrip(string tripValueId, string cityValueId);
+        void AddCity(string tripValueId, string cityValueId);
+
+        void AddExpense(string tripValueId, string expenseValueId);
 
         void Create(TripBinding binding);
 
@@ -15,5 +17,9 @@ namespace AnticevicApi.BL.Handlers.Trip
         PaginatedView<View.Trip> Get(TripGetBinding binding);
 
         View.Trip GetSingle(string valueId);
+
+        void RemoveCity(string tripValueId, string cityValueId);
+
+        void RemoveExpense(string tripValueId, string expenseValueId);
     }
 }
