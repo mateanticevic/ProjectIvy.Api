@@ -29,5 +29,7 @@ namespace AnticevicApi.Model.View.Trip
         public IEnumerable<City.City> Cities { get; set; }
 
         public IEnumerable<Expense.Expense> Expenses { get; set; }
+
+        public decimal TotalSpent { get; set; }
     }
 }

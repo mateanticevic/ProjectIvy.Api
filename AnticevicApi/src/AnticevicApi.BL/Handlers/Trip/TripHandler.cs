@@ -1,10 +1,14 @@
 ﻿using AnticevicApi.BL.Exceptions;
 using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.BL.MapExtensions;
+using AnticevicApi.DL.Databases.Main.Queries;
+using AnticevicApi.DL.Extensions.Entities;
 using AnticevicApi.DL.Extensions;
+using AnticevicApi.DL.Sql;
 using AnticevicApi.Model.Binding.Trip;
 using AnticevicApi.Model.Database.Main.Travel;
 using AnticevicApi.Model.View;
+using Dapper;
 using Database = AnticevicApi.Model.Database.Main;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -153,10 +157,27 @@ namespace AnticevicApi.BL.Handlers.Trip
                                                    .OrderBy(x => x.Date)
                                                    .ToList();
 
+                decimal totalSpent = 0;
+                using (var db = GetSqlConnection())
+                {
+                    int targetCurrencyId = context.GetCurrencyId(null, User.Id);
+                    string sql = SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency);
+
+                    var query = new GetExpenseSumQuery()
+                    {
+                        ExpenseIds = expenses.Select(x => x.Id),
+                        TargetCurrencyId = targetCurrencyId,
+                        UserId = User.Id
+                    };
+
+                    totalSpent = db.ExecuteScalar<decimal>(sql, query);
+                }
+
                 var tripView = new View.Trip.Trip(trip)
                 {
                     Expenses = expenses.Select(x => new View.Expense.Expense(x)),
-                    Distance = _trackingHandler.GetDistance(new Model.Binding.Common.FilteredBinding(trip.TimestampStart, trip.TimestampEnd))
+                    Distance = _trackingHandler.GetDistance(new Model.Binding.Common.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
+                    TotalSpent = totalSpent
                 };
 
                 return tripView;

@@ -3,7 +3,10 @@
 --DECLARE @UserId INT = 1
 --DECLARE @TargetCurrencyId INT = 45
 --DECLARE @ExpenseTypeValueId NVARCHAR(MAX) = NULL
---DECLARE @VendorValueId NVARCHAR(MAX) = 'olimp'
+--DECLARE @VendorValueId NVARCHAR(MAX) = NULL
+--DECLARE @ExpenseIds dbo.IntList
+--INSERT INTO @ExpenseIds (Value) VALUES (50)
+--INSERT INTO @ExpenseIds (Value) VALUES (51)
 
 DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 
@@ -70,3 +73,4 @@ WHERE 1=1
 	AND (ISNULL(@VendorValueId, v.ValueId) = v.ValueId OR (v.ValueId IS NULL AND @VendorValueId IS NULL))
 	AND (@From IS NULL OR e.[Date] >= @From)
 	AND (@To IS NULL OR e.[Date] <= @To)
+	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExpenseIds) OR EXISTS(SELECT TOP 1 * FROM @ExpenseIds WHERE [Value] = e.Id))

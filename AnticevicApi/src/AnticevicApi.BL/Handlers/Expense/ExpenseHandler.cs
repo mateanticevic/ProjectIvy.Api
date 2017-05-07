@@ -1,4 +1,5 @@
 ﻿using AnticevicApi.BL.MapExtensions;
+using AnticevicApi.DL.Databases.Main.Queries;
 using AnticevicApi.DL.Extensions.Entities;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.DL.Sql;
@@ -9,9 +10,9 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System;
 using View = AnticevicApi.Model.View.Expense;
-using System.Threading.Tasks;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
@@ -187,7 +188,7 @@ namespace AnticevicApi.BL.Handlers.Expense
 
                 using (var sql = GetSqlConnection())
                 {
-                    var parameters = new
+                    var parameters = new GetExpenseSumQuery()
                     {
                         ExpenseTypeValueId = binding.TypeId,
                         VendorValueId = binding.VendorId,
