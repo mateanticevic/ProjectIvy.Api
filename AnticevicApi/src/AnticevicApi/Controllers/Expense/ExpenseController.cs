@@ -52,7 +52,7 @@ namespace AnticevicApi.Controllers.Expense
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), from, to);
 
-            return _expenseHandler.GetCount(new FilteredBinding(from, to));
+            return _expenseHandler.Count(new FilteredBinding(from, to));
         }
 
         [HttpGet]

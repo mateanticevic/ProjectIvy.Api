@@ -70,6 +70,24 @@ namespace AnticevicApi.BL.Handlers.Trip
             }
         }
 
+        public void AddPoi(string tripValueId, string poiValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
+                int poiId = context.Pois.GetId(poiValueId).Value;
+
+                var tripPoi = new TripPoi()
+                {
+                    PoiId = poiId,
+                    TripId = tripId
+                };
+
+                context.TripPois.Add(tripPoi);
+                context.SaveChanges();
+            }
+        }
+
         public void Create(TripBinding binding)
         {
             using (var context = GetMainContext())
@@ -133,6 +151,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             {
                 var trip = context.Trips.WhereUser(User.Id)
                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
+                                        .Include($"{nameof(Database.Travel.Trip.Pois)}.{nameof(TripPoi.Poi)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
                 var excludedExpenseIds = context.TripExpensesExcluded.Where(x => x.TripId == trip.Id)
@@ -229,6 +248,27 @@ namespace AnticevicApi.BL.Handlers.Trip
 
                 context.TripExpensesExcluded.Add(tripExpenseExcluded);
                 context.SaveChanges();
+            }
+        }
+
+        public void RemovePoi(string tripValueId, string poiValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int poiId = context.Pois.GetId(poiValueId).Value;
+                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
+
+                var tripPoi = context.TripPois.SingleOrDefault(x => x.PoiId == poiId && x.TripId == tripId);
+
+                if (tripPoi != null)
+                {
+                    context.TripPois.Remove(tripPoi);
+                    context.SaveChanges();
+                }
+                else
+                {
+                    throw new ResourceNotFoundException();
+                }
             }
         }
     }

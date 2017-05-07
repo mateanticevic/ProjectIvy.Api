@@ -12,13 +12,13 @@ namespace AnticevicApi.BL.Handlers.Tracking
 
         IEnumerable<Model.View.Tracking.Tracking> Get(FilteredBinding binding);
 
-        int GetCount(FilteredBinding binding);
+        int Count(FilteredBinding binding);
 
         int GetDistance(FilteredBinding binding);
 
         View.TrackingCurrent GetLast();
 
-        int GetUniqueCount(FilteredBinding binding);
+        int CountUnique(FilteredBinding binding);
 
         bool ImportFromKml(XDocument kml);
     }

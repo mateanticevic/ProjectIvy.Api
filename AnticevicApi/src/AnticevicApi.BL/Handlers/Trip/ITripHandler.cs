@@ -10,6 +10,8 @@ namespace AnticevicApi.BL.Handlers.Trip
 
         void AddExpense(string tripValueId, string expenseValueId);
 
+        void AddPoi(string tripValueId, string poiValueId);
+
         void Create(TripBinding binding);
 
         void Delete(string valueId);
@@ -21,5 +23,7 @@ namespace AnticevicApi.BL.Handlers.Trip
         void RemoveCity(string tripValueId, string cityValueId);
 
         void RemoveExpense(string tripValueId, string expenseValueId);
+
+        void RemovePoi(string tripValueId, string poiValueId);
     }
 }

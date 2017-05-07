@@ -20,5 +20,7 @@ namespace AnticevicApi.Model.Database.Main.Travel
         public DateTime TimestampStart { get; set; }
 
         public ICollection<TripCity> Cities { get; set; }
+
+        public ICollection<TripPoi> Pois { get; set; }
     }
 }

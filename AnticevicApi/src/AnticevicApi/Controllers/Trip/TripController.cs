@@ -45,6 +45,15 @@ namespace AnticevicApi.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
+        [HttpDelete]
+        [Route("{tripId}/poi/{poiId}")]
+        public StatusCodeResult DeletePoi(string tripId, string poiId)
+        {
+            _tripHandler.RemovePoi(tripId, poiId);
+
+            return new StatusCodeResult(StatusCodes.Status200OK);
+        }
+
         #region Get
 
         [HttpGet]
@@ -54,13 +63,22 @@ namespace AnticevicApi.Controllers.Trip
         }
 
         [HttpGet]
-        [Route("{id}")]
-        public View.Trip Get(string id)
+        [Route("{tripId}")]
+        public View.Trip Get(string tripId)
         {
-            return _tripHandler.GetSingle(id);
+            return _tripHandler.GetSingle(tripId);
         }
 
         #endregion
+
+        [HttpPost]
+        [Route("{tripId}/poi/{poiId}")]
+        public StatusCodeResult PostPoi(string tripId, string poiId)
+        {
+            _tripHandler.AddPoi(tripId, poiId);
+
+            return new StatusCodeResult(StatusCodes.Status201Created);
+        }
 
         [HttpPost]
         [Route("{tripId}/city/{cityId}")]
@@ -82,7 +100,7 @@ namespace AnticevicApi.Controllers.Trip
 
         [HttpPost]
         [Route("{tripId}")]
-        public StatusCodeResult Post(string tripId, [FromBody] TripBinding binding)
+        public StatusCodeResult Post([FromBody] TripBinding binding, string tripId)
         {
             binding.Id = tripId;
             _tripHandler.Create(binding);

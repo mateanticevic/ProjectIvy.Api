@@ -1,9 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers.Poi;
-using AnticevicApi.Model.Constants;
-using View = AnticevicApi.Model.View.Poi;
+using AnticevicApi.Model.Binding.Poi;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers.Poi
 {
@@ -17,9 +16,14 @@ namespace AnticevicApi.Controllers.Poi
             _poiHandler = poiHandler;
         }
 
-        #region Get
+        [Route("{poiId}")]
+        [HttpPost]
+        public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)
+        {
+            binding.Id = poiId;
+            _poiHandler.Create(binding);
 
-
-        #endregion
+            return new StatusCodeResult(StatusCodes.Status201Created);
+        }
     }
 }

@@ -49,14 +49,14 @@ namespace AnticevicApi.Controllers.Tracking
         [Route("count")]
         public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            return _trackingHandler.GetCount(new FilteredBinding(from, to));
+            return _trackingHandler.Count(new FilteredBinding(from, to));
         }
 
         [HttpGet]
         [Route("unique/count")]
         public int GetUniqueCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
-            return _trackingHandler.GetUniqueCount(new FilteredBinding(from, to));
+            return _trackingHandler.CountUnique(new FilteredBinding(from, to));
         }
 
         [HttpGet]

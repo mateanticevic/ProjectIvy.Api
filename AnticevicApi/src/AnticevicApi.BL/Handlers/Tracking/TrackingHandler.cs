@@ -18,6 +18,28 @@ namespace AnticevicApi.BL.Handlers.Tracking
         {
         }
 
+        public int Count(FilteredBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var userTrackings = db.Trackings.WhereUser(User.Id)
+                                                .WhereTimestampInclusive(binding);
+
+                return userTrackings.Count();
+            }
+        }
+
+        public int CountUnique(FilteredBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var query = db.UniqueLocations.WhereUser(User.Id)
+                                              .WhereTimestampInclusive(binding);
+
+                return query.Count();
+            }
+        }
+
         public bool Create(TrackingBinding binding)
         {
             using (var db = GetMainContext())
@@ -41,17 +63,6 @@ namespace AnticevicApi.BL.Handlers.Tracking
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
                                    .Select(x => new View.Tracking(x));
-            }
-        }
-
-        public int GetCount(FilteredBinding binding)
-        {
-            using (var db = GetMainContext())
-            {
-                var userTrackings = db.Trackings.WhereUser(User.Id)
-                                                .WhereTimestampInclusive(binding);
-
-                return userTrackings.Count();
             }
         }
 
@@ -117,17 +128,6 @@ namespace AnticevicApi.BL.Handlers.Tracking
                                            .FirstOrDefault();
 
                 return new View.TrackingCurrent(tracking);
-            }
-        }
-
-        public int GetUniqueCount(FilteredBinding binding)
-        {
-            using (var db = GetMainContext())
-            {
-                var query = db.UniqueLocations.WhereUser(User.Id)
-                                              .WhereTimestampInclusive(binding);
-
-                return query.Count();
             }
         }
 

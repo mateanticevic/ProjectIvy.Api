@@ -22,6 +22,19 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
         }
 
+        public int Count(FilteredBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                var expenses = db.Expenses.WhereUser(User.Id);
+
+                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
+                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
+
+                return expenses.Count();
+            }
+        }
+
         public string Create(ExpenseBinding binding)
         {
             using (var db = GetMainContext())
@@ -93,19 +106,6 @@ namespace AnticevicApi.BL.Handlers.Expense
                                   .Where(x => x.Date.Date == date)
                                   .ToList()
                                   .Select(x => new View.Expense(x));
-            }
-        }
-
-        public int GetCount(FilteredBinding binding)
-        {
-            using (var db = GetMainContext())
-            {
-                var expenses = db.Expenses.WhereUser(User.Id);
-
-                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
-                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
-
-                return expenses.Count();
             }
         }
 
@@ -199,44 +199,6 @@ namespace AnticevicApi.BL.Handlers.Expense
                     };
                     return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);
                 }
-            }
-        }
-
-        public IEnumerable<View.Expense> GetByVendor(string valueId, DateTime? from = null, DateTime? to = null)
-        {
-            using (var db = GetMainContext())
-            {
-                var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
-
-                var expenses = db.Vendors.Include(x => x.Expenses)
-                                 .ThenInclude(x => x.Currency)
-                                 .SingleOrDefault(x => x.ValueId == valueId)
-                                 .Expenses
-                                 .WhereUser(User.Id);
-
-                expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
-                expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
-
-                return expenses.ToList().Select(x => new View.Expense(x));
-            }
-        }
-
-        public IEnumerable<View.Expense> GetByType(string valueId, DateTime? from = null, DateTime? to = null)
-        {
-            using (var db = GetMainContext())
-            {
-                var c = db.Vendors.SingleOrDefault(x => x.ValueId == valueId);
-
-                var expenses = db.ExpenseTypes.Include(x => x.Expenses)
-                                 .ThenInclude(x => x.Currency)
-                                 .SingleOrDefault(x => x.ValueId == valueId)
-                                 .Expenses
-                                 .WhereUser(User.Id);
-
-                expenses = from.HasValue ? expenses.Where(x => x.Date >= from) : expenses;
-                expenses = to.HasValue ? expenses.Where(x => x.Date <= to) : expenses;
-
-                return expenses.ToList().Select(x => new View.Expense(x));
             }
         }
 
