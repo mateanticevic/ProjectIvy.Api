@@ -5,8 +5,6 @@ using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Linq;
 using View = AnticevicApi.Model.View.Airport;
 
 namespace AnticevicApi.Controllers.Airport

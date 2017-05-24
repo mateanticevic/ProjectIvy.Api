@@ -15,6 +15,12 @@ namespace AnticevicApi.Model.Database.Main.Common
 
         public string Name { get; set; }
 
+        public int CountryId { get; set; }
+
+        public Country Country { get; set; }
+
+        public ICollection<Transport.Airport> Airports { get; set; }
+
         public ICollection<Vendor> Vendors { get; set; }
     }
 }

@@ -1,5 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnticevicApi.Model.Database.Main.Transport
 {
@@ -12,5 +12,9 @@ namespace AnticevicApi.Model.Database.Main.Transport
         public string IATA { get; set; }
 
         public string Name { get; set; }
+
+        public int CityId { get; set; }
+
+        public Common.City City { get; set; }
     }
 }

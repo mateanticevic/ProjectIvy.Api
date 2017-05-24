@@ -47,7 +47,7 @@ namespace AnticevicApi.BL.Handlers.Airport
 
         private IQueryable<Database.Transport.Airport> Filter(AirportGetBinding binding, MainContext context)
         {
-            var airports = context.Airports.AsQueryable();
+            var airports = context.Airports.Include(x => x.City).AsQueryable();
 
             if (binding.Visited.HasValue)
             {
@@ -61,6 +61,12 @@ namespace AnticevicApi.BL.Handlers.Airport
 
                 airports = binding.Visited.Value ? airports.Where(x => visitedAirportIds.Contains(x.Id)) : airports.Where(x => !visitedAirportIds.Contains(x.Id));
             }
+
+            int? cityId = context.Cities.GetId(binding.CityId);
+            airports = cityId.HasValue ? airports.Where(x => x.CityId == cityId) : airports;
+
+            int? countryId = context.Countries.GetId(binding.Countryid);
+            airports = countryId.HasValue ? airports.Where(x => x.City.CountryId == countryId) : airports;
 
             return airports;
         }

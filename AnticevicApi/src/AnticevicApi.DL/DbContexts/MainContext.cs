@@ -37,6 +37,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<Country> Countries { get; set; }
+
         public DbSet<Currency> Currencies { get; set; }
 
         public DbSet<Domain> Domains { get; set; }
@@ -108,11 +110,19 @@ namespace AnticevicApi.DL.DbContexts
                         .HasOne(x => x.Application)
                         .WithMany(x => x.Settings);
 
+            modelBuilder.Entity<Airport>()
+                        .HasOne(x => x.City)
+                        .WithMany(x => x.Airports);
+
             modelBuilder.Entity<AccessToken>()
                         .HasOne(x => x.User);
 
             modelBuilder.Entity<Car>()
                         .HasOne(x => x.User);
+
+            modelBuilder.Entity<City>()
+                        .HasOne(x => x.Country)
+                        .WithMany(x => x.Cities);
 
             modelBuilder.Entity<CarLog>()
                         .HasOne(x => x.Car)
