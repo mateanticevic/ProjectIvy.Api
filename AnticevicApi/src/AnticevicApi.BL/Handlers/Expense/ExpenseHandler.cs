@@ -86,6 +86,10 @@ namespace AnticevicApi.BL.Handlers.Expense
                 result = vendorId.HasValue ? result.Where(x => x.VendorId == vendorId) : result;
                 result = currencyId.HasValue ? result.Where(x => x.CurrencyId == currencyId) : result;
 
+                result = string.IsNullOrWhiteSpace(binding.Description) ? result : result.Where(x => x.Comment.Contains(binding.Description));
+                result = binding.AmountFrom.HasValue ? result.Where(x => x.Ammount >= binding.AmountFrom) : result;
+                result = binding.AmountTo.HasValue ? result.Where(x => x.Ammount <= binding.AmountTo) : result;
+
                 view.Count = result.Count();
 
                 result = result.OrderByDescending(x => x.Date)
