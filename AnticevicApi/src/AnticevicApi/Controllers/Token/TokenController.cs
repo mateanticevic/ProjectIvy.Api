@@ -17,9 +17,11 @@ namespace AnticevicApi.Controllers.Token
         #region Get
 
         [HttpPost]
-        public string PostToken([FromQuery] string username, [FromQuery] string password)
+        public ActionResult PostToken([FromQuery] string username, [FromQuery] string password)
         {
-            return _securityHandler.CreateToken(username, password);
+            string token = _securityHandler.CreateToken(username, password);
+
+            return new JsonResult(token);
         }
 
         #endregion
