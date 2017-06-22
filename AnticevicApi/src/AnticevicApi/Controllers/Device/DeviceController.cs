@@ -1,11 +1,14 @@
 ﻿using AnticevicApi.BL.Handlers.Device;
 using AnticevicApi.Model.Binding.Device;
+using AnticevicApi.Model.Constants.Database;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace AnticevicApi.Controllers.Device
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class DeviceController : BaseController<DeviceController>
     {

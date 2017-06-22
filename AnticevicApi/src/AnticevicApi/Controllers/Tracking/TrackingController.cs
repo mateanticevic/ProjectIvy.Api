@@ -1,7 +1,9 @@
 ﻿using AnticevicApi.BL.Handlers.Tracking;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Tracking;
+using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Utilities.Geo;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
@@ -11,6 +13,7 @@ using View = AnticevicApi.Model.View.Tracking;
 
 namespace AnticevicApi.Controllers.Tracking
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class TrackingController : BaseController<TrackingController>
     {

@@ -1,6 +1,8 @@
 ﻿using AnticevicApi.BL.Handlers.Income;
 using AnticevicApi.Model.Binding.Common;
+using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Model.View;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -8,6 +10,7 @@ using View = AnticevicApi.Model.View.Income;
 
 namespace AnticevicApi.Controllers.Income
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class IncomeController : BaseController<IncomeController>
     {

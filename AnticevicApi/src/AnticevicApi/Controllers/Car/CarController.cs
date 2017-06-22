@@ -1,12 +1,15 @@
 ﻿using AnticevicApi.BL.Handlers.Car;
 using AnticevicApi.Model.Binding.Car;
+using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Model.View.Car;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 
 namespace AnticevicApi.Controllers.Car
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class CarController : BaseController<CarController>
     {

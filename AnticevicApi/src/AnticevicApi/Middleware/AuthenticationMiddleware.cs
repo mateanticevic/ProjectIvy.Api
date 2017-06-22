@@ -3,10 +3,9 @@ using AnticevicApi.Cache;
 using AnticevicApi.Extensions;
 using AnticevicApi.Model.Constants.Database;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System;
 
 namespace AnticevicApi.Middleware
 {
@@ -40,6 +39,7 @@ namespace AnticevicApi.Middleware
                 var claimIdentity = new ClaimsIdentity();
 
                 claimIdentity.AddClaim(new Claim(ClaimTypes.Role, UserRole.Administrator));
+                claimIdentity.AddClaim(new Claim(ClaimTypes.Role, UserRole.User));
 
                 httpContext.User.AddIdentity(claimIdentity);
 
@@ -47,7 +47,7 @@ namespace AnticevicApi.Middleware
             }
             catch(Exception e)
             {
-                throw new UnauthorizedAccessException();
+                return _next(httpContext);
             }
         }
     }

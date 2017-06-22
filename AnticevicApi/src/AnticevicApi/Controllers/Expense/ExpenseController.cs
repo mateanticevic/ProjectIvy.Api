@@ -1,17 +1,20 @@
 ﻿using AnticevicApi.BL.Handlers.Expense;
 using AnticevicApi.Model.Binding.Common;
 using AnticevicApi.Model.Binding.Expense;
+using AnticevicApi.Model.Constants.Database;
 using AnticevicApi.Model.Constants;
 using AnticevicApi.Model.View;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using System;
 using View = AnticevicApi.Model.View.Expense;
-using System.Threading.Tasks;
 
 namespace AnticevicApi.Controllers.Expense
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class ExpenseController : BaseController<ExpenseController>
     {
