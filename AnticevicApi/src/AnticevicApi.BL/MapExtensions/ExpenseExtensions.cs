@@ -2,9 +2,9 @@
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.Database.Main.Finance;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System;
-using Microsoft.EntityFrameworkCore;
 
 namespace AnticevicApi.BL.MapExtensions
 {
@@ -33,13 +33,17 @@ namespace AnticevicApi.BL.MapExtensions
             return set.WhereUser(userId)
                       .OrderByDescending(x => x.ValueId.Count())
                       .ThenByDescending(x => x.ValueId)
-                      .FirstOrDefault()
+                      .FirstOrDefault()?
                       .ValueId;
         }
 
         public static int NextValueId(this DbSet<Expense> set, int userId)
         {
-            return Convert.ToInt32(set.LastValueId(userId)) + 1;
+            string lastValueId = set.LastValueId(userId);
+
+            lastValueId = string.IsNullOrEmpty(lastValueId) ? 0.ToString() : lastValueId;
+
+            return Convert.ToInt32(lastValueId) + 1;
         }
     }
 }
