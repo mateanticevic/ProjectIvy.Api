@@ -74,3 +74,4 @@ WHERE 1=1
 	AND (@From IS NULL OR e.[Date] >= @From)
 	AND (@To IS NULL OR e.[Date] <= @To)
 	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExpenseIds) OR EXISTS(SELECT TOP 1 * FROM @ExpenseIds WHERE [Value] = e.Id))
+	AND ISNULL(@UserId, e.UserId) = e.UserId
