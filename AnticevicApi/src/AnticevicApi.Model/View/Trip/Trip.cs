@@ -12,6 +12,9 @@ namespace AnticevicApi.Model.View.Trip
         {
             Id = x.ValueId;
             Cities = x.Cities.Select(y => new City.City(y.City));
+            Countries = x.Cities.Select(y => new Country.Country(y.City.Country))
+                                .GroupBy(y => y.Id)
+                                .Select(y => y.FirstOrDefault());
             Name = x.Name;
             Pois = x.Pois.IsNullOrEmpty() ? null : x.Pois.Select(y => new Poi.Poi(y.Poi));
             TimestampEnd = x.TimestampEnd;
@@ -27,6 +30,8 @@ namespace AnticevicApi.Model.View.Trip
         public DateTime TimestampStart { get; set; }
 
         public int Distance { get; set; }
+
+        public IEnumerable<Country.Country> Countries { get; set; }
 
         public IEnumerable<City.City> Cities { get; set; }
 

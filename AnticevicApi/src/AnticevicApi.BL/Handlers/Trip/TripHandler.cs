@@ -124,7 +124,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var query = context.Trips.WhereUser(User.Id)
-                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
+                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
                                          .AsQueryable();
 
                 query = binding.From.HasValue ? query.Where(x => x.TimestampEnd > binding.From.Value) : query;
