@@ -1,4 +1,5 @@
-﻿using AnticevicApi.Model.Binding.Trip;
+﻿using AnticevicApi.Extensions.BuiltInTypes;
+using AnticevicApi.Model.Binding.Trip;
 using AnticevicApi.Model.Database.Main.Travel;
 
 namespace AnticevicApi.BL.MapExtensions
@@ -9,10 +10,10 @@ namespace AnticevicApi.BL.MapExtensions
         {
             trip = trip == null ? new Trip() : trip;
 
+            trip.ValueId = binding.Name.NameToValueId();
             trip.Name = binding.Name;
             trip.TimestampEnd = binding.TimestampEnd;
             trip.TimestampStart = binding.TimestampStart;
-            trip.ValueId = binding.Id;
 
             return trip;
         }

@@ -99,10 +99,9 @@ namespace AnticevicApi.Controllers.Trip
         }
 
         [HttpPost]
-        [Route("{tripId}")]
+        [Route("")]
         public StatusCodeResult Post([FromBody] TripBinding binding, string tripId)
         {
-            binding.Id = tripId;
             _tripHandler.Create(binding);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
