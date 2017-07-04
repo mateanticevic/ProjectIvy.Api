@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <VersionPrefix>0.20.1</VersionPrefix>
+    <VersionPrefix>0.20.2</VersionPrefix>
     <TargetFramework>netcoreapp1.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>AnticevicApi</AssemblyName>
@@ -9,7 +9,7 @@
     <PackageId>AnticevicApi</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
-    <Version>0.20.1</Version>
+    <Version>0.20.2</Version>
     <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
   </PropertyGroup>
 
@@ -49,6 +49,18 @@
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Xml" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.WebApiCompatShim" Version="1.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="before-deploy.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="deploy.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
