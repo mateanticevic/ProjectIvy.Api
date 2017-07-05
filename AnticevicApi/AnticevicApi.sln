@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}"
+	ProjectSection(SolutionItems) = preProject
+		src\appveyor.yml = src\appveyor.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FD49CF1-7E25-46E7-9ABD-7FA9907DD528}"
 EndProject
