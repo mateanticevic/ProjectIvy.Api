@@ -64,9 +64,9 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
-        public PaginatedView<View.Expense> Get(ExpenseGetBinding binding)
+        public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            var view = new PaginatedView<View.Expense>();
+            var view = new PagedView<View.Expense>();
 
             using (var db = GetMainContext())
             {

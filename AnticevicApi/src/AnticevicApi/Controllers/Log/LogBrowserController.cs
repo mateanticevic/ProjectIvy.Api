@@ -21,7 +21,7 @@ namespace AnticevicApi.Controllers.Income
         }
         
         [HttpGet]
-        public PaginatedView<BrowserLog> Get([FromQuery] LogBrowserGetBinding binding)
+        public PagedView<BrowserLog> Get([FromQuery] LogBrowserGetBinding binding)
         {
             return _devicehandler.Get(binding);
         }

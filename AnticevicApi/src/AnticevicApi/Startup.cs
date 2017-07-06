@@ -26,6 +26,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using AnticevicApi.BL.Handlers.Trip;
+using AnticevicApi.BL.Handlers.Country;
 
 namespace AnticevicApi
 {
@@ -64,7 +65,7 @@ namespace AnticevicApi
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
-            services.AddHandler<ICarHandler, CarHandler>();
+            services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();

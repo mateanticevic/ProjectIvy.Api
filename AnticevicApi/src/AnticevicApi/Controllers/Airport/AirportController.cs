@@ -20,7 +20,7 @@ namespace AnticevicApi.Controllers.Airport
         }
 
         [HttpGet]
-        public PaginatedView<View.Airport> Get([FromQuery] AirportGetBinding binding)
+        public PagedView<View.Airport> Get([FromQuery] AirportGetBinding binding)
         {
             return _airportHandler.Get(binding);
         }

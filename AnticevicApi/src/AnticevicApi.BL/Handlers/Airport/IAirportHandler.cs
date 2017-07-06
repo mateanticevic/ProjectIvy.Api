@@ -8,6 +8,6 @@ namespace AnticevicApi.BL.Handlers.Airport
     {
         long Count(AirportGetBinding binding);
 
-        PaginatedView<View.Airport> Get(AirportGetBinding binding);
+        PagedView<View.Airport> Get(AirportGetBinding binding);
     }
 }

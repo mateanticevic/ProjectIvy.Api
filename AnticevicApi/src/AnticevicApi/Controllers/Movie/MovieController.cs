@@ -24,7 +24,7 @@ namespace AnticevicApi.Controllers.Movie
         #region Get
 
         [HttpGet]
-        public PaginatedView<View.Movie> Get([FromQuery] MovieGetBinding binding)
+        public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 

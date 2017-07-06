@@ -119,7 +119,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             }
         }
 
-        public PaginatedView<View.Trip.Trip> Get(TripGetBinding binding)
+        public PagedView<View.Trip.Trip> Get(TripGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -141,7 +141,7 @@ namespace AnticevicApi.BL.Handlers.Trip
                                  .ToList()
                                  .Select(x => new View.Trip.Trip(x));
 
-                return new PaginatedView<View.Trip.Trip>(items, count);
+                return new PagedView<View.Trip.Trip>(items, count);
             }
         }
 

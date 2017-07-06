@@ -16,7 +16,7 @@ namespace AnticevicApi.BL.Handlers.Trip
 
         void Delete(string valueId);
 
-        PaginatedView<View.Trip> Get(TripGetBinding binding);
+        PagedView<View.Trip> Get(TripGetBinding binding);
 
         View.Trip GetSingle(string valueId);
 

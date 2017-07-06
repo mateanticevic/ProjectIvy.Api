@@ -42,7 +42,7 @@ namespace AnticevicApi.Controllers.Expense
 
         [HttpGet]
         [Route("")]
-        public PaginatedView<View.Expense> Get(ExpenseGetBinding binding)
+        public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
             Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
 

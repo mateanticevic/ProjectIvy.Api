@@ -9,6 +9,6 @@ namespace AnticevicApi.BL.Handlers.Device
     {
         void CreateBrowserLog(BrowserLogBinding binding);
 
-        PaginatedView<View.Device.BrowserLog> Get(LogBrowserGetBinding binding);
+        PagedView<View.Device.BrowserLog> Get(LogBrowserGetBinding binding);
     }
 }

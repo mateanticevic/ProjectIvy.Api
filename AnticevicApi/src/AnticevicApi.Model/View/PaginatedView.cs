@@ -2,14 +2,14 @@
 
 namespace AnticevicApi.Model.View
 {
-    public class PaginatedView<T>
+    public class PagedView<T>
     {
-        public PaginatedView()
+        public PagedView()
         {
 
         }
 
-        public PaginatedView(IEnumerable<T> items, long count)
+        public PagedView(IEnumerable<T> items, long count)
         {
             Count = count;
             Items = items;

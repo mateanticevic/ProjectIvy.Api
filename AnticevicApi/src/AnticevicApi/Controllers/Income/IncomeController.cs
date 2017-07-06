@@ -24,7 +24,7 @@ namespace AnticevicApi.Controllers.Income
         #region Get
 
         [HttpGet]
-        public PaginatedView<View.Income> Get([FromQuery] FilteredPagedBinding binding)
+        public PagedView<View.Income> Get([FromQuery] FilteredPagedBinding binding)
         {
             return _incomeHandler.Get(binding);
         }

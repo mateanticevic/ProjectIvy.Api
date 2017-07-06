@@ -14,7 +14,7 @@ namespace AnticevicApi.BL.Handlers.Movie
         {
         }
 
-        public PaginatedView<View.Movie> Get(MovieGetBinding binding)
+        public PagedView<View.Movie> Get(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -28,7 +28,7 @@ namespace AnticevicApi.BL.Handlers.Movie
 
                 int count = query.Count();
 
-                return new PaginatedView<View.Movie>(items, count);
+                return new PagedView<View.Movie>(items, count);
             }
         }
 

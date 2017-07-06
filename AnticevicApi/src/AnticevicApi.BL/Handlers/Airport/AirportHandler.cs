@@ -1,12 +1,11 @@
-﻿using AnticevicApi.DL.Extensions;
+﻿using AnticevicApi.DL.DbContexts;
+using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Airport;
 using AnticevicApi.Model.View;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using Database = AnticevicApi.Model.Database.Main;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = AnticevicApi.Model.View.Airport;
-using AnticevicApi.DL.DbContexts;
 
 namespace AnticevicApi.BL.Handlers.Airport
 {
@@ -24,7 +23,7 @@ namespace AnticevicApi.BL.Handlers.Airport
             }
         }
 
-        public PaginatedView<View.Airport> Get(AirportGetBinding binding)
+        public PagedView<View.Airport> Get(AirportGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -37,7 +36,7 @@ namespace AnticevicApi.BL.Handlers.Airport
                                     .Select(x => new View.Airport(x))
                                     .ToList();
 
-                return new PaginatedView<View.Airport>()
+                return new PagedView<View.Airport>()
                 {
                     Count = count,
                     Items = items

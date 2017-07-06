@@ -7,7 +7,7 @@ namespace AnticevicApi.BL.Handlers.Movie
 {
     public interface IMovieHandler : IHandler
     {
-        PaginatedView<View.Movie> Get(MovieGetBinding binding);
+        PagedView<View.Movie> Get(MovieGetBinding binding);
 
         int GetCount(MovieGetBinding binding);
 

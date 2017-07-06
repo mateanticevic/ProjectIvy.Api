@@ -6,7 +6,7 @@ namespace AnticevicApi.BL.Handlers.Income
 {
     public interface IIncomeHandler : IHandler
     {
-        PaginatedView<View.Income> Get(FilteredPagedBinding binding);
+        PagedView<View.Income> Get(FilteredPagedBinding binding);
 
         int GetCount(FilteredBinding binding);
 

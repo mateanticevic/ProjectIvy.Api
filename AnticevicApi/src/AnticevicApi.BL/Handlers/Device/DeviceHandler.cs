@@ -67,7 +67,7 @@ namespace AnticevicApi.BL.Handlers.Device
             }
         }
 
-        public PaginatedView<View.Device.BrowserLog> Get(LogBrowserGetBinding binding)
+        public PagedView<View.Device.BrowserLog> Get(LogBrowserGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -90,7 +90,7 @@ namespace AnticevicApi.BL.Handlers.Device
 
                 long count = r.Count();
 
-                return new PaginatedView<View.Device.BrowserLog>(items, count);
+                return new PagedView<View.Device.BrowserLog>(items, count);
             }
         }
     }

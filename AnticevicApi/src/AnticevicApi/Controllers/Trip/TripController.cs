@@ -57,7 +57,7 @@ namespace AnticevicApi.Controllers.Trip
         #region Get
 
         [HttpGet]
-        public PaginatedView<View.Trip> Get(TripGetBinding binding)
+        public PagedView<View.Trip> Get(TripGetBinding binding)
         {
             return _tripHandler.Get(binding);
         }

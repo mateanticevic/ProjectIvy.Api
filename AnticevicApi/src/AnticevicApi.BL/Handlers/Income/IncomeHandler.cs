@@ -17,7 +17,7 @@ namespace AnticevicApi.BL.Handlers.Income
         {
         }
 
-        public PaginatedView<View.Income> Get(FilteredPagedBinding binding)
+        public PagedView<View.Income> Get(FilteredPagedBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -34,7 +34,7 @@ namespace AnticevicApi.BL.Handlers.Income
 
                 var count = query.Count();
 
-                return new PaginatedView<View.Income>(items, count);
+                return new PagedView<View.Income>(items, count);
             }
         }
 
