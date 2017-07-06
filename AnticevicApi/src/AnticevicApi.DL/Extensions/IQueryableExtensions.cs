@@ -28,9 +28,13 @@ namespace AnticevicApi.DL.Extensions
             return query.Page(binding.Page, binding.PageSize);
         }
 
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, int? page, int? pageSize)
+        public static IQueryable<T> Page<T>(this IQueryable<T> query, int? page, int? pageSize = 10)
         {
-            return query.Skip(page.Value * pageSize.Value)
+            // Page number to page index (zero based)
+            int pageIndex = page.HasValue ? page.Value - 1 : 0;
+            pageIndex = pageIndex < 0 ? 0 : pageIndex;
+
+            return query.Skip(pageIndex * pageSize.Value)
                         .Take(pageSize.Value);
         }
 
