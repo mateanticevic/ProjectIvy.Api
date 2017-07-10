@@ -43,6 +43,10 @@ namespace AnticevicApi.Controllers.Project
             return _taskHandler.Get(valueId, taskValueId);
         }
 
+        #endregion
+
+        #region Put
+
         [HttpPut]
         [Route("{valueId}/task")]
         public string PutTask([FromBody] TaskBinding binding, string valueId)

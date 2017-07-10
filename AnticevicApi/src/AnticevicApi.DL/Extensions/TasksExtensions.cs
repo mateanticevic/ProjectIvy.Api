@@ -12,13 +12,17 @@ namespace AnticevicApi.DL.Extensions
             return set.Where(x => x.ProjectId == projectId)
                       .OrderByDescending(x => x.ValueId.Count())
                       .ThenByDescending(x => x.ValueId)
-                      .FirstOrDefault()
+                      .FirstOrDefault()?
                       .ValueId;
         }
 
         public static int NextValueId(this DbSet<Task> set, int projectId)
         {
-            return Convert.ToInt32(set.LastValueId(projectId)) + 1;
+            string lastValueId = set.LastValueId(projectId);
+
+            lastValueId = string.IsNullOrEmpty(lastValueId) ? 0.ToString() : lastValueId;
+
+            return Convert.ToInt32(lastValueId) + 1;
         }
     }
 }
