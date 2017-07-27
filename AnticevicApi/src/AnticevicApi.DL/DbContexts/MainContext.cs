@@ -95,6 +95,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<Vendor> Vendors { get; set; }
 
+        public DbSet<VendorPoi> VendorPois { get; set; }
+
         public DbSet<Web> Webs { get; set; }
 
         public string ConnectionString { get; private set; }
@@ -158,6 +160,9 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<Vendor>()
                         .HasOne(x => x.City)
                         .WithMany(x => x.Vendors);
+
+            modelBuilder.Entity<VendorPoi>()
+                        .HasKey(x => new { x.PoiId, x.VendorId });
 
             modelBuilder.Entity<Flight>()
                         .HasOne(x => x.DestinationAirport);
