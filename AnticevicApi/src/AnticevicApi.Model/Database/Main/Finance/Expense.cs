@@ -32,6 +32,10 @@ namespace AnticevicApi.Model.Database.Main.Finance
 
         public DateTime? Modified { get; set; }
 
+        public int? PoiId { get; set; }
+
+        public Travel.Poi Poi { get; set; }
+        
         public string ValueId { get; set; }
 
         public int? VendorId { get; set; }

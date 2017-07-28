@@ -157,6 +157,9 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<Expense>()
                         .HasOne(x => x.Currency);
 
+            modelBuilder.Entity<Expense>()
+                        .HasOne(x => x.Poi);
+
             modelBuilder.Entity<Vendor>()
                         .HasOne(x => x.City)
                         .WithMany(x => x.Vendors);

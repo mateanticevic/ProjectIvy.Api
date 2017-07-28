@@ -14,6 +14,8 @@ namespace AnticevicApi.Model.Binding.Expense
 
         public string ExpenseTypeValueid { get; set; }
 
+        public string PoiId { get; set; }
+
         public string ValueId { get; set; }
 
         public string VendorValueId { get; set; }

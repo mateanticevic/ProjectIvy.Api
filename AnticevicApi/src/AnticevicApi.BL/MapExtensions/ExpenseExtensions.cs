@@ -23,6 +23,7 @@ namespace AnticevicApi.BL.MapExtensions
             entity.Date = binding.Date;
             entity.ExpenseTypeId = db.ExpenseTypes.GetId(binding.ExpenseTypeValueid).Value;
             entity.Modified = DateTime.Now;
+            entity.PoiId = db.Pois.GetId(binding.PoiId);
             entity.VendorId = db.Vendors.GetId(binding.VendorValueId);
 
             return entity;
