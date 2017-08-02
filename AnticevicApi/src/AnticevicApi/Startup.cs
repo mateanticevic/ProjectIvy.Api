@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Airport;
 using AnticevicApi.BL.Handlers.Application;
 using AnticevicApi.BL.Handlers.Car;
+using AnticevicApi.BL.Handlers.Country;
 using AnticevicApi.BL.Handlers.Currency;
 using AnticevicApi.BL.Handlers.Device;
 using AnticevicApi.BL.Handlers.Expense;
@@ -11,6 +12,7 @@ using AnticevicApi.BL.Handlers.Project;
 using AnticevicApi.BL.Handlers.Security;
 using AnticevicApi.BL.Handlers.Task;
 using AnticevicApi.BL.Handlers.Tracking;
+using AnticevicApi.BL.Handlers.Trip;
 using AnticevicApi.BL.Handlers.User;
 using AnticevicApi.BL.Handlers.Vendor;
 using AnticevicApi.BL.Handlers.Web;
@@ -25,8 +27,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
-using AnticevicApi.BL.Handlers.Trip;
-using AnticevicApi.BL.Handlers.Country;
 
 namespace AnticevicApi
 {
@@ -95,6 +95,8 @@ namespace AnticevicApi
             var logger = loggerFactory.CreateLogger(nameof(Startup));
             logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
 
+            app.UseStaticFiles();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -104,7 +106,7 @@ namespace AnticevicApi
 
             app.UseExceptionHandlingMiddleware();
             app.UseAuthenticationMiddleware();
-            app.UseMvc();          
+            app.UseMvc();
         }
     }
 }

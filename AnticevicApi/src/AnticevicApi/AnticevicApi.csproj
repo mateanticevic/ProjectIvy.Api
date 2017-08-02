@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <VersionPrefix>0.25.0</VersionPrefix>
+    <VersionPrefix>0.25.1</VersionPrefix>
     <TargetFramework>netcoreapp1.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>AnticevicApi</AssemblyName>
@@ -9,7 +9,7 @@
     <PackageId>AnticevicApi</PackageId>
     <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
     <PackageTargetFallback>$(PackageTargetFallback);dotnet5.6;portable-net45+win8</PackageTargetFallback>
-    <Version>0.25.0</Version>
+    <Version>0.25.1</Version>
     <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
   </PropertyGroup>
 
