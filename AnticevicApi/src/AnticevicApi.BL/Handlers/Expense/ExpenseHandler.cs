@@ -64,20 +64,36 @@ namespace AnticevicApi.BL.Handlers.Expense
             }
         }
 
+        public View.Expense Get(string expenseId)
+        {
+            using (var context = GetMainContext())
+            {
+                var expense = context.Expenses.Include(x => x.ExpenseType)
+                                              .Include(x => x.Currency)
+                                              .Include(x => x.Poi)
+                                              .Include(x => x.Vendor)
+                                              .WhereUser(User)
+                                              .SingleOrDefault(x => x.ValueId == expenseId);
+
+                return new View.Expense(expense);
+            }
+        }
+
         public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
             var view = new PagedView<View.Expense>();
 
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                int? currencyId = db.Currencies.GetId(binding.CurrencyId);
-                int? expenseTypeId = db.ExpenseTypes.GetId(binding.TypeId);
-                int? vendorId = db.Vendors.GetId(binding.VendorId);
+                int? currencyId = context.Currencies.GetId(binding.CurrencyId);
+                int? expenseTypeId = context.ExpenseTypes.GetId(binding.TypeId);
+                int? vendorId = context.Vendors.GetId(binding.VendorId);
 
-                var result = db.Expenses.Include(x => x.ExpenseType)
-                                        .Include(x => x.Currency)
-                                        .Include(x => x.Vendor)
-                                        .WhereUser(User.Id);
+                var result = context.Expenses.Include(x => x.ExpenseType)
+                                             .Include(x => x.Currency)
+                                             .Include(x => x.Poi)
+                                             .Include(x => x.Vendor)
+                                             .WhereUser(User.Id);
 
                 result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
                 result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
@@ -99,17 +115,6 @@ namespace AnticevicApi.BL.Handlers.Expense
                 view.Items = result.ToList().Select(x => new View.Expense(x));
 
                 return view;
-            }
-        }
-
-        public IEnumerable<View.Expense> GetByDate(DateTime date)
-        {
-            using (var db = GetMainContext())
-            {
-                return db.Expenses.WhereUser(User.Id)
-                                  .Where(x => x.Date.Date == date)
-                                  .ToList()
-                                  .Select(x => new View.Expense(x));
             }
         }
 

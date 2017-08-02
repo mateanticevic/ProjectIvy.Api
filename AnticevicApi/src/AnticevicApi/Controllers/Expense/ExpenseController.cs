@@ -41,11 +41,15 @@ namespace AnticevicApi.Controllers.Expense
         #region Get
 
         [HttpGet]
-        [Route("")]
+        [Route("{expenseId}")]
+        public View.Expense Get(string expenseId)
+        {
+            return _expenseHandler.Get(expenseId);
+        }
+
+        [HttpGet]
         public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
-
             return _expenseHandler.Get(binding);
         }
 
@@ -94,26 +98,15 @@ namespace AnticevicApi.Controllers.Expense
             return await _expenseHandler.GetGroupedByTypeSum(binding);
         }
 
-        [HttpGet]
-        [Route("{date:datetime}")]
-        public IEnumerable<View.Expense> GetByDate(DateTime date)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetByDate), date);
-
-            return _expenseHandler.GetByDate(date);
-        }
-
         #endregion
 
         #region Post
 
-        [HttpPost]
+        [HttpPut]
         [Route("{valueId}")]
-        public bool Put(string valueId, [FromBody] ExpenseBinding binding)
+        public bool Put(string expenseId, [FromBody] ExpenseBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Put), binding);
-
-            binding.ValueId = valueId;
+            binding.ValueId = expenseId;
             return _expenseHandler.Update(binding);
         }
 
@@ -121,12 +114,9 @@ namespace AnticevicApi.Controllers.Expense
 
         #region Put
 
-        [HttpPut]
-        [Route("")]
-        public string Put([FromBody] ExpenseBinding binding)
+        [HttpPost]
+        public string Post([FromBody] ExpenseBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Put), binding);
-
             return _expenseHandler.Create(binding);
         }
 

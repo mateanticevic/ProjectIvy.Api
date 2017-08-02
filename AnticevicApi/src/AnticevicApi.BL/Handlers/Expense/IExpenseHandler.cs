@@ -2,9 +2,8 @@
 using AnticevicApi.Model.Binding.Expense;
 using AnticevicApi.Model.View;
 using System.Collections.Generic;
-using System;
-using View = AnticevicApi.Model.View.Expense;
 using System.Threading.Tasks;
+using View = AnticevicApi.Model.View.Expense;
 
 namespace AnticevicApi.BL.Handlers.Expense
 {
@@ -14,9 +13,9 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         bool Delete(string valueId);
 
-        PagedView<View.Expense> Get(ExpenseGetBinding binding);
+        View.Expense Get(string expenseId);
 
-        IEnumerable<View.Expense> GetByDate(DateTime date);
+        PagedView<View.Expense> Get(ExpenseGetBinding binding);
 
         int Count(FilteredBinding binding);
 
