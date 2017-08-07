@@ -57,6 +57,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<IncomeSource> IncomeSources { get; set; }
 
+        public DbSet<Manufacturer> Manufacturers { get; set; }
+
         public DbSet<Movie> Movies { get; set; }
 
         public DbSet<Poi> Pois { get; set; }

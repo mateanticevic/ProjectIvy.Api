@@ -16,6 +16,19 @@ namespace AnticevicApi.BL.Handlers.Car
         {
         }
 
+        public void Create(string valueId, CarBinding car)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = car.ToEntity(context);
+                entity.ValueId = valueId;
+                entity.UserId = User.Id;
+
+                context.Cars.Add(entity);
+                context.SaveChanges();
+            }
+        }
+
         public DateTime CreateLog(CarLogBinding binding)
         {
             using (var context = GetMainContext())

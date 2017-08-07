@@ -14,6 +14,8 @@ namespace AnticevicApi.Model.Database.Main.Transport
 
         public string ValueId { get; set; }
 
+        public int ManufacturerId { get; set; }
+
         public short ProductionYear { get; set; }
 
         public ICollection<CarLog> CarLogs { get; set; }

@@ -1,12 +1,12 @@
 ﻿using AnticevicApi.BL.Handlers.Car;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.Constants.Database;
-using View = AnticevicApi.Model.View.Car;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
+using System;
+using View = AnticevicApi.Model.View.Car;
 
 namespace AnticevicApi.Controllers.Car
 {
@@ -31,17 +31,17 @@ namespace AnticevicApi.Controllers.Car
         }
 
         [HttpGet]
-        [Route("{valueId}/log/count")]
-        public int GetLogCount(string valueId)
+        [Route("{id}/log/count")]
+        public int GetLogCount(string id)
         {
-            return _carHandler.GetLogCount(valueId);
+            return _carHandler.GetLogCount(id);
         }
 
         [HttpGet]
-        [Route("{valueId}/log/latest")]
-        public View.CarLog GetLogLatest(string valueId)
+        [Route("{id}/log/latest")]
+        public View.CarLog GetLogLatest(string id)
         {
-            return _carHandler.GetLatestLog(valueId);
+            return _carHandler.GetLatestLog(id);
         }
 
         #endregion
@@ -50,11 +50,24 @@ namespace AnticevicApi.Controllers.Car
 
         [HttpPost]
         [HttpPut]
-        [Route("{valueId}/log")]
-        public DateTime PostLog([FromBody] CarLogBinding binding, string valueId)
+        [Route("{id}/log")]
+        public DateTime PostLog([FromBody] CarLogBinding binding, string id)
         {
-            binding.CarValueId = valueId;
+            binding.CarValueId = id;
             return _carHandler.CreateLog(binding);
+        }
+
+        #endregion
+
+        #region Put
+
+        [HttpPut]
+        [Route("{id}")]
+        public IActionResult PutCar(string id, [FromBody] CarBinding car)
+        {
+            _carHandler.Create(id, car);
+
+            return Ok();
         }
 
         #endregion

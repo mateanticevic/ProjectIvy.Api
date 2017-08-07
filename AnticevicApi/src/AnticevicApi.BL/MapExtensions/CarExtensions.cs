@@ -8,15 +8,25 @@ namespace AnticevicApi.BL.MapExtensions
 {
     public static class CarExtensions
     {
-        public static CarLog ToEntity(this CarLogBinding binding, MainContext db, CarLog entity = null)
+        public static Car ToEntity(this CarBinding b, MainContext context, Car entity = null)
         {
             if (entity == null)
-            {
-                entity = new CarLog();
-            }
+                entity = new Car();
 
-            entity.CarId = db.Cars.GetId(binding.CarValueId).Value;
-            entity.Odometer = binding.Odometer;
+            entity.ManufacturerId = context.Manufacturers.GetId(b.ManufacturerId).Value;
+            entity.Model = b.Model;
+            entity.ProductionYear = b.ProductionYear;
+
+            return entity;
+        }
+
+        public static CarLog ToEntity(this CarLogBinding b, MainContext context, CarLog entity = null)
+        {
+            if (entity == null)
+                entity = new CarLog();
+
+            entity.CarId = context.Cars.GetId(b.CarValueId).Value;
+            entity.Odometer = b.Odometer;
             entity.Timestamp = DateTime.Now;
 
             return entity;

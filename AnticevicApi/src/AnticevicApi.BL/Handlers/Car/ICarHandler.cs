@@ -7,6 +7,8 @@ namespace AnticevicApi.BL.Handlers.Car
 {
     public interface ICarHandler : IHandler
     {
+        void Create(string valueId, CarBinding car);
+
         DateTime CreateLog(CarLogBinding binding);
 
         IEnumerable<View.Car> Get();
