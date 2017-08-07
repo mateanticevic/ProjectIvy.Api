@@ -6,7 +6,6 @@ namespace AnticevicApi.Model.Binding.Common
     {
         public FilteredPagedBinding()
         {
-
         }
 
         public FilteredPagedBinding(DateTime? from, DateTime? to, int? page, int? pageSize) : base(from, to)

@@ -38,11 +38,11 @@ namespace AnticevicApi.Controllers.Car
 
         #endregion
 
-        #region Put
+        #region Post
 
-        [HttpPut]
+        [HttpPost]
         [Route("{valueId}/log")]
-        public DateTime PutLog([FromBody] CarLogBinding binding, string valueId)
+        public DateTime PostLog([FromBody] CarLogBinding binding, string valueId)
         {
             binding.CarValueId = valueId;
             return _carHandler.CreateLog(binding);

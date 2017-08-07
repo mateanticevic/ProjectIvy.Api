@@ -4,6 +4,12 @@ namespace AnticevicApi.Model.Binding.Expense
 {
     public class ExpenseSumGetBinding : FilteredBinding
     {
+        public string CurrencyId { get; set; }
+
+        public string TypeId { get; set; }
+
+        public string VendorId { get; set; }
+
         public ExpenseSumGetBinding Override(FilteredBinding binding)
         {
             From = binding.From;
@@ -18,9 +24,5 @@ namespace AnticevicApi.Model.Binding.Expense
 
             return this;
         }
-
-        public string CurrencyId { get; set; }
-        public string TypeId { get; set; }
-        public string VendorId { get; set; }
     }
 }

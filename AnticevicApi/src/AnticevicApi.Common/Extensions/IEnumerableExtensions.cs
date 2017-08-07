@@ -12,7 +12,7 @@ namespace AnticevicApi.Common.Extensions
 
         public static IEnumerable<T> EmptyIfNull<T>(this IEnumerable<T> collection)
         {
-            if(collection == null)
+            if (collection == null)
             {
                 return new List<T>();
             }

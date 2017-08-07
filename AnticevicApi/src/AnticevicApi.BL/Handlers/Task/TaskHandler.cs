@@ -150,7 +150,6 @@ namespace AnticevicApi.BL.Handlers.Task
                 return db.TaskPriorities.OrderBy(x => x.Name)
                                         .ToList()
                                         .Select(x => new View.Priority(x));
-                                        
             }
         }
 
@@ -161,7 +160,6 @@ namespace AnticevicApi.BL.Handlers.Task
                 return db.TaskStatuses.OrderBy(x => x.Name)
                                         .ToList()
                                         .Select(x => new View.Status(x));
-
             }
         }
 
@@ -172,7 +170,6 @@ namespace AnticevicApi.BL.Handlers.Task
                 return db.TaskTypes.OrderBy(x => x.Name)
                                         .ToList()
                                         .Select(x => new View.Type(x));
-
             }
         }
 

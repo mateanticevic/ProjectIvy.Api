@@ -1,5 +1,5 @@
-﻿using AnticevicApi.BL.MapExtensions;
-using AnticevicApi.DL.DbContexts;
+﻿using AnticevicApi.BL.Exceptions;
+using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.View.Car;
@@ -17,12 +17,19 @@ namespace AnticevicApi.BL.Handlers.Car
 
         public DateTime CreateLog(CarLogBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var entity = binding.ToEntity(db);
+                var lastEntry = GetLatestLog(binding.CarValueId);
 
-                db.CarLogs.Add(entity);
-                db.SaveChanges();
+                if(binding.Odometer < lastEntry.Odometer)
+                {
+                    throw new InvalidRequestException($"Odometer must be {lastEntry.Odometer}km or higher.");
+                }
+
+                var entity = binding.ToEntity(context);
+
+                context.CarLogs.Add(entity);
+                context.SaveChanges();
 
                 return entity.Timestamp;
             }

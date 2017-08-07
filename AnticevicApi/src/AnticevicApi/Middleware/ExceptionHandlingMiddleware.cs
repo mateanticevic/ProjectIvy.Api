@@ -1,9 +1,9 @@
 ﻿using AnticevicApi.BL.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
-using System;
 using System.Net;
 using System.Threading.Tasks;
+using System;
 
 namespace AnticevicApi.Middleware
 {
@@ -34,6 +34,8 @@ namespace AnticevicApi.Middleware
 
             if (e is UnauthorizedAccessException)
                 statusCode = HttpStatusCode.Unauthorized;
+            else if (e is InvalidRequestException)
+                statusCode = HttpStatusCode.BadRequest;
             else if (e is ResourceExistsException)
                 statusCode = HttpStatusCode.Conflict;
             else if (e is ResourceNotFoundException)
