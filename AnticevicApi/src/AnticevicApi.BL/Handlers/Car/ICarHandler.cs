@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.Model.Binding.Car;
-using AnticevicApi.Model.View.Car;
+using System.Collections.Generic;
 using System;
+using View = AnticevicApi.Model.View.Car;
 
 namespace AnticevicApi.BL.Handlers.Car
 {
@@ -8,8 +9,10 @@ namespace AnticevicApi.BL.Handlers.Car
     {
         DateTime CreateLog(CarLogBinding binding);
 
+        IEnumerable<View.Car> Get();
+
         int GetLogCount(string carValueId);
 
-        CarLog GetLatestLog(string carValueId);
+        View.CarLog GetLatestLog(string carValueId);
     }
 }

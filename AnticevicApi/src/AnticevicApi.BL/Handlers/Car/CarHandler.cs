@@ -2,8 +2,9 @@
 using AnticevicApi.BL.MapExtensions;
 using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Car;
-using AnticevicApi.Model.View.Car;
+using View = AnticevicApi.Model.View.Car;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
 using System;
 
@@ -35,6 +36,17 @@ namespace AnticevicApi.BL.Handlers.Car
             }
         }
 
+        public IEnumerable<View.Car> Get()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Cars.WhereUser(User)
+                                   .ToList()
+                                   .Select(x => new View.Car(x))
+                                   .ToList();
+            }
+        }
+
         public int GetLogCount(string carValueId)
         {
             using (var db = GetMainContext())
@@ -47,7 +59,7 @@ namespace AnticevicApi.BL.Handlers.Car
             }
         }
 
-        public CarLog GetLatestLog(string carValueId)
+        public View.CarLog GetLatestLog(string carValueId)
         {
             using (var db = GetMainContext())
             {
@@ -58,7 +70,7 @@ namespace AnticevicApi.BL.Handlers.Car
                                     .OrderByDescending(x => x.Timestamp)
                                     .FirstOrDefault();
 
-                return new CarLog(carLog);
+                return new View.CarLog(carLog);
             }
         }
     }

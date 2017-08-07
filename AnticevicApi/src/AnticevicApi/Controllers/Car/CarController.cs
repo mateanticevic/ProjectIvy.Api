@@ -1,11 +1,12 @@
 ﻿using AnticevicApi.BL.Handlers.Car;
 using AnticevicApi.Model.Binding.Car;
 using AnticevicApi.Model.Constants.Database;
-using AnticevicApi.Model.View.Car;
+using View = AnticevicApi.Model.View.Car;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 
 namespace AnticevicApi.Controllers.Car
 {
@@ -23,6 +24,13 @@ namespace AnticevicApi.Controllers.Car
         #region Get
 
         [HttpGet]
+        [Route("")]
+        public IEnumerable<View.Car> Get()
+        {
+            return _carHandler.Get();
+        }
+
+        [HttpGet]
         [Route("{valueId}/log/count")]
         public int GetLogCount(string valueId)
         {
@@ -31,7 +39,7 @@ namespace AnticevicApi.Controllers.Car
 
         [HttpGet]
         [Route("{valueId}/log/latest")]
-        public CarLog GetLogLatest(string valueId)
+        public View.CarLog GetLogLatest(string valueId)
         {
             return _carHandler.GetLatestLog(valueId);
         }
@@ -41,6 +49,7 @@ namespace AnticevicApi.Controllers.Car
         #region Post
 
         [HttpPost]
+        [HttpPut]
         [Route("{valueId}/log")]
         public DateTime PostLog([FromBody] CarLogBinding binding, string valueId)
         {

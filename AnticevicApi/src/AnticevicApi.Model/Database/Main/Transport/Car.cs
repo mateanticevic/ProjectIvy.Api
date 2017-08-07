@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace AnticevicApi.Model.Database.Main.Transport
 {
-    [Table("Car", Schema = "Transport")]
+    [Table(nameof(Car), Schema = nameof(Transport))]
     public class Car : UserEntity, IHasValueId
     {
         [Key]
