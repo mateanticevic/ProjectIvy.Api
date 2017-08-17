@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>0.26.0</VersionPrefix>
+    <VersionPrefix>0.27.0</VersionPrefix>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <AssemblyName>AnticevicApi.Tests</AssemblyName>
     <PackageId>AnticevicApi.Tests</PackageId>
@@ -10,7 +10,7 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>0.26.0</Version>
+    <Version>0.27.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
