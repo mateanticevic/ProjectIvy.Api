@@ -27,6 +27,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
+using System;
 
 namespace AnticevicApi
 {
@@ -51,7 +52,7 @@ namespace AnticevicApi
 
         protected AppSettings Settings { get; private set; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(Configuration);
 
@@ -84,6 +85,8 @@ namespace AnticevicApi
 
             services.AddMvc()
                     .AddXmlDataContractSerializerFormatters();
+
+            return services.BuildServiceProvider();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
