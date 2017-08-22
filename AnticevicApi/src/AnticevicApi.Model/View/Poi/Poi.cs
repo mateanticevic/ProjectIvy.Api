@@ -11,10 +11,10 @@ namespace AnticevicApi.Model.View.Poi
             Latitude = x.Latitude;
             Longitude = x.Longitude;
             Name = x.Name;
-            ValueId = x.ValueId;
+            Id = x.ValueId;
         }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 

@@ -9,10 +9,10 @@ namespace AnticevicApi.Model.View.Vendor
         {
             City = x.City.ConvertTo(y => new City.City(y));
             Name = x.Name;
-            ValueId = x.ValueId;
+            Id = x.ValueId;
         }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
 

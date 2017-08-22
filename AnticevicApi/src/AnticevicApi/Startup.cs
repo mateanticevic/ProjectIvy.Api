@@ -1,6 +1,7 @@
 ﻿using AnticevicApi.BL.Handlers.Airport;
 using AnticevicApi.BL.Handlers.Application;
 using AnticevicApi.BL.Handlers.Car;
+using AnticevicApi.BL.Handlers.Card;
 using AnticevicApi.BL.Handlers.Country;
 using AnticevicApi.BL.Handlers.Currency;
 using AnticevicApi.BL.Handlers.Device;
@@ -28,6 +29,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using System;
+using AnticevicApi.BL.Handlers.PaymentType;
 
 namespace AnticevicApi
 {
@@ -66,6 +68,7 @@ namespace AnticevicApi
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
+            services.AddHandler<ICardHandler, CardHandler>();
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();
@@ -73,6 +76,7 @@ namespace AnticevicApi
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
             services.AddHandler<IMovieHandler, MovieHandler>();
+            services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
             services.AddHandler<IProjectHandler, ProjectHandler>();
             services.AddHandler<ISecurityHandler, SecurityHandler>();

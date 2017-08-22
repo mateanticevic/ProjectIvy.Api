@@ -33,6 +33,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<Car> Cars { get; set; }
 
+        public DbSet<Card> Cards { get; set; }
+
         public DbSet<CarLog> CarLogs { get; set; }
 
         public DbSet<City> Cities { get; set; }
@@ -60,6 +62,8 @@ namespace AnticevicApi.DL.DbContexts
         public DbSet<Manufacturer> Manufacturers { get; set; }
 
         public DbSet<Movie> Movies { get; set; }
+
+        public DbSet<PaymentType> PaymentTypes { get; set; }
 
         public DbSet<Poi> Pois { get; set; }
 

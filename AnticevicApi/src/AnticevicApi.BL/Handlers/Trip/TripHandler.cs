@@ -151,6 +151,7 @@ namespace AnticevicApi.BL.Handlers.Trip
             {
                 var trip = context.Trips.WhereUser(User.Id)
                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
+                                        .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
                                         .Include($"{nameof(Database.Travel.Trip.Pois)}.{nameof(TripPoi.Poi)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 

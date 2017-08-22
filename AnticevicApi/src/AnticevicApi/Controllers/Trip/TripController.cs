@@ -66,7 +66,8 @@ namespace AnticevicApi.Controllers.Trip
         [Route("{tripId}")]
         public View.Trip Get(string tripId)
         {
-            return _tripHandler.GetSingle(tripId);
+            var s = _tripHandler.GetSingle(tripId);
+            return s;
         }
 
         #endregion

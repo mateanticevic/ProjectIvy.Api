@@ -10,7 +10,7 @@ namespace AnticevicApi.BL.MapExtensions
 {
     public static class ExpenseExtensions
     {
-        public static Expense ToEntity(this ExpenseBinding binding, MainContext db, Expense entity = null)
+        public static Expense ToEntity(this ExpenseBinding binding, MainContext context, Expense entity = null)
         {
             if (entity == null)
             {
@@ -18,13 +18,15 @@ namespace AnticevicApi.BL.MapExtensions
             }
 
             entity.Ammount = binding.Amount;
+            entity.CardId = context.Cards.GetId(binding.CardId);
             entity.Comment = binding.Comment;
-            entity.CurrencyId = db.Currencies.SingleOrDefault(x => x.Code == binding.CurrencyValueId).Id;
+            entity.CurrencyId = context.Currencies.SingleOrDefault(x => x.Code == binding.CurrencyValueId).Id;
             entity.Date = binding.Date;
-            entity.ExpenseTypeId = db.ExpenseTypes.GetId(binding.ExpenseTypeValueid).Value;
+            entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeValueid).Value;
             entity.Modified = DateTime.Now;
-            entity.PoiId = db.Pois.GetId(binding.PoiId);
-            entity.VendorId = db.Vendors.GetId(binding.VendorValueId);
+            entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
+            entity.PoiId = context.Pois.GetId(binding.PoiId);
+            entity.VendorId = context.Vendors.GetId(binding.VendorValueId);
 
             return entity;
         }

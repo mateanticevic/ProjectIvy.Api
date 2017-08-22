@@ -7,11 +7,11 @@ namespace AnticevicApi.Model.View.Task
         public Type(DatabaseModel.Org.TaskType x)
         {
             Name = x.Name;
-            ValueId = x.ValueId;
+            Id = x.ValueId;
         }
 
-        public string Name { get; set; }
+        public string Id { get; set; }
 
-        public string ValueId { get; set; }
+        public string Name { get; set; }
     }
 }

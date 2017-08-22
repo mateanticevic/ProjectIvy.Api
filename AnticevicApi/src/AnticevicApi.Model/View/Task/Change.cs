@@ -1,6 +1,6 @@
 ﻿using AnticevicApi.Extensions.BuiltInTypes;
-using System;
 using DatabaseModel = AnticevicApi.Model.Database.Main;
+using System;
 
 namespace AnticevicApi.Model.View.Task
 {

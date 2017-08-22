@@ -7,10 +7,10 @@ namespace AnticevicApi.Model.View.City
         public City(DatabaseModel.Common.City x)
         {
             Name = x.Name;
-            ValueId = x.ValueId;
+            Id = x.ValueId;
         }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
     }

@@ -5,7 +5,7 @@ using System;
 
 namespace AnticevicApi.Model.Database.Main.Finance
 {
-    [Table("Income", Schema = "Finance")]
+    [Table(nameof(Income), Schema = nameof(Finance))]
     public class Income : UserEntity, IHasTimestamp
     {
         [Key]

@@ -6,12 +6,12 @@ namespace AnticevicApi.Model.View.Project
     {
         public Project(DatabaseModel.Org.Project x)
         {
-            ValueId = x.ValueId;
+            Id = x.ValueId;
             Name = x.Name;
         }
 
-        public string Name { get; set; }
+        public string Id { get; set; }
 
-        public string ValueId { get; set; }
+        public string Name { get; set; }
     }
 }

@@ -17,14 +17,16 @@ namespace AnticevicApi.Model.View.Task
             Modified = x.Modified;
             Name = x.Name;
             Type = x.Type.ConvertTo(y => new Type(y));
-            ValueId = x.ValueId;
+            Id = x.ValueId;
         }
 
-        public Task(DatabaseModel.Org.Task t, DatabaseModel.Org.TaskChange c, string projectValueId) : this(t)
+        public Task(DatabaseModel.Org.Task t, DatabaseModel.Org.TaskChange c, string projectId) : this(t)
         {
             LastChange = new Change(c);
-            ProjectValueId = projectValueId;
+            ProjectId = projectId;
         }
+
+        public string Id { get; set; }
 
         public DateTime Created { get; set; }
 
@@ -40,9 +42,7 @@ namespace AnticevicApi.Model.View.Task
 
         public string Name { get; set; }
 
-        public string ProjectValueId { get; set; }
-
-        public string ValueId { get; set; }
+        public string ProjectId { get; set; }
 
         public Change LastChange { get; set; }
 

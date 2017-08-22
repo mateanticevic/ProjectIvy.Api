@@ -1,7 +1,7 @@
 ﻿using AnticevicApi.Model.Database.Main.Common;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnticevicApi.Model.Database.Main.Finance
 {

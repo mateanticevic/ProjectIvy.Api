@@ -8,16 +8,16 @@ namespace AnticevicApi.Model.View.ExpenseType
         {
             Icon = x.Icon;
             IconUrl = x.IconUrl;
-            ValueId = x.ValueId;
+            Id = x.ValueId;
             Name = x.TypeDescription;
         }
+
+        public string Id { get; set; }
 
         public string Icon { get; set; }
 
         public string IconUrl { get; set; }
 
         public string Name { get; set; }
-
-        public string ValueId { get; set; }
     }
 }

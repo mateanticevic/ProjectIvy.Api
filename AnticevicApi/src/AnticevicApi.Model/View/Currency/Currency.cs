@@ -7,12 +7,12 @@ namespace AnticevicApi.Model.View.Currency
         public Currency(DatabaseModel.Common.Currency x)
         {
             Code = x.Code;
-            ValueId = x.Code;
+            Id = x.Code;
             Name = x.Name;
             Symbol = x.Symbol;
         }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
         public string Code { get; set; }
 

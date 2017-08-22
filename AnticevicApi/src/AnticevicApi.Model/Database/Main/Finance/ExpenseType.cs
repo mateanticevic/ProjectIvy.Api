@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace AnticevicApi.Model.Database.Main.Finance
 {
-    [Table("ExpenseType", Schema = "Finance")]
+    [Table(nameof(ExpenseType), Schema = nameof(Finance))]
     public class ExpenseType : IHasValueId
     {
         [Key]
