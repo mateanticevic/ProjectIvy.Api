@@ -5,6 +5,7 @@ using AnticevicApi.Model.View;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using View = AnticevicApi.Model.View.Country;
 
 namespace AnticevicApi.Controllers.Country
@@ -33,6 +34,14 @@ namespace AnticevicApi.Controllers.Country
         public View.Country Get(string id)
         {
             return _countryHandler.Get(id);
+        }
+
+        [HttpGet]
+        [Route("visited")]
+        [Authorize(Roles = UserRole.User)]
+        public IEnumerable<View.Country> GetCountries()
+        {
+            return _countryHandler.GetVisited();
         }
 
         #endregion

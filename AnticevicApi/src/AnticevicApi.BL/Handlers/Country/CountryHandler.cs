@@ -1,7 +1,10 @@
 ﻿using AnticevicApi.DL.Extensions;
 using AnticevicApi.Model.Binding.Country;
 using AnticevicApi.Model.View;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System;
 using View = AnticevicApi.Model.View.Country;
 
 namespace AnticevicApi.BL.Handlers.Country
@@ -41,6 +44,22 @@ namespace AnticevicApi.BL.Handlers.Country
                     Count = count,
                     Items = items
                 };
+            }
+        }
+        
+        public IEnumerable<View.Country> GetVisited()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Trips.WhereUser(User)
+                                    .Where(x => x.TimestampEnd < DateTime.Now)
+                                    .Include(x => x.Cities)
+                                    .SelectMany(x => x.Cities)
+                                    .Select(x => x.City.Country)
+                                    .Distinct()
+                                    .Select(x => new View.Country(x))
+                                    .ToList();
+
             }
         }
     }
