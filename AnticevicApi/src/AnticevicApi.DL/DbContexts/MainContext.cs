@@ -41,6 +41,8 @@ namespace AnticevicApi.DL.DbContexts
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<CountryPolygon> CountryPolygons { get; set; }
+
         public DbSet<Currency> Currencies { get; set; }
 
         public DbSet<Domain> Domains { get; set; }
@@ -135,6 +137,9 @@ namespace AnticevicApi.DL.DbContexts
             modelBuilder.Entity<CarLog>()
                         .HasOne(x => x.Car)
                         .WithMany(x => x.CarLogs);
+
+            modelBuilder.Entity<CountryPolygon>()
+                        .HasKey(x => new { x.CountryId, x.GroupId, x.Index });
 
             modelBuilder.Entity<Tracking>()
                         .HasOne(x => x.User)

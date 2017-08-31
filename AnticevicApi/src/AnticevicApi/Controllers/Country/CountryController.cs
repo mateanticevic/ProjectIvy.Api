@@ -39,9 +39,18 @@ namespace AnticevicApi.Controllers.Country
         [HttpGet]
         [Route("visited")]
         [Authorize(Roles = UserRole.User)]
-        public IEnumerable<View.Country> GetCountries()
+        public IEnumerable<View.Country> GetVisited()
         {
             return _countryHandler.GetVisited();
+        }
+
+        [HttpGet]
+        [Route("visited/boundaries")]
+        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries()
+        {
+            var visitedCountries = _countryHandler.GetVisited();
+
+            return _countryHandler.GetBoundaries(visitedCountries);
         }
 
         #endregion

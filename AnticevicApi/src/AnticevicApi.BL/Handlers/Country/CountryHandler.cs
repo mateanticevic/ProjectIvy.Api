@@ -62,5 +62,36 @@ namespace AnticevicApi.BL.Handlers.Country
 
             }
         }
+
+        public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
+        {
+            using (var context = GetMainContext())
+            {
+                var polygons = context.CountryPolygons.Where(x => countries.Any(y => y.Id == x.Country.ValueId))
+                                                        .Include(x => x.Country)
+                                                        .ToList();
+
+                foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
+                {
+                    var paths = new List<IEnumerable<Location>>();
+
+                    foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
+                    {
+                        var path = countryPolygon.OrderBy(x => x.Index)
+                                                 .Select(x => new Location() { Latitude = x.Latitude, Longitude = x.Longitude })
+                                                 .ToList();
+                        paths.Add(path);
+                    }
+
+                    var countryBoundaries = new View.CountryBoundaries()
+                    {
+                        Country = countries.SingleOrDefault(x => x.Id == countryPolygons.Key.ValueId),
+                        Polygons = paths
+                    };
+
+                    yield return countryBoundaries;
+                }
+            }
+        }
     }
 }

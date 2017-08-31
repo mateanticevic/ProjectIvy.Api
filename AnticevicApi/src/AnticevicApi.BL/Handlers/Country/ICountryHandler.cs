@@ -11,6 +11,8 @@ namespace AnticevicApi.BL.Handlers.Country
 
         PagedView<View.Country> Get(CountryGetBinding binding);
 
+        IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries);
+
         IEnumerable<View.Country> GetVisited();
     }
 }
