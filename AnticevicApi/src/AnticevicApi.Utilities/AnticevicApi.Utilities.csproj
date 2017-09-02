@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <VersionPrefix>0.29.0</VersionPrefix>
+    <VersionPrefix>0.30.0</VersionPrefix>
     <TargetFramework>netstandard2.0</TargetFramework>
     <AssemblyName>AnticevicApi.Utilities</AssemblyName>
     <PackageId>AnticevicApi.Utilities</PackageId>
@@ -10,7 +10,7 @@
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
-    <Version>0.29.0</Version>
+    <Version>0.30.0</Version>
   </PropertyGroup>
 
   <ItemGroup>
