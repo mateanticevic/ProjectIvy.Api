@@ -163,19 +163,23 @@ namespace AnticevicApi.BL.Handlers.Trip
                                                                      .Select(x => x.ExpenseId)
                                                                      .ToList();
 
-                var userExpenses = context.Expenses.WhereUser(User.Id)
-                                                   .Include(x => x.Currency)
-                                                   .Include(x => x.ExpenseType)
-                                                   .Include(x => x.Vendor);
+                var userExpenses = context.Expenses.WhereUser(User.Id);
 
                 var expensesWithExcluded = userExpenses.Where(x => trip.TimestampStart.Date <= x.Date && trip.TimestampEnd.Date >= x.Date)
                                                        .Where(x => !excludedExpenseIds.Contains(x.Id));
 
                 var expensesIncluded = userExpenses.Where(x => includedExpenseIds.Contains(x.Id));
 
-                var expenses = expensesWithExcluded.Union(expensesIncluded)
-                                                   .OrderBy(x => x.Date)
-                                                   .ToList();
+                var expenseIds = expensesWithExcluded.Union(expensesIncluded)
+                                                     .Select(x => x.Id)
+                                                     .ToList();
+
+                var expenses = context.Expenses.Where(x => expenseIds.Contains(x.Id))
+                                               .Include(x => x.Currency)
+                                               .Include(x => x.ExpenseType)
+                                               .Include(x => x.Vendor)
+                                               .OrderBy(x => x.Date)
+                                               .ToList();
 
                 decimal totalSpent = 0;
                 using (var db = GetSqlConnection())
@@ -185,7 +189,7 @@ namespace AnticevicApi.BL.Handlers.Trip
 
                     var query = new GetExpenseSumQuery()
                     {
-                        ExpenseIds = expenses.Select(x => x.Id),
+                        ExpenseIds = expenseIds,
                         TargetCurrencyId = targetCurrencyId,
                         UserId = User.Id
                     };
