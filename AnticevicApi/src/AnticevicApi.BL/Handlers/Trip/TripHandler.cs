@@ -171,6 +171,7 @@ namespace AnticevicApi.BL.Handlers.Trip
                 var expensesIncluded = userExpenses.Where(x => includedExpenseIds.Contains(x.Id));
 
                 var expenseIds = expensesWithExcluded.Union(expensesIncluded)
+                                                     .OrderBy(x => x.Date)
                                                      .Select(x => x.Id)
                                                      .ToList();
 
