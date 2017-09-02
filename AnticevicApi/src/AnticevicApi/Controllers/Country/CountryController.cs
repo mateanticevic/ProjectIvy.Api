@@ -30,6 +30,13 @@ namespace AnticevicApi.Controllers.Country
         }
 
         [HttpGet]
+        [Route("count")]
+        public long GetCount(CountryGetBinding binding)
+        {
+            return _countryHandler.Count(binding);
+        }
+
+        [HttpGet]
         [Route("{id}")]
         public View.Country Get(string id)
         {
@@ -42,6 +49,13 @@ namespace AnticevicApi.Controllers.Country
         public IEnumerable<View.Country> GetVisited()
         {
             return _countryHandler.GetVisited();
+        }
+
+        [HttpGet]
+        [Route("visited/count")]
+        public long GetVisitedCount()
+        {
+            return _countryHandler.CountVisited();
         }
 
         [HttpGet]

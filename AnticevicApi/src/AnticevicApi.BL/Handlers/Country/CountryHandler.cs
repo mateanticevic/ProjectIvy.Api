@@ -15,6 +15,31 @@ namespace AnticevicApi.BL.Handlers.Country
         {
         }
 
+        public long Count(CountryGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var countries = context.Countries;
+
+                return countries.Count();
+            }
+        }
+
+        public long CountVisited()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Trips.WhereUser(User)
+                                    .Where(x => x.TimestampEnd < DateTime.Now)
+                                    .Include(x => x.Cities)
+                                    .SelectMany(x => x.Cities)
+                                    .Select(x => x.City.Country)
+                                    .Distinct()
+                                    .Select(x => x)
+                                    .LongCount();
+            }
+        }
+
         public View.Country Get(string id)
         {
             using (var context = GetMainContext())

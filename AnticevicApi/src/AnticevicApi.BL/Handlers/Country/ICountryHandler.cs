@@ -7,6 +7,10 @@ namespace AnticevicApi.BL.Handlers.Country
 {
     public interface ICountryHandler
     {
+        long Count(CountryGetBinding binding);
+
+        long CountVisited();
+
         View.Country Get(string id);
 
         PagedView<View.Country> Get(CountryGetBinding binding);
