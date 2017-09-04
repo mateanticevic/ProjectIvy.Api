@@ -5,7 +5,7 @@ using System;
 
 namespace AnticevicApi.Model.Database.Main.User
 {
-    [Table("User", Schema = "User")]
+    [Table(nameof(User), Schema = nameof(User))]
     public class User
     {
         [Key]
@@ -28,6 +28,8 @@ namespace AnticevicApi.Model.Database.Main.User
         public string Username { get; set; }
 
         public string LastFmUsername { get; set; }
+
+        public Common.Currency DefaultCurrency { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
 

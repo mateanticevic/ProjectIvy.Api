@@ -34,6 +34,7 @@ namespace AnticevicApi.BL.Handlers.User
             {
                 var userEntity = db.Users.Include(x => x.UserRoles)
                                          .ThenInclude(x => x.Role)
+                                         .Include(x => x.DefaultCurrency)
                                          .SingleOrDefault(x => x.Id == id);
 
                 return new View.User(userEntity);
