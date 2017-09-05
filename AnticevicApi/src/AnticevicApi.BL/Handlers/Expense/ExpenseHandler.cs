@@ -215,12 +215,14 @@ namespace AnticevicApi.BL.Handlers.Expense
 
         public bool Update(ExpenseBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var entity = db.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.Id);
+                var entity = context.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.Id);
 
-                entity = binding.ToEntity(db, entity);
-                db.SaveChanges();
+                entity = binding.ToEntity(context, entity);
+
+                context.Expenses.Update(entity);
+                context.SaveChanges();
 
                 return true;
             }

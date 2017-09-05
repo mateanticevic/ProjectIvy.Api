@@ -26,6 +26,7 @@ namespace AnticevicApi.BL.MapExtensions
             entity.Modified = DateTime.Now;
             entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
             entity.PoiId = context.Pois.GetId(binding.PoiId);
+            entity.ValueId = binding.Id;
             entity.VendorId = context.Vendors.GetId(binding.VendorId);
 
             return entity;

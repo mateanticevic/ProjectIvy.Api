@@ -103,10 +103,10 @@ namespace AnticevicApi.Controllers.Expense
         #region Post
 
         [HttpPut]
-        [Route("{valueId}")]
-        public bool Put(string expenseId, [FromBody] ExpenseBinding binding)
+        [Route("{id}")]
+        public bool Put(string id, [FromBody] ExpenseBinding binding)
         {
-            binding.Id = expenseId;
+            binding.Id = id;
             return _expenseHandler.Update(binding);
         }
 
