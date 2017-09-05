@@ -93,6 +93,8 @@ namespace AnticevicApi.BL.Handlers.Expense
                                              .Include(x => x.Currency)
                                              .Include(x => x.Poi)
                                              .Include(x => x.Vendor)
+                                             .Include(x => x.PaymentType)
+                                             .Include(x => x.Card)
                                              .WhereUser(User.Id);
 
                 result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
@@ -215,7 +217,7 @@ namespace AnticevicApi.BL.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var entity = db.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.ValueId);
+                var entity = db.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.Id);
 
                 entity = binding.ToEntity(db, entity);
                 db.SaveChanges();

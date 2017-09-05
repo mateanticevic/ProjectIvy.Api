@@ -8,7 +8,7 @@ namespace AnticevicApi.Model.Binding.Expense
 
         public string Comment { get; set; }
 
-        public string CurrencyValueId { get; set; }
+        public string CurrencyId { get; set; }
 
         public DateTime Date { get; set; }
 
@@ -20,8 +20,8 @@ namespace AnticevicApi.Model.Binding.Expense
 
         public string PoiId { get; set; }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
-        public string VendorValueId { get; set; }
+        public string VendorId { get; set; }
     }
 }

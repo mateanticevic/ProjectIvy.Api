@@ -106,7 +106,7 @@ namespace AnticevicApi.Controllers.Expense
         [Route("{valueId}")]
         public bool Put(string expenseId, [FromBody] ExpenseBinding binding)
         {
-            binding.ValueId = expenseId;
+            binding.Id = expenseId;
             return _expenseHandler.Update(binding);
         }
 
