@@ -22,7 +22,7 @@ namespace AnticevicApi.BL.MapExtensions
             entity.Comment = binding.Comment;
             entity.CurrencyId = context.Currencies.SingleOrDefault(x => x.Code == binding.CurrencyId).Id;
             entity.Date = binding.Date;
-            entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeValueid).Value;
+            entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
             entity.Modified = DateTime.Now;
             entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
             entity.PoiId = context.Pois.GetId(binding.PoiId);

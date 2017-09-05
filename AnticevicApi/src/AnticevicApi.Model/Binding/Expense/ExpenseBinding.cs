@@ -12,7 +12,7 @@ namespace AnticevicApi.Model.Binding.Expense
 
         public DateTime Date { get; set; }
 
-        public string ExpenseTypeValueid { get; set; }
+        public string ExpenseTypeId { get; set; }
 
         public string PaymentTypeId { get; set; }
 
