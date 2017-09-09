@@ -131,6 +131,18 @@ namespace ProjectIvy.BL.Handlers.Tracking
             }
         }
 
+        public double GetMaxSpeed(FilteredBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var maxSpeed = context.Trackings.WhereUser(User)
+                                                .WhereTimestampInclusive(binding)
+                                                .Max(x => x.Speed);
+
+                return maxSpeed.HasValue ? maxSpeed.Value : 0;
+            }
+        }
+
         public bool ImportFromKml(XDocument kml)
         {
             var trackings = KmlHandler.ParseKml(kml);

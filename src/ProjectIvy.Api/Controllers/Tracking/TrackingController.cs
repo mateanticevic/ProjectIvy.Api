@@ -1,11 +1,11 @@
-﻿using ProjectIvy.BL.Handlers.Tracking;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Tracking;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Utilities.Geo;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
@@ -37,8 +37,8 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public string GetGpx([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             return _trackingHandler.Get(new FilteredBinding(from, to))
-                                  .ToGpx()
-                                  .ToString();
+                                   .ToGpx()
+                                   .ToString();
         }
 
         [HttpGet]
@@ -67,6 +67,13 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public int GetDistance([FromQuery] FilteredBinding binding)
         {
             return _trackingHandler.GetDistance(binding);
+        }
+
+        [HttpGet]
+        [Route("speed/max")]
+        public double GetMaxSpeed([FromQuery] FilteredBinding binding)
+        {
+            return _trackingHandler.GetMaxSpeed(binding);
         }
 
         #endregion

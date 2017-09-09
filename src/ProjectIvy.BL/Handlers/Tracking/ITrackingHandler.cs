@@ -10,11 +10,13 @@ namespace ProjectIvy.BL.Handlers.Tracking
     {
         bool Create(TrackingBinding binding);
 
-        IEnumerable<Model.View.Tracking.Tracking> Get(FilteredBinding binding);
+        IEnumerable<View.Tracking> Get(FilteredBinding binding);
 
         int Count(FilteredBinding binding);
 
         int GetDistance(FilteredBinding binding);
+
+        double GetMaxSpeed(FilteredBinding binding);
 
         View.TrackingCurrent GetLast();
 
