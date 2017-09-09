@@ -14,6 +14,8 @@ namespace ProjectIvy.BL.Handlers.Tracking
 
         int Count(FilteredBinding binding);
 
+        double GetAverageSpeed(FilteredBinding binding);
+
         int GetDistance(FilteredBinding binding);
 
         double GetMaxSpeed(FilteredBinding binding);

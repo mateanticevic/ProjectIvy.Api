@@ -70,6 +70,13 @@ namespace ProjectIvy.Api.Controllers.Tracking
         }
 
         [HttpGet]
+        [Route("speed/average")]
+        public double GetAverageSpeed([FromQuery] FilteredBinding binding)
+        {
+            return _trackingHandler.GetAverageSpeed(binding);
+        }
+
+        [HttpGet]
         [Route("speed/max")]
         public double GetMaxSpeed([FromQuery] FilteredBinding binding)
         {

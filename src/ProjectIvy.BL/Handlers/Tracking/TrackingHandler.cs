@@ -119,6 +119,18 @@ namespace ProjectIvy.BL.Handlers.Tracking
             }
         }
 
+        public double GetAverageSpeed(FilteredBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var averageSpeed = context.Trackings.WhereUser(User)
+                                                    .WhereTimestampInclusive(binding)
+                                                    .Average(x => x.Speed);
+
+                return averageSpeed.HasValue ? averageSpeed.Value : 0;
+            }
+        }
+
         public View.TrackingCurrent GetLast()
         {
             using (var db = GetMainContext())
