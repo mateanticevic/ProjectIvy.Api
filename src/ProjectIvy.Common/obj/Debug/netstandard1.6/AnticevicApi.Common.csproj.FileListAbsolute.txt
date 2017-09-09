@@ -1,0 +1,7 @@
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\bin\Debug\netstandard1.6\ProjectIvy.Common.deps.json
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\bin\Debug\netstandard1.6\ProjectIvy.Common.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\bin\Debug\netstandard1.6\ProjectIvy.Common.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\obj\Debug\netstandard1.6\ProjectIvy.Common.AssemblyInfo.cs
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\obj\Debug\netstandard1.6\ProjectIvy.Common.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\obj\Debug\netstandard1.6\ProjectIvy.Common.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Common\obj\Debug\netstandard1.6\ProjectIvy.Common.csprojResolveAssemblyReference.cache

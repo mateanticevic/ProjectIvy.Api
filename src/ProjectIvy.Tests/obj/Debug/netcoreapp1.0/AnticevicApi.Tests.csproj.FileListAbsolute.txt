@@ -1,0 +1,15 @@
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Tests.deps.json
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Tests.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Tests.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Common.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Extensions.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Model.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Utilities.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Utilities.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Common.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Extensions.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\bin\Debug\netcoreapp1.0\ProjectIvy.Model.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\obj\Debug\netcoreapp1.0\ProjectIvy.Tests.csprojResolveAssemblyReference.cache
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\obj\Debug\netcoreapp1.0\ProjectIvy.Tests.AssemblyInfo.cs
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\obj\Debug\netcoreapp1.0\ProjectIvy.Tests.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.Tests\obj\Debug\netcoreapp1.0\ProjectIvy.Tests.pdb

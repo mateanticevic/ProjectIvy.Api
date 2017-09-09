@@ -1,0 +1,21 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+configuration: Debug
+before_build:
+- cmd: dotnet restore "C:\projects\projectivy-api\ProjectIvy.sln"
+build:
+  project: ProjectIvy.sln
+  publish_wap: true
+  verbosity: normal
+test: off
+artifacts:
+- path: src\ProjectIvy\bin\Debug\netcoreapp2.0
+  name: ProjectIvy.Api
+  type: WebDeployPackage
+deploy:
+- provider: Environment
+  name: ZgHome
+  on:
+    branch: master
+    ProjectIvy.Api.deploy_website: true
+    ProjectIvy.Api.site_name: api2.anticevic.net

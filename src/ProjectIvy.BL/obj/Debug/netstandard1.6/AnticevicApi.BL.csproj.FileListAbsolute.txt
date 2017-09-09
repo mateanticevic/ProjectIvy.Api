@@ -1,0 +1,17 @@
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.BL.deps.json
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.BL.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.BL.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Common.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.DL.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Extensions.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Model.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Utilities.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Common.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.DL.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Extensions.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Utilities.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\bin\Debug\netstandard1.6\ProjectIvy.Model.pdb
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\obj\Debug\netstandard1.6\ProjectIvy.BL.csprojResolveAssemblyReference.cache
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\obj\Debug\netstandard1.6\ProjectIvy.BL.AssemblyInfo.cs
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\obj\Debug\netstandard1.6\ProjectIvy.BL.dll
+C:\Users\mate\Source\Repos\ProjectIvy\ProjectIvy\src\ProjectIvy.BL\obj\Debug\netstandard1.6\ProjectIvy.BL.pdb

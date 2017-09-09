@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <VersionPrefix>1.0.0</VersionPrefix>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <AssemblyName>ProjectIvy.Api</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <PackageId>ProjectIvy</PackageId>
+    <RuntimeFrameworkVersion>2.0</RuntimeFrameworkVersion>
+    <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
+    <Version>1.0.0</Version>
+    <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="wwwroot\**\*;nlog.config">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ProjectIvy.BL\ProjectIvy.BL.csproj" />
+    <ProjectReference Include="..\ProjectIvy.Common\ProjectIvy.Common.csproj" />
+    <ProjectReference Include="..\ProjectIvy.DL\ProjectIvy.DL.csproj" />
+    <ProjectReference Include="..\ProjectIvy.Utilities\ProjectIvy.Utilities.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="before-deploy.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="deploy.ps1">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="nlog.config">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
