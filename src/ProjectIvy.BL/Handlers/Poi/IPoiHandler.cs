@@ -1,5 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Poi;
-using System.Collections.Generic;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Poi
 {
@@ -7,6 +7,6 @@ namespace ProjectIvy.BL.Handlers.Poi
     {
         void Create(PoiBinding binding);
 
-        IEnumerable<Model.View.Poi.Poi> Get(PoiGetBinding binding);
+        PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding);
     }
 }

@@ -1,7 +1,8 @@
-﻿using ProjectIvy.BL.MapExtensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Poi;
-using System.Collections.Generic;
+using ProjectIvy.Model.View;
 using System.Linq;
 
 namespace ProjectIvy.BL.Handlers.Poi
@@ -23,17 +24,26 @@ namespace ProjectIvy.BL.Handlers.Poi
             }
         }
 
-        public IEnumerable<Model.View.Poi.Poi> Get(PoiGetBinding binding)
+        public PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding)
         {
             using (var context = GetMainContext())
             {
+                int? categoryId = context.PoiCategories.GetId(binding.CategoryId);
                 int? vendorId = context.Vendors.GetId(binding.VendorId);
 
-                var pois = context.VendorPois.WhereIf(vendorId.HasValue, x => x.VendorId == vendorId.Value)
-                                             .Select(x => x.Poi)
-                                             .ToList();
+                var pois = context.Pois.Include(x => x.PoiCategory)
+                                       .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
+                                       .WhereIf(!string.IsNullOrWhiteSpace(binding.Name), x => x.Name.Contains(binding.Name))
+                                       .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId));
 
-                return pois.Select(x => new Model.View.Poi.Poi(x));
+                var result = new PagedView<Model.View.Poi.Poi>();
+                result.Count = pois.Count();
+                result.Items = pois.OrderByDescending(x => x.Id)
+                                   .Page(binding)
+                                   .ToList()
+                                   .Select(x => new Model.View.Poi.Poi(x));
+
+                return result;
             }
         }
     }

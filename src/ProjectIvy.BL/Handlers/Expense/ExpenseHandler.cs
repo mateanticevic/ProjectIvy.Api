@@ -1,4 +1,6 @@
-﻿using ProjectIvy.BL.MapExtensions;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
+using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
@@ -6,8 +8,6 @@ using ProjectIvy.DL.Sql;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
-using Dapper;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -81,8 +81,6 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            var view = new PagedView<View.Expense>();
-
             using (var context = GetMainContext())
             {
                 int? currencyId = context.Currencies.GetId(binding.CurrencyId);
@@ -108,6 +106,7 @@ namespace ProjectIvy.BL.Handlers.Expense
                 result = binding.AmountFrom.HasValue ? result.Where(x => x.Ammount >= binding.AmountFrom) : result;
                 result = binding.AmountTo.HasValue ? result.Where(x => x.Ammount <= binding.AmountTo) : result;
 
+                var view = new PagedView<View.Expense>();
                 view.Count = result.Count();
 
                 result = result.OrderByDescending(x => x.Date)

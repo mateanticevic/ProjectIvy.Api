@@ -266,6 +266,10 @@ namespace ProjectIvy.DL.DbContexts
                         .HasOne(x => x.PoiCategory)
                         .WithMany(x => x.Pois);
 
+            modelBuilder.Entity<Poi>()
+                        .HasMany(x => x.VendorPois)
+                        .WithOne(x => x.Poi);
+
             modelBuilder.Entity<TripPoi>()
                         .HasKey(x => new { x.PoiId, x.TripId });
 

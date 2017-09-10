@@ -30,6 +30,9 @@ namespace ProjectIvy.DL.Extensions
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, int? page, int? pageSize = 10)
         {
+            if (!pageSize.HasValue)
+                return query;
+
             // Page number to page index (zero based)
             int pageIndex = page.HasValue ? page.Value - 1 : 0;
             pageIndex = pageIndex < 0 ? 0 : pageIndex;

@@ -35,7 +35,7 @@ namespace ProjectIvy.Api.Controllers.Vendor
         [Route("{vendorId}/poi")]
         public IEnumerable<object> GetPois(string vendorId)
         {
-            return _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId });
+            return _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageSize = null }).Items;
         }
 
         #endregion

@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System.Collections.Generic;
 
 namespace ProjectIvy.Model.Database.Main.Travel
 {
@@ -20,5 +21,7 @@ namespace ProjectIvy.Model.Database.Main.Travel
         public decimal Longitude { get; set; }
 
         public PoiCategory PoiCategory { get; set; }
+
+        public ICollection<Finance.VendorPoi> VendorPois { get; set; }
     }
 }

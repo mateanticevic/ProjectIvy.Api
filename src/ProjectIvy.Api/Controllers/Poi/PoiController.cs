@@ -1,8 +1,10 @@
-﻿using ProjectIvy.BL.Handlers.Poi;
-using ProjectIvy.Model.Binding.Poi;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Poi;
+using ProjectIvy.Model.Binding.Poi;
+using ProjectIvy.Model.View;
+using View = ProjectIvy.Model.View.Poi;
 
 namespace ProjectIvy.Api.Controllers.Poi
 {
@@ -16,8 +18,15 @@ namespace ProjectIvy.Api.Controllers.Poi
             _poiHandler = poiHandler;
         }
 
-        [Route("{poiId}")]
+        [HttpGet]
+        [Route("")]
+        public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding)
+        {
+            return _poiHandler.Get(binding);
+        }
+
         [HttpPost]
+        [Route("{poiId}")]
         public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)
         {
             binding.Id = poiId;
