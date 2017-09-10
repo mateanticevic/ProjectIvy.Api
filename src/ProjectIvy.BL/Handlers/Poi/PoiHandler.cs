@@ -3,6 +3,7 @@ using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectIvy.BL.Handlers.Poi
@@ -44,6 +45,16 @@ namespace ProjectIvy.BL.Handlers.Poi
                                    .Select(x => new Model.View.Poi.Poi(x));
 
                 return result;
+            }
+        }
+
+        public IEnumerable<Model.View.Poi.PoiCategory> GetCategories()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.PoiCategories.OrderBy(x => x.Name)
+                                            .ToList()
+                                            .Select(x => new Model.View.Poi.PoiCategory(x));
             }
         }
     }
