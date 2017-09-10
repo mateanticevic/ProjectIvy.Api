@@ -5,7 +5,7 @@ using System.Collections.Generic;
 namespace ProjectIvy.Model.Database.Main.Travel
 {
     [Table(nameof(Poi), Schema = nameof(Travel))]
-    public class Poi : IHasValueId, IHasName
+    public class Poi : IHasValueId, IHasName, IHasLocation
     {
         [Key]
         public int Id { get; set; }

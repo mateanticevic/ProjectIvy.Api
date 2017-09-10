@@ -35,7 +35,8 @@ namespace ProjectIvy.BL.Handlers.Poi
                 var pois = context.Pois.Include(x => x.PoiCategory)
                                        .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
                                        .WhereIf(!string.IsNullOrWhiteSpace(binding.Name), x => x.Name.Contains(binding.Name))
-                                       .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId));
+                                       .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId))
+                                       .InsideRectangle(binding.X, binding.Y);
 
                 var result = new PagedView<Model.View.Poi.Poi>();
                 result.Count = pois.Count();

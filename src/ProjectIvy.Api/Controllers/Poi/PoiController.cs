@@ -1,26 +1,38 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Poi;
-using System.Collections.Generic;
+using ProjectIvy.Model.Binding.Poi;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Poi;
 
 namespace ProjectIvy.Api.Controllers.Poi
 {
     [Route("[controller]")]
-    public class CommonController : BaseController<CommonController>
+    public class PoiController : BaseController<PoiController>
     {
         private readonly IPoiHandler _poiHandler;
 
-        public CommonController(ILogger<CommonController> logger, IPoiHandler poiHandler) : base(logger)
+        public PoiController(ILogger<PoiController> logger, IPoiHandler poiHandler) : base(logger)
         {
             _poiHandler = poiHandler;
         }
 
         [HttpGet]
-        [Route("poiCategory")]
-        public IEnumerable<View.PoiCategory> GetPoiCategories()
+        [Route("")]
+        public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding)
         {
-            return _poiHandler.GetCategories();
+            return _poiHandler.Get(binding);
+        }
+
+        [HttpPost]
+        [Route("{poiId}")]
+        public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)
+        {
+            binding.Id = poiId;
+            _poiHandler.Create(binding);
+
+            return new StatusCodeResult(StatusCodes.Status201Created);
         }
     }
 }

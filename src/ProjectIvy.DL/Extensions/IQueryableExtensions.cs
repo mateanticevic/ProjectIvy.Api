@@ -13,6 +13,25 @@ namespace ProjectIvy.DL.Extensions
             return query.SingleOrDefault(x => x.ValueId == valueId)?.Id;
         }
 
+        public static IQueryable<T> InsideRectangle<T>(this IQueryable<T> query, LocationBinding a, LocationBinding b) where T : IHasLocation
+        {
+            if (a == null || b == null)
+                return query;
+
+            decimal minLat = a.Lat < b.Lat ? a.Lat : b.Lat;
+            decimal maxLat = a.Lat > b.Lat ? a.Lat : b.Lat;
+
+            decimal minLng = a.Lng < b.Lng ? a.Lng : b.Lng;
+            decimal maxLng = a.Lng > b.Lng ? a.Lng : b.Lng;
+
+            query = query.Where(x => x.Latitude > minLat)
+                         .Where(x => x.Latitude < maxLat)
+                         .Where(x => x.Longitude > minLng)
+                         .Where(x => x.Longitude < maxLng);
+
+            return query;
+        }
+
         public static IOrderedQueryable<T> OrderBy<T,TKey>(this IQueryable<T> query, bool orderAscending, Expression<Func<T, TKey>> sortExpression)
         {
             return orderAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
