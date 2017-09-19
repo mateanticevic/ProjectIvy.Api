@@ -1,4 +1,7 @@
-﻿using ProjectIvy.BL.Exceptions;
+﻿using Dapper;
+using Database = ProjectIvy.Model.Database.Main;
+using Microsoft.EntityFrameworkCore;
+using ProjectIvy.BL.Exceptions;
 using ProjectIvy.BL.Handlers.Tracking;
 using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Databases.Main.Queries;
@@ -8,9 +11,6 @@ using ProjectIvy.DL.Sql;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.View;
-using Dapper;
-using Database = ProjectIvy.Model.Database.Main;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = ProjectIvy.Model.View;
 

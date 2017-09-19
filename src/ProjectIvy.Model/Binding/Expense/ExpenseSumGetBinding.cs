@@ -2,13 +2,9 @@
 
 namespace ProjectIvy.Model.Binding.Expense
 {
-    public class ExpenseSumGetBinding : FilteredBinding
+    public class ExpenseSumGetBinding : ExpenseGetBinding
     {
-        public string CurrencyId { get; set; }
-
-        public string TypeId { get; set; }
-
-        public string VendorId { get; set; }
+        public string TargetCurrencyId { get; set; }
 
         public ExpenseSumGetBinding Override(FilteredBinding binding)
         {

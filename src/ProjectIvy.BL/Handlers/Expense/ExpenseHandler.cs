@@ -83,28 +83,14 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                int? currencyId = context.Currencies.GetId(binding.CurrencyId);
-                int? expenseTypeId = context.ExpenseTypes.GetId(binding.TypeId);
-                int? vendorId = context.Vendors.GetId(binding.VendorId);
-
                 var result = context.Expenses.Include(x => x.ExpenseType)
                                              .Include(x => x.Currency)
                                              .Include(x => x.Poi)
                                              .Include(x => x.Vendor)
                                              .Include(x => x.PaymentType)
                                              .Include(x => x.Card)
-                                             .WhereUser(User.Id);
-
-                result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
-                result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
-
-                result = expenseTypeId.HasValue ? result.Where(x => x.ExpenseTypeId == expenseTypeId) : result;
-                result = vendorId.HasValue ? result.Where(x => x.VendorId == vendorId) : result;
-                result = currencyId.HasValue ? result.Where(x => x.CurrencyId == currencyId) : result;
-
-                result = string.IsNullOrWhiteSpace(binding.Description) ? result : result.Where(x => x.Comment.Contains(binding.Description));
-                result = binding.AmountFrom.HasValue ? result.Where(x => x.Ammount >= binding.AmountFrom) : result;
-                result = binding.AmountTo.HasValue ? result.Where(x => x.Ammount <= binding.AmountTo) : result;
+                                             .WhereUser(User.Id)
+                                             .Where(binding, context);
 
                 var view = new PagedView<View.Expense>();
                 view.Count = result.Count();
@@ -192,19 +178,21 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         public async Task<decimal> GetSum(ExpenseSumGetBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                int targetCurrencyId = db.GetCurrencyId(binding.CurrencyId, User.Id);
+                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, User.Id);
+
+                var expenseIds = context.Expenses.WhereUser(User)
+                                                 .Where(binding, context)
+                                                 .Select(x => x.Id)
+                                                 .ToList();
 
                 using (var sql = GetSqlConnection())
                 {
                     var parameters = new GetExpenseSumQuery()
                     {
-                        ExpenseTypeValueId = binding.TypeId,
-                        VendorValueId = binding.VendorId,
+                        ExpenseIds = expenseIds,
                         TargetCurrencyId = targetCurrencyId,
-                        From = binding.From,
-                        To = binding.To,
                         UserId = User.Id
                     };
                     return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);

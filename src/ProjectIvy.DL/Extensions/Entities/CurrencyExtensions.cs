@@ -1,10 +1,7 @@
-﻿using ProjectIvy.DL.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.DL.DbContexts;
 using ProjectIvy.Model.Database.Main.Common;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ProjectIvy.DL.Extensions.Entities
 {
