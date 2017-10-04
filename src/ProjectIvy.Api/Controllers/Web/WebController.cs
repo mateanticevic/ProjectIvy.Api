@@ -1,7 +1,7 @@
-﻿using ProjectIvy.BL.Handlers.Web;
-using ProjectIvy.Model.Binding.Web;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Web;
+using ProjectIvy.Model.Binding.Web;
 using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Web;
 
@@ -17,7 +17,7 @@ namespace ProjectIvy.Api.Controllers.Web
             _webHandler = webHandler;
         }
 
-        #region Time/
+        #region Get
 
         [HttpGet]
         [Route("time/sum")]

@@ -1,10 +1,10 @@
-﻿using ProjectIvy.BL.Handlers.Airport;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using ProjectIvy.BL.Handlers.Airport;
 using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using View = ProjectIvy.Model.View.Airport;
 
 namespace ProjectIvy.Api.Controllers.Airport

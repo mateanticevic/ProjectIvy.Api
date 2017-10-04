@@ -131,11 +131,12 @@ namespace ProjectIvy.BL.Handlers.Tracking
             }
         }
 
-        public View.TrackingCurrent GetLast()
+        public View.TrackingCurrent GetLast(DateTime? at = null)
         {
             using (var db = GetMainContext())
             {
                 var tracking = db.Trackings.WhereUser(User.Id)
+                                           .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
                                            .OrderByDescending(x => x.Timestamp)
                                            .FirstOrDefault();
 

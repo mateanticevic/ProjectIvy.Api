@@ -1,11 +1,10 @@
-﻿using ProjectIvy.BL.Handlers.Movie;
-using ProjectIvy.Model.Binding.Movie;
-using ProjectIvy.Model.Constants.Database;
-using ProjectIvy.Model.Constants;
-using ProjectIvy.Model.View;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Movie;
+using ProjectIvy.Model.Binding.Movie;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Api.Controllers.Movie
@@ -26,8 +25,6 @@ namespace ProjectIvy.Api.Controllers.Movie
         [HttpGet]
         public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), binding);
-
             return _movieHandler.Get(binding);
         }
 
@@ -35,8 +32,6 @@ namespace ProjectIvy.Api.Controllers.Movie
         [Route("count")]
         public int GetCount([FromQuery] MovieGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetCount), binding);
-
             return _movieHandler.GetCount(binding);
         }
 

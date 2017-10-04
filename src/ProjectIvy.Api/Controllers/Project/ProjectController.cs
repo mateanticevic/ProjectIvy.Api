@@ -1,14 +1,17 @@
-﻿using ProjectIvy.BL.Handlers.Project;
-using ProjectIvy.BL.Handlers.Task;
-using ProjectIvy.Model.Binding.Task;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Project;
+using ProjectIvy.BL.Handlers.Task;
+using ProjectIvy.Model.Binding.Task;
+using ProjectIvy.Model.Constants.Database;
 using System.Collections.Generic;
 using ViewProject = ProjectIvy.Model.View.Project;
 using ViewTask = ProjectIvy.Model.View.Task;
 
 namespace ProjectIvy.Api.Controllers.Project
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class ProjectController : BaseController<ProjectController>
     {

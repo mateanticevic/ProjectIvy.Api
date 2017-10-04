@@ -1,14 +1,17 @@
-﻿using ProjectIvy.BL.Services.LastFm;
-using ProjectIvy.Model.Binding.Common;
-using ProjectIvy.Model.View.Services.LastFm;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Services.LastFm;
+using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.View.Services.LastFm;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System;
 
 namespace ProjectIvy.Api.Controllers.Service
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("service/[controller]")]
     public class LastFmController : BaseController<LastFmController>
     {

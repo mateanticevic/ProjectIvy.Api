@@ -26,3 +26,4 @@
 src/ProjectIvy.Api/obj
 src/ProjectIvy.Api/bin
 .vs
+/src/ProjectIvy.Api/appsettings.json

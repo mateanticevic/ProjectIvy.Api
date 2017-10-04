@@ -1,9 +1,9 @@
-﻿using ProjectIvy.BL.Handlers.Poi;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Poi;
 using ProjectIvy.BL.Handlers.Vendor;
 using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.Constants;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using ViewVendor = ProjectIvy.Model.View.Vendor;
 
@@ -26,8 +26,6 @@ namespace ProjectIvy.Api.Controllers.Vendor
         [HttpGet]
         public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get), contains);
-
             return _vendorHandler.Get(contains);
         }
 

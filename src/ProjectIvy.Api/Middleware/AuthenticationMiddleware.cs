@@ -1,8 +1,8 @@
-﻿using ProjectIvy.BL.Handlers.Security;
+﻿using Microsoft.AspNetCore.Http;
 using ProjectIvy.Api.Cache;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.BL.Handlers.Security;
 using ProjectIvy.Model.Constants.Database;
-using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using System.Threading.Tasks;
 

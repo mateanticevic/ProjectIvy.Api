@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Linq;
+using System.Net.Http.Headers;
 
 namespace ProjectIvy.Api.Extensions
 {
@@ -7,7 +8,16 @@ namespace ProjectIvy.Api.Extensions
     {
         public static string GetAuthorizationToken(this HttpContext context)
         {
-            return context.Request.Headers.SingleOrDefault(x => x.Key == "Authorization").Value;
+            string authorizationHeader = context.Request.Headers.SingleOrDefault(x => x.Key == "Authorization").Value;
+
+            if (AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorizationHeaderValue))
+            {
+                return authorizationHeaderValue.Parameter;
+            }
+            else
+            {
+                return authorizationHeader;
+            }
         }
     }
 }

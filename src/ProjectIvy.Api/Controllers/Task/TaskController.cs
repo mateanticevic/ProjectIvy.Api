@@ -1,13 +1,16 @@
-﻿using ProjectIvy.BL.Handlers.Task;
-using ProjectIvy.Model.Binding.Task;
-using ProjectIvy.Model.Constants;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Task;
+using ProjectIvy.Model.Binding.Task;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.Constants;
 using System.Collections.Generic;
 using ViewModel = ProjectIvy.Model.View.Task;
 
 namespace ProjectIvy.Api.Controllers.Task
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class TaskController : BaseController<TaskController>
     {

@@ -1,13 +1,16 @@
-﻿using ProjectIvy.BL.Handlers.Trip;
-using ProjectIvy.Model.Binding.Trip;
-using ProjectIvy.Model.View;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Trip;
+using ProjectIvy.Model.Binding.Trip;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Trip;
 
 namespace ProjectIvy.Api.Controllers.Trip
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class TripController : BaseController<TripController>
     {
@@ -17,6 +20,8 @@ namespace ProjectIvy.Api.Controllers.Trip
         {
             _tripHandler = tripHandler;
         }
+
+        #region Delete
 
         [HttpDelete]
         [Route("{tripId}")]
@@ -54,6 +59,8 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
+        #endregion
+
         #region Get
 
         [HttpGet]
@@ -71,6 +78,8 @@ namespace ProjectIvy.Api.Controllers.Trip
         }
 
         #endregion
+
+        #region Post
 
         [HttpPost]
         [Route("{tripId}/poi/{poiId}")]
@@ -107,5 +116,7 @@ namespace ProjectIvy.Api.Controllers.Trip
 
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
+
+        #endregion
     }
 }

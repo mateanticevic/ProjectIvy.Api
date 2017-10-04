@@ -1,11 +1,11 @@
-﻿using ProjectIvy.BL.Handlers.Device;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Device;
 using ProjectIvy.Model.Binding.Log;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.Device;
 using ProjectIvy.Model.View;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace ProjectIvy.Api.Controllers.Income
 {

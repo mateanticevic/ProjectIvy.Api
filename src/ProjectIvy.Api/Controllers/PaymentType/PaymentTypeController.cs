@@ -1,8 +1,8 @@
-﻿using ProjectIvy.BL.Handlers.PaymentType;
-using ProjectIvy.Model.Constants.Database;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.PaymentType;
+using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.PaymentType
 {

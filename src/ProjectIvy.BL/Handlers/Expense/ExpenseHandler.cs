@@ -187,6 +187,9 @@ namespace ProjectIvy.BL.Handlers.Expense
                                                  .Select(x => x.Id)
                                                  .ToList();
 
+                if (!expenseIds.Any())
+                    return 0;
+
                 using (var sql = GetSqlConnection())
                 {
                     var parameters = new GetExpenseSumQuery()

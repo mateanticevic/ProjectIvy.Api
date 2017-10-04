@@ -43,9 +43,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet]
         [Route("last")]
-        public View.TrackingCurrent GetLast()
+        public View.TrackingCurrent GetLast([FromQuery] DateTime? at = null)
         {
-            return _trackingHandler.GetLast();
+            return _trackingHandler.GetLast(at);
         }
 
         [HttpGet]
