@@ -22,5 +22,18 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(binding.AmountFrom.HasValue, x => x.Ammount >= binding.AmountFrom)
                         .WhereIf(binding.AmountTo.HasValue, x => x.Ammount <= binding.AmountTo);
         }
+
+        public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
+        {
+            switch (binding.OrderBy)
+            {
+                case ExpenseSort.Date:
+                    return query.OrderBy(binding.OrderAscending, x => x.Date);
+                case ExpenseSort.Amount:
+                    return query.OrderBy(binding.OrderAscending, x => x.Ammount);
+                default:
+                    return query.OrderBy(binding.OrderAscending, x => x.Date);
+            }
+        }
     }
 }

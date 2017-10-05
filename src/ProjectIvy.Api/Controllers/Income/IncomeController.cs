@@ -1,10 +1,11 @@
-﻿using ProjectIvy.BL.Handlers.Income;
-using ProjectIvy.Model.Binding.Common;
-using ProjectIvy.Model.Constants.Database;
-using ProjectIvy.Model.View;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Income;
+using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.View;
 using System;
 using View = ProjectIvy.Model.View.Income;
 
@@ -24,7 +25,7 @@ namespace ProjectIvy.Api.Controllers.Income
         #region Get
 
         [HttpGet]
-        public PagedView<View.Income> Get([FromQuery] FilteredPagedBinding binding)
+        public PagedView<View.Income> Get([FromQuery] IncomeGetBinding binding)
         {
             return _incomeHandler.Get(binding);
         }

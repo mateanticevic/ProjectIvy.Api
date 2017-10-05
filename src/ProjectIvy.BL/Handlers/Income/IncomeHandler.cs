@@ -1,10 +1,11 @@
-﻿using ProjectIvy.DL.Extensions;
-using ProjectIvy.Model.Binding.Common;
+﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Model.View;
 using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Sql;
-using Dapper;
+using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Model.View;
 using System.Linq;
 using System;
 using View = ProjectIvy.Model.View.Income;
@@ -17,7 +18,7 @@ namespace ProjectIvy.BL.Handlers.Income
         {
         }
 
-        public PagedView<View.Income> Get(FilteredPagedBinding binding)
+        public PagedView<View.Income> Get(IncomeGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -25,7 +26,7 @@ namespace ProjectIvy.BL.Handlers.Income
                                       .Include(x => x.Currency)
                                       .Include(x => x.IncomeSource)
                                       .Include(x => x.IncomeType)
-                                      .OrderByDescending(x => x.Timestamp)
+                                      .OrderBy(binding)
                                       .WhereTimestampInclusive(binding);
 
                 var items = query.Page(binding)

@@ -4,6 +4,8 @@ namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseGetBinding : FilteredPagedBinding
     {
+        public ExpenseSort OrderBy { get; set; }
+
         public decimal? AmountFrom { get; set; }
 
         public decimal? AmountTo { get; set; }

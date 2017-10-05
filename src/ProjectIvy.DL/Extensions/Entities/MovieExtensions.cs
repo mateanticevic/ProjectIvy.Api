@@ -21,27 +21,27 @@ namespace ProjectIvy.DL.Extensions.Entities
 
         public static IOrderedQueryable<Movie> OrderBy(this IQueryable<Movie> movies, MovieGetBinding binding)
         {
-            if (binding.SortBy == MovieSort.MyRating)
+            if (binding.OrderBy == MovieSort.MyRating)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.MyRating);
             }
-            else if (binding.SortBy == MovieSort.MyRatingDifference)
+            else if (binding.OrderBy == MovieSort.MyRatingDifference)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.MyRating - x.Rating);
             }
-            else if (binding.SortBy == MovieSort.Year)
+            else if (binding.OrderBy == MovieSort.Year)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.Year);
             }
-            else if (binding.SortBy == MovieSort.Title)
+            else if (binding.OrderBy == MovieSort.Title)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.Title);
             }
-            else if (binding.SortBy == MovieSort.Rating)
+            else if (binding.OrderBy == MovieSort.Rating)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.Rating);
             }
-            else if (binding.SortBy == MovieSort.Runtime)
+            else if (binding.OrderBy == MovieSort.Runtime)
             {
                 return movies.OrderBy(binding.OrderAscending, x => x.Runtime);
             }

@@ -136,7 +136,7 @@ namespace ProjectIvy.BL.Handlers.Trip
 
                 int count = query.Count();
 
-                var items = query.OrderByDescending(x => x.TimestampStart)
+                var items = query.OrderBy(binding)
                                  .Page(binding)
                                  .ToList()
                                  .Select(x => new View.Trip.Trip(x));

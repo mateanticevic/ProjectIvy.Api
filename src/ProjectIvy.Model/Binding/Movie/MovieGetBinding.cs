@@ -1,6 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Common;
 using System.Collections.Generic;
-using System;
 
 namespace ProjectIvy.Model.Binding.Movie
 {
@@ -14,22 +13,7 @@ namespace ProjectIvy.Model.Binding.Movie
 
         public short? RuntimeShorter { get; set; }
 
-        public string Sort { get; set; }
-
-        public MovieSort SortBy
-        {
-            get
-            {
-                try
-                {
-                    return (MovieSort)Enum.Parse(typeof(MovieSort), Sort);
-                }
-                catch
-                {
-                    return MovieSort.Watched;
-                }
-            }
-        }
+        public MovieSort OrderBy { get; set; }
 
         public string Title { get; set; }
 
