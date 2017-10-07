@@ -12,6 +12,12 @@
     <Version>0.0.0</Version>
     <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
   </PropertyGroup>
+  
+  <PropertyGroup>
+    <BuildDependsOn>
+      SetVersion
+    </BuildDependsOn>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Update="wwwroot\**\*;nlog.config">
@@ -46,5 +52,14 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <!--<Target Name="Build" DependsOnTargets="SetVersion" />
+  <Target Name="Test" AfterTargets="Build">
+    <Message Importance="High" Text="Begin" />
+  </Target>
+  <Target Name="SetVersion" BeforeTargets="Build">
+    <Message Importance="High" Text="Setting release version." />
+    <exec command="powershell.exe -noprofile -executionpolicy bypass -command &quot;&amp; {..\..\scripts\pre-build.ps1}&quot;"></exec>
+  </Target>-->
+
 
 </Project>
