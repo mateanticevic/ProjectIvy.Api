@@ -37,8 +37,8 @@ namespace ProjectIvy.BL.MapExtensions
             return set.WhereUser(userId)
                       .OrderByDescending(x => x.ValueId.Count())
                       .ThenByDescending(x => x.ValueId)
-                      .FirstOrDefault()?
-                      .ValueId;
+                      .FirstOrDefault()
+                      ?.ValueId;
         }
 
         public static int NextValueId(this DbSet<Expense> set, int userId)

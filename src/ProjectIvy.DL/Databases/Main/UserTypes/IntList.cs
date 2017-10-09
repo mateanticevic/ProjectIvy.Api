@@ -9,10 +9,10 @@ namespace ProjectIvy.DL.Databases.Main.UserTypes
 {
     public class IntList
     {
+        public const string TypeName = "dbo.IntList";
+
         private readonly IEnumerable<IntListItem> _items;
 
-        public const string TypeName = "dbo.IntList";
-        
         public IntList(IEnumerable<int> items)
         {
             _items = items.IsNullOrEmpty() ? new List<IntListItem>() : items.Select(x => new IntListItem() { Value = x });
@@ -32,6 +32,7 @@ namespace ProjectIvy.DL.Databases.Main.UserTypes
                 record.SetInt32(0, item.Value);
                 items.Add(record);
             }
+
             var sqlParameter = new SqlParameter(parameterName, SqlDbType.Structured);
             sqlParameter.Direction = ParameterDirection.Input;
             sqlParameter.TypeName = TypeName;

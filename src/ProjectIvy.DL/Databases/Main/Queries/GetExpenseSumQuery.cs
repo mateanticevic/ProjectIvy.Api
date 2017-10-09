@@ -1,10 +1,10 @@
 ﻿using System.Collections.Generic;
 using ProjectIvy.DL.Databases.Main.UserTypes;
 using ProjectIvy.DL.Extensions;
-using static Dapper.SqlMapper;
 using System.Data.SqlClient;
 using System.Data;
 using System;
+using static Dapper.SqlMapper;
 
 namespace ProjectIvy.DL.Databases.Main.Queries
 {

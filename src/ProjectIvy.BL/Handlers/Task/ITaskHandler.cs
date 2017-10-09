@@ -23,6 +23,5 @@ namespace ProjectIvy.BL.Handlers.Task
         IEnumerable<View.Status> GetStatuses();
 
         IEnumerable<View.Type> GetTypes();
-
     }
 }

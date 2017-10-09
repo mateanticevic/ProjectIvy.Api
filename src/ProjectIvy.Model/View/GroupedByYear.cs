@@ -4,7 +4,6 @@
     {
         public GroupedByYear()
         {
-
         }
 
         public GroupedByYear(T data, int year)
@@ -14,6 +13,7 @@
         }
 
         public T Data { get; set; }
+
         public int Year { get; set; }
     }
 }

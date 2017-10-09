@@ -32,7 +32,7 @@ namespace ProjectIvy.DL.Extensions
             return query;
         }
 
-        public static IOrderedQueryable<T> OrderBy<T,TKey>(this IQueryable<T> query, bool orderAscending, Expression<Func<T, TKey>> sortExpression)
+        public static IOrderedQueryable<T> OrderBy<T, TKey>(this IQueryable<T> query, bool orderAscending, Expression<Func<T, TKey>> sortExpression)
         {
             return orderAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
         }

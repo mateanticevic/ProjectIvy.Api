@@ -12,8 +12,8 @@ namespace ProjectIvy.DL.Extensions
             return set.Where(x => x.ProjectId == projectId)
                       .OrderByDescending(x => x.ValueId.Count())
                       .ThenByDescending(x => x.ValueId)
-                      .FirstOrDefault()?
-                      .ValueId;
+                      .FirstOrDefault()
+                      ?.ValueId;
         }
 
         public static int NextValueId(this DbSet<Task> set, int projectId)

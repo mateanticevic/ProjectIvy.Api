@@ -8,12 +8,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2
 		src\appveyor.yml = src\appveyor.yml
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4FD49CF1-7E25-46E7-9ABD-7FA9907DD528}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{607772D1-62BE-4F0F-A8EB-8E5AD8827085}"
 	ProjectSection(SolutionItems) = preProject
-		scripts\before-deploy.ps1 = scripts\before-deploy.ps1
-		scripts\deploy.ps1 = scripts\deploy.ps1
 		scripts\pre-build.ps1 = scripts\pre-build.ps1
 		scripts\set-version.ps1 = scripts\set-version.ps1
 	EndProjectSection
@@ -33,6 +29,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Utilities", "src\ProjectIvy.Utilities\ProjectIvy.Utilities.csproj", "{1F089E28-FF7B-40EC-A2DA-F9C6ACCA6FE5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Tests", "src\ProjectIvy.Tests\ProjectIvy.Tests.csproj", "{960E7F01-7EB0-413A-BB09-12FE85359A00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{0F11251C-1155-4BD4-A366-FA95B6C7E27A}"
+	ProjectSection(SolutionItems) = preProject
+		appsettings.json = appsettings.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

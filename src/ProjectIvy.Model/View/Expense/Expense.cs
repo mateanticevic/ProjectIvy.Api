@@ -24,7 +24,7 @@ namespace ProjectIvy.Model.View.Expense
 
         public string Comment { get; set; }
 
-        public Card.Card Card { get;set;}
+        public Card.Card Card { get; set; }
 
         public Currency.Currency Currency { get; set; }
 

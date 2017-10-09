@@ -84,7 +84,6 @@ namespace ProjectIvy.BL.Handlers.Country
                                     .Distinct()
                                     .Select(x => new View.Country(x))
                                     .ToList();
-
             }
         }
 

@@ -35,7 +35,7 @@ namespace ProjectIvy.BL.Handlers.Car
             {
                 var lastEntry = GetLatestLog(binding.CarValueId);
 
-                if(binding.Odometer < lastEntry.Odometer)
+                if (binding.Odometer < lastEntry.Odometer)
                 {
                     throw new InvalidRequestException($"Odometer must be {lastEntry.Odometer}km or higher.");
                 }

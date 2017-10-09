@@ -4,14 +4,7 @@
     {
         public GroupedByMonth()
         {
-
         }
-
-        public T Data { get; set; }
-
-        public int Month { get; set; }
-
-        public int Year { get; set; }
 
         public GroupedByMonth(T data, int month, int year)
         {
@@ -19,5 +12,11 @@
             Month = month;
             Year = year;
         }
+
+        public T Data { get; set; }
+
+        public int Month { get; set; }
+
+        public int Year { get; set; }
     }
 }

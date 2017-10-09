@@ -6,7 +6,6 @@ namespace ProjectIvy.Model.View
     {
         public PagedView()
         {
-
         }
 
         public PagedView(IEnumerable<T> items, long count)

@@ -16,18 +16,6 @@ namespace ProjectIvy.Api.Middleware
             _next = next;
         }
 
-        public async Task Invoke(HttpContext httpContext)
-        {
-            try
-            {
-                await _next(httpContext);
-            }
-            catch(Exception e)
-            {
-                await HandleException(httpContext, e);
-            }
-        }
-
         public static Task HandleException(HttpContext context, Exception e)
         {
             var statusCode = HttpStatusCode.InternalServerError;
@@ -45,6 +33,18 @@ namespace ProjectIvy.Api.Middleware
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
             return context.Response.WriteAsync(result);
+        }
+
+        public async Task Invoke(HttpContext httpContext)
+        {
+            try
+            {
+                await _next(httpContext);
+            }
+            catch (Exception e)
+            {
+                await HandleException(httpContext, e);
+            }
         }
     }
 }
