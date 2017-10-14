@@ -1,6 +1,7 @@
 ﻿using ProjectIvy.DL.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectIvy.DL.Extensions.Entities
@@ -13,9 +14,13 @@ namespace ProjectIvy.DL.Extensions.Entities
             int? expenseTypeId = context.ExpenseTypes.GetId(binding.TypeId);
             int? vendorId = context.Vendors.GetId(binding.VendorId);
 
+            IEnumerable<ExpenseType> expenseTypes = null;
+            if (expenseTypeId.HasValue)
+                expenseTypes = context.ExpenseTypes.GetAll();
+
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
-                        .WhereIf(expenseTypeId.HasValue, x => x.ExpenseTypeId == expenseTypeId)
+                        .WhereIf(expenseTypeId.HasValue, x => x.ExpenseTypeId == expenseTypeId || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeId.Value))
                         .WhereIf(vendorId.HasValue, x => x.VendorId == vendorId)
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
