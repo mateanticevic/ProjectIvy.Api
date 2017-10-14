@@ -1,10 +1,9 @@
-﻿using ProjectIvy.BL.Handlers.Expense;
-using ProjectIvy.Model.Constants;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using ViewExpenseType = ProjectIvy.Model.View.ExpenseType;
+using ProjectIvy.BL.Handlers.Expense;
 using ProjectIvy.Model.Binding.ExpenseType;
+using System.Collections.Generic;
+using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers
 {
@@ -21,11 +20,16 @@ namespace ProjectIvy.Api.Controllers
         #region Get
 
         [HttpGet]
-        public IEnumerable<ViewExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding)
+        public IEnumerable<View.ExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding)
         {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Get));
-
             return _expenseTypeHandler.Get(binding);
+        }
+
+        [HttpGet]
+        [Route("tree")]
+        public IEnumerable<View.Node<View.ExpenseType.ExpenseType>> GetTree()
+        {
+            return _expenseTypeHandler.GetTree();
         }
 
         #endregion
