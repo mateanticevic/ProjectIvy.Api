@@ -13,6 +13,7 @@ namespace ProjectIvy.BL.MapExtensions
 
             entity.ValueId = binding.Id;
             entity.Name = binding.Name;
+            entity.Address = binding.Address;
             entity.Latitude = binding.Latitude;
             entity.Longitude = binding.Longitude;
             entity.PoiCategoryId = context.PoiCategories.GetId(binding.PoiCategoryId).Value;

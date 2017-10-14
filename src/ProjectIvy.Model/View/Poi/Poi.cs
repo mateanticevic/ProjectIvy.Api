@@ -1,5 +1,5 @@
-﻿using ProjectIvy.Extensions.BuiltInTypes;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
+using ProjectIvy.Extensions.BuiltInTypes;
 
 namespace ProjectIvy.Model.View.Poi
 {
@@ -11,12 +11,15 @@ namespace ProjectIvy.Model.View.Poi
             Latitude = x.Latitude;
             Longitude = x.Longitude;
             Name = x.Name;
+            Address = x.Address;
             Id = x.ValueId;
         }
 
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Address { get; set; }
 
         public decimal Latitude { get; set; }
 
