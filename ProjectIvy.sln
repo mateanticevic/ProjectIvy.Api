@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.16
+VisualStudioVersion = 15.0.27004.2002
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}"
 	ProjectSection(SolutionItems) = preProject
@@ -10,7 +10,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{607772D1-62BE-4F0F-A8EB-8E5AD8827085}"
 	ProjectSection(SolutionItems) = preProject
-		scripts\pre-build.ps1 = scripts\pre-build.ps1
 		scripts\set-version.ps1 = scripts\set-version.ps1
 	EndProjectSection
 EndProject
