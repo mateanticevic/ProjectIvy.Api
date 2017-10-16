@@ -1,7 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <VersionPrefix>0.0.0</VersionPrefix>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <PreserveCompilationContext>true</PreserveCompilationContext>
     <AssemblyName>ProjectIvy.Api</AssemblyName>
@@ -9,14 +8,7 @@
     <PackageId>ProjectIvy</PackageId>
     <RuntimeFrameworkVersion>2.0</RuntimeFrameworkVersion>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
-    <Version>0.0.0</Version>
     <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
-  </PropertyGroup>
-  
-  <PropertyGroup>
-    <BuildDependsOn>
-      SetVersion
-    </BuildDependsOn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -33,8 +25,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta5" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta7" />
   </ItemGroup>
 
   <ItemGroup>
@@ -52,14 +45,5 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <!--<Target Name="Build" DependsOnTargets="SetVersion" />
-  <Target Name="Test" AfterTargets="Build">
-    <Message Importance="High" Text="Begin" />
-  </Target>
-  <Target Name="SetVersion" BeforeTargets="Build">
-    <Message Importance="High" Text="Setting release version." />
-    <exec command="powershell.exe -noprofile -executionpolicy bypass -command &quot;&amp; {..\..\scripts\pre-build.ps1}&quot;"></exec>
-  </Target>-->
-
 
 </Project>
