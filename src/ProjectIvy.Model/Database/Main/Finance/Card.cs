@@ -19,5 +19,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public DateTime Issued { get; set; }
 
         public string LastFourDigits { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

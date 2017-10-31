@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.DL.Extensions;
+using ProjectIvy.Model.Binding.Card;
 using System.Collections.Generic;
 using System.Linq;
 using View = ProjectIvy.Model.View.Card;
@@ -11,11 +12,12 @@ namespace ProjectIvy.BL.Handlers.Card
         {
         }
 
-        public IEnumerable<View.Card> GetCards()
+        public IEnumerable<View.Card> GetCards(CardGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Cards.WhereUser(User)
+                                    .WhereIf(binding.IsActive.HasValue, x => x.IsActive == binding.IsActive.Value)
                                     .Select(x => new View.Card(x))
                                     .ToList();
             }

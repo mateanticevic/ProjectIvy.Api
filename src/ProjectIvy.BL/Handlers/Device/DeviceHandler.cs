@@ -23,7 +23,10 @@ namespace ProjectIvy.BL.Handlers.Device
             {
                 using (var db = GetMainContext())
                 {
-                    int deviceId = db.Devices.SingleOrDefault(x => x.ValueId == binding.DeviceId).Id;
+                    int? deviceId = db.Devices.SingleOrDefault(x => x.ValueId == binding.DeviceId)?.Id;
+
+                    if (!deviceId.HasValue)
+                        throw new ResourceNotFoundException();
 
                     int? domainId = db.Domains.SingleOrDefault(x => x.ValueId == binding.Domain)?.Id;
                     if (!domainId.HasValue)
@@ -49,7 +52,7 @@ namespace ProjectIvy.BL.Handlers.Device
 
                     var browserLog = new BrowserLog()
                     {
-                        DeviceId = deviceId,
+                        DeviceId = deviceId.Value,
                         DomainId = domainId.Value,
                         TimestampStart = binding.Start,
                         TimestampEnd = binding.End,

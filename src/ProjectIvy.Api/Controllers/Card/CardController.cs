@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Card;
+using ProjectIvy.Model.Binding.Card;
 using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Card
@@ -18,9 +19,9 @@ namespace ProjectIvy.Api.Controllers.Card
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public IActionResult Get([FromQuery] CardGetBinding binding)
         {
-            return Ok(_cardHandler.GetCards());
+            return Ok(_cardHandler.GetCards(binding));
         }
     }
 }
