@@ -85,6 +85,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             {
                 var result = context.Expenses.Include(x => x.ExpenseType)
                                              .Include(x => x.Currency)
+                                             .Include(x => x.ParentCurrency)
                                              .Include(x => x.Poi)
                                              .Include(x => x.Vendor)
                                              .Include(x => x.PaymentType)

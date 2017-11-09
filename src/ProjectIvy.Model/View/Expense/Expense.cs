@@ -12,15 +12,21 @@ namespace ProjectIvy.Model.View.Expense
             Card = x.Card.ConvertTo(y => new Card.Card(y));
             Comment = x.Comment;
             Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
+            ParentCurrency = x.ParentCurrency?.ConvertTo(y => new Currency.Currency(y));
             Date = x.Date;
             ExpenseType = x.ExpenseType.ConvertTo(y => new ExpenseType.ExpenseType(y));
             Id = x.ValueId;
             PaymentType = x.PaymentType.ConvertTo(y => new PaymentType.PaymentType(y));
             Poi = x.Poi.ConvertTo(y => new Poi.Poi(y));
             Vendor = x.Vendor.ConvertTo(y => new Vendor.Vendor(y));
+            ParentCurrencyExchangeRate = x.ParentCurrencyExchangeRate;
+            Modified = x.Modified;
+            Timestamp = x.Timestamp;
         }
 
         public decimal Amount { get; set; }
+
+        public decimal? ParentCurrencyExchangeRate { get; set; }
 
         public string Comment { get; set; }
 
@@ -28,7 +34,13 @@ namespace ProjectIvy.Model.View.Expense
 
         public Currency.Currency Currency { get; set; }
 
+        public Currency.Currency ParentCurrency { get; set; }
+
         public DateTime Date { get; set; }
+
+        public DateTime? Modified { get; set; }
+
+        public DateTime? Timestamp { get; set; }
 
         public ExpenseType.ExpenseType ExpenseType { get; set; }
 

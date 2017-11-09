@@ -11,6 +11,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public Expense()
         {
             Modified = DateTime.Now;
+            Timestamp = DateTime.Now;
         }
 
         [Key]
@@ -23,12 +24,18 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public string Comment { get; set; }
 
         public int CurrencyId { get; set; }
-        
+
+        public int? ParentCurrencyId { get; set; }
+
+        public decimal? ParentCurrencyExchangeRate { get; set; }
+
         public DateTime Date { get; set; }
 
         public int ExpenseTypeId { get; set; }
         
         public DateTime? Modified { get; set; }
+
+        public DateTime? Timestamp { get; set; }
 
         public int? PoiId { get; set; }
         
@@ -39,6 +46,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public int? CardId { get; set; }
 
         public Currency Currency { get; set; }
+
+        public Currency ParentCurrency { get; set; }
 
         public Card Card { get; set; }
 

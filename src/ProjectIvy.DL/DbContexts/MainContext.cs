@@ -169,6 +169,9 @@ namespace ProjectIvy.DL.DbContexts
                         .HasOne(x => x.Currency);
 
             modelBuilder.Entity<Expense>()
+                        .HasOne(x => x.ParentCurrency);
+
+            modelBuilder.Entity<Expense>()
                         .HasOne(x => x.Poi);
 
             modelBuilder.Entity<Vendor>()
