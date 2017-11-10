@@ -6,6 +6,8 @@ namespace ProjectIvy.Model.Binding.Expense
     {
         public decimal Amount { get; set; }
 
+        public decimal? ParentCurrencyExchangeRate { get; set; }
+
         public string Comment { get; set; }
 
         public string CurrencyId { get; set; }
@@ -15,6 +17,8 @@ namespace ProjectIvy.Model.Binding.Expense
         public string ExpenseTypeId { get; set; }
 
         public string PaymentTypeId { get; set; }
+
+        public string ParentCurrencyId { get; set; }
 
         public string CardId { get; set; }
 

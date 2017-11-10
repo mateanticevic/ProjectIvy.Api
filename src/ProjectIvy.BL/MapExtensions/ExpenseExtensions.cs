@@ -24,7 +24,9 @@ namespace ProjectIvy.BL.MapExtensions
             entity.Date = binding.Date;
             entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
             entity.Modified = DateTime.Now;
+            entity.ParentCurrencyId = string.IsNullOrEmpty(binding.ParentCurrencyId) ? null : context.Currencies.SingleOrDefault(x => x.Code == binding.ParentCurrencyId)?.Id;
             entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
+            entity.ParentCurrencyExchangeRate = entity.ParentCurrencyExchangeRate;
             entity.PoiId = context.Pois.GetId(binding.PoiId);
             entity.ValueId = binding.Id;
             entity.VendorId = context.Vendors.GetId(binding.VendorId);
