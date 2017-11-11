@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
+using System.Collections.Generic;
 
 namespace ProjectIvy.Model.Database.Main.Finance
 {
@@ -58,5 +59,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public Travel.Poi Poi { get; set; }
 
         public Vendor Vendor { get; set; }
+
+        public ICollection<ExpenseFile> ExpenseFiles { get; set; }
     }
 }

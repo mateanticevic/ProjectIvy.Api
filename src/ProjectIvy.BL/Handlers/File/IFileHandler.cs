@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using ProjectIvy.Model.View.File;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.BL.Handlers.File
 {
     public interface IFileHandler
     {
-        Task<byte[]> GetFile(string id);
+        Task<FileWithData> GetFile(string id);
     }
 }

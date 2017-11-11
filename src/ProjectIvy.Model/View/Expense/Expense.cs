@@ -1,5 +1,7 @@
 ﻿using ProjectIvy.Extensions.BuiltInTypes;
 using DatabaseModel = ProjectIvy.Model.Database.Main;
+using System.Collections.Generic;
+using System.Linq;
 using System;
 
 namespace ProjectIvy.Model.View.Expense
@@ -12,6 +14,7 @@ namespace ProjectIvy.Model.View.Expense
             Card = x.Card.ConvertTo(y => new Card.Card(y));
             Comment = x.Comment;
             Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
+            Files = x.ExpenseFiles?.Select(y => y.ConvertTo(p => new ExpenseFile(p)));
             ParentCurrency = x.ParentCurrency?.ConvertTo(y => new Currency.Currency(y));
             Date = x.Date;
             ExpenseType = x.ExpenseType.ConvertTo(y => new ExpenseType.ExpenseType(y));
@@ -33,6 +36,8 @@ namespace ProjectIvy.Model.View.Expense
         public Card.Card Card { get; set; }
 
         public Currency.Currency Currency { get; set; }
+
+        public IEnumerable<ExpenseFile> Files { get; set; }
 
         public Currency.Currency ParentCurrency { get; set; }
 

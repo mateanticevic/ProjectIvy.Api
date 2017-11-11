@@ -1,4 +1,7 @@
-﻿using ProjectIvy.DL.Services.AzureStorage;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.DL.Services.AzureStorage;
+using ProjectIvy.Model.View.File;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.BL.Handlers.File
@@ -12,9 +15,17 @@ namespace ProjectIvy.BL.Handlers.File
             _azureStorageHelper = azureStorageHelper;
         }
 
-        public async Task<byte[]> GetFile(string id)
+        public async Task<FileWithData> GetFile(string id)
         {
-            return await _azureStorageHelper.GetFile($"images/{id}.jpg");
+            using (var context = GetMainContext())
+            {
+                var file = context.Files.Include(x => x.FileType)
+                                        .SingleOrDefault(x => x.ValueId == id);
+
+                var data = await _azureStorageHelper.GetFile(file.Uri);
+
+                return new FileWithData(file) { Data = data };
+            }
         }
     }
 }

@@ -11,6 +11,7 @@ using ProjectIvy.Model.Database.Main.Transport;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.Database.Main.User;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Database.Main.Storage;
 
 namespace ProjectIvy.DL.DbContexts
 {
@@ -53,7 +54,13 @@ namespace ProjectIvy.DL.DbContexts
 
         public DbSet<Expense> Expenses { get; set; }
 
+        public DbSet<ExpenseFile> ExpenseFiles { get; set; }
+
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
+
+        public DbSet<File> Files { get; set; }
+
+        public DbSet<FileType> FileTypes { get; set; }
 
         public DbSet<Flight> Flights { get; set; }
 
@@ -160,6 +167,20 @@ namespace ProjectIvy.DL.DbContexts
             modelBuilder.Entity<ExpenseType>()
                         .HasOne(x => x.ParentType)
                         .WithMany(x => x.Children);
+
+            modelBuilder.Entity<ExpenseFile>()
+                        .HasKey(x => new { x.ExpenseId, x.FileId });
+
+            modelBuilder.Entity<ExpenseFile>()
+                        .HasOne(x => x.Expense)
+                        .WithMany(x => x.ExpenseFiles);
+
+            modelBuilder.Entity<ExpenseFile>()
+                        .HasOne(x => x.File)
+                        .WithMany(x => x.ExpenseFiles);
+
+            modelBuilder.Entity<File>()
+                        .HasOne(x => x.FileType);
 
             modelBuilder.Entity<Expense>()
                         .HasOne(x => x.Vendor)
