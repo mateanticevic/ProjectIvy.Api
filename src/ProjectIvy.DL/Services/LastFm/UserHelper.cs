@@ -20,7 +20,8 @@ namespace ProjectIvy.DL.Services.LastFm
         {
             var hc = new HttpClient();
 
-            var response = await hc.GetStringAsync("http://ws.audioscrobbler.com/2.0/?method=user.gettoptracks&user=tema_tracid&api_key=60ace6d94d756d1a7b417bbcd0e42b34&format=json");
+            //TODO: set string
+            var response = await hc.GetStringAsync("");
 
             var jo = JObject.Parse(response.Replace("@", string.Empty));
 

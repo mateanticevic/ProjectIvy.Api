@@ -22,6 +22,7 @@ using ProjectIvy.BL.Services.LastFm;
 using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Constants;
 using LastFm = ProjectIvy.DL.Services.LastFm;
+using AzureStorage = ProjectIvy.DL.Services.AzureStorage;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -30,6 +31,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using System;
+using ProjectIvy.BL.Handlers.File;
 
 namespace ProjectIvy.Api
 {
@@ -62,6 +64,7 @@ namespace ProjectIvy.Api
                     .Configure<AppSettings>(Configuration);
 
             services.AddSingletonFactory<LastFm.IUserHelper, LastFm.UserFactory>();
+            services.AddSingletonFactory<AzureStorage.IAzureStorageHelper, AzureStorage.AzureStorageFactory>();
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
 
@@ -72,6 +75,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();
+            services.AddHandler<IFileHandler, FileHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
