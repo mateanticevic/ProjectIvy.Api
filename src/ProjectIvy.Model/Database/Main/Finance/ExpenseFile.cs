@@ -11,7 +11,11 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public int FileId { get; set; }
 
+        public int ExpenseFileTypeId { get; set; }
+
         public Expense Expense { get; set; }
+
+        public ExpenseFileType ExpenseFileType { get; set; }
 
         public Storage.File File { get; set; }
     }

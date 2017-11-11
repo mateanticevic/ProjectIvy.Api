@@ -56,6 +56,8 @@ namespace ProjectIvy.DL.DbContexts
 
         public DbSet<ExpenseFile> ExpenseFiles { get; set; }
 
+        public DbSet<ExpenseFileType> ExpenseFileTypes { get; set; }
+
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
 
         public DbSet<File> Files { get; set; }
@@ -167,6 +169,9 @@ namespace ProjectIvy.DL.DbContexts
             modelBuilder.Entity<ExpenseType>()
                         .HasOne(x => x.ParentType)
                         .WithMany(x => x.Children);
+
+            modelBuilder.Entity<ExpenseFile>()
+                        .HasOne(x => x.ExpenseFileType);
 
             modelBuilder.Entity<ExpenseFile>()
                         .HasKey(x => new { x.ExpenseId, x.FileId });

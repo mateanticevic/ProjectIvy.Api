@@ -22,7 +22,7 @@ namespace ProjectIvy.Api.Controllers.Income
         {
             var file = await _fileHandler.GetFile(id);
 
-            return File(file.Data, file.FileType.MimeType);
+            return File(file.Data, file.Type.MimeType);
         }
 
         [HttpPost]

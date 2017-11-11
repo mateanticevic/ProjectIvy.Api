@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Extensions.BuiltInTypes;
+using System;
 
 namespace ProjectIvy.Model.View.File
 {
@@ -6,12 +7,15 @@ namespace ProjectIvy.Model.View.File
     {
         public File(Database.Main.Storage.File entity)
         {
+            Created = entity.Created;
             Id = entity.ValueId;
-            FileType = entity.FileType.ConvertTo(x => new FileType.FileType(x));
+            Type = entity.FileType.ConvertTo(x => new FileType.FileType(x));
         }
 
         public string Id { get; set; }
 
-        public FileType.FileType FileType { get; set; }
+        public DateTime Created { get; set; }
+
+        public FileType.FileType Type { get; set; }
     }
 }

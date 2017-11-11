@@ -92,6 +92,7 @@ namespace ProjectIvy.BL.Handlers.Expense
                                              .Include(x => x.Card)
                                              .Include(x => x.ExpenseFiles)
                                              .Include($"{nameof(Model.Database.Main.Finance.Expense.ExpenseFiles)}.{nameof(Model.Database.Main.Finance.ExpenseFile.File)}.{nameof(Model.Database.Main.Storage.File.FileType)}")
+                                             .Include($"{nameof(Model.Database.Main.Finance.Expense.ExpenseFiles)}.{nameof(Model.Database.Main.Finance.ExpenseFile.ExpenseFileType)}")
                                              .WhereUser(User.Id)
                                              .Where(binding, context);
 
