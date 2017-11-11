@@ -100,7 +100,7 @@ namespace ProjectIvy.Api.Controllers.Expense
 
         #endregion
 
-        #region Post
+        #region Put
 
         [HttpPut]
         [Route("{id}")]
@@ -112,12 +112,21 @@ namespace ProjectIvy.Api.Controllers.Expense
 
         #endregion
 
-        #region Put
+        #region Post
 
         [HttpPost]
         public string Post([FromBody] ExpenseBinding binding)
         {
             return _expenseHandler.Create(binding);
+        }
+
+        [HttpPost]
+        [Route("{expenseId}/file/{fileId}")]
+        public IActionResult PostExpenseFile(string expenseId, string fileId, [FromBody] ExpenseFileBinding binding)
+        {
+            _expenseHandler.AddFile(expenseId, fileId, binding);
+
+            return Ok();
         }
 
         #endregion

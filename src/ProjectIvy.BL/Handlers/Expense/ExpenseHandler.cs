@@ -22,6 +22,27 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
         }
 
+        public void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int fileId = context.Files.GetId(fileValueId).Value;
+                int expenseId = context.Expenses.GetId(expenseValueId).Value;
+                int expenseFileTypeId = context.ExpenseFileTypes.GetId(binding.TypeId).Value;
+
+                var entity = new Model.Database.Main.Finance.ExpenseFile()
+                {
+                    ExpenseFileTypeId = expenseFileTypeId,
+                    ExpenseId = expenseId,
+                    FileId = fileId,
+                    Name = binding.Name
+                };
+
+                context.ExpenseFiles.Add(entity);
+                context.SaveChanges();
+            }
+        }
+
         public int Count(FilteredBinding binding)
         {
             using (var db = GetMainContext())

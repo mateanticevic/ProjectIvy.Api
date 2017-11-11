@@ -9,6 +9,8 @@ namespace ProjectIvy.BL.Handlers.Expense
 {
     public interface IExpenseHandler : IHandler
     {
+        void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding);
+
         string Create(ExpenseBinding binding);
 
         bool Delete(string valueId);
