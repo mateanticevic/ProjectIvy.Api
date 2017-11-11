@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.File;
+using ProjectIvy.Model.Binding.File;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Income
@@ -22,6 +23,18 @@ namespace ProjectIvy.Api.Controllers.Income
             var file = await _fileHandler.GetFile(id);
 
             return File(file.Data, file.FileType.MimeType);
+        }
+
+        [HttpPost]
+        [Route("")]
+        public async Task<IActionResult> Post()
+        {
+            var bytes = new byte[HttpContext.Request.ContentLength.Value];
+            await HttpContext.Request.Body.ReadAsync(bytes, 0, (int)HttpContext.Request.ContentLength.Value);
+
+            string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
+
+            return Ok(fileName);
         }
     }
 }

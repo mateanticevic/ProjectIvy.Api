@@ -1,6 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Services.AzureStorage;
+using ProjectIvy.Model.Binding.File;
+using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.File;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -26,6 +31,48 @@ namespace ProjectIvy.BL.Handlers.File
 
                 return new FileWithData(file) { Data = data };
             }
+        }
+
+        public async Task<string> UploadFile(FileBinding file)
+        {
+            string fileName = Guid.NewGuid().ToString().Replace("-", string.Empty);
+
+            using (var context = GetMainContext())
+            {
+                var fileType = context.FileTypes.SingleOrDefault(x => x.MimeType == file.MimeType);
+
+                string fullPath = $"{GetFolder((StorageFileType)fileType.Id)}/{fileName}.{fileType.Extension}";
+
+                await _azureStorageHelper.UploadFile(fullPath, file.Data);
+
+                var fileEntity = new Model.Database.Main.Storage.File()
+                {
+                    Created = new DateTime(),
+                    FileTypeId = fileType.Id,
+                    ProviderId = (int)StorageProvider.AzureStorage,
+                    Uri = fullPath,
+                    ValueId = fileName
+                };
+                context.Files.Add(fileEntity);
+                await context.SaveChangesAsync();
+            }
+
+            return fileName;
+        }
+
+        private string GetFolder(StorageFileType fileType)
+        {
+            //TODO: Rewrite
+            var documents = new List<StorageFileType>() { StorageFileType.Pdf };
+            var images = new List<StorageFileType>() { StorageFileType.Jpg, StorageFileType.Png };
+
+            if (images.Contains(fileType))
+                return "images";
+
+            if (documents.Contains(fileType))
+                return "documents";
+
+            return "other";
         }
     }
 }

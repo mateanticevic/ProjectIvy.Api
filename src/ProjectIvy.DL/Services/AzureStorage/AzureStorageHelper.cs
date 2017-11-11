@@ -29,5 +29,17 @@ namespace ProjectIvy.DL.Services.AzureStorage
 
             return data;
         }
+
+        public async Task UploadFile(string fileName, byte[] fileData)
+        {
+            var parts = fileName.Split('/');
+
+            var share = _client.GetShareReference(parts[0]);
+            var directory = share.GetRootDirectoryReference();
+
+            var file = directory.GetFileReference(parts[1]);
+
+            await file.UploadFromByteArrayAsync(fileData, 0, fileData.Length);
+        }
     }
 }
