@@ -27,7 +27,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             using (var context = GetMainContext())
             {
                 int fileId = context.Files.GetId(fileValueId).Value;
-                int expenseId = context.Expenses.GetId(expenseValueId).Value;
+                int expenseId = context.Expenses.WhereUser(User).GetId(expenseValueId).Value;
                 int expenseFileTypeId = context.ExpenseFileTypes.GetId(binding.TypeId).Value;
 
                 var entity = new Model.Database.Main.Finance.ExpenseFile()
