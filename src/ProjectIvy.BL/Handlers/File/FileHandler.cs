@@ -50,6 +50,7 @@ namespace ProjectIvy.BL.Handlers.File
                     Created = DateTime.Now,
                     FileTypeId = fileType.Id,
                     ProviderId = (int)StorageProvider.AzureStorage,
+                    SizeInBytes = file.Data.Length,
                     Uri = fullPath,
                     UserId = User.Id,
                     ValueId = fileName

@@ -19,6 +19,8 @@ namespace ProjectIvy.Model.Database.Main.Storage
 
         public int FileTypeId { get; set; }
 
+        public int SizeInBytes { get; set; }
+
         public DateTime Created { get; set; }
 
         public FileType FileType { get; set; }
