@@ -30,13 +30,15 @@ namespace ProjectIvy.Api.Controllers.Income
         public async Task<IActionResult> Post()
         {
             var bytes = new byte[HttpContext.Request.ContentLength.Value];
-            await HttpContext.Request.Body.ReadAsync(bytes, 0, (int)HttpContext.Request.ContentLength.Value);
 
-            Logger.LogError($"Array size: {bytes.Length}");
+            using (var ms = new System.IO.MemoryStream(bytes.Length))
+            {
+                HttpContext.Request.Body.CopyTo(ms);
+                bytes = ms.ToArray();
+                string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
 
-            string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
-
-            return Ok(fileName);
+                return Ok(fileName);
+            }
         }
     }
 }
