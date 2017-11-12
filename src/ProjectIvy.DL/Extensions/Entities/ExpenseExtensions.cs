@@ -1,4 +1,5 @@
-﻿using ProjectIvy.DL.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.DL.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
 using System.Collections.Generic;
@@ -8,6 +9,20 @@ namespace ProjectIvy.DL.Extensions.Entities
 {
     public static class ExpenseExtensions
     {
+        public static IQueryable<Expense> IncludeAll(this IQueryable<Expense> query)
+        {
+            return query.Include(x => x.ExpenseType)
+                        .Include(x => x.Currency)
+                        .Include(x => x.ParentCurrency)
+                        .Include(x => x.Poi)
+                        .Include(x => x.Vendor)
+                        .Include(x => x.PaymentType)
+                        .Include(x => x.Card)
+                        .Include(x => x.ExpenseFiles)
+                        .Include($"{nameof(Expense.ExpenseFiles)}.{nameof(ExpenseFile.File)}.{nameof(Model.Database.Main.Storage.File.FileType)}")
+                        .Include($"{nameof(Expense.ExpenseFiles)}.{nameof(ExpenseFile.ExpenseFileType)}");
+        }
+
         public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
         {
             int? currencyId = context.Currencies.GetId(binding.CurrencyId);

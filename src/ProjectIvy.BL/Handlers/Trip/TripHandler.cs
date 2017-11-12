@@ -176,9 +176,7 @@ namespace ProjectIvy.BL.Handlers.Trip
                                                      .ToList();
 
                 var expenses = context.Expenses.Where(x => expenseIds.Contains(x.Id))
-                                               .Include(x => x.Currency)
-                                               .Include(x => x.ExpenseType)
-                                               .Include(x => x.Vendor)
+                                               .IncludeAll()
                                                .OrderBy(x => x.Date)
                                                .ToList();
 

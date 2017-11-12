@@ -104,17 +104,8 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                var result = context.Expenses.Include(x => x.ExpenseType)
-                                             .Include(x => x.Currency)
-                                             .Include(x => x.ParentCurrency)
-                                             .Include(x => x.Poi)
-                                             .Include(x => x.Vendor)
-                                             .Include(x => x.PaymentType)
-                                             .Include(x => x.Card)
-                                             .Include(x => x.ExpenseFiles)
-                                             .Include($"{nameof(Model.Database.Main.Finance.Expense.ExpenseFiles)}.{nameof(Model.Database.Main.Finance.ExpenseFile.File)}.{nameof(Model.Database.Main.Storage.File.FileType)}")
-                                             .Include($"{nameof(Model.Database.Main.Finance.Expense.ExpenseFiles)}.{nameof(Model.Database.Main.Finance.ExpenseFile.ExpenseFileType)}")
-                                             .WhereUser(User.Id)
+                var result = context.Expenses.WhereUser(User.Id)
+                                             .IncludeAll()
                                              .Where(binding, context);
 
                 var view = new PagedView<View.Expense>();
