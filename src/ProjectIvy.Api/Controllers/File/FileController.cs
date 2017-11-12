@@ -32,6 +32,8 @@ namespace ProjectIvy.Api.Controllers.Income
             var bytes = new byte[HttpContext.Request.ContentLength.Value];
             await HttpContext.Request.Body.ReadAsync(bytes, 0, (int)HttpContext.Request.ContentLength.Value);
 
+            Logger.LogError($"Array size: {bytes.Length}");
+
             string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
 
             return Ok(fileName);
