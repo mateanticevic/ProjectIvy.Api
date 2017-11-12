@@ -47,10 +47,11 @@ namespace ProjectIvy.BL.Handlers.File
 
                 var fileEntity = new Model.Database.Main.Storage.File()
                 {
-                    Created = new DateTime(),
+                    Created = DateTime.Now,
                     FileTypeId = fileType.Id,
                     ProviderId = (int)StorageProvider.AzureStorage,
                     Uri = fullPath,
+                    UserId = User.Id,
                     ValueId = fileName
                 };
                 context.Files.Add(fileEntity);

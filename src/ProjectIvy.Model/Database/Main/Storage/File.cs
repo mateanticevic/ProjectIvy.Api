@@ -6,7 +6,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Storage
 {
     [Table(nameof(File), Schema = nameof(Storage))]
-    public class File : IHasValueId
+    public class File : UserEntity, IHasValueId
     {
         [Key]
         public int Id { get; set; }
