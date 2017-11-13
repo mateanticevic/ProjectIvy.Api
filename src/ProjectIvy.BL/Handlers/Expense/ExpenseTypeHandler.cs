@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.ExpenseType;
 using ProjectIvy.Model.View.ExpenseType;
+using ProjectIvy.Model.View.Expense;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,6 +29,15 @@ namespace ProjectIvy.BL.Handlers.Expense
                                       .OrderBy(x => x.TypeDescription)
                                       .ToList()
                                       .Select(x => new ExpenseType(x));
+            }
+        }
+
+        public IEnumerable<ExpenseFileType> GetFileTypes()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.ExpenseFileTypes.Select(x => new ExpenseFileType(x))
+                                               .ToList();
             }
         }
 
