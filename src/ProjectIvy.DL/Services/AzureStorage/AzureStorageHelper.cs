@@ -36,6 +36,9 @@ namespace ProjectIvy.DL.Services.AzureStorage
 
             var file = directory.GetFileReference(parts[1]);
 
+            if (!await file.ExistsAsync())
+                return null;
+
             byte[] data = new byte[file.StreamWriteSizeInBytes];
             await file.DownloadToByteArrayAsync(data, 0);
 

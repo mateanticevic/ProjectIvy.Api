@@ -44,6 +44,9 @@ namespace ProjectIvy.BL.Handlers.File
 
                 var data = await _azureStorageHelper.GetFile(file.Uri);
 
+                if (data == null)
+                    throw new ResourceNotFoundException();
+
                 return new FileWithData(file) { Data = data };
             }
         }
