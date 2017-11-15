@@ -120,15 +120,13 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId)
+        public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
         {
             using (var context = GetMainContext())
             {
-                int expenseId = context.Expenses.GetId(expenseValueId).Value;
-
                 return context.Expenses.IncludeAll()
                                        .WhereUser(User)
-                                       .SingleOrDefault(x => x.ValueId == expenseValueId)
+                                       .SingleOrDefault(x => x.ValueId == expenseId)
                                        .ExpenseFiles
                                        .Select(x => new View.ExpenseFile(x))
                                        .ToList();
