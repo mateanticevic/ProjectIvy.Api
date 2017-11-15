@@ -15,6 +15,18 @@ namespace ProjectIvy.DL.Services.AzureStorage
             _client = _account.CreateCloudFileClient();
         }
 
+        public async Task DeleteFile(string fileName)
+        {
+            var parts = fileName.Split('/');
+
+            var share = _client.GetShareReference(parts[0]);
+            var directory = share.GetRootDirectoryReference();
+
+            var file = directory.GetFileReference(parts[1]);
+
+            await file.DeleteAsync();
+        }
+
         public async Task<byte[]> GetFile(string fileName)
         {
             var parts = fileName.Split('/');

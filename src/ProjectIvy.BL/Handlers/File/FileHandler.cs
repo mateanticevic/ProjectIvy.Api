@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.BL.Exceptions;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Services.AzureStorage;
 using ProjectIvy.Model.Binding.File;
@@ -18,6 +19,20 @@ namespace ProjectIvy.BL.Handlers.File
         public FileHandler(IHandlerContext<FileHandler> context, IAzureStorageHelper azureStorageHelper) : base(context)
         {
             _azureStorageHelper = azureStorageHelper;
+        }
+
+        public async System.Threading.Tasks.Task DeleteFile(string id)
+        {
+            using (var context = GetMainContext())
+            {
+                var file = context.Files.Include(x => x.FileType)
+                                        .SingleOrDefault(x => x.ValueId == id);
+
+                if (file.UserId != User.Id)
+                    throw new UnauthorizedException();
+
+                await _azureStorageHelper.DeleteFile(file.Uri);
+            }
         }
 
         public async Task<FileWithData> GetFile(string id)

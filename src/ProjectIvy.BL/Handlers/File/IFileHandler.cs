@@ -6,6 +6,8 @@ namespace ProjectIvy.BL.Handlers.File
 {
     public interface IFileHandler
     {
+        System.Threading.Tasks.Task DeleteFile(string id);
+
         Task<FileWithData> GetFile(string id);
 
         Task<string> UploadFile(FileBinding file);

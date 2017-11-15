@@ -15,7 +15,16 @@ namespace ProjectIvy.Api.Controllers.Income
         {
             _fileHandler = fileHandler;
         }
-        
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> Delete(string id)
+        {
+            await _fileHandler.DeleteFile(id);
+
+            return Ok();
+        }
+
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> Get(string id)
