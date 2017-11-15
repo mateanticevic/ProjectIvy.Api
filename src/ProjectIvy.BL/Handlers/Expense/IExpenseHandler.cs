@@ -19,6 +19,8 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         PagedView<View.Expense> Get(ExpenseGetBinding binding);
 
+        IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
+
         int Count(FilteredBinding binding);
 
         Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding);

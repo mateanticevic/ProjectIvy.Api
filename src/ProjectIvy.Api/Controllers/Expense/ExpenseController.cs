@@ -63,6 +63,13 @@ namespace ProjectIvy.Api.Controllers.Expense
         }
 
         [HttpGet]
+        [Route("{expenseId}/file")]
+        public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
+        {
+            return _expenseHandler.GetFiles(expenseId);
+        }
+
+        [HttpGet]
         [Route("sum")]
         public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding)
         {
