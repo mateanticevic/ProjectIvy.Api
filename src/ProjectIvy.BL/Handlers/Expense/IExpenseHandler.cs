@@ -11,6 +11,10 @@ namespace ProjectIvy.BL.Handlers.Expense
     {
         void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding);
 
+        int Count(FilteredBinding binding);
+
+        int CountVendors(ExpenseGetBinding binding);
+
         string Create(ExpenseBinding binding);
 
         bool Delete(string valueId);
@@ -20,8 +24,6 @@ namespace ProjectIvy.BL.Handlers.Expense
         PagedView<View.Expense> Get(ExpenseGetBinding binding);
 
         IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
-
-        int Count(FilteredBinding binding);
 
         Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding);
 

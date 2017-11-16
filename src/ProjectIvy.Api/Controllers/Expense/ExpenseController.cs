@@ -105,6 +105,13 @@ namespace ProjectIvy.Api.Controllers.Expense
             return await _expenseHandler.GetGroupedByTypeSum(binding);
         }
 
+        [HttpGet]
+        [Route("vendor/count")]
+        public int GetUniqueVendorsCount([FromQuery] ExpenseSumGetBinding binding)
+        {
+            return _expenseHandler.CountVendors(binding);
+        }
+
         #endregion
 
         #region Put
