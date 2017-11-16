@@ -38,6 +38,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(expenseTypeId.HasValue, x => x.ExpenseTypeId == expenseTypeId || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeId.Value))
                         .WhereIf(vendorId.HasValue, x => x.VendorId == vendorId)
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
+                        .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
                         .WhereIf(binding.AmountFrom.HasValue, x => x.Ammount >= binding.AmountFrom)
                         .WhereIf(binding.AmountTo.HasValue, x => x.Ammount <= binding.AmountTo);

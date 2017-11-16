@@ -6,6 +6,8 @@ namespace ProjectIvy.Model.Binding.Expense
     {
         public ExpenseSort OrderBy { get; set; }
 
+        public bool? HasLinkedFiles { get; set; }
+
         public decimal? AmountFrom { get; set; }
 
         public decimal? AmountTo { get; set; }
