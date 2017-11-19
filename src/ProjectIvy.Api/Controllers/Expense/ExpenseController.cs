@@ -106,8 +106,15 @@ namespace ProjectIvy.Api.Controllers.Expense
         }
 
         [HttpGet]
+        [Route("type/count")]
+        public int GetTypesCount([FromQuery] ExpenseGetBinding binding)
+        {
+            return _expenseHandler.CountTypes(binding);
+        }
+
+        [HttpGet]
         [Route("vendor/count")]
-        public int GetUniqueVendorsCount([FromQuery] ExpenseSumGetBinding binding)
+        public int GetVendorsCount([FromQuery] ExpenseGetBinding binding)
         {
             return _expenseHandler.CountVendors(binding);
         }

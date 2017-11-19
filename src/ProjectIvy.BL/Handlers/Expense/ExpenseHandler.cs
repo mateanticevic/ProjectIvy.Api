@@ -56,6 +56,18 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
+        public int CountTypes(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User)
+                                       .Include(x => x.Vendor)
+                                       .Where(binding, context)
+                                       .GroupBy(x => x.ExpenseTypeId)
+                                       .Count();
+            }
+        }
+
         public int CountVendors(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
