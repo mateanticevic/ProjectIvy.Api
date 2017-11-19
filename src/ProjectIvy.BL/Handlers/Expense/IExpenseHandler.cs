@@ -13,6 +13,8 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         int Count(FilteredBinding binding);
 
+        int CountTypes(ExpenseGetBinding binding);
+
         int CountVendors(ExpenseGetBinding binding);
 
         string Create(ExpenseBinding binding);
