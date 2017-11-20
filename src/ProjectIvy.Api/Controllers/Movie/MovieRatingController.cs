@@ -8,7 +8,7 @@ using ProjectIvy.Model.Constants.Database;
 namespace ProjectIvy.Api.Controllers.Movie
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("movie/rating")]
+    [Route("Movie/Rating")]
     public class MovieRatingController : BaseController<MovieController>
     {
         private readonly IMovieHandler _movieHandler;
@@ -18,8 +18,7 @@ namespace ProjectIvy.Api.Controllers.Movie
             _movieHandler = movieHandler;
         }
 
-        [HttpGet]
-        [Route("average")]
+        [HttpGet("Average")]
         public double GetAverage([FromQuery] MovieGetBinding binding)
         {
             return _movieHandler.GetRatingAverage(binding);

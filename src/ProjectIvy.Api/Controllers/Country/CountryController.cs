@@ -23,43 +23,37 @@ namespace ProjectIvy.Api.Controllers.Country
         #region Get
 
         [HttpGet]
-        [Route("")]
         public PagedView<View.Country> Get(CountryGetBinding binding)
         {
             return _countryHandler.Get(binding);
         }
 
-        [HttpGet]
-        [Route("count")]
+        [HttpGet("Count")]
         public long GetCount(CountryGetBinding binding)
         {
             return _countryHandler.Count(binding);
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public View.Country Get(string id)
         {
             return _countryHandler.Get(id);
         }
 
-        [HttpGet]
-        [Route("visited")]
+        [HttpGet("Visited")]
         [Authorize(Roles = UserRole.User)]
         public IEnumerable<View.Country> GetVisited()
         {
             return _countryHandler.GetVisited();
         }
 
-        [HttpGet]
-        [Route("visited/count")]
+        [HttpGet("Visited/Count")]
         public long GetVisitedCount()
         {
             return _countryHandler.CountVisited();
         }
 
-        [HttpGet]
-        [Route("visited/boundaries")]
+        [HttpGet("Visited/Boundaries")]
         public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries()
         {
             var visitedCountries = _countryHandler.GetVisited();

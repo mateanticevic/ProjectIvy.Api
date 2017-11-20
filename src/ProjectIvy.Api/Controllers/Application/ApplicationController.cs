@@ -15,8 +15,7 @@ namespace ProjectIvy.Api.Controllers.Application
             _applicationHandler = applicationHandler;
         }
 
-        [HttpGet]
-        [Route("{valueId}/settings")]
+        [HttpGet("{valueId}/settings")]
         public Dictionary<string, object> GetSettings(string valueId)
         {
             return _applicationHandler.GetSettings(valueId);

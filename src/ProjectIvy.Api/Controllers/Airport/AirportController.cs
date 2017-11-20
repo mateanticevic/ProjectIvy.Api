@@ -25,8 +25,7 @@ namespace ProjectIvy.Api.Controllers.Airport
             return _airportHandler.Get(binding);
         }
 
-        [HttpGet]
-        [Route("count")]
+        [HttpGet("Count")]
         public long GetCount([FromQuery] AirportGetBinding binding)
         {
             return _airportHandler.Count(binding);

@@ -28,8 +28,7 @@ namespace ProjectIvy.Api.Controllers.Movie
             return _movieHandler.Get(binding);
         }
 
-        [HttpGet]
-        [Route("count")]
+        [HttpGet("Count")]
         public int GetCount([FromQuery] MovieGetBinding binding)
         {
             return _movieHandler.GetCount(binding);
