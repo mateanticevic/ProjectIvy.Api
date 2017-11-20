@@ -24,21 +24,18 @@ namespace ProjectIvy.Api.Controllers.Car
         #region Get
 
         [HttpGet]
-        [Route("")]
         public IEnumerable<View.Car> Get()
         {
             return _carHandler.Get();
         }
 
-        [HttpGet]
-        [Route("{id}/log/count")]
+        [HttpGet("{id}/Log/Count")]
         public int GetLogCount(string id)
         {
             return _carHandler.GetLogCount(id);
         }
 
-        [HttpGet]
-        [Route("{id}/log/latest")]
+        [HttpGet("{id}/Log/Latest")]
         public View.CarLog GetLogLatest(string id)
         {
             return _carHandler.GetLatestLog(id);
@@ -48,9 +45,7 @@ namespace ProjectIvy.Api.Controllers.Car
 
         #region Post
 
-        [HttpPost]
-        [HttpPut]
-        [Route("{id}/log")]
+        [HttpPost("{id}/Log")]
         public DateTime PostLog([FromBody] CarLogBinding binding, string id)
         {
             binding.CarValueId = id;
@@ -61,8 +56,7 @@ namespace ProjectIvy.Api.Controllers.Car
 
         #region Put
 
-        [HttpPut]
-        [Route("{id}")]
+        [HttpPut("{id}")]
         public IActionResult PutCar(string id, [FromBody] CarBinding car)
         {
             _carHandler.Create(id, car);
