@@ -28,6 +28,7 @@
     <PackageReference Include="GitVersionTask" Version="4.0.0-beta0012" />
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.0.0-rtm-beta5" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="1.1.0" />
   </ItemGroup>
 
   <ItemGroup>
