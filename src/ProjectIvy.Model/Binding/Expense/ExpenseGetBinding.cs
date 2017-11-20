@@ -8,6 +8,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public bool? HasLinkedFiles { get; set; }
 
+        public bool? HasPoi { get; set; }
+
         public decimal? AmountFrom { get; set; }
 
         public decimal? AmountTo { get; set; }
