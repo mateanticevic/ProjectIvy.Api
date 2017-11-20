@@ -32,6 +32,7 @@ using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using System;
 using ProjectIvy.BL.Handlers.File;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace ProjectIvy.Api
 {
@@ -59,6 +60,11 @@ namespace ProjectIvy.Api
         public IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddApplicationInsightsTelemetry(Configuration);
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "ProjectIvy Api", Version = "v1" });
+            });
 
             services.AddLogging()
                     .Configure<AppSettings>(Configuration);
@@ -112,6 +118,13 @@ namespace ProjectIvy.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy V1");
+            });
 
             app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
 

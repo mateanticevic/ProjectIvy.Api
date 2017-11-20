@@ -12,7 +12,7 @@ using System;
 namespace ProjectIvy.Api.Controllers.Service
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("service/[controller]")]
+    [Route("Service/[controller]")]
     public class LastFmController : BaseController<LastFmController>
     {
         private readonly ILastFmHandler _lastFmHandler;
@@ -22,15 +22,13 @@ namespace ProjectIvy.Api.Controllers.Service
             _lastFmHandler = lastFmHandler;
         }
 
-        [HttpGet]
-        [Route("count")]
+        [HttpGet("Count")]
         public async Task<int> GetCount()
         {
             return await _lastFmHandler.GetTotalCount();
         }
 
-        [HttpGet]
-        [Route("tracks")]
+        [HttpGet("Tracks")]
         public async Task<IEnumerable<Track>> GetTracks([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] int? page, [FromQuery] int? pageSize)
         {
             return await _lastFmHandler.GetTracks(new FilteredPagedBinding(from, to, page, pageSize));

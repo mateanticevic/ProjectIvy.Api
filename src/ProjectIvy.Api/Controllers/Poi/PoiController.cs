@@ -19,14 +19,12 @@ namespace ProjectIvy.Api.Controllers.Poi
         }
 
         [HttpGet]
-        [Route("")]
         public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding)
         {
             return _poiHandler.Get(binding);
         }
 
-        [HttpPost]
-        [Route("{poiId}")]
+        [HttpPost("{poiId}")]
         public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)
         {
             binding.Id = poiId;
