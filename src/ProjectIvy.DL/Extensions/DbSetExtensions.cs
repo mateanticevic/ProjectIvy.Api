@@ -14,6 +14,9 @@ namespace ProjectIvy.DL.Extensions
 
         public static int? GetId<T>(this DbSet<T> set, string valueId) where T : class, IHasValueId
         {
+            if (string.IsNullOrWhiteSpace(valueId))
+                return null;
+
             return set.SingleOrDefault(x => x.ValueId == valueId)?.Id;
         }
     }
