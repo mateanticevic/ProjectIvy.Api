@@ -10,8 +10,8 @@ using ProjectIvy.Model.Database.Main.Tracking;
 using ProjectIvy.Model.Database.Main.Transport;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.Database.Main.User;
-using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Database.Main.Storage;
+using Microsoft.EntityFrameworkCore;
 
 namespace ProjectIvy.DL.DbContexts
 {
