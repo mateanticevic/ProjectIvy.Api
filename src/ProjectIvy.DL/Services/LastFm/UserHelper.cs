@@ -20,8 +20,8 @@ namespace ProjectIvy.DL.Services.LastFm
         {
             var hc = new HttpClient();
 
-            //TODO: set string
-            var response = await hc.GetStringAsync("");
+            // TODO: set string
+            var response = await hc.GetStringAsync(string.Empty);
 
             var jo = JObject.Parse(response.Replace("@", string.Empty));
 

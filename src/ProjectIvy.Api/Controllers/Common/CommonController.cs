@@ -17,10 +17,11 @@ namespace ProjectIvy.Api.Controllers.Poi
         private readonly IPaymentTypeHandler _paymentHandler;
         private readonly IPoiHandler _poiHandler;
 
-        public CommonController(ILogger<CommonController> logger, ICurrencyHandler currencyHandler,
-                                                                  IPaymentTypeHandler paymentTypeHandler,
-                                                                  IPoiHandler poiHandler,
-                                                                  IExpenseTypeHandler expenseTypeHandler) : base(logger)
+        public CommonController(ILogger<CommonController> logger,
+                                ICurrencyHandler currencyHandler,
+                                IPaymentTypeHandler paymentTypeHandler,
+                                IPoiHandler poiHandler,
+                                IExpenseTypeHandler expenseTypeHandler) : base(logger)
         {
             _currencyHandler = currencyHandler;
             _expenseTypeHandler = expenseTypeHandler;

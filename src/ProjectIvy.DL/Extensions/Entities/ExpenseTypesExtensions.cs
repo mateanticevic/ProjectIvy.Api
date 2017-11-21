@@ -8,7 +8,7 @@ namespace ProjectIvy.DL.Extensions.Entities
     {
         public static bool IsChildType(this ExpenseType type, int parentId)
         {
-            while(true)
+            while (true)
             {
                 if (!type.ParentTypeId.HasValue)
                     return false;
