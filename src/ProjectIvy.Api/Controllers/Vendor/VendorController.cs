@@ -3,7 +3,6 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Poi;
 using ProjectIvy.BL.Handlers.Vendor;
 using ProjectIvy.Model.Binding.Poi;
-using ProjectIvy.Model.Constants;
 using System.Collections.Generic;
 using ViewVendor = ProjectIvy.Model.View.Vendor;
 
@@ -24,17 +23,10 @@ namespace ProjectIvy.Api.Controllers.Vendor
         #region Get
 
         [HttpGet]
-        public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains)
-        {
-            return _vendorHandler.Get(contains);
-        }
+        public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains) => _vendorHandler.Get(contains);
 
-        [HttpGet]
-        [Route("{vendorId}/poi")]
-        public IEnumerable<object> GetPois(string vendorId)
-        {
-            return _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageSize = null }).Items;
-        }
+        [HttpGet("{vendorId}/Poi")]
+        public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageSize = null }).Items;
 
         #endregion
     }

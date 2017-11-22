@@ -15,10 +15,7 @@ namespace ProjectIvy.Api.Controllers.User
     {
         private readonly IUserHandler _userHandler;
 
-        public UserController(ILogger<UserController> logger, IUserHandler userHandler) : base(logger)
-        {
-            _userHandler = userHandler;
-        }
+        public UserController(ILogger<UserController> logger, IUserHandler userHandler) : base(logger) => _userHandler = userHandler;
 
         [HttpGet]
         public View.User Get()
@@ -26,8 +23,7 @@ namespace ProjectIvy.Api.Controllers.User
             return _userHandler.Get();
         }
 
-        [HttpPost]
-        [Route("password")]
+        [HttpPost("Password")]
         public StatusCodeResult PostPassword([FromBody] PasswordSetBinding binding)
         {
             _userHandler.SetPassword(binding);

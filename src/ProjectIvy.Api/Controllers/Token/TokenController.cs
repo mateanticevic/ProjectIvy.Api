@@ -9,10 +9,7 @@ namespace ProjectIvy.Api.Controllers.Token
     {
         private readonly ISecurityHandler _securityHandler;
 
-        public TokenController(ILogger<TokenController> logger, ISecurityHandler securityHandler) : base(logger)
-        {
-            _securityHandler = securityHandler;
-        }
+        public TokenController(ILogger<TokenController> logger, ISecurityHandler securityHandler) : base(logger) => _securityHandler = securityHandler;
 
         #region Get
 

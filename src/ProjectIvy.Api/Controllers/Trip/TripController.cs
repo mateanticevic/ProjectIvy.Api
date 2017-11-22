@@ -16,15 +16,11 @@ namespace ProjectIvy.Api.Controllers.Trip
     {
         private readonly ITripHandler _tripHandler;
 
-        public TripController(ILogger<TripController> logger, ITripHandler tripHandler) : base(logger)
-        {
-            _tripHandler = tripHandler;
-        }
+        public TripController(ILogger<TripController> logger, ITripHandler tripHandler) : base(logger) => _tripHandler = tripHandler;
 
         #region Delete
 
-        [HttpDelete]
-        [Route("{tripId}")]
+        [HttpDelete("{tripId}")]
         public StatusCodeResult Delete(string tripId)
         {
             _tripHandler.Delete(tripId);
@@ -32,8 +28,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
-        [HttpDelete]
-        [Route("{tripId}/city/{cityId}")]
+        [HttpDelete("{tripId}/City/{cityId}")]
         public StatusCodeResult DeleteCity(string tripId, string cityId)
         {
             _tripHandler.RemoveCity(tripId, cityId);
@@ -41,8 +36,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
-        [HttpDelete]
-        [Route("{tripId}/expense/{expenseId}")]
+        [HttpDelete("{tripId}/Expense/{expenseId}")]
         public StatusCodeResult DeleteExpense(string tripId, string expenseId)
         {
             _tripHandler.RemoveExpense(tripId, expenseId);
@@ -50,8 +44,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
-        [HttpDelete]
-        [Route("{tripId}/poi/{poiId}")]
+        [HttpDelete("{tripId}/Poi/{poiId}")]
         public StatusCodeResult DeletePoi(string tripId, string poiId)
         {
             _tripHandler.RemovePoi(tripId, poiId);
@@ -64,25 +57,16 @@ namespace ProjectIvy.Api.Controllers.Trip
         #region Get
 
         [HttpGet]
-        public PagedView<View.Trip> Get(TripGetBinding binding)
-        {
-            return _tripHandler.Get(binding);
-        }
+        public PagedView<View.Trip> Get(TripGetBinding binding) => _tripHandler.Get(binding);
 
-        [HttpGet]
-        [Route("{tripId}")]
-        public View.Trip Get(string tripId)
-        {
-            var s = _tripHandler.GetSingle(tripId);
-            return s;
-        }
+        [HttpGet("{tripId}")]
+        public View.Trip Get(string tripId) => _tripHandler.GetSingle(tripId);
 
         #endregion
 
         #region Post
 
-        [HttpPost]
-        [Route("{tripId}/poi/{poiId}")]
+        [HttpPost("{tripId}/poi/{poiId}")]
         public StatusCodeResult PostPoi(string tripId, string poiId)
         {
             _tripHandler.AddPoi(tripId, poiId);
@@ -90,8 +74,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost]
-        [Route("{tripId}/city/{cityId}")]
+        [HttpPost("{tripId}/city/{cityId}")]
         public StatusCodeResult PostCity(string tripId, string cityId)
         {
             _tripHandler.AddCity(tripId, cityId);
@@ -99,8 +82,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost]
-        [Route("{tripId}/expense/{expenseId}")]
+        [HttpPost("{tripId}/expense/{expenseId}")]
         public StatusCodeResult PostExpense(string tripId, string expenseId)
         {
             _tripHandler.AddExpense(tripId, expenseId);
@@ -108,8 +90,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost]
-        [Route("")]
+        [HttpPost("")]
         public StatusCodeResult Post([FromBody] TripBinding binding, string tripId)
         {
             _tripHandler.Create(binding);

@@ -12,34 +12,16 @@ namespace ProjectIvy.Api.Controllers.Web
     {
         private readonly IWebHandler _webHandler;
 
-        public WebController(ILogger<WebController> logger, IWebHandler webHandler) : base(logger)
-        {
-            _webHandler = webHandler;
-        }
+        public WebController(ILogger<WebController> logger, IWebHandler webHandler) : base(logger) => _webHandler = webHandler;
 
-        #region Get
+        [HttpGet("Time/Sum")]
+        public IEnumerable<View.WebTime> GetTimeSummed([FromQuery] WebTimeGetPagedBinding binding) => _webHandler.GetTimeSummed(binding);
 
         [HttpGet]
-        [Route("time/sum")]
-        public IEnumerable<View.WebTime> GetTimeSummed([FromQuery] WebTimeGetPagedBinding binding)
-        {
-            return _webHandler.GetTimeSummed(binding);
-        }
+        [Route("Time/Total")]
+        public int GetTimeTotal([FromQuery] WebTimeGetBinding binding) => _webHandler.GetTimeSum(binding);
 
-        [HttpGet]
-        [Route("time/total")]
-        public int GetTimeTotal([FromQuery] WebTimeGetBinding binding)
-        {
-            return _webHandler.GetTimeSum(binding);
-        }
-
-        [HttpGet]
-        [Route("time/total/byday")]
-        public IEnumerable<View.TimeByDay> GetTimeTotalByDay([FromQuery] WebTimeGetBinding binding)
-        {
-            return _webHandler.GetTimeTotalByDay(binding);
-        }
-
-        #endregion
+        [HttpGet("Time/Total/Byday")]
+        public IEnumerable<View.TimeByDay> GetTimeTotalByDay([FromQuery] WebTimeGetBinding binding) => _webHandler.GetTimeTotalByDay(binding);
     }
 }

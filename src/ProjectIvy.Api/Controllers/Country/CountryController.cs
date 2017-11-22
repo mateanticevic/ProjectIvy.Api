@@ -15,51 +15,28 @@ namespace ProjectIvy.Api.Controllers.Country
     {
         private readonly ICountryHandler _countryHandler;
 
-        public CountryController(ILogger<CountryController> logger, ICountryHandler countryHandler) : base(logger)
-        {
-            _countryHandler = countryHandler;
-        }
+        public CountryController(ILogger<CountryController> logger, ICountryHandler countryHandler) : base(logger) => _countryHandler = countryHandler;
 
         #region Get
 
         [HttpGet]
-        public PagedView<View.Country> Get(CountryGetBinding binding)
-        {
-            return _countryHandler.Get(binding);
-        }
+        public PagedView<View.Country> Get(CountryGetBinding binding) => _countryHandler.Get(binding);
 
         [HttpGet("Count")]
-        public long GetCount(CountryGetBinding binding)
-        {
-            return _countryHandler.Count(binding);
-        }
+        public long GetCount(CountryGetBinding binding) => _countryHandler.Count(binding);
 
         [HttpGet("{id}")]
-        public View.Country Get(string id)
-        {
-            return _countryHandler.Get(id);
-        }
+        public View.Country Get(string id) => _countryHandler.Get(id);
 
         [HttpGet("Visited")]
         [Authorize(Roles = UserRole.User)]
-        public IEnumerable<View.Country> GetVisited()
-        {
-            return _countryHandler.GetVisited();
-        }
+        public IEnumerable<View.Country> GetVisited() => _countryHandler.GetVisited();
 
         [HttpGet("Visited/Count")]
-        public long GetVisitedCount()
-        {
-            return _countryHandler.CountVisited();
-        }
+        public long GetVisitedCount() => _countryHandler.CountVisited();
 
         [HttpGet("Visited/Boundaries")]
-        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries()
-        {
-            var visitedCountries = _countryHandler.GetVisited();
-
-            return _countryHandler.GetBoundaries(visitedCountries);
-        }
+        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries() => _countryHandler.GetBoundaries(_countryHandler.GetVisited());
 
         #endregion
     }

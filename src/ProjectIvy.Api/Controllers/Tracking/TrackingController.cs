@@ -27,13 +27,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Tracking> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to)
-        {
-            return _trackingHandler.Get(new FilteredBinding(from, to));
-        }
+        public IEnumerable<View.Tracking> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.Get(new FilteredBinding(@from, to));
 
-        [HttpGet]
-        [Route("gpx")]
+        [HttpGet("Gpx")]
         public string GetGpx([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             return _trackingHandler.Get(new FilteredBinding(from, to))
@@ -41,60 +37,32 @@ namespace ProjectIvy.Api.Controllers.Tracking
                                    .ToString();
         }
 
-        [HttpGet]
-        [Route("last")]
-        public View.TrackingCurrent GetLast([FromQuery] DateTime? at = null)
-        {
-            return _trackingHandler.GetLast(at);
-        }
+        [HttpGet("Last")]
+        public View.TrackingCurrent GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
 
-        [HttpGet]
-        [Route("count")]
-        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
-        {
-            return _trackingHandler.Count(new FilteredBinding(from, to));
-        }
+        [HttpGet("Count")]
+        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.Count(new FilteredBinding(@from, to));
 
-        [HttpGet]
-        [Route("unique/count")]
-        public int GetUniqueCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
-        {
-            return _trackingHandler.CountUnique(new FilteredBinding(from, to));
-        }
+        [HttpGet("Unique/Count")]
+        public int GetUniqueCount([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.CountUnique(new FilteredBinding(@from, to));
 
-        [HttpGet]
-        [Route("distance")]
-        public int GetDistance([FromQuery] FilteredBinding binding)
-        {
-            return _trackingHandler.GetDistance(binding);
-        }
+        [HttpGet("Distance")]
+        public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
 
-        [HttpGet]
-        [Route("speed/average")]
-        public double GetAverageSpeed([FromQuery] FilteredBinding binding)
-        {
-            return _trackingHandler.GetAverageSpeed(binding);
-        }
+        [HttpGet("Speed/Average")]
+        public double GetAverageSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetAverageSpeed(binding);
 
-        [HttpGet]
-        [Route("speed/max")]
-        public double GetMaxSpeed([FromQuery] FilteredBinding binding)
-        {
-            return _trackingHandler.GetMaxSpeed(binding);
-        }
+        [HttpGet("Speed/Max")]
+        public double GetMaxSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetMaxSpeed(binding);
 
         #endregion
 
         #region Put
 
         [HttpPut]
-        public bool Put([FromBody] TrackingBinding binding)
-        {
-            return _trackingHandler.Create(binding);
-        }
+        public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
 
-        [HttpPut]
-        [Route("kml")]
+        [HttpPut("kml")]
         public bool PutKml([FromBody] string kmlRaw)
         {
             var kml = XDocument.Parse(kmlRaw);
