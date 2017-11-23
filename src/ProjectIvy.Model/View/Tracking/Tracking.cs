@@ -1,9 +1,10 @@
 ﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
+using ProjectIvy.Common.Interfaces;
 using System;
 
 namespace ProjectIvy.Model.View.Tracking
 {
-    public class Tracking
+    public class Tracking : ITracking
     {
         public Tracking(DatabaseModel.Tracking.Tracking x)
         {
@@ -18,6 +19,18 @@ namespace ProjectIvy.Model.View.Tracking
         public double? Accuracy { get; set; }
 
         public double? Altitude { get; set; }
+
+        public decimal Latitude
+        {
+            get => Lat;
+            set => Lat = value;
+        }
+
+        public decimal Longitude
+        {
+            get => Lng;
+            set => Lng = value;
+        }
 
         public decimal Lat { get; set; }
 

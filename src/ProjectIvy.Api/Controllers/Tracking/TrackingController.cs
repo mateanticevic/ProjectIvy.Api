@@ -2,13 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Tracking;
+using ProjectIvy.Common.Parsers;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.Constants.Database;
-using ProjectIvy.Utilities.Geo;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
+using System.Linq;
+using ProjectIvy.Common.Interfaces;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
@@ -33,6 +35,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public string GetGpx([FromQuery] DateTime? from, [FromQuery] DateTime? to)
         {
             return _trackingHandler.Get(new FilteredBinding(from, to))
+                                   .Select(x => (ITracking)x)
                                    .ToGpx()
                                    .ToString();
         }

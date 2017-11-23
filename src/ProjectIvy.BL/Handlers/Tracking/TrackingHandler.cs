@@ -1,9 +1,9 @@
 ﻿using ProjectIvy.BL.MapExtensions;
+using ProjectIvy.Common.Parsers;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
-using ProjectIvy.Utilities.Geo;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
@@ -158,7 +158,8 @@ namespace ProjectIvy.BL.Handlers.Tracking
 
         public bool ImportFromKml(XDocument kml)
         {
-            var trackings = KmlHandler.ParseKml(kml);
+            var trackings = KmlHandler.ParseKml(kml)
+                                      .Select(x => (Model.Database.Main.Tracking.Tracking)x);
 
             using (var db = GetMainContext())
             {

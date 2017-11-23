@@ -1,13 +1,13 @@
-﻿using ProjectIvy.Model.View.Tracking;
+﻿using ProjectIvy.Common.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace ProjectIvy.Utilities.Geo
+namespace ProjectIvy.Common.Parsers
 {
     public static class GpxHandler
     {
-        public static XDocument ToGpx(this IEnumerable<Tracking> trackings)
+        public static XDocument ToGpx(this IEnumerable<ITracking> trackings)
         {
             var xdoc = new XDocument();
 
@@ -32,8 +32,8 @@ namespace ProjectIvy.Utilities.Geo
             {
                 var trkpt = new XElement("trkpt");
 
-                trkpt.Add(new XAttribute("lat", tracking.Lat));
-                trkpt.Add(new XAttribute("lon", tracking.Lng));
+                trkpt.Add(new XAttribute("lat", tracking.Latitude));
+                trkpt.Add(new XAttribute("lon", tracking.Longitude));
 
                 var time = new XElement("time");
                 time.Value = tracking.Timestamp.ToString();

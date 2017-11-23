@@ -2,7 +2,7 @@
 using System.Reflection;
 using System.Text;
 
-namespace ProjectIvy.Utilities.IO
+namespace ProjectIvy.Common.IO
 {
     public class ResourcesUtility
     {

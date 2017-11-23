@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using ProjectIvy.Common.Interfaces;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System;
@@ -6,7 +6,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Tracking
 {
     [Table("Tracking", Schema = "Tracking")]
-    public class Tracking : UserEntity, IHasTimestamp
+    public class Tracking : UserEntity, IHasTimestamp, ITracking
     {
         [Key]
         public int Id { get; set; }

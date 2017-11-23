@@ -24,7 +24,6 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectIvy.Common\ProjectIvy.Common.csproj" />
     <ProjectReference Include="..\ProjectIvy.DL\ProjectIvy.DL.csproj" />
-    <ProjectReference Include="..\ProjectIvy.Utilities\ProjectIvy.Utilities.csproj" />
   </ItemGroup>
 
   <ItemGroup>

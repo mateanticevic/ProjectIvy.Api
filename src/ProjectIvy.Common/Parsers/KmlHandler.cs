@@ -1,14 +1,15 @@
-﻿using ProjectIvy.Model.Database.Main.Tracking;
+using ProjectIvy.Common.Interfaces.Internal;
+using ProjectIvy.Common.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System;
 
-namespace ProjectIvy.Utilities.Geo
+namespace ProjectIvy.Common.Parsers
 {
     public class KmlHandler
     {
-        public static IEnumerable<Tracking> ParseKml(XDocument kml)
+        public static IEnumerable<ITracking> ParseKml(XDocument kml)
         {
             XNamespace rootNamespace = kml.Root.Name.Namespace;
             XNamespace namespaceKml = XNamespace.Get("http://www.google.com/kml/ext/2.2");
