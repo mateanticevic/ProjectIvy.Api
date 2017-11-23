@@ -1,6 +1,6 @@
-﻿using Microsoft.Extensions.Options;
-using ProjectIvy.Common.Configuration;
+﻿using ProjectIvy.Common.Configuration;
 using ProjectIvy.Common.Interfaces;
+using Microsoft.Extensions.Options;
 
 namespace ProjectIvy.DL.Services.AzureStorage
 {
@@ -8,14 +8,8 @@ namespace ProjectIvy.DL.Services.AzureStorage
     {
         private readonly Common.Configuration.Services.AzureStorage _settings;
 
-        public AzureStorageFactory(IOptions<AppSettings> options)
-        {
-            _settings = options.Value.Services.AzureStorage;
-        }
+        public AzureStorageFactory(IOptions<AppSettings> options) => _settings = options.Value.Services.AzureStorage;
 
-        public IAzureStorageHelper Build()
-        {
-            return new AzureStorageHelper(_settings);
-        }
+        public IAzureStorageHelper Build() => new AzureStorageHelper(_settings);
     }
 }

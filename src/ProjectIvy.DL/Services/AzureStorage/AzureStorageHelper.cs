@@ -39,7 +39,7 @@ namespace ProjectIvy.DL.Services.AzureStorage
             if (!await file.ExistsAsync())
                 return null;
 
-            byte[] data = new byte[file.StreamWriteSizeInBytes];
+            var data = new byte[file.StreamWriteSizeInBytes];
             await file.DownloadToByteArrayAsync(data, 0);
 
             return data;

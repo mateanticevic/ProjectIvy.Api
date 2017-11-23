@@ -9,11 +9,5 @@
 
             return value;
         }
-
-        public static string NameToValueId(this string name)
-        {
-            return name.ToLowerInvariant()
-                       .Replace(' ', '-');
-        }
     }
 }
