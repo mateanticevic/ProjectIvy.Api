@@ -1,6 +1,6 @@
-﻿using ProjectIvy.BL.Handlers;
-using ProjectIvy.Extensions.Factory;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ProjectIvy.BL.Handlers;
+using ProjectIvy.Common.Interfaces;
 using System;
 
 namespace ProjectIvy.Api.Extensions

@@ -1,4 +1,4 @@
-﻿using ProjectIvy.Extensions.BuiltInTypes;
+﻿using ProjectIvy.Common.Extensions;
 using System;
 
 namespace ProjectIvy.Model.View.File

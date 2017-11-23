@@ -1,5 +1,5 @@
 ﻿using DatabaseModel = ProjectIvy.Model.Database.Main.Finance;
-using ProjectIvy.Extensions.BuiltInTypes;
+using ProjectIvy.Common.Extensions;
 
 namespace ProjectIvy.Model.View.Expense
 {

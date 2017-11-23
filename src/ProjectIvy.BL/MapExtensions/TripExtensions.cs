@@ -1,4 +1,4 @@
-﻿using ProjectIvy.Extensions.BuiltInTypes;
+﻿using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 
@@ -8,7 +8,7 @@ namespace ProjectIvy.BL.MapExtensions
     {
         public static Trip ToEntity(this TripBinding binding, Trip trip = null)
         {
-            trip = trip == null ? new Trip() : trip;
+            trip = trip ?? new Trip();
 
             trip.ValueId = binding.Name.NameToValueId();
             trip.Name = binding.Name;

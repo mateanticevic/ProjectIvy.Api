@@ -1,4 +1,4 @@
-﻿namespace ProjectIvy.Extensions.Factory
+﻿namespace ProjectIvy.Common.Interfaces
 {
     public interface IServiceFactory<T> where T : class
     {

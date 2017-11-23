@@ -1,5 +1,5 @@
-﻿using ProjectIvy.Extensions.BuiltInTypes;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
+using ProjectIvy.Common.Extensions;
 using System;
 
 namespace ProjectIvy.Model.View.Task

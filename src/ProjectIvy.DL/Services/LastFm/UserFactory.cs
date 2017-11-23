@@ -1,6 +1,6 @@
 ﻿using ProjectIvy.Common.Configuration;
-using ProjectIvy.Extensions.Factory;
 using Microsoft.Extensions.Options;
+using ProjectIvy.Common.Interfaces;
 
 namespace ProjectIvy.DL.Services.LastFm
 {

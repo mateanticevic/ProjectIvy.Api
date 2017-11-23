@@ -1,4 +1,4 @@
-﻿namespace ProjectIvy.Extensions.BuiltInTypes
+﻿namespace ProjectIvy.Common.Extensions
 {
     public static class StringExtensions
     {

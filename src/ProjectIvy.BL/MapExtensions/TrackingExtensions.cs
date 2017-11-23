@@ -1,4 +1,4 @@
-﻿using ProjectIvy.Extensions.BuiltInTypes;
+﻿using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.Database.Main.Tracking;
 
