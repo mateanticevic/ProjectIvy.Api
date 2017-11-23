@@ -1,4 +1,4 @@
-﻿using ProjectIvy.Common.Helpers;
+﻿using ProjectIvy.Extensions.BuiltInTypes;
 using System;
 
 namespace ProjectIvy.DL.Services.LastFm
@@ -11,12 +11,12 @@ namespace ProjectIvy.DL.Services.LastFm
 
         public static string SetFrom(this string url, DateTime? from)
         {
-            return from.HasValue ? $"{url}&from={DateTimeHelper.ToUnix(from.Value)}" : url;
+            return from.HasValue ? $"{url}&from={from.Value.ToUnix()}" : url;
         }
 
         public static string SetTo(this string url, DateTime? to)
         {
-            return to.HasValue ? $"{url}&to={DateTimeHelper.ToUnix(to.Value)}" : url;
+            return to.HasValue ? $"{url}&to={to.Value.ToUnix()}" : url;
         }
 
         public static string SetPage(this string url, int? page)

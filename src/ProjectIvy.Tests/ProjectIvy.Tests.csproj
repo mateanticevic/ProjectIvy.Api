@@ -13,6 +13,10 @@
     <Version>0.0.0</Version>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Api\**" />
     <EmbeddedResource Remove="Api\**" />
