@@ -1,5 +1,6 @@
 ﻿using ProjectIvy.Common.Extensions;
 using System;
+using ProjectIvy.Model.Services.LastFm;
 
 namespace ProjectIvy.DL.Services.LastFm
 {
@@ -28,6 +29,8 @@ namespace ProjectIvy.DL.Services.LastFm
         {
             return pageSize.HasValue ? $"{url}&limit={pageSize}" : url;
         }
+
+        public static string SetPeriod(this string url, string period) => $"{url}&period={period}";
 
         public static string SetKey(this string url, string key)
         {

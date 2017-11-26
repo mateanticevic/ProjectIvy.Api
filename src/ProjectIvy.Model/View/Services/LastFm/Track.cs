@@ -11,7 +11,7 @@ namespace ProjectIvy.Model.View.Services.LastFm
             Artist = new Artist(track.Artist);
             Images = new Images(track);
             Title = track.Name;
-            Timestamp = DateTimeHelper.FromUnix(track.Date.Unix);
+            Timestamp = track.Date == null ? (DateTime?)null : DateTimeHelper.FromUnix(track.Date.Unix);
         }
 
         public Artist Artist { get; set; }
@@ -20,6 +20,6 @@ namespace ProjectIvy.Model.View.Services.LastFm
 
         public string Title { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
     }
 }

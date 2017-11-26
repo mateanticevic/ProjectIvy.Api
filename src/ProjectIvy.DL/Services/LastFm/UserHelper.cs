@@ -4,65 +4,76 @@ using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.Model.Services.LastFm.Request;
 
 namespace ProjectIvy.DL.Services.LastFm
 {
     public class UserHelper : IUserHelper
     {
-        private string _url;
+        private readonly string _url;
+
+        private readonly Common.Configuration.Services.LastFm _settings;
 
         public UserHelper(Common.Configuration.Services.LastFm settings)
         {
             _url = settings.Url.SetKey(settings.Key);
+            _settings = settings;
         }
 
-        public async Task<IEnumerable<Track>> GetTopTracks()
+        public async Task<IEnumerable<Track>> GetTopTracks(string username)
         {
-            var hc = new HttpClient();
+            using (var client = new HttpClient())
+            {
+                var request = new UserGetTopArtists(_settings.Url, _settings.Key, username)
+                {
+                    Api_Key = _settings.Key,
+                    Period = Period.Overall,
+                    User = username
+                };
 
-            // TODO: set string
-            var response = await hc.GetStringAsync(string.Empty);
+                var json = await client.GetStringAsync(request.ToUrl());
 
-            var jo = JObject.Parse(response.Replace("@", string.Empty));
+                var tracks = JObject.Parse(json).SelectToken("toptracks")
+                                    .SelectToken("track");
 
-            var tt = jo.SelectToken("toptracks");
-
-            var track = tt.SelectToken("track");
-
-            return track.ToObject<IEnumerable<Track>>();
+                return tracks.ToObject<IEnumerable<Track>>();
+            }
         }
 
         public async Task<Info> GetTotalCount(string username)
         {
-            var hc = new HttpClient();
+            using (var client = new HttpClient())
+            {
+                var request = new UserGetInfo(_settings.Url, _settings.Key, username);
+                 
+                var json = await client.GetStringAsync(request.ToUrl());
 
-            string url = _url.SetMethod(ApiMethod.User.GetInfo)
-                             .SetUsername(username);
+                var infoObject = JObject.Parse(json).SelectToken("user");
 
-            var json = await hc.GetStringAsync(url);
-
-            var infoObject = JObject.Parse(json).SelectToken("user");
-
-            return infoObject.ToObject<Info>();
+                return infoObject.ToObject<Info>();
+            }
         }
 
         public async Task<IEnumerable<Track>> GetTracks(string username, FilteredPagedBinding filter)
         {
-            var hc = new HttpClient();
+            using (var client = new HttpClient())
+            {
+                var request = new UserGetRecentTracks(_settings.Url, _settings.Key, username)
+                {
+                    Api_Key = _settings.Key,
+                    From = filter.From?.ToUnix().ToString(),
+                    User = username,
+                    To = filter.To?.ToUnix().ToString()
+                };
 
-            string url = _url.SetMethod(ApiMethod.User.GetRecentTracks)
-                             .SetUsername(username)
-                             .SetFrom(filter.From)
-                             .SetTo(filter.To)
-                             .SetPage(filter.Page)
-                             .SetPageSize(filter.PageSize);
+                var json = await client.GetStringAsync(request.ToUrl());
 
-            var json = await hc.GetStringAsync(url);
+                var tracks = JObject.Parse(json).SelectToken("recenttracks")
+                                                .SelectToken("track");
 
-            var tracks = JObject.Parse(json).SelectToken("recenttracks")
-                                            .SelectToken("track");
-
-            return tracks.ToObject<IEnumerable<Track>>();
+                return tracks.ToObject<IEnumerable<Track>>();
+            }
         }
     }
 }

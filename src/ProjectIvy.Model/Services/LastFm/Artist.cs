@@ -10,12 +10,6 @@ namespace ProjectIvy.Model.Services.LastFm
         [JsonProperty("#text")]
         public string Text { get; set; }
 
-        public string ArtistName
-        {
-            get
-            {
-                return string.IsNullOrEmpty(Name) ? Text : Name;
-            }
-        }
+        public string ArtistName => string.IsNullOrEmpty(Name) ? Text : Name;
     }
 }
