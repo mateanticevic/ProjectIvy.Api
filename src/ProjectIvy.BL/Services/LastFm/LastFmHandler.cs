@@ -29,6 +29,17 @@ namespace ProjectIvy.BL.Services.LastFm
             }
         }
 
+        public async Task<IEnumerable<Track>> GetLovedTracks()
+        {
+            using (var db = GetMainContext())
+            {
+                string username = db.Users.SingleOrDefault(x => x.Id == User.Id).LastFmUsername;
+
+                var info = await _userHelper.GetLovedTracks(username);
+                return info.Select(x => new Track(x));
+            }
+        }
+
         public async Task<IEnumerable<Track>> GetTopTracks()
         {
             using (var db = GetMainContext())

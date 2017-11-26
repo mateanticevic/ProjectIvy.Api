@@ -24,6 +24,9 @@ namespace ProjectIvy.Api.Controllers.Service.LastFm
         [HttpGet("Count")]
         public async Task<int> GetCount() => await _lastFmHandler.GetTotalCount();
 
+        [HttpGet("Loved")]
+        public async Task<IEnumerable<Track>> GetLoved() => await _lastFmHandler.GetLovedTracks();
+
         [HttpGet("Top")]
         public async Task<IEnumerable<Track>> GetTopTracks() => await _lastFmHandler.GetTopTracks();
     }

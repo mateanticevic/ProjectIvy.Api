@@ -21,6 +21,23 @@ namespace ProjectIvy.DL.Services.LastFm
             _settings = settings;
         }
 
+        public async Task<IEnumerable<Track>> GetLovedTracks(string username)
+        {
+            using (var client = new HttpClient())
+            {
+                var request = new UserGetLovedTracks(_settings.Url, _settings.Key, username)
+                {
+                };
+
+                var json = await client.GetStringAsync(request.ToUrl());
+
+                var tracks = JObject.Parse(json).SelectToken("lovedtracks")
+                                                .SelectToken("track");
+
+                return tracks.ToObject<IEnumerable<Track>>();
+            }
+        }
+
         public async Task<IEnumerable<Track>> GetTopTracks(string username)
         {
             using (var client = new HttpClient())

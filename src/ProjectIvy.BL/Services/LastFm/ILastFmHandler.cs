@@ -10,6 +10,8 @@ namespace ProjectIvy.BL.Services.LastFm
     {
         Task<int> GetTotalCount();
 
+        Task<IEnumerable<Track>> GetLovedTracks();
+
         Task<IEnumerable<Track>> GetTopTracks();
 
         Task<IEnumerable<Track>> GetTracks(FilteredPagedBinding binding);
