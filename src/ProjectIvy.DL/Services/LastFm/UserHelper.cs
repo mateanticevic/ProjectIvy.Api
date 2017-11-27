@@ -37,12 +37,29 @@ namespace ProjectIvy.DL.Services.LastFm
                 return tracks.ToObject<IEnumerable<Track>>();
             }
         }
+        
+        public async Task<IEnumerable<Artist>> GetTopArtists(string username)
+        {
+            using (var client = new HttpClient())
+            {
+                var request = new UserGetTopArtists(_settings.Url, _settings.Key, username)
+                {
+                };
+
+                var json = await client.GetStringAsync(request.ToUrl());
+
+                var tracks = JObject.Parse(json).SelectToken("topartists")
+                                                .SelectToken("artist");
+
+                return tracks.ToObject<IEnumerable<Artist>>();
+            }
+        }
 
         public async Task<IEnumerable<Track>> GetTopTracks(string username)
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetTopArtists(_settings.Url, _settings.Key, username)
+                var request = new UserGetTopTracks(_settings.Url, _settings.Key, username)
                 {
                     Api_Key = _settings.Key,
                     Period = Period.Overall,

@@ -12,6 +12,8 @@ namespace ProjectIvy.BL.Services.LastFm
 
         Task<IEnumerable<Track>> GetLovedTracks();
 
+        Task<IEnumerable<Artist>> GetTopArtists();
+
         Task<IEnumerable<Track>> GetTopTracks();
 
         Task<IEnumerable<Track>> GetTracks(FilteredPagedBinding binding);

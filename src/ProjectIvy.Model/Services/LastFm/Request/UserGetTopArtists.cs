@@ -6,8 +6,6 @@
         {
         }
 
-        public string Period { get; set; }
-
-        public override string Method => "user.getTopTracks";
+        public override string Method => "user.getTopArtists";
     }
 }

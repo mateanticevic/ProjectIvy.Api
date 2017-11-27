@@ -40,6 +40,17 @@ namespace ProjectIvy.BL.Services.LastFm
             }
         }
 
+        public async Task<IEnumerable<Artist>> GetTopArtists()
+        {
+            using (var db = GetMainContext())
+            {
+                string username = db.Users.SingleOrDefault(x => x.Id == User.Id).LastFmUsername;
+
+                var artists = await _userHelper.GetTopArtists(username);
+                return artists.Select(x => new Artist(x));
+            }
+        }
+
         public async Task<IEnumerable<Track>> GetTopTracks()
         {
             using (var db = GetMainContext())
