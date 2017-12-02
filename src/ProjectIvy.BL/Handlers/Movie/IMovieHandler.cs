@@ -1,6 +1,7 @@
 ﻿using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Movie;
+using System.Collections.Generic;
 using System;
 
 namespace ProjectIvy.BL.Handlers.Movie
@@ -10,6 +11,10 @@ namespace ProjectIvy.BL.Handlers.Movie
         PagedView<View.Movie> Get(MovieGetBinding binding);
 
         int GetCount(MovieGetBinding binding);
+
+        IEnumerable<GroupedByMonth<int>> GetCountByMonth(MovieGetBinding binding);
+
+        IEnumerable<GroupedByYear<int>> GetCountByYear(MovieGetBinding binding);
 
         double GetMyRatingAverage(MovieGetBinding binding);
 
