@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Movie;
@@ -23,16 +24,16 @@ namespace ProjectIvy.Api.Controllers.Movie
         #region Get
 
         [HttpGet]
-        public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding)
-        {
-            return _movieHandler.Get(binding);
-        }
+        public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding) => _movieHandler.Get(binding);
 
         [HttpGet("Count")]
-        public int GetCount([FromQuery] MovieGetBinding binding)
-        {
-            return _movieHandler.GetCount(binding);
-        }
+        public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.GetCount(binding);
+
+        [HttpGet("Count/ByMonth")]
+        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] MovieGetBinding binding) => _movieHandler.GetCountByMonth(binding);
+
+        [HttpGet("Count/ByYear")]
+        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.GetCountByYear(binding);
 
         #endregion
     }

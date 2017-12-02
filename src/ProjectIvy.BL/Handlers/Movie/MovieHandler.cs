@@ -2,9 +2,10 @@
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using System.Linq;
-using View = ProjectIvy.Model.View.Movie;
 using System;
+using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.BL.Handlers.Movie
 {
@@ -40,6 +41,33 @@ namespace ProjectIvy.BL.Handlers.Movie
                                           .Where(binding);
 
                 return userMovies.Count();
+            }
+        }
+
+        public IEnumerable<GroupedByMonth<int>> GetCountByMonth(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
+                                .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                                .OrderByDescending(x => x.Year)
+                                .ThenByDescending(x => x.Month)
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<GroupedByYear<int>> GetCountByYear(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Timestamp.Year)
+                                .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                .OrderByDescending(x => x.Year)
+                                .ToList();
             }
         }
 
