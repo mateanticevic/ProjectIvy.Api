@@ -1,5 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-using ProjectIvy.Model.Binding.Expense;
+﻿using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +10,9 @@ namespace ProjectIvy.BL.Handlers.Expense
     {
         void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding);
 
-        int Count(FilteredBinding binding);
+        int Count(ExpenseGetBinding binding);
+
+        IEnumerable<KeyValuePair<string, decimal>> CountByDay(ExpenseGetBinding binding);
 
         int CountTypes(ExpenseGetBinding binding);
 

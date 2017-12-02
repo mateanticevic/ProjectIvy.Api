@@ -40,62 +40,31 @@ namespace ProjectIvy.Api.Controllers.Expense
         #region Get
 
         [HttpGet("{expenseId}")]
-        public View.Expense Get(string expenseId)
-        {
-            return _expenseHandler.Get(expenseId);
-        }
+        public View.Expense Get(string expenseId) => _expenseHandler.Get(expenseId);
 
         [HttpGet]
-        public PagedView<View.Expense> Get(ExpenseGetBinding binding)
-        {
-            return _expenseHandler.Get(binding);
-        }
+        public PagedView<View.Expense> Get(ExpenseGetBinding binding) => _expenseHandler.Get(binding);
 
         [HttpGet("Count")]
-        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), from, to);
+        public int GetCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.Count(binding);
 
-            return _expenseHandler.Count(new FilteredBinding(from, to));
-        }
+        [HttpGet("Count/ByDay")]
+        public IEnumerable<KeyValuePair<string, decimal>> GetCountByDay([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByDay(binding);
 
         [HttpGet("{expenseId}/File")]
-        public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
-        {
-            return _expenseHandler.GetFiles(expenseId);
-        }
+        public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) => _expenseHandler.GetFiles(expenseId);
 
         [HttpGet("Sum")]
-        public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetSum), binding);
+        public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSum(binding);
 
-            return await _expenseHandler.GetSum(binding);
-        }
+        [HttpGet("Sum/ByMonth")]
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByMonthSum(binding);
 
-        [HttpGet("Sum/Month")]
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] ExpenseSumGetBinding binding)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByMonthSum), binding);
-
-            return await _expenseHandler.GetGroupedByMonthSum(binding);
-        }
-
-        [HttpGet("Sum/Year")]
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByYearSum), binding);
-
-            return await _expenseHandler.GetGroupedByYearSum(binding);
-        }
+        [HttpGet("Sum/ByYear")]
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByYearSum(binding);
 
         [HttpGet("Sum/Type")]
-        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding)
-        {
-            Logger.LogInformation((int)LogEvent.ActionCalled, nameof(GetGroupedByTypeSum), binding);
-
-            return await _expenseHandler.GetGroupedByTypeSum(binding);
-        }
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByTypeSum(binding);
 
         [HttpGet("Type/Count")]
         public int GetTypesCount([FromQuery] ExpenseGetBinding binding)
@@ -104,10 +73,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         }
 
         [HttpGet("Vendor/Count")]
-        public int GetVendorsCount([FromQuery] ExpenseGetBinding binding)
-        {
-            return _expenseHandler.CountVendors(binding);
-        }
+        public int GetVendorsCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountVendors(binding);
 
         #endregion
 
@@ -125,10 +91,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         #region Post
 
         [HttpPost]
-        public string Post([FromBody] ExpenseBinding binding)
-        {
-            return _expenseHandler.Create(binding);
-        }
+        public string Post([FromBody] ExpenseBinding binding) => _expenseHandler.Create(binding);
 
         [HttpPost("{expenseId}/File/{fileId}")]
         public IActionResult PostExpenseFile(string expenseId, string fileId, [FromBody] ExpenseFileBinding binding)

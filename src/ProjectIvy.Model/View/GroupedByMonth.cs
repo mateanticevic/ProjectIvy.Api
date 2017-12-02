@@ -6,7 +6,7 @@
         {
         }
 
-        public GroupedByMonth(T data, int month, int year)
+        public GroupedByMonth(T data, int year, int month)
         {
             Data = data;
             Month = month;
