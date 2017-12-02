@@ -58,14 +58,14 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                Func<DateTime, KeyValuePair<DateTime, int>> factory = x => new KeyValuePair<DateTime, int>(x, 0);
+                var to = binding.To ?? DateTime.Now;
 
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date)
                                        .OrderByDescending(x => x.Key)
                                        .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
-                                       .FillMissingDates(x => x.Key, factory, binding.From.Value, binding.To.Value)
+                                       .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From.Value, to)
                                        .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value))
                                        .ToList();
             }
@@ -75,10 +75,28 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
+                var to = binding.To ?? DateTime.Now;
+
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                        .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From.Value, to)
+                                       .ToList();
+            }
+        }
+
+        public IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var to = binding.To ?? DateTime.Now;
+
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .GroupBy(x => x.Date.Year)
+                                       .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From.Value.Year, to.Year)
                                        .ToList();
             }
         }

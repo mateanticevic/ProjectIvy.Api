@@ -16,6 +16,8 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding);
 
+        IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding);
+
         int CountTypes(ExpenseGetBinding binding);
 
         int CountVendors(ExpenseGetBinding binding);
