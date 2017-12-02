@@ -55,6 +55,10 @@ namespace ProjectIvy.DL.Extensions.Entities
             {
                 case ExpenseSort.Date:
                     return query.OrderBy(binding.OrderAscending, x => x.Date);
+                case ExpenseSort.Created:
+                    return query.OrderBy(binding.OrderAscending, x => x.Timestamp);
+                case ExpenseSort.Modified:
+                    return query.OrderBy(binding.OrderAscending, x => x.Modified);
                 case ExpenseSort.Amount:
                     return query.OrderBy(binding.OrderAscending, x => x.Ammount);
                 default:

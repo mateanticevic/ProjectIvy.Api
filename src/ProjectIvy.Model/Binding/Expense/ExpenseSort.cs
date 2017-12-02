@@ -7,6 +7,8 @@ namespace ProjectIvy.Model.Binding.Expense
     public enum ExpenseSort
     {
         Date,
+        Created,
+        Modified,
         Amount
     }
 }
