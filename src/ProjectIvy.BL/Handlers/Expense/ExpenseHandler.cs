@@ -43,16 +43,31 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public int Count(FilteredBinding binding)
+        public int Count(ExpenseGetBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var expenses = db.Expenses.WhereUser(User.Id);
+                var result = context.Expenses.WhereUser(User.Id)
+                                    .Where(binding, context);
 
-                expenses = binding.From.HasValue ? expenses.Where(x => x.Date >= binding.From) : expenses;
-                expenses = binding.To.HasValue ? expenses.Where(x => x.Date <= binding.To) : expenses;
+                return result.Count();
+            }
+        }
 
-                return expenses.Count();
+        public IEnumerable<KeyValuePair<string, decimal>> CountByDay(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                Func<DateTime, KeyValuePair<DateTime, decimal>> factory = x => new KeyValuePair<DateTime, decimal>(x, 0);
+
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .GroupBy(x => x.Date)
+                                       .OrderByDescending(x => x.Key)
+                                       .Select(x => new KeyValuePair<DateTime, decimal>(x.Key, x.Count()))
+                                       .FillMissingDates(x => x.Key, factory, binding.From.Value, binding.To.Value)
+                                       .Select(x => new KeyValuePair<string, decimal>(x.Key.ToString("yyyy-MM-dd"), x.Value))
+                                       .ToList();
             }
         }
 
@@ -133,8 +148,10 @@ namespace ProjectIvy.BL.Handlers.Expense
                                              .IncludeAll()
                                              .Where(binding, context);
 
-                var view = new PagedView<View.Expense>();
-                view.Count = result.Count();
+                var view = new PagedView<View.Expense>
+                {
+                    Count = result.Count()
+                };
 
                 result = result.OrderBy(binding)
                                .ThenByDescending(x => x.Timestamp)
@@ -184,8 +201,6 @@ namespace ProjectIvy.BL.Handlers.Expense
 
                 var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.Override(x))));
 
-                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
-
                 return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month));
             }
         }
@@ -202,8 +217,6 @@ namespace ProjectIvy.BL.Handlers.Expense
                 var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
                 var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.Override(x))));
-
-                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
 
                 return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key));
             }
