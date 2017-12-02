@@ -15,7 +15,7 @@ namespace ProjectIvy.Api.Controllers.Income
     [Route("[controller]")]
     public class IncomeController : BaseController<IncomeController>
     {
-        private IIncomeHandler _incomeHandler;
+        private readonly IIncomeHandler _incomeHandler;
 
         public IncomeController(ILogger<IncomeController> logger, IIncomeHandler incomeHandler) : base(logger)
         {
@@ -25,24 +25,13 @@ namespace ProjectIvy.Api.Controllers.Income
         #region Get
 
         [HttpGet]
-        public PagedView<View.Income> Get([FromQuery] IncomeGetBinding binding)
-        {
-            return _incomeHandler.Get(binding);
-        }
+        public PagedView<View.Income> Get([FromQuery] IncomeGetBinding binding) => _incomeHandler.Get(binding);
 
-        [HttpGet]
-        [Route("count")]
-        public int GetCount([FromQuery] FilteredBinding binding)
-        {
-            return _incomeHandler.GetCount(binding);
-        }
+        [HttpGet("Count")]
+        public int GetCount([FromQuery] FilteredBinding binding) => _incomeHandler.GetCount(binding);
 
-        [HttpGet]
-        [Route("sum")]
-        public decimal Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode)
-        {
-            return _incomeHandler.GetSum(new FilteredBinding(from, to), currencyCode);
-        }
+        [HttpGet("Sum")]
+        public decimal Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode) => _incomeHandler.GetSum(new FilteredBinding(from, to), currencyCode);
 
         #endregion
     }

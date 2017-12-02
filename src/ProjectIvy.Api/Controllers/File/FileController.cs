@@ -4,20 +4,16 @@ using ProjectIvy.BL.Handlers.File;
 using ProjectIvy.Model.Binding.File;
 using System.Threading.Tasks;
 
-namespace ProjectIvy.Api.Controllers.Income
+namespace ProjectIvy.Api.Controllers.File
 {
     [Route("[controller]")]
     public class FileController : BaseController<FileController>
     {
-        private IFileHandler _fileHandler;
+        private readonly IFileHandler _fileHandler;
 
-        public FileController(ILogger<FileController> logger, IFileHandler fileHandler) : base(logger)
-        {
-            _fileHandler = fileHandler;
-        }
+        public FileController(ILogger<FileController> logger, IFileHandler fileHandler) : base(logger) => _fileHandler = fileHandler;
 
-        [HttpDelete]
-        [Route("{id}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(string id)
         {
             await _fileHandler.DeleteFile(id);
@@ -25,8 +21,7 @@ namespace ProjectIvy.Api.Controllers.Income
             return Ok();
         }
 
-        [HttpGet]
-        [Route("{id}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
         {
             var file = await _fileHandler.GetFile(id);
@@ -34,8 +29,7 @@ namespace ProjectIvy.Api.Controllers.Income
             return File(file.Data, file.Type.MimeType);
         }
 
-        [HttpPost]
-        [Route("")]
+        [HttpPost("")]
         public async Task<IActionResult> Post()
         {
             var bytes = new byte[HttpContext.Request.ContentLength.Value];

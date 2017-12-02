@@ -27,31 +27,20 @@ namespace ProjectIvy.Api.Controllers.Project
         #region Get
 
         [HttpGet]
-        public IEnumerable<ViewProject.Project> Get()
-        {
-            return _projectHandler.Get();
-        }
+        public IEnumerable<ViewProject.Project> Get() => _projectHandler.Get();
 
-        [HttpGet]
-        [Route("{valueId}/tasks")]
-        public IEnumerable<ViewTask.Task> GetTasks(string valueId)
-        {
-            return _taskHandler.Get(valueId);
-        }
+        [HttpGet("{valueId}/Tasks")]
+        public IEnumerable<ViewTask.Task> GetTasks(string valueId) => _taskHandler.Get(valueId);
 
-        [HttpGet]
-        [Route("{valueId}/task/{taskValueId}")]
-        public ViewTask.Task GetTask(string valueId, string taskValueId)
-        {
-            return _taskHandler.Get(valueId, taskValueId);
-        }
+        [HttpGet("{valueId}/Task/{taskValueId}")]
+        public ViewTask.Task GetTask(string valueId, string taskValueId) => _taskHandler.Get(valueId, taskValueId);
 
         #endregion
 
         #region Put
 
         [HttpPut]
-        [Route("{valueId}/task")]
+        [Route("{valueId}/Task")]
         public string PutTask([FromBody] TaskBinding binding, string valueId)
         {
             binding.ProjectId = valueId;

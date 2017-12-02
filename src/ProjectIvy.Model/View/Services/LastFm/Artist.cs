@@ -1,5 +1,4 @@
 ﻿using ServiceModel = ProjectIvy.Model.Services.LastFm;
-using System;
 
 namespace ProjectIvy.Model.View.Services.LastFm
 {
@@ -8,8 +7,8 @@ namespace ProjectIvy.Model.View.Services.LastFm
         public Artist(ServiceModel.Artist artist)
         {
             Name = artist.ArtistName;
-            PlayCount = Int32.Parse(artist.Playcount);
-            Rank = Int32.Parse(artist.Attributes.Rank);
+            PlayCount = int.Parse(artist.Playcount);
+            Rank = int.Parse(artist.Attributes.Rank);
             Url = artist.Url;
         }
 

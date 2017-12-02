@@ -1,10 +1,10 @@
-﻿using ProjectIvy.BL.Handlers.Device;
-using ProjectIvy.Model.Binding.Device;
-using ProjectIvy.Model.Constants.Database;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Device;
+using ProjectIvy.Model.Binding.Device;
+using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Device
 {
@@ -14,13 +14,9 @@ namespace ProjectIvy.Api.Controllers.Device
     {
         private readonly IDeviceHandler _deviceHandler;
 
-        public DeviceController(ILogger<DeviceController> logger, IDeviceHandler deviceHandler) : base(logger)
-        {
-            _deviceHandler = deviceHandler;
-        }
+        public DeviceController(ILogger<DeviceController> logger, IDeviceHandler deviceHandler) : base(logger) => _deviceHandler = deviceHandler;
 
-        [HttpPut]
-        [Route("{deviceId}/browserLog")]
+        [HttpPut("{deviceId}/browserLog")]
         public StatusCodeResult PutBrowserLog([FromBody] BrowserLogBinding binding, string deviceId)
         {
             binding.DeviceId = deviceId;

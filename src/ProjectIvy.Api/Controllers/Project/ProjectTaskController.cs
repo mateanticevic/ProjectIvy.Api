@@ -14,13 +14,9 @@ namespace ProjectIvy.Api.Controllers.Project
     {
         private readonly ITaskHandler _taskHandler;
 
-        public ProjectTaskController(ILogger<ProjectTaskController> logger, ITaskHandler taskHandler) : base(logger)
-        {
-            _taskHandler = taskHandler;
-        }
+        public ProjectTaskController(ILogger<ProjectTaskController> logger, ITaskHandler taskHandler) : base(logger) => _taskHandler = taskHandler;
 
-        [HttpPost]
-        [Route("{taskId}/change")]
+        [HttpPost("{taskId}/change")]
         public StatusCodeResult PostTaskChange([FromBody] TaskChangeBinding binding, string projectId, string taskId)
         {
             try
@@ -37,8 +33,7 @@ namespace ProjectIvy.Api.Controllers.Project
             }
         }
 
-        [HttpDelete]
-        [Route("{taskId}")]
+        [HttpDelete("{taskId}")]
         public StatusCodeResult DeleteTask(string projectId, string taskId)
         {
             _taskHandler.Delete(projectId, taskId);

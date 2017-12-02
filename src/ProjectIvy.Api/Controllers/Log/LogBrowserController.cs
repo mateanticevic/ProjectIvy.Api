@@ -7,23 +7,17 @@ using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.Device;
 using ProjectIvy.Model.View;
 
-namespace ProjectIvy.Api.Controllers.Income
+namespace ProjectIvy.Api.Controllers.Log
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("log/browser")]
+    [Route("Log/Browser")]
     public class LogBrowserController : BaseController<LogBrowserController>
     {
-        private IDeviceHandler _devicehandler;
+        private readonly IDeviceHandler _devicehandler;
 
-        public LogBrowserController(ILogger<LogBrowserController> logger, IDeviceHandler devicehandler) : base(logger)
-        {
-            _devicehandler = devicehandler;
-        }
-        
+        public LogBrowserController(ILogger<LogBrowserController> logger, IDeviceHandler devicehandler) : base(logger) => _devicehandler = devicehandler;
+
         [HttpGet]
-        public PagedView<BrowserLog> Get([FromQuery] LogBrowserGetBinding binding)
-        {
-            return _devicehandler.Get(binding);
-        }
+        public PagedView<BrowserLog> Get([FromQuery] LogBrowserGetBinding binding) => _devicehandler.Get(binding);
     }
 }

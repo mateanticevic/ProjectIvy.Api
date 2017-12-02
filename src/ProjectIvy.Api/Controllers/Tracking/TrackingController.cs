@@ -29,12 +29,12 @@ namespace ProjectIvy.Api.Controllers.Tracking
         #region Get
 
         [HttpGet]
-        public IEnumerable<View.Tracking> Get([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.Get(new FilteredBinding(@from, to));
+        public IEnumerable<View.Tracking> Get([FromQuery] FilteredBinding binding) => _trackingHandler.Get(binding);
 
         [HttpGet("Gpx")]
-        public string GetGpx([FromQuery] DateTime? from, [FromQuery] DateTime? to)
+        public string GetGpx([FromQuery] FilteredBinding binding)
         {
-            return _trackingHandler.Get(new FilteredBinding(from, to))
+            return _trackingHandler.Get(binding)
                                    .Select(x => (ITracking)x)
                                    .ToGpx()
                                    .ToString();
@@ -44,10 +44,10 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public View.TrackingCurrent GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
 
         [HttpGet("Count")]
-        public int GetCount([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.Count(new FilteredBinding(@from, to));
+        public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
 
-        [HttpGet("Unique/Count")]
-        public int GetUniqueCount([FromQuery] DateTime? from, [FromQuery] DateTime? to) => _trackingHandler.CountUnique(new FilteredBinding(@from, to));
+        [HttpGet("Count/Unique")]
+        public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);
 
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
@@ -65,7 +65,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpPut]
         public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
 
-        [HttpPut("kml")]
+        [HttpPut("Kml")]
         public bool PutKml([FromBody] string kmlRaw)
         {
             var kml = XDocument.Parse(kmlRaw);

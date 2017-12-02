@@ -1,6 +1,6 @@
-﻿using ProjectIvy.BL.Handlers.Currency;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Currency;
 using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Currency;
 
@@ -11,16 +11,9 @@ namespace ProjectIvy.Api.Controllers.Currency
     {
         private readonly ICurrencyHandler _currencyHandler;
 
-        public CurrencyController(ILogger<CurrencyController> logger, ICurrencyHandler currencyHandler) : base(logger)
-        {
-            _currencyHandler = currencyHandler;
-        }
+        public CurrencyController(ILogger<CurrencyController> logger, ICurrencyHandler currencyHandler) : base(logger) => _currencyHandler = currencyHandler;
 
         [HttpGet]
-        [Route("")]
-        public IEnumerable<View.Currency> Get()
-        {
-            return _currencyHandler.Get();
-        }
+        public IEnumerable<View.Currency> Get() => _currencyHandler.Get();
     }
 }

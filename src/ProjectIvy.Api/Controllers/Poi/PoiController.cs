@@ -13,16 +13,10 @@ namespace ProjectIvy.Api.Controllers.Poi
     {
         private readonly IPoiHandler _poiHandler;
 
-        public PoiController(ILogger<PoiController> logger, IPoiHandler poiHandler) : base(logger)
-        {
-            _poiHandler = poiHandler;
-        }
+        public PoiController(ILogger<PoiController> logger, IPoiHandler poiHandler) : base(logger) => _poiHandler = poiHandler;
 
         [HttpGet]
-        public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding)
-        {
-            return _poiHandler.Get(binding);
-        }
+        public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding) => _poiHandler.Get(binding);
 
         [HttpPost("{poiId}")]
         public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)

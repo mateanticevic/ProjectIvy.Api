@@ -24,6 +24,8 @@ namespace ProjectIvy.Model.Services.LastFm.Request
 
         public int? Page { get; set; }
 
+        public abstract string Method { get; }
+
         public string ToUrl() => $"{_url}?{ToQueryString()}";
 
         public string ToQueryString()
@@ -34,7 +36,5 @@ namespace ProjectIvy.Model.Services.LastFm.Request
                  
             return string.Join("&", properties.ToArray());
         }
-
-        public abstract string Method { get; }
     }
 }
