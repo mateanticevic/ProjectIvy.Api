@@ -54,19 +54,31 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public IEnumerable<KeyValuePair<string, decimal>> CountByDay(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<string, int>> CountByDay(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
-                Func<DateTime, KeyValuePair<DateTime, decimal>> factory = x => new KeyValuePair<DateTime, decimal>(x, 0);
+                Func<DateTime, KeyValuePair<DateTime, int>> factory = x => new KeyValuePair<DateTime, int>(x, 0);
 
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date)
                                        .OrderByDescending(x => x.Key)
-                                       .Select(x => new KeyValuePair<DateTime, decimal>(x.Key, x.Count()))
+                                       .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
                                        .FillMissingDates(x => x.Key, factory, binding.From.Value, binding.To.Value)
-                                       .Select(x => new KeyValuePair<string, decimal>(x.Key.ToString("yyyy-MM-dd"), x.Value))
+                                       .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value))
+                                       .ToList();
+            }
+        }
+
+        public IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .GroupBy(x => new { x.Date.Year, x.Date.Month })
+                                       .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
                                        .ToList();
             }
         }

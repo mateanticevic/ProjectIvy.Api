@@ -12,7 +12,9 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         int Count(ExpenseGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, decimal>> CountByDay(ExpenseGetBinding binding);
+        IEnumerable<KeyValuePair<string, int>> CountByDay(ExpenseGetBinding binding);
+
+        IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding);
 
         int CountTypes(ExpenseGetBinding binding);
 
