@@ -7,7 +7,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Finance
 {
     [Table(nameof(Expense), Schema = nameof(Finance))]
-    public class Expense : UserEntity, IHasValueId
+    public class Expense : UserEntity, IHasValueId, IHasCreatedModified
     {
         public Expense()
         {
@@ -34,9 +34,9 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public int ExpenseTypeId { get; set; }
         
-        public DateTime? Modified { get; set; }
+        public DateTime Modified { get; set; }
 
-        public DateTime? Created { get; set; }
+        public DateTime Created { get; set; }
 
         public int? PoiId { get; set; }
         
