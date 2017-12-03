@@ -90,5 +90,22 @@ namespace ProjectIvy.BL.Handlers.Income
                 return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month));
             }
         }
+
+        public IEnumerable<GroupedByYear<decimal>> GetSumByYear(IncomeGetSumBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int startYear = binding.From?.Year ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Timestamp).FirstOrDefault().Timestamp.Year;
+                int endYear = binding.To?.Year ?? DateTime.Now.Year;
+
+                var years = Enumerable.Range(startYear, endYear - startYear + 1);
+
+                var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
+
+                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
+
+                return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key));
+            }
+        }
     }
 }

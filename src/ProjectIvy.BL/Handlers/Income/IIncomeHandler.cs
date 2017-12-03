@@ -16,5 +16,7 @@ namespace ProjectIvy.BL.Handlers.Income
         Task<decimal> GetSum(IncomeGetSumBinding binding);
 
         IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(IncomeGetSumBinding binding);
+
+        IEnumerable<GroupedByYear<decimal>> GetSumByYear(IncomeGetSumBinding binding);
     }
 }
