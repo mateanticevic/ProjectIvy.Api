@@ -12,11 +12,11 @@ namespace ProjectIvy.DL.Extensions.Entities
             switch (binding.OrderBy)
             {
                 case IncomeSort.Date:
-                    return query.OrderBy(binding.OrderAscending, x => x.Timestamp);
+                    return query.OrderBy(binding.OrderAscending, x => x.Date);
                 case IncomeSort.Amount:
                     return query.OrderBy(binding.OrderAscending, x => x.Ammount);
                 default:
-                    return query.OrderBy(binding.OrderAscending, x => x.Timestamp);
+                    return query.OrderBy(binding.OrderAscending, x => x.Date);
             }
         }
 
@@ -26,8 +26,8 @@ namespace ProjectIvy.DL.Extensions.Entities
             int? sourceId = context.IncomeSources.GetId(binding.SourceId);
             int? typeId = context.IncomeTypes.GetId(binding.TypeId);
 
-            return query.WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                        .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+            return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
+                        .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
                         .WhereIf(typeId.HasValue, x => x.IncomeTypeId == typeId)
                         .WhereIf(sourceId.HasValue, x => x.IncomeSourceId == sourceId)
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId);

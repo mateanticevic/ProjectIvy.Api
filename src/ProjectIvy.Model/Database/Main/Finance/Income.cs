@@ -6,7 +6,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Finance
 {
     [Table(nameof(Income), Schema = nameof(Finance))]
-    public class Income : UserEntity, IHasTimestamp
+    public class Income : UserEntity, IHasCreatedModified
     {
         [Key]
         public int Id { get; set; }
@@ -27,6 +27,10 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public IncomeType IncomeType { get; set; }
 
-        public DateTime Timestamp { get; set; }
+        public DateTime Date { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime Modified { get; set; }
     }
 }

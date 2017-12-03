@@ -243,7 +243,7 @@ namespace ProjectIvy.DL.DbContexts
                         .HasOne(x => x.Type);
 
             modelBuilder.Entity<TrackingDistance>()
-                        .HasKey(x => new { x.Timestamp, x.UserId });
+                        .HasKey(x => new { Timestamp = x.Timestamp, x.UserId });
 
             modelBuilder.Entity<UserRole>()
                         .HasKey(x => new { x.UserId, x.RoleId });

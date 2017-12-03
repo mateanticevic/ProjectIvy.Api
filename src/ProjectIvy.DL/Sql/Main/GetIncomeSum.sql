@@ -20,11 +20,11 @@ SELECT
 FROM Finance.Income i
 LEFT JOIN Common.CurrencyRate crEurToTarget ON crEurToTarget.FromCurrencyId = @EURId
 									AND crEurToTarget.ToCurrencyId = @TargetCurrencyId
-									AND crEurToTarget.Timestamp = (SELECT TOP 1 x.Timestamp FROM Common.CurrencyRate x WHERE x.FromCurrencyId = @EURId AND x.ToCurrencyId = @TargetCurrencyId AND x.Timestamp <= i.Timestamp ORDER BY x.Timestamp DESC)
+									AND crEurToTarget.Timestamp = (SELECT TOP 1 x.Timestamp FROM Common.CurrencyRate x WHERE x.FromCurrencyId = @EURId AND x.ToCurrencyId = @TargetCurrencyId AND x.Timestamp <= i.Date ORDER BY x.Timestamp DESC)
 LEFT JOIN Common.CurrencyRate crEurToOrigin ON crEurToOrigin.FromCurrencyId = @EURId
 									AND crEurToOrigin.ToCurrencyId = i.CurrencyId
-									AND crEurToOrigin.Timestamp = (SELECT TOP 1 x.Timestamp FROM Common.CurrencyRate x WHERE x.FromCurrencyId = @EURId AND x.ToCurrencyId = i.CurrencyId AND x.Timestamp <= i.Timestamp ORDER BY x.Timestamp DESC)
+									AND crEurToOrigin.Timestamp = (SELECT TOP 1 x.Timestamp FROM Common.CurrencyRate x WHERE x.FromCurrencyId = @EURId AND x.ToCurrencyId = i.CurrencyId AND x.Timestamp <= i.Date ORDER BY x.Timestamp DESC)
 WHERE i.UserId = @UserId
-AND (@From IS NULL OR @From <= i.Timestamp)
-AND (@To IS NULL OR @To >= i.Timestamp)
+AND (@From IS NULL OR @From <= i.Date)
+AND (@To IS NULL OR @To >= i.Date)
 AND (NOT EXISTS (SELECT TOP 1 * FROM @IncomeIds) OR EXISTS(SELECT TOP 1 * FROM @IncomeIds WHERE [Value] = i.Id))

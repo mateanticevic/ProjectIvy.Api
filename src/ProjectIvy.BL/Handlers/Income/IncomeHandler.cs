@@ -48,7 +48,7 @@ namespace ProjectIvy.BL.Handlers.Income
             using (var db = GetMainContext())
             {
                 var query = db.Incomes.WhereUser(User.Id)
-                                      .Where(x => x.Timestamp >= binding.From && x.Timestamp <= binding.To);
+                                      .Where(x => x.Date >= binding.From && x.Date <= binding.To);
 
                 return query.Count();
             }
@@ -83,7 +83,7 @@ namespace ProjectIvy.BL.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                var from = binding.From ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Timestamp).FirstOrDefault().Timestamp;
+                var from = binding.From ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date;
                 var to = binding.To ?? DateTime.Now;
 
                 var periods = from.RangeMonthsClosed(to)
@@ -100,7 +100,7 @@ namespace ProjectIvy.BL.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                int startYear = binding.From?.Year ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Timestamp).FirstOrDefault().Timestamp.Year;
+                int startYear = binding.From?.Year ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
                 int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
                 var years = Enumerable.Range(startYear, endYear - startYear + 1);

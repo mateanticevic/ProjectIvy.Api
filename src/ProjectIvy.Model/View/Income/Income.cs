@@ -13,7 +13,7 @@ namespace ProjectIvy.Model.View.Income
             Description = x.Description;
             Source = x.IncomeSource.ConvertTo(y => new IncomeSource(y));
             Type = x.IncomeType.ConvertTo(y => new IncomeType(y));
-            Timestamp = x.Timestamp;
+            Timestamp = x.Date;
         }
 
         public decimal Amount { get; set; }
