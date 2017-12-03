@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using System;
 
 namespace ProjectIvy.Model.Database.Main.Travel
 {
     [Table(nameof(Poi), Schema = nameof(Travel))]
-    public class Poi : IHasValueId, IHasName, IHasLocation
+    public class Poi : IHasValueId, IHasName, IHasLocation, IHasCreatedModified
     {
         [Key]
         public int Id { get; set; }
@@ -21,6 +22,10 @@ namespace ProjectIvy.Model.Database.Main.Travel
         public decimal Latitude { get; set; }
 
         public decimal Longitude { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime Modified { get; set; }
 
         public PoiCategory PoiCategory { get; set; }
 

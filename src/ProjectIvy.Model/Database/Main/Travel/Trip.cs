@@ -6,8 +6,14 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Travel
 {
     [Table(nameof(Trip), Schema = nameof(Travel))]
-    public class Trip : UserEntity, IHasName, IHasValueId
+    public class Trip : UserEntity, IHasName, IHasValueId, IHasCreatedModified
     {
+        public Trip()
+        {
+            Created = DateTime.Now;
+            Modified = DateTime.Now;
+        }
+
         [Key]
         public int Id { get; set; }
 
@@ -18,6 +24,10 @@ namespace ProjectIvy.Model.Database.Main.Travel
         public DateTime TimestampEnd { get; set; }
 
         public DateTime TimestampStart { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime Modified { get; set; }
 
         public ICollection<TripCity> Cities { get; set; }
 
