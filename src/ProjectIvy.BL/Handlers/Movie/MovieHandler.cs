@@ -5,6 +5,7 @@ using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
 using System;
+using ProjectIvy.Common.Extensions;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.BL.Handlers.Movie
@@ -30,6 +31,16 @@ namespace ProjectIvy.BL.Handlers.Movie
                 int count = query.Count();
 
                 return new PagedView<View.Movie>(items, count);
+            }
+        }
+
+        public View.Movie Get(string imdbId)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Movies.WhereUser(User)
+                                     .SingleOrDefault(x => x.ImdbId == imdbId)
+                                     .ConvertTo(x => new View.Movie(x));
             }
         }
 

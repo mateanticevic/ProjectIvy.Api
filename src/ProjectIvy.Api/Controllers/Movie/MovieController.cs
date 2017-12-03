@@ -26,6 +26,9 @@ namespace ProjectIvy.Api.Controllers.Movie
         [HttpGet]
         public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding) => _movieHandler.Get(binding);
 
+        [HttpGet("{imdbId}")]
+        public View.Movie Get(string imdbId) => _movieHandler.Get(imdbId);
+
         [HttpGet("Count")]
         public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.GetCount(binding);
 

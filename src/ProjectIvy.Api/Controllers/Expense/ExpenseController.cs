@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.BL.Handlers.Expense;
-using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.Constants;
@@ -9,7 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense

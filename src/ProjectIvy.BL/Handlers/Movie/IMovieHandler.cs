@@ -10,6 +10,8 @@ namespace ProjectIvy.BL.Handlers.Movie
     {
         PagedView<View.Movie> Get(MovieGetBinding binding);
 
+        View.Movie Get(string imdbId);
+
         int GetCount(MovieGetBinding binding);
 
         IEnumerable<GroupedByMonth<int>> GetCountByMonth(MovieGetBinding binding);
