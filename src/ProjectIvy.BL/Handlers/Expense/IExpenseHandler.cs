@@ -32,11 +32,11 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
 
-        Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding);
+        Task<IEnumerable<GroupedByMonth<decimal>>> GetSumByMonth(ExpenseSumGetBinding binding);
 
-        Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(ExpenseSumGetBinding binding);
+        Task<IEnumerable<GroupedByYear<decimal>>> GetSumByYear(ExpenseSumGetBinding binding);
 
-        Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum(ExpenseSumGetBinding binding);
+        Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding);
 
         Task<decimal> GetSum(ExpenseSumGetBinding binding);
 

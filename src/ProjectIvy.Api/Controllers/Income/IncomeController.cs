@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Income;
@@ -6,8 +7,8 @@ using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
-using System;
 using View = ProjectIvy.Model.View.Income;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Income
 {
@@ -17,10 +18,7 @@ namespace ProjectIvy.Api.Controllers.Income
     {
         private readonly IIncomeHandler _incomeHandler;
 
-        public IncomeController(ILogger<IncomeController> logger, IIncomeHandler incomeHandler) : base(logger)
-        {
-            _incomeHandler = incomeHandler;
-        }
+        public IncomeController(ILogger<IncomeController> logger, IIncomeHandler incomeHandler) : base(logger) => _incomeHandler = incomeHandler;
 
         #region Get
 
@@ -31,7 +29,10 @@ namespace ProjectIvy.Api.Controllers.Income
         public int GetCount([FromQuery] FilteredBinding binding) => _incomeHandler.GetCount(binding);
 
         [HttpGet("Sum")]
-        public decimal Get([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string currencyCode) => _incomeHandler.GetSum(new FilteredBinding(from, to), currencyCode);
+        public async Task<decimal> GetSum([FromQuery] IncomeGetSumBinding binding) => await _incomeHandler.GetSum(binding);
+
+        [HttpGet("Sum/ByMonth")]
+        public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => _incomeHandler.GetSumByMonth(binding);
 
         #endregion
     }

@@ -19,5 +19,13 @@ namespace ProjectIvy.Model.Binding.Common
         public DateTime? To { get; set; }
 
         public bool OrderAscending { get; set; }
+
+        public T OverrideFromTo<T>(DateTime? from, DateTime? to) where T : FilteredBinding
+        {
+            From = from;
+            To = to;
+
+            return (T)this;
+        }
     }
 }

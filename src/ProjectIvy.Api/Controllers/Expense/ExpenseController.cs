@@ -64,13 +64,13 @@ namespace ProjectIvy.Api.Controllers.Expense
         public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSum(binding);
 
         [HttpGet("Sum/ByMonth")]
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByMonthSum(binding);
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSumByMonth(binding);
 
         [HttpGet("Sum/ByYear")]
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByYearSum(binding);
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSumByYear(binding);
 
         [HttpGet("Sum/Type")]
-        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetGroupedByTypeSum(binding);
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSumByTypeSum(binding);
 
         [HttpGet("Type/Count")]
         public int GetTypesCount([FromQuery] ExpenseGetBinding binding)

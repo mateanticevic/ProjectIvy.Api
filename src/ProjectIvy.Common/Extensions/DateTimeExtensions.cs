@@ -35,6 +35,26 @@ namespace ProjectIvy.Common.Extensions
             yield return current.AddMonths(1);
         }
 
+        public static IEnumerable<(DateTime from, DateTime to)> RangeMonthsClosed(this DateTime from, DateTime to)
+        {
+            if (from.Year == to.Year && from.Month == to.Month)
+                yield return (from, to);
+            else
+            {
+                yield return (from, new DateTime(from.Year, from.Month, 1).AddMonths(1).AddDays(-1));
+
+                var current = new DateTime(from.Year, from.Month, 1);
+
+                while (current.Year != to.Year || to.Month - current.Month > 1)
+                {
+                    current = current.AddMonths(1);
+                    yield return (current, current.AddMonths(1).AddDays(-1));
+                }
+
+                yield return (new DateTime(to.Year, to.Month, 1), to);
+            }
+        }
+
         public static long ToUnix(this DateTime dateTime)
         {
             var epoch = new DateTime(1970, 1, 1, 0, 0, 0, 0);

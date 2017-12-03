@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using ProjectIvy.Common.Extensions;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -206,36 +207,24 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetGroupedByMonthSum(ExpenseSumGetBinding binding)
+        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetSumByMonth(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
-                var startDate = context.Expenses.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date;
-                var endDate = DateTime.Now;
+                var from = binding.From ?? context.Expenses.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date;
+                var to = binding.To ?? DateTime.Now;
 
-                var periods = new List<FilteredBinding>();
+                var periods = from.RangeMonthsClosed(to)
+                                  .Select(x => new FilteredBinding(x.from, x.to))
+                                  .ToList();
 
-                foreach (var year in Enumerable.Range(startDate.Year, endDate.Year - startDate.Year + 1))
-                {
-                    int startMonth = startDate.Year == year ? startDate.Month : 1;
-                    int endMonth = endDate.Year == year ? endDate.Month : 12;
-
-                    foreach (var month in Enumerable.Range(startMonth, endMonth - startMonth + 1))
-                    {
-                        var startOfMonth = new DateTime(year, month, 1);
-                        var endOfMonth = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-
-                        periods.Add(new FilteredBinding(startOfMonth, endOfMonth));
-                    }
-                }
-
-                var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.Override(x))));
+                var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
 
                 return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month));
             }
         }
 
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetGroupedByYearSum(ExpenseSumGetBinding binding)
+        public async Task<IEnumerable<GroupedByYear<decimal>>> GetSumByYear(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -246,13 +235,13 @@ namespace ProjectIvy.BL.Handlers.Expense
 
                 var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
-                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.Override(x))));
+                var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
 
                 return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key));
             }
         }
 
-        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum(ExpenseSumGetBinding binding)
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
