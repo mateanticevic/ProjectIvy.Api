@@ -70,6 +70,8 @@ namespace ProjectIvy.DL.DbContexts
 
         public DbSet<IncomeSource> IncomeSources { get; set; }
 
+        public DbSet<IncomeType> IncomeTypes { get; set; }
+
         public DbSet<Manufacturer> Manufacturers { get; set; }
 
         public DbSet<Movie> Movies { get; set; }

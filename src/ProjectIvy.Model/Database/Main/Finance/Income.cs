@@ -15,6 +15,10 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public int CurrencyId { get; set; }
 
+        public int IncomeTypeId { get; set; }
+
+        public int IncomeSourceId { get; set; }
+
         public Currency Currency { get; set; }
 
         public string Description { get; set; }

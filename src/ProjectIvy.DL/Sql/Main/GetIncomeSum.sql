@@ -2,6 +2,9 @@
 --DECLARE @To DATE = '2018-04-30'
 --DECLARE @UserId INT = 1
 --DECLARE @TargetCurrencyId INT = 45
+--DECLARE @IncomeIds dbo.IntList
+--INSERT INTO @IncomeIds (Value) VALUES (50)
+--INSERT INTO @IncomeIds (Value) VALUES (51)
 
 DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 
@@ -24,3 +27,4 @@ LEFT JOIN Common.CurrencyRate crEurToOrigin ON crEurToOrigin.FromCurrencyId = @E
 WHERE i.UserId = @UserId
 AND (@From IS NULL OR @From <= i.Timestamp)
 AND (@To IS NULL OR @To >= i.Timestamp)
+AND (NOT EXISTS (SELECT TOP 1 * FROM @IncomeIds) OR EXISTS(SELECT TOP 1 * FROM @IncomeIds WHERE [Value] = i.Id))

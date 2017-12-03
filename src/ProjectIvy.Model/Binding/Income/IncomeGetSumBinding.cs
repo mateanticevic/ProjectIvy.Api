@@ -1,8 +1,6 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Income
+﻿namespace ProjectIvy.Model.Binding.Income
 {
-    public class IncomeGetSumBinding : FilteredBinding
+    public class IncomeGetSumBinding : IncomeGetBinding
     {
         public string TargetCurrencyId { get; set; }
     }

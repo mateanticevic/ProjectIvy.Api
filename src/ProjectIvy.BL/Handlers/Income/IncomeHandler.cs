@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Databases.Main.Queries;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.BL.Handlers.Income
@@ -23,14 +24,14 @@ namespace ProjectIvy.BL.Handlers.Income
 
         public PagedView<View.Income> Get(IncomeGetBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var query = db.Incomes.WhereUser(User.Id)
+                var query = context.Incomes.WhereUser(User.Id)
                                       .Include(x => x.Currency)
                                       .Include(x => x.IncomeSource)
                                       .Include(x => x.IncomeType)
-                                      .OrderBy(binding)
-                                      .WhereTimestampInclusive(binding);
+                                      .Where(binding, context)
+                                      .OrderBy(binding);
 
                 var items = query.Page(binding)
                                  .ToList()
@@ -55,17 +56,21 @@ namespace ProjectIvy.BL.Handlers.Income
 
         public async Task<decimal> GetSum(IncomeGetSumBinding binding)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                int targetCurrencyId = db.GetCurrencyId(binding.TargetCurrencyId, User.Id);
+                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, User.Id);
+
+                var incomeIds = context.Incomes.WhereUser(User)
+                                               .Where(binding, context)
+                                               .Select(x => x.Id)
+                                               .ToList();
 
                 using (var sql = GetSqlConnection())
                 {
-                    var parameters = new
+                    var parameters = new GetIncomeSumQuery()
                     {
+                        IncomeIds = incomeIds,
                         TargetCurrencyId = targetCurrencyId,
-                        From = binding.From,
-                        To = binding.To,
                         UserId = User.Id
                     };
 
