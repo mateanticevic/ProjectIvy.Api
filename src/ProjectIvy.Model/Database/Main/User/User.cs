@@ -6,7 +6,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.User
 {
     [Table(nameof(User), Schema = nameof(User))]
-    public class User
+    public class User : IHasCreatedModified
     {
         [Key]
         public int Id { get; set; }
@@ -28,6 +28,10 @@ namespace ProjectIvy.Model.Database.Main.User
         public string Username { get; set; }
 
         public string LastFmUsername { get; set; }
+
+        public DateTime Created { get; set; }
+
+        public DateTime Modified { get; set; }
 
         public Common.Currency DefaultCurrency { get; set; }
 
