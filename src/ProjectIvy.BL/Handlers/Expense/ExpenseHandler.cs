@@ -185,7 +185,7 @@ namespace ProjectIvy.BL.Handlers.Expense
                 };
 
                 result = result.OrderBy(binding)
-                               .ThenByDescending(x => x.Timestamp)
+                               .ThenByDescending(x => x.Created)
                                .Page(binding.Page, binding.PageSize);
 
                 view.Items = result.ToList().Select(x => new View.Expense(x));

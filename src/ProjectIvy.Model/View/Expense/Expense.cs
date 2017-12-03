@@ -24,7 +24,7 @@ namespace ProjectIvy.Model.View.Expense
             Vendor = x.Vendor.ConvertTo(y => new Vendor.Vendor(y));
             ParentCurrencyExchangeRate = x.ParentCurrencyExchangeRate;
             Modified = x.Modified;
-            Timestamp = x.Timestamp;
+            Timestamp = x.Created;
         }
 
         public decimal Amount { get; set; }

@@ -12,7 +12,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public Expense()
         {
             Modified = DateTime.Now;
-            Timestamp = DateTime.Now;
+            Created = DateTime.Now;
         }
 
         [Key]
@@ -36,7 +36,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         
         public DateTime? Modified { get; set; }
 
-        public DateTime? Timestamp { get; set; }
+        public DateTime? Created { get; set; }
 
         public int? PoiId { get; set; }
         
