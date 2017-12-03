@@ -5,18 +5,16 @@ using System.ComponentModel.DataAnnotations;
 namespace ProjectIvy.Model.Database.Main.Finance
 {
     [Table(nameof(ExpenseType), Schema = nameof(Finance))]
-    public class ExpenseType : IHasValueId
+    public class ExpenseType : IHasValueId, IHasName
     {
         [Key]
         public int Id { get; set; }
 
-        public string Icon { get; set; }
-
-        public string IconUrl { get; set; }
-
         public string ValueId { get; set; }
 
-        public string TypeDescription { get; set; }
+        public string Name { get; set; }
+
+        public string Icon { get; set; }
 
         public int? ParentTypeId { get; set; }
 

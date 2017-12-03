@@ -1,8 +1,8 @@
 ﻿using ProjectIvy.Model.Database.Main.Common;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
-using System;
 using System.Collections.Generic;
+using System;
 
 namespace ProjectIvy.Model.Database.Main.Finance
 {

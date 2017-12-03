@@ -7,16 +7,13 @@ namespace ProjectIvy.Model.View.ExpenseType
         public ExpenseType(DatabaseModel.Finance.ExpenseType x)
         {
             Icon = x.Icon;
-            IconUrl = x.IconUrl;
             Id = x.ValueId;
-            Name = x.TypeDescription;
+            Name = x.Name;
         }
 
         public string Id { get; set; }
 
         public string Icon { get; set; }
-
-        public string IconUrl { get; set; }
 
         public string Name { get; set; }
     }

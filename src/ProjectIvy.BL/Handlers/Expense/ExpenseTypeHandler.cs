@@ -26,7 +26,7 @@ namespace ProjectIvy.BL.Handlers.Expense
                                       .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
                                       .WhereIf(binding.HasParent.HasValue, x => binding.HasParent.Value ? x.ParentTypeId != null : x.ParentTypeId == null)
                                       .WhereIf(parentId.HasValue, x => x.ParentTypeId == parentId.Value)
-                                      .OrderBy(x => x.TypeDescription)
+                                      .OrderBy(x => x.Name)
                                       .ToList()
                                       .Select(x => new ExpenseType(x));
             }
