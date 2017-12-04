@@ -238,7 +238,8 @@ namespace ProjectIvy.BL.Handlers.Expense
 
                 var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
 
-                return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key));
+                return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key))
+                            .OrderBy(binding);
             }
         }
 
