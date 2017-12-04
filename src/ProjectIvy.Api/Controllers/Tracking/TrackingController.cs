@@ -11,6 +11,7 @@ using System.Xml.Linq;
 using System;
 using System.Linq;
 using ProjectIvy.Common.Interfaces;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
@@ -45,6 +46,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet("Count")]
         public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
+
+        [HttpGet("Count/ByYear")]
+        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] FilteredBinding binding) => _trackingHandler.CountByYear(binding);
 
         [HttpGet("Count/Unique")]
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);

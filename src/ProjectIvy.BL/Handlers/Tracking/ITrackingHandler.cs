@@ -1,5 +1,6 @@
 ﻿using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
+using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
@@ -14,6 +15,8 @@ namespace ProjectIvy.BL.Handlers.Tracking
         IEnumerable<View.Tracking> Get(FilteredBinding binding);
 
         int Count(FilteredBinding binding);
+
+        IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding);
 
         double GetAverageSpeed(FilteredBinding binding);
 
