@@ -47,6 +47,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Count")]
         public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
 
+        [HttpGet("Count/ByMonth")]
+        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] FilteredBinding binding) => _trackingHandler.CountByMonth(binding);
+
         [HttpGet("Count/ByYear")]
         public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] FilteredBinding binding) => _trackingHandler.CountByYear(binding);
 

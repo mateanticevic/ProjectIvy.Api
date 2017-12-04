@@ -30,6 +30,20 @@ namespace ProjectIvy.BL.Handlers.Tracking
             }
         }
 
+        public IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Trackings.WhereUser(User)
+                              .WhereTimestampInclusive(binding.From, binding.To)
+                              .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month } )
+                              .OrderByDescending(x => x.Key.Year)
+                              .ThenByDescending(x => x.Key.Month)
+                              .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                              .ToList();
+            }
+        }
+
         public IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding)
         {
             using (var context = GetMainContext())
