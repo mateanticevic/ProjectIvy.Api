@@ -16,6 +16,8 @@ namespace ProjectIvy.BL.Handlers.Tracking
 
         int Count(FilteredBinding binding);
 
+        IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding);
+
         IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding);
 
         double GetAverageSpeed(FilteredBinding binding);
