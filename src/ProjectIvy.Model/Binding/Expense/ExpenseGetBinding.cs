@@ -2,7 +2,7 @@
 
 namespace ProjectIvy.Model.Binding.Expense
 {
-    public class ExpenseGetBinding : FilteredPagedBinding
+    public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>
     {
         public ExpenseSort OrderBy { get; set; }
 
