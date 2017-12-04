@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.BL.Handlers.Tracking
@@ -26,6 +27,19 @@ namespace ProjectIvy.BL.Handlers.Tracking
                                                 .WhereTimestampInclusive(binding);
 
                 return userTrackings.Count();
+            }
+        }
+
+        public IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Trackings.WhereUser(User)
+                                        .WhereTimestampInclusive(binding.From, binding.To)
+                                        .GroupBy(x => x.Timestamp.Year)
+                                        .OrderByDescending(x => x.Key)
+                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                        .ToList();
             }
         }
 
