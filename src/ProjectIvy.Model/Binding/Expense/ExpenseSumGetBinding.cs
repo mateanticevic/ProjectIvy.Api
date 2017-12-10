@@ -2,7 +2,7 @@
 {
     public class ExpenseSumGetBinding : ExpenseGetBinding, IOrderable<GroupedSort>
     {
-        public new GroupedSort OrderBy { get; set; }
+        public new GroupedSort OrderBy { get; set; } = GroupedSort.Date;
 
         public string TargetCurrencyId { get; set; }
 
