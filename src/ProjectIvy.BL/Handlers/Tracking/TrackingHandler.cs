@@ -36,7 +36,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
             {
                 return context.Trackings.WhereUser(User)
                               .WhereTimestampInclusive(binding.From, binding.To)
-                              .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month } )
+                              .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
                               .OrderByDescending(x => x.Key.Year)
                               .ThenByDescending(x => x.Key.Month)
                               .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
@@ -155,7 +155,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
                                                     .WhereTimestampInclusive(binding)
                                                     .Average(x => x.Speed);
 
-                return averageSpeed.HasValue ? averageSpeed.Value : 0;
+                return averageSpeed ?? 0;
             }
         }
 
@@ -180,7 +180,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
                                                 .WhereTimestampInclusive(binding)
                                                 .Max(x => x.Speed);
 
-                return maxSpeed.HasValue ? maxSpeed.Value : 0;
+                return maxSpeed ?? 0;
             }
         }
 
