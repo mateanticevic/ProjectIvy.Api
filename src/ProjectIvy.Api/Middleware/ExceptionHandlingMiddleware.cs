@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ProjectIvy.BL.Exceptions;
 using System.Net;
@@ -32,10 +33,11 @@ namespace ProjectIvy.Api.Middleware
             var result = JsonConvert.SerializeObject(new { error = e.Message });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)statusCode;
+
             return context.Response.WriteAsync(result);
         }
 
-        public async Task Invoke(HttpContext httpContext)
+        public async Task Invoke(HttpContext httpContext, ILogger<ExceptionHandlingMiddleware> logger)
         {
             try
             {
@@ -43,6 +45,7 @@ namespace ProjectIvy.Api.Middleware
             }
             catch (Exception e)
             {
+                logger.LogError(e, string.Empty);
                 await HandleException(httpContext, e);
             }
         }
