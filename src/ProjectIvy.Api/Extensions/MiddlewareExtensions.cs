@@ -1,5 +1,5 @@
-﻿using ProjectIvy.Api.Middleware;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using ProjectIvy.Api.Middleware;
 
 namespace ProjectIvy.Api.Extensions
 {
