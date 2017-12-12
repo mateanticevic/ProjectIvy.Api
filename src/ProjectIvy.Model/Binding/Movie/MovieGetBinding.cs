@@ -1,5 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace ProjectIvy.Model.Binding.Movie
 {

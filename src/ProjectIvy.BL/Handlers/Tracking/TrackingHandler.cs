@@ -2,12 +2,12 @@
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
-using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
 using System;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Tracking;
 

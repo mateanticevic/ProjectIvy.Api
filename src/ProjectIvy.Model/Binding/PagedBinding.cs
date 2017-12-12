@@ -1,4 +1,4 @@
-﻿namespace ProjectIvy.Model.Binding.Common
+﻿namespace ProjectIvy.Model.Binding
 {
     public class PagedBinding : IPagedBinding
     {

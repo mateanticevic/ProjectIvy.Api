@@ -1,4 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
+﻿using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Services.LastFm;
 using System.Collections.Generic;
 using System.Threading.Tasks;

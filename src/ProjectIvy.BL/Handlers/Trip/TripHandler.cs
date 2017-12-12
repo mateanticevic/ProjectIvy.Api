@@ -194,7 +194,7 @@ namespace ProjectIvy.BL.Handlers.Trip
                 var tripView = new View.Trip.Trip(trip)
                 {
                     Expenses = expenses.Select(x => new View.Expense.Expense(x)),
-                    Distance = _trackingHandler.GetDistance(new Model.Binding.Common.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
+                    Distance = _trackingHandler.GetDistance(new Model.Binding.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
                     TotalSpent = totalSpent
                 };
 

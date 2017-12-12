@@ -66,7 +66,7 @@ namespace ProjectIvy.DL.Extensions
             };
         }
 
-        public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, FilteredBinding binding) where T : IHasTimestamp
+        public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, IFilteredBinding binding) where T : IHasTimestamp
         {
             return query.WhereTimestampInclusive(binding.From, binding.To);
         }

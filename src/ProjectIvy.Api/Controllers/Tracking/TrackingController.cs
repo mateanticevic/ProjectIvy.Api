@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Tracking;
 using ProjectIvy.Common.Parsers;
-using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Common.Interfaces;
+using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Xml.Linq;
 using System;
 using System.Linq;
-using ProjectIvy.Common.Interfaces;
-using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking

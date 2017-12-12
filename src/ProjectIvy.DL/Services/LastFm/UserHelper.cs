@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Services.LastFm.Request;
 
 namespace ProjectIvy.DL.Services.LastFm

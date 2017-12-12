@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Services.LastFm;
-using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.Services.LastFm;
 using System.Collections.Generic;

@@ -1,5 +1,5 @@
-﻿using ProjectIvy.Model.Binding.Common;
-using ProjectIvy.Model.Binding.Tracking;
+﻿using ProjectIvy.Model.Binding.Tracking;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Xml.Linq;

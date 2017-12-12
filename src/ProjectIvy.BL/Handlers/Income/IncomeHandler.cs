@@ -1,17 +1,17 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Sql;
-using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
 using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectIvy.Common.Extensions;
-using ProjectIvy.DL.Databases.Main.Queries;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.BL.Handlers.Income
