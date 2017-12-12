@@ -26,20 +26,14 @@ namespace ProjectIvy.BL.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                var query = context.Incomes.WhereUser(User.Id)
+                return context.Incomes.WhereUser(User.Id)
                                       .Include(x => x.Currency)
                                       .Include(x => x.IncomeSource)
                                       .Include(x => x.IncomeType)
                                       .Where(binding, context)
-                                      .OrderBy(binding);
-
-                var items = query.Page(binding)
-                                 .ToList()
-                                 .Select(x => new View.Income(x));
-
-                var count = query.Count();
-
-                return new PagedView<View.Income>(items, count);
+                                      .OrderBy(binding)
+                                      .Select(x => new View.Income(x))
+                                      .ToPagedView(binding);
             }
         }
 

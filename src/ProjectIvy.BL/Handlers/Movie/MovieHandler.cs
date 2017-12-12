@@ -1,11 +1,11 @@
-﻿using ProjectIvy.DL.Extensions;
+﻿using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using ProjectIvy.Common.Extensions;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.BL.Handlers.Movie
@@ -20,17 +20,11 @@ namespace ProjectIvy.BL.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var query = db.Movies.WhereUser(User.Id)
-                                     .Where(binding);
-
-                var items = query.OrderBy(binding)
-                                 .Page(binding.ToPagedBinding())
-                                 .ToList()
-                                 .Select(x => new View.Movie(x));
-
-                int count = query.Count();
-
-                return new PagedView<View.Movie>(items, count);
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .OrderBy(binding)
+                                .Select(x => new View.Movie(x))
+                                .ToPagedView(binding);
             }
         }
 

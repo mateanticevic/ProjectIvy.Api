@@ -190,22 +190,13 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                var result = context.Expenses.WhereUser(User.Id)
-                                             .IncludeAll()
-                                             .Where(binding, context);
-
-                var view = new PagedView<View.Expense>
-                {
-                    Count = result.Count()
-                };
-
-                result = result.OrderBy(binding)
-                               .ThenByDescending(x => x.Created)
-                               .Page(binding.Page, binding.PageSize);
-
-                view.Items = result.ToList().Select(x => new View.Expense(x));
-
-                return view;
+                return context.Expenses.WhereUser(User.Id)
+                                       .IncludeAll()
+                                       .Where(binding, context)
+                                       .OrderBy(binding)
+                                       .ThenByDescending(x => x.Created)
+                                       .Select(x => new View.Expense(x))
+                                       .ToPagedView(binding);
             }
         }
 
