@@ -1,6 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Income
+﻿namespace ProjectIvy.Model.Binding.Income
 {
     public class IncomeGetBinding : FilteredPagedBinding
     {

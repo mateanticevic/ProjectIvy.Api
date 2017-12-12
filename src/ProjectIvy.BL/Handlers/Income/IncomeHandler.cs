@@ -1,17 +1,17 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Sql;
-using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
 using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectIvy.Common.Extensions;
-using ProjectIvy.DL.Databases.Main.Queries;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.BL.Handlers.Income
@@ -26,20 +26,14 @@ namespace ProjectIvy.BL.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                var query = context.Incomes.WhereUser(User.Id)
+                return context.Incomes.WhereUser(User.Id)
                                       .Include(x => x.Currency)
                                       .Include(x => x.IncomeSource)
                                       .Include(x => x.IncomeType)
                                       .Where(binding, context)
-                                      .OrderBy(binding);
-
-                var items = query.Page(binding)
-                                 .ToList()
-                                 .Select(x => new View.Income(x));
-
-                var count = query.Count();
-
-                return new PagedView<View.Income>(items, count);
+                                      .OrderBy(binding)
+                                      .Select(x => new View.Income(x))
+                                      .ToPagedView(binding);
             }
         }
 

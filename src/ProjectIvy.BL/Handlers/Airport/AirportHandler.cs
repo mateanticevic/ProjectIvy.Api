@@ -1,9 +1,7 @@
-﻿using ProjectIvy.DL.DbContexts;
+﻿using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;
-using Database = ProjectIvy.Model.Database.Main;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = ProjectIvy.Model.View.Airport;
 
@@ -19,7 +17,8 @@ namespace ProjectIvy.BL.Handlers.Airport
         {
             using (var context = GetMainContext())
             {
-                return Filter(binding, context).LongCount();
+                return context.Airports.Where(binding, context, User.Id)
+                                       .LongCount();
             }
         }
 
@@ -27,47 +26,10 @@ namespace ProjectIvy.BL.Handlers.Airport
         {
             using (var context = GetMainContext())
             {
-                var airports = Filter(binding, context);
-
-                long count = airports.Count();
-
-                var items = airports.Page(binding)
-                                    .ToList()
-                                    .Select(x => new View.Airport(x))
-                                    .ToList();
-
-                return new PagedView<View.Airport>()
-                {
-                    Count = count,
-                    Items = items
-                };
+                return context.Airports.Where(binding, context, User.Id)
+                                       .Select(x => new View.Airport(x))
+                                       .ToPagedView(binding);
             }
-        }
-
-        private IQueryable<Database.Transport.Airport> Filter(AirportGetBinding binding, MainContext context)
-        {
-            var airports = context.Airports.Include(x => x.City).AsQueryable();
-
-            if (binding.Visited.HasValue)
-            {
-                var visitedAirports = context.Flights.WhereUser(User.Id)
-                                                     .Select(x => new { Destination = x.DestinationAirportId, Origin = x.OriginAirportId })
-                                                     .ToList();
-
-                var visitedAirportIds = visitedAirports.Select(x => x.Destination)
-                                                       .Concat(visitedAirports.Select(x => x.Origin))
-                                                       .ToList();
-
-                airports = binding.Visited.Value ? airports.Where(x => visitedAirportIds.Contains(x.Id)) : airports.Where(x => !visitedAirportIds.Contains(x.Id));
-            }
-
-            int? cityId = context.Cities.GetId(binding.CityId);
-            airports = cityId.HasValue ? airports.Where(x => x.CityId == cityId) : airports;
-
-            int? countryId = context.Countries.GetId(binding.Countryid);
-            airports = countryId.HasValue ? airports.Where(x => x.City.CountryId == countryId) : airports;
-
-            return airports;
         }
     }
 }

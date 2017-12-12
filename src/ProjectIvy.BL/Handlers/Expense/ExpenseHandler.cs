@@ -5,14 +5,17 @@ using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Sql;
-using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using ProjectIvy.Common.Extensions;
+using ProjectIvy.Model.View.ExpenseType;
+using ProjectIvy.Model.View.Poi;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -66,9 +69,9 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .GroupBy(x => x.Date)
                                        .OrderByDescending(x => x.Key)
                                        .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
-                                       .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From.Value, to)
-                                       .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value))
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From, to)
+                                       .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value));
             }
         }
 
@@ -82,8 +85,8 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                        .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From.Value, to)
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to);
             }
         }
 
@@ -97,8 +100,50 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Year)
                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
-                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From.Value.Year, to.Year)
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From?.Year, to.Year);
+            }
+        }
+
+        public PagedView<PoiCount> CountByPoi(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.Poi)
+                                       .GroupBy(x => x.Poi)
+                                       .Select(x => new PoiCount(x.Key, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<ExpenseTypeCount> CountByType(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.ExpenseType)
+                                       .GroupBy(x => x.ExpenseType)
+                                       .Select(x => new ExpenseTypeCount(x.Key, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.Vendor)
+                                       .GroupBy(x => new {x.VendorId, x.Vendor })
+                                       .Select(x => new VendorCount(x.Key.Vendor, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
             }
         }
 
@@ -175,22 +220,13 @@ namespace ProjectIvy.BL.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                var result = context.Expenses.WhereUser(User.Id)
-                                             .IncludeAll()
-                                             .Where(binding, context);
-
-                var view = new PagedView<View.Expense>
-                {
-                    Count = result.Count()
-                };
-
-                result = result.OrderBy(binding)
-                               .ThenByDescending(x => x.Created)
-                               .Page(binding.Page, binding.PageSize);
-
-                view.Items = result.ToList().Select(x => new View.Expense(x));
-
-                return view;
+                return context.Expenses.WhereUser(User.Id)
+                                       .IncludeAll()
+                                       .Where(binding, context)
+                                       .OrderBy(binding)
+                                       .ThenByDescending(x => x.Created)
+                                       .Select(x => new View.Expense(x))
+                                       .ToPagedView(binding);
             }
         }
 
@@ -207,7 +243,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetSumByMonth(ExpenseSumGetBinding binding)
+        public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -225,7 +261,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetSumByYear(ExpenseSumGetBinding binding)
+        public IEnumerable<GroupedByYear<decimal>> GetSumByYear(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {

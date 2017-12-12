@@ -12,19 +12,19 @@ namespace ProjectIvy.BL.Handlers.Currency
 
         public IEnumerable<View.Currency> Get()
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                return db.Currencies.OrderBy(x => x.Name)
-                                    .ToList()
-                                    .Select(x => new View.Currency(x));
+                return context.Currencies.OrderBy(x => x.Name)
+                                         .ToList()
+                                         .Select(x => new View.Currency(x));
             }
         }
 
         public View.Currency Get(string code)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var entity = db.Currencies.SingleOrDefault(x => x.Code == code);
+                var entity = context.Currencies.SingleOrDefault(x => x.Code == code);
 
                 return new View.Currency(entity);
             }

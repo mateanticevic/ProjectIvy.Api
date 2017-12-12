@@ -26,7 +26,7 @@ namespace ProjectIvy.Api.Controllers.Vendor
         public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains) => _vendorHandler.Get(contains);
 
         [HttpGet("{vendorId}/Poi")]
-        public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageSize = null }).Items;
+        public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageSize = 0 }).Items;
 
         #endregion
     }

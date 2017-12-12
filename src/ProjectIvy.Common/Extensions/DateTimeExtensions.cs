@@ -9,15 +9,15 @@ namespace ProjectIvy.Common.Extensions
         {
             yield return from;
 
-            var current = from;
+            var current = from.Date;
 
-            while (current != to)
+            while (current < to.Date)
             {
                 current = current.AddDays(1);
                 yield return current;
             }
 
-            yield return to;
+            yield return to.Date;
         }
 
         public static IEnumerable<DateTime> RangeMonths(this DateTime from, DateTime to)

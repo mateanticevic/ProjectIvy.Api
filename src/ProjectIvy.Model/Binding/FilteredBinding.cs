@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ProjectIvy.Model.Binding.Common
+namespace ProjectIvy.Model.Binding
 {
-    public class FilteredBinding
+    public class FilteredBinding : IFilteredBinding
     {
         public FilteredBinding()
         {

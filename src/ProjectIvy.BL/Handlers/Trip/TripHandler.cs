@@ -134,14 +134,9 @@ namespace ProjectIvy.BL.Handlers.Trip
 
                 query = cityId.HasValue ? query.Where(x => x.Cities.Select(y => y.CityId).Contains(cityId.Value)) : query;
 
-                int count = query.Count();
-
-                var items = query.OrderBy(binding)
-                                 .Page(binding)
-                                 .ToList()
-                                 .Select(x => new View.Trip.Trip(x));
-
-                return new PagedView<View.Trip.Trip>(items, count);
+                return query.OrderBy(binding)
+                            .Select(x => new View.Trip.Trip(x))
+                            .ToPagedView(binding);
             }
         }
 
@@ -199,7 +194,7 @@ namespace ProjectIvy.BL.Handlers.Trip
                 var tripView = new View.Trip.Trip(trip)
                 {
                     Expenses = expenses.Select(x => new View.Expense.Expense(x)),
-                    Distance = _trackingHandler.GetDistance(new Model.Binding.Common.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
+                    Distance = _trackingHandler.GetDistance(new Model.Binding.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
                     TotalSpent = totalSpent
                 };
 

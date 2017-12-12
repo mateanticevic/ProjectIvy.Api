@@ -1,6 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Log
+﻿namespace ProjectIvy.Model.Binding.Log
 {
     public class LogBrowserGetBinding : FilteredPagedBinding
     {

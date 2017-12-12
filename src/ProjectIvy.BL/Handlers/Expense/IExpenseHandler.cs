@@ -2,6 +2,9 @@
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.Model.View.ExpenseType;
+using ProjectIvy.Model.View.Poi;
+using ProjectIvy.Model.View.Vendor;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -18,6 +21,12 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding);
 
+        PagedView<PoiCount> CountByPoi(ExpenseGetBinding binding);
+
+        PagedView<ExpenseTypeCount> CountByType(ExpenseGetBinding binding);
+
+        PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding);
+
         int CountTypes(ExpenseGetBinding binding);
 
         int CountVendors(ExpenseGetBinding binding);
@@ -32,9 +41,9 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
 
-        Task<IEnumerable<GroupedByMonth<decimal>>> GetSumByMonth(ExpenseSumGetBinding binding);
+        IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(ExpenseSumGetBinding binding);
 
-        Task<IEnumerable<GroupedByYear<decimal>>> GetSumByYear(ExpenseSumGetBinding binding);
+        IEnumerable<GroupedByYear<decimal>> GetSumByYear(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding);
 
