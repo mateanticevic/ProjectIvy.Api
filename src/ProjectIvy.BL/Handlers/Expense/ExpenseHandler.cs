@@ -14,6 +14,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using ProjectIvy.Model.View.ExpenseType;
+using ProjectIvy.Model.View.Poi;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -100,6 +102,34 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
                                        .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From.Value.Year, to.Year)
                                        .ToList();
+            }
+        }
+
+        public PagedView<PoiCount> CountByPoi(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.Poi)
+                                       .GroupBy(x => x.Poi)
+                                       .Select(x => new PoiCount(x.Key, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<ExpenseTypeCount> CountByType(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.ExpenseType)
+                                       .GroupBy(x => x.ExpenseType)
+                                       .Select(x => new ExpenseTypeCount(x.Key, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
             }
         }
 
