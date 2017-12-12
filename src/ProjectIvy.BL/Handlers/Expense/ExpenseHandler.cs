@@ -69,9 +69,9 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .GroupBy(x => x.Date)
                                        .OrderByDescending(x => x.Key)
                                        .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
-                                       .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From.Value, to)
-                                       .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value))
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From, to)
+                                       .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value));
             }
         }
 
@@ -85,8 +85,8 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                        .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From.Value, to)
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to);
             }
         }
 
@@ -100,8 +100,8 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Year)
                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
-                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From.Value.Year, to.Year)
-                                       .ToList();
+                                       .ToList()
+                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From?.Year, to.Year);
             }
         }
 
@@ -243,7 +243,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByMonth<decimal>>> GetSumByMonth(ExpenseSumGetBinding binding)
+        public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -261,7 +261,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<GroupedByYear<decimal>>> GetSumByYear(ExpenseSumGetBinding binding)
+        public IEnumerable<GroupedByYear<decimal>> GetSumByYear(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
