@@ -2,7 +2,7 @@
 
 namespace ProjectIvy.Model.Binding.Common
 {
-    public class FilteredPagedBinding : FilteredBinding
+    public class FilteredPagedBinding : FilteredBinding, IPagedBinding
     {
         public FilteredPagedBinding()
         {

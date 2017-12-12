@@ -1,5 +1,7 @@
 ﻿using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Database.Main;
+using ProjectIvy.Model.View;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
@@ -37,12 +39,7 @@ namespace ProjectIvy.DL.Extensions
             return orderAscending ? query.OrderBy(sortExpression) : query.OrderByDescending(sortExpression);
         }
 
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, FilteredPagedBinding binding)
-        {
-            return query.Page(binding.Page, binding.PageSize);
-        }
-
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, PagedBinding binding)
+        public static IQueryable<T> Page<T>(this IQueryable<T> query, IPagedBinding binding)
         {
             return query.Page(binding.Page, binding.PageSize);
         }
@@ -53,11 +50,20 @@ namespace ProjectIvy.DL.Extensions
                 return query;
 
             // Page number to page index (zero based)
-            int pageIndex = page.HasValue ? page.Value - 1 : 0;
+            int pageIndex = page - 1 ?? 0;
             pageIndex = pageIndex < 0 ? 0 : pageIndex;
 
             return query.Skip(pageIndex * pageSize.Value)
                         .Take(pageSize.Value);
+        }
+
+        public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding)
+        {
+            return new PagedView<T>()
+            {
+                Count = query.Count(),
+                Items = query.Page(binding).ToList()
+            };
         }
 
         public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, FilteredBinding binding) where T : IHasTimestamp

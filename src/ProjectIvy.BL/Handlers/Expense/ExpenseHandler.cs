@@ -5,14 +5,15 @@ using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.DL.Sql;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using ProjectIvy.Common.Extensions;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -99,6 +100,20 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
                                        .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From.Value.Year, to.Year)
                                        .ToList();
+            }
+        }
+
+        public PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(User.Id)
+                                       .Where(binding, context)
+                                       .Include(x => x.Vendor)
+                                       .GroupBy(x => new {x.VendorId, x.Vendor })
+                                       .Select(x => new VendorCount(x.Key.Vendor, x.Count()))
+                                       .OrderByDescending(x => x.Count)
+                                       .ToPagedView(binding);
             }
         }
 

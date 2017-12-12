@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.Model.View.Vendor;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
@@ -54,6 +55,9 @@ namespace ProjectIvy.Api.Controllers.Expense
 
         [HttpGet("Count/ByYear")]
         public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
+
+        [HttpGet("Count/ByVendor")]
+        public PagedView<VendorCount> GetCountBy([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByVendor(binding);
 
         [HttpGet("{expenseId}/File")]
         public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) => _expenseHandler.GetFiles(expenseId);

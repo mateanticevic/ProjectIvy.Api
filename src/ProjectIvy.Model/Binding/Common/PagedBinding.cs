@@ -1,6 +1,6 @@
 ﻿namespace ProjectIvy.Model.Binding.Common
 {
-    public class PagedBinding
+    public class PagedBinding : IPagedBinding
     {
         public PagedBinding()
         {
@@ -10,12 +10,12 @@
 
         public PagedBinding(int? page, int? pageSize)
         {
-            Page = page.HasValue ? page : 0;
-            PageSize = pageSize.HasValue ? pageSize : 10;
+            Page = page ?? 0;
+            PageSize = pageSize ?? 10;
         }
 
-        public int? Page { get; set; }
+        public int Page { get; set; }
 
-        public int? PageSize { get; set; }
+        public int PageSize { get; set; }
     }
 }

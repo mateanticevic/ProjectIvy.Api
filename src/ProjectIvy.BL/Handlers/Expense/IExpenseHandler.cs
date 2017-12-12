@@ -2,6 +2,7 @@
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.Model.View.Vendor;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -17,6 +18,8 @@ namespace ProjectIvy.BL.Handlers.Expense
         IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding);
 
         IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding);
+
+        PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding);
 
         int CountTypes(ExpenseGetBinding binding);
 
