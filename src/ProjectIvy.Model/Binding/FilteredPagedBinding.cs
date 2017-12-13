@@ -10,6 +10,8 @@ namespace ProjectIvy.Model.Binding
 
         public bool OrderAscending { get; set; }
 
+        public bool PageAll { get; set; }
+
         public int Page { get; set; } = 0;
 
         public int PageSize { get; set; } = 10;
@@ -20,11 +22,6 @@ namespace ProjectIvy.Model.Binding
             To = to;
 
             return (T)this;
-        }
-
-        public PagedBinding ToPagedBinding()
-        {
-            return new PagedBinding(Page, PageSize);
         }
     }
 }

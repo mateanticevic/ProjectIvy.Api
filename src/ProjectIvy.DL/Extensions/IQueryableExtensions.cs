@@ -41,20 +41,15 @@ namespace ProjectIvy.DL.Extensions
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, IPagedBinding binding)
         {
-            return query.Page(binding.Page, binding.PageSize);
-        }
-
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, int? page, int? pageSize = 10)
-        {
-            if (!pageSize.HasValue)
+            if (binding.PageAll)
                 return query;
 
             // Page number to page index (zero based)
-            int pageIndex = page - 1 ?? 0;
+            int pageIndex = binding.Page - 1;
             pageIndex = pageIndex < 0 ? 0 : pageIndex;
 
-            return query.Skip(pageIndex * pageSize.Value)
-                        .Take(pageSize.Value);
+            return query.Skip(pageIndex * binding.PageSize)
+                        .Take(binding.PageSize);
         }
 
         public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding)
