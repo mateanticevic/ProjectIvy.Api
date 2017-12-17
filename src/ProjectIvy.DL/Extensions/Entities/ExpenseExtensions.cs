@@ -42,6 +42,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(expenseTypeId.HasValue, x => x.ExpenseTypeId == expenseTypeId || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeId.Value))
                         .WhereIf(vendorId.HasValue, x => x.VendorId == vendorId)
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
+                        .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
