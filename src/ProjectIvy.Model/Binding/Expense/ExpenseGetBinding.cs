@@ -25,8 +25,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public string PaymentTypeId { get; set; }
 
-        public string TypeId { get; set; }
+        public IEnumerable<string> TypeId { get; set; }
 
-        public string VendorId { get; set; }
+        public IEnumerable<string> VendorId { get; set; }
     }
 }

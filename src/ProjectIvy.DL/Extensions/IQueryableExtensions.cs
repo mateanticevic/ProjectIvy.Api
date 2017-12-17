@@ -5,6 +5,7 @@ using ProjectIvy.Model.View;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace ProjectIvy.DL.Extensions
 {
@@ -90,6 +91,16 @@ namespace ProjectIvy.DL.Extensions
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, bool ifTrue, Expression<Func<T, bool>> condition)
         {
             return ifTrue ? queryable.Where(condition) : queryable;
+        }
+
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, object ifNotNull, Expression<Func<T, bool>> condition)
+        {
+            return ifNotNull != null ? queryable.Where(condition) : queryable;
+        }
+
+        public static IQueryable<T> WhereIf<T, TItem>(this IQueryable<T> queryable, IEnumerable<TItem> ifHasItems, Expression<Func<T, bool>> condition)
+        {
+            return ifHasItems != null && ifHasItems.Any() ? queryable.Where(condition) : queryable;
         }
     }
 }
