@@ -32,7 +32,7 @@ namespace ProjectIvy.DL.Extensions.Entities
             var vendorIds = context.Vendors.GetIds(binding.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
-            if (expenseTypeIds.Any())
+            if (expenseTypeIds != null && expenseTypeIds.Any())
                 expenseTypes = context.ExpenseTypes.GetAll();
 
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
