@@ -75,6 +75,22 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
+        public IEnumerable<KeyValuePair<string, int>> CountByDayOfWeek(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var to = binding.To ?? DateTime.Now;
+
+                return context.Expenses.WhereUser(User.Id)
+                    .Where(binding, context)
+                    .GroupBy(x => x.Date.DayOfWeek)
+                    .OrderByDescending(x => x.Key)
+                    .Select(x => new KeyValuePair<DayOfWeek, int>(x.Key, x.Count()))
+                    .ToList()
+                    .Select(x => new KeyValuePair<string, int>(x.Key.ToString(), x.Value));
+            }
+        }
+
         public IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
