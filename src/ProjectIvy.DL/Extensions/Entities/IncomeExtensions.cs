@@ -29,6 +29,7 @@ namespace ProjectIvy.DL.Extensions.Entities
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
                         .WhereIf(typeId.HasValue, x => x.IncomeTypeId == typeId)
+                        .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(sourceId.HasValue, x => x.IncomeSourceId == sourceId)
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId);
         }

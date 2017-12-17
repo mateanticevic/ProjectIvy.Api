@@ -9,7 +9,7 @@ namespace ProjectIvy.Model.View.Income
         public Income(DatabaseModel.Finance.Income x)
         {
             Amount = x.Ammount;
-            Currency = x.ConvertTo(y => new Currency.Currency(y.Currency));
+            Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
             Description = x.Description;
             Source = x.IncomeSource.ConvertTo(y => new IncomeSource(y));
             Type = x.IncomeType.ConvertTo(y => new IncomeType(y));
