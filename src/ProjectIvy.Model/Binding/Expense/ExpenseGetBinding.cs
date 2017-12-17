@@ -1,7 +1,12 @@
-﻿namespace ProjectIvy.Model.Binding.Expense
+﻿using System.Collections.Generic;
+using System;
+
+namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>
     {
+        public IEnumerable<DayOfWeek> Day { get; set; }
+
         public ExpenseSort OrderBy { get; set; }
 
         public bool? HasLinkedFiles { get; set; }
@@ -20,8 +25,8 @@
 
         public string PaymentTypeId { get; set; }
 
-        public string TypeId { get; set; }
+        public IEnumerable<string> TypeId { get; set; }
 
-        public string VendorId { get; set; }
+        public IEnumerable<string> VendorId { get; set; }
     }
 }

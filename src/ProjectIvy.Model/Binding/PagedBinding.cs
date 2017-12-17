@@ -2,17 +2,7 @@
 {
     public class PagedBinding : IPagedBinding
     {
-        public PagedBinding()
-        {
-            Page = 0;
-            PageSize = 10;
-        }
-
-        public PagedBinding(int? page, int? pageSize)
-        {
-            Page = page ?? 0;
-            PageSize = pageSize ?? 10;
-        }
+        public bool PageAll { get; set; }
 
         public int Page { get; set; }
 

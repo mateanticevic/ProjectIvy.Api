@@ -6,13 +6,23 @@ namespace ProjectIvy.DL.Extensions.Entities
 {
     public static class ExpenseTypesExtensions
     {
+        public static bool IsChildType(this ExpenseType type, IEnumerable<int> parentIds)
+        {
+            foreach (int parentId in parentIds)
+            {
+                if (type.IsChildType(parentId))
+                    return true;
+            }
+            return false;
+        }
+
         public static bool IsChildType(this ExpenseType type, int parentId)
         {
             while (true)
             {
                 if (!type.ParentTypeId.HasValue)
                     return false;
-                else if (type.ParentTypeId == parentId)
+                if (type.ParentTypeId == parentId)
                     return true;
 
                 type = type.ParentType;

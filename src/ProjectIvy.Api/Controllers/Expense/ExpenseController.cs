@@ -1,16 +1,16 @@
-﻿using ProjectIvy.BL.Handlers.Expense;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using ProjectIvy.BL.Handlers.Expense;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.Constants;
 using ProjectIvy.Model.View;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View.Poi;
 using ProjectIvy.Model.View.Vendor;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
@@ -52,6 +52,9 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Count/ByDay")]
         public IEnumerable<KeyValuePair<string, int>> GetCountByDay([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByDay(binding);
 
+        [HttpGet("Count/ByDayOfWeek")]
+        public IEnumerable<KeyValuePair<string, int>> GetCountByDayOfWekk([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByDayOfWeek(binding);
+
         [HttpGet("Count/ByMonth")]
         public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonth(binding);
 
@@ -83,10 +86,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSumByTypeSum(binding);
 
         [HttpGet("Type/Count")]
-        public int GetTypesCount([FromQuery] ExpenseGetBinding binding)
-        {
-            return _expenseHandler.CountTypes(binding);
-        }
+        public int GetTypesCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountTypes(binding);
 
         [HttpGet("Vendor/Count")]
         public int GetVendorsCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountVendors(binding);

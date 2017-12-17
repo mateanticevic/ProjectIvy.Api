@@ -27,21 +27,22 @@ namespace ProjectIvy.DL.Extensions.Entities
         {
             int? cardId = context.Cards.GetId(binding.CardId);
             int? currencyId = context.Currencies.GetId(binding.CurrencyId);
-            int? expenseTypeId = context.ExpenseTypes.GetId(binding.TypeId);
+            var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
             int? paymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
-            int? vendorId = context.Vendors.GetId(binding.VendorId);
+            var vendorIds = context.Vendors.GetIds(binding.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
-            if (expenseTypeId.HasValue)
+            if (expenseTypeIds.Any())
                 expenseTypes = context.ExpenseTypes.GetAll();
 
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
                         .WhereIf(cardId.HasValue, x => x.CardId == cardId)
                         .WhereIf(paymentTypeId.HasValue, x => x.PaymentTypeId == paymentTypeId)
-                        .WhereIf(expenseTypeId.HasValue, x => x.ExpenseTypeId == expenseTypeId || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeId.Value))
-                        .WhereIf(vendorId.HasValue, x => x.VendorId == vendorId)
+                        .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
+                        .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
+                        .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))

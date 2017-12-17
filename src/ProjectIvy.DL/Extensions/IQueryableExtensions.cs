@@ -5,6 +5,7 @@ using ProjectIvy.Model.View;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace ProjectIvy.DL.Extensions
 {
@@ -41,20 +42,15 @@ namespace ProjectIvy.DL.Extensions
 
         public static IQueryable<T> Page<T>(this IQueryable<T> query, IPagedBinding binding)
         {
-            return query.Page(binding.Page, binding.PageSize);
-        }
-
-        public static IQueryable<T> Page<T>(this IQueryable<T> query, int? page, int? pageSize = 10)
-        {
-            if (!pageSize.HasValue)
+            if (binding.PageAll)
                 return query;
 
             // Page number to page index (zero based)
-            int pageIndex = page - 1 ?? 0;
+            int pageIndex = binding.Page - 1;
             pageIndex = pageIndex < 0 ? 0 : pageIndex;
 
-            return query.Skip(pageIndex * pageSize.Value)
-                        .Take(pageSize.Value);
+            return query.Skip(pageIndex * binding.PageSize)
+                        .Take(binding.PageSize);
         }
 
         public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding)
@@ -95,6 +91,16 @@ namespace ProjectIvy.DL.Extensions
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, bool ifTrue, Expression<Func<T, bool>> condition)
         {
             return ifTrue ? queryable.Where(condition) : queryable;
+        }
+
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, object ifNotNull, Expression<Func<T, bool>> condition)
+        {
+            return ifNotNull != null ? queryable.Where(condition) : queryable;
+        }
+
+        public static IQueryable<T> WhereIf<T, TItem>(this IQueryable<T> queryable, IEnumerable<TItem> ifHasItems, Expression<Func<T, bool>> condition)
+        {
+            return ifHasItems != null && ifHasItems.Any() ? queryable.Where(condition) : queryable;
         }
     }
 }
