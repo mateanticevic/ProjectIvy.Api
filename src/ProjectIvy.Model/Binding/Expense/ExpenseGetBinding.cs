@@ -17,7 +17,7 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public decimal? AmountTo { get; set; }
 
-        public string CardId { get; set; }
+        public IEnumerable<string> CardId { get; set; }
 
         public IEnumerable<string> CurrencyId { get; set; }
 

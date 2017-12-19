@@ -25,7 +25,7 @@ namespace ProjectIvy.DL.Extensions.Entities
 
         public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
         {
-            int? cardId = context.Cards.GetId(binding.CardId);
+            var cardIds = context.Cards.GetIds(binding.CardId);
             var currencyIds = context.Currencies.GetIds(binding.CurrencyId);
             var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
             var paymentTypeIds = context.PaymentTypes.GetIds(binding.PaymentTypeId);
@@ -37,7 +37,7 @@ namespace ProjectIvy.DL.Extensions.Entities
 
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
-                        .WhereIf(cardId.HasValue, x => x.CardId == cardId)
+                        .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
                         .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
