@@ -25,10 +25,10 @@ namespace ProjectIvy.DL.Extensions.Entities
 
         public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
         {
-            int? cardId = context.Cards.GetId(binding.CardId);
-            int? currencyId = context.Currencies.GetId(binding.CurrencyId);
+            var cardIds = context.Cards.GetIds(binding.CardId);
+            var currencyIds = context.Currencies.GetIds(binding.CurrencyId);
             var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
-            int? paymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
+            var paymentTypeIds = context.PaymentTypes.GetIds(binding.PaymentTypeId);
             var vendorIds = context.Vendors.GetIds(binding.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
@@ -37,11 +37,11 @@ namespace ProjectIvy.DL.Extensions.Entities
 
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
-                        .WhereIf(cardId.HasValue, x => x.CardId == cardId)
-                        .WhereIf(paymentTypeId.HasValue, x => x.PaymentTypeId == paymentTypeId)
+                        .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
+                        .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
-                        .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
+                        .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
                         .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))

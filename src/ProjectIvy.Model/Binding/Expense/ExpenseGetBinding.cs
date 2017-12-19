@@ -17,13 +17,13 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public decimal? AmountTo { get; set; }
 
-        public string CardId { get; set; }
+        public IEnumerable<string> CardId { get; set; }
 
-        public string CurrencyId { get; set; }
+        public IEnumerable<string> CurrencyId { get; set; }
 
         public string Description { get; set; }
 
-        public string PaymentTypeId { get; set; }
+        public IEnumerable<string> PaymentTypeId { get; set; }
 
         public IEnumerable<string> TypeId { get; set; }
 
