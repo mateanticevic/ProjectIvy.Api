@@ -19,7 +19,7 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public string CardId { get; set; }
 
-        public string CurrencyId { get; set; }
+        public IEnumerable<string> CurrencyId { get; set; }
 
         public string Description { get; set; }
 

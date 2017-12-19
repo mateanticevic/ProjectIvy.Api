@@ -26,7 +26,7 @@ namespace ProjectIvy.DL.Extensions.Entities
         public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
         {
             int? cardId = context.Cards.GetId(binding.CardId);
-            int? currencyId = context.Currencies.GetId(binding.CurrencyId);
+            var currencyIds = context.Currencies.GetIds(binding.CurrencyId);
             var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
             int? paymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
             var vendorIds = context.Vendors.GetIds(binding.VendorId);
@@ -41,7 +41,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(paymentTypeId.HasValue, x => x.PaymentTypeId == paymentTypeId)
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
-                        .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId)
+                        .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
                         .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
