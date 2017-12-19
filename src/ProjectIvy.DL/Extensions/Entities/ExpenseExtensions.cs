@@ -28,7 +28,7 @@ namespace ProjectIvy.DL.Extensions.Entities
             int? cardId = context.Cards.GetId(binding.CardId);
             var currencyIds = context.Currencies.GetIds(binding.CurrencyId);
             var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
-            int? paymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
+            var paymentTypeIds = context.PaymentTypes.GetIds(binding.PaymentTypeId);
             var vendorIds = context.Vendors.GetIds(binding.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
@@ -38,7 +38,7 @@ namespace ProjectIvy.DL.Extensions.Entities
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
                         .WhereIf(cardId.HasValue, x => x.CardId == cardId)
-                        .WhereIf(paymentTypeId.HasValue, x => x.PaymentTypeId == paymentTypeId)
+                        .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
