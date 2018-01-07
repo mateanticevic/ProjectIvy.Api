@@ -19,7 +19,7 @@ namespace ProjectIvy.BL.MapExtensions
             entity.Longitude = binding.Longitude;
             entity.PoiCategoryId = context.PoiCategories.GetId(binding.PoiCategoryId).Value;
             entity.Modified = DateTime.Now;
-            entity.Created = entity.Created != default ? entity.Created : DateTime.Now;
+            entity.Created = entity.Created != default(DateTime) ? entity.Created : DateTime.Now;
 
             return entity;
         }
