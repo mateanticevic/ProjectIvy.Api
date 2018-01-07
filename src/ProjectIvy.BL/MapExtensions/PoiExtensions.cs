@@ -9,9 +9,9 @@ namespace ProjectIvy.BL.MapExtensions
     {
         public static Poi ToEntity(this PoiBinding binding, MainContext context, Poi entity = null)
         {
-            entity = entity == null ? new Poi() : entity;
+            entity = entity ?? new Poi();
 
-            entity.ValueId = binding.Id;
+            entity.ValueId = binding.Name.Replace(" ", "-").ToLowerInvariant();
             entity.Name = binding.Name;
             entity.Address = binding.Address;
             entity.Latitude = binding.Latitude;

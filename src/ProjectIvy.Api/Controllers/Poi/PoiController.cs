@@ -18,10 +18,9 @@ namespace ProjectIvy.Api.Controllers.Poi
         [HttpGet]
         public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding) => _poiHandler.Get(binding);
 
-        [HttpPost("{poiId}")]
-        public StatusCodeResult Post([FromBody] PoiBinding binding, string poiId)
+        [HttpPost]
+        public IActionResult Post([FromBody] PoiBinding binding)
         {
-            binding.Id = poiId;
             _poiHandler.Create(binding);
 
             return new StatusCodeResult(StatusCodes.Status201Created);
