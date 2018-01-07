@@ -1,4 +1,5 @@
-﻿using ProjectIvy.DL.DbContexts;
+﻿using System;
+using ProjectIvy.DL.DbContexts;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.Database.Main.Travel;
@@ -17,6 +18,8 @@ namespace ProjectIvy.BL.MapExtensions
             entity.Latitude = binding.Latitude;
             entity.Longitude = binding.Longitude;
             entity.PoiCategoryId = context.PoiCategories.GetId(binding.PoiCategoryId).Value;
+            entity.Modified = DateTime.Now;
+            entity.Created = entity.Created != default ? entity.Created : DateTime.Now;
 
             return entity;
         }
