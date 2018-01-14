@@ -31,6 +31,7 @@ using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using System;
+using ProjectIvy.BL.Handlers.Beer;
 using ProjectIvy.BL.Handlers.File;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -76,6 +77,7 @@ namespace ProjectIvy.Api
 
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
+            services.AddHandler<IBeerHandler, BeerHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICardHandler, CardHandler>();
             services.AddHandler<ICountryHandler, CountryHandler>();

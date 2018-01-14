@@ -12,6 +12,7 @@ using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.Database.Main.User;
 using ProjectIvy.Model.Database.Main.Storage;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Database.Main.Beer;
 
 namespace ProjectIvy.DL.DbContexts
 {
@@ -30,6 +31,12 @@ namespace ProjectIvy.DL.DbContexts
 
         public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
 
+        public DbSet<Beer> Beers { get; set; }
+
+        public DbSet<BeerBrand> BeerBrands { get; set; }
+
+        public DbSet<BeerServing> BeerServings { get; set; }
+
         public DbSet<BrowserLog> BrowserLogs { get; set; }
 
         public DbSet<Car> Cars { get; set; }
@@ -39,6 +46,8 @@ namespace ProjectIvy.DL.DbContexts
         public DbSet<CarLog> CarLogs { get; set; }
 
         public DbSet<City> Cities { get; set; }
+
+        public DbSet<Consumation> Consumations { get; set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -137,6 +146,16 @@ namespace ProjectIvy.DL.DbContexts
 
             modelBuilder.Entity<AccessToken>()
                         .HasOne(x => x.User);
+
+            modelBuilder.Entity<Beer>()
+                        .HasOne(x => x.BeerBrand)
+                        .WithMany(x => x.Beers);
+
+            modelBuilder.Entity<Consumation>()
+                        .HasOne(x => x.Beer);
+
+            modelBuilder.Entity<Consumation>()
+                        .HasOne(x => x.BeerServing);
 
             modelBuilder.Entity<Car>()
                         .HasOne(x => x.User);

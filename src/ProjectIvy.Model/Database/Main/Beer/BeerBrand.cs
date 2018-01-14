@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace ProjectIvy.Model.Database.Main.Beer
@@ -12,5 +13,7 @@ namespace ProjectIvy.Model.Database.Main.Beer
         public string ValueId { get; set; }
 
         public string Name { get; set; }
+
+        public ICollection<Beer> Beers { get; set; }
     }
 }
