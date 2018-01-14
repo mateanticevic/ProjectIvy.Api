@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
-    [Table(nameof(City), Schema = "Common")]
+    [Table(nameof(City), Schema = nameof(Common))]
     public class City : IHasValueId, IHasName
     {
         [Key]
