@@ -45,10 +45,12 @@ namespace ProjectIvy.Common.Extensions
 
                 var current = new DateTime(from.Year, from.Month, 1);
 
-                while (current.Year != to.Year || to.Month - current.Month > 1)
+                while ( current.Year != to.Year || to.Month - current.Month > 1)
                 {
                     current = current.AddMonths(1);
-                    yield return (current, current.AddMonths(1).AddDays(-1));
+
+                    if (current.AddMonths(1).AddDays(-1) < to)
+                        yield return (current, current.AddMonths(1).AddDays(-1));
                 }
 
                 yield return (new DateTime(to.Year, to.Month, 1), to);

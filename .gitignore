@@ -36,3 +36,5 @@ src/ProjectIvy.Api/bin
 /src/ProjectIvy.Tests/StyleCop.Cache
 /src/ProjectIvy.Utilities/StyleCop.Cache
 /StyleCop.Cache
+/ProjectIvy.Tests/bin
+/ProjectIvy.Tests/obj
