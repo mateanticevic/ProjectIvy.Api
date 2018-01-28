@@ -32,7 +32,8 @@ namespace ProjectIvy.Common.Extensions
                 yield return current;
             }
 
-            yield return current.AddMonths(1);
+            if (current.Month != 1)
+                yield return current.AddMonths(1);
         }
 
         public static IEnumerable<(DateTime from, DateTime to)> RangeMonthsClosed(this DateTime from, DateTime to)
