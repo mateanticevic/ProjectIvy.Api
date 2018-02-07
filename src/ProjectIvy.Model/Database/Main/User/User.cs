@@ -15,6 +15,8 @@ namespace ProjectIvy.Model.Database.Main.User
 
         public int DefaultLanguageId { get; set; }
 
+        public int? BirthCityId { get; set; }
+
         public string FirstName { get; set; }
 
         public string LastName { get; set; }
@@ -34,6 +36,8 @@ namespace ProjectIvy.Model.Database.Main.User
         public DateTime Modified { get; set; }
 
         public Common.Currency DefaultCurrency { get; set; }
+
+        public Common.City BirthCity { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
 

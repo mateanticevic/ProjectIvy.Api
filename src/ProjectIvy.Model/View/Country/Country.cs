@@ -1,4 +1,5 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using System.Collections.Generic;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Country
 {
@@ -13,5 +14,12 @@ namespace ProjectIvy.Model.View.Country
         public string Id { get; set; }
 
         public string Name { get; set; }
+    }
+
+    public class CountryComparer : IEqualityComparer<Country>
+    {
+        public bool Equals(Country x, Country y) => x.Id == y.Id;
+
+        public int GetHashCode(Country obj) => obj.Id.GetHashCode();
     }
 }

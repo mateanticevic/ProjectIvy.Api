@@ -1,8 +1,7 @@
-﻿using ProjectIvy.DL.Sql;
-using ProjectIvy.Model.Binding.Common;
+﻿using Dapper;
+using ProjectIvy.DL.Sql;
 using ProjectIvy.Model.Binding.Web;
 using ProjectIvy.Model.View.Web;
-using Dapper;
 using System.Collections.Generic;
 
 namespace ProjectIvy.BL.Handlers.Web

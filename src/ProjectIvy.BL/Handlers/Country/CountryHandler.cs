@@ -76,14 +76,23 @@ namespace ProjectIvy.BL.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                return context.Trips.WhereUser(User)
-                                    .Where(x => x.TimestampEnd < DateTime.Now)
-                                    .Include(x => x.Cities)
-                                    .SelectMany(x => x.Cities)
-                                    .Select(x => x.City.Country)
-                                    .Distinct()
-                                    .Select(x => new View.Country(x))
-                                    .ToList();
+                var countries = context.Trips.WhereUser(User)
+                                       .Where(x => x.TimestampEnd < DateTime.Now)
+                                       .Include(x => x.Cities)
+                                       .OrderBy(x => x.TimestampStart)
+                                       .SelectMany(x => x.Cities)
+                                       .Select(x => x.City.Country)
+                                       .Select(x => new View.Country(x))
+                                       .ToList();
+
+                var birthCountry = User.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
+                                                                             .SingleOrDefault(x => x.Id == User.BirthCityId.Value)
+                                                                             .Country : null;
+
+                if (birthCountry != null)
+                    countries.Insert(0, new View.Country(birthCountry));
+
+                return countries.Distinct(new View.CountryComparer());
             }
         }
 

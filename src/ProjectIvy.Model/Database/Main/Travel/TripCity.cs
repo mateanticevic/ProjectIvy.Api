@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using System;
 
 namespace ProjectIvy.Model.Database.Main.Travel
 {
@@ -8,6 +9,8 @@ namespace ProjectIvy.Model.Database.Main.Travel
         public int CityId { get; set; }
 
         public int TripId { get; set; }
+
+        public DateTime? EnteredOn { get; set; }
 
         public Common.City City { get; set; }
 
