@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2026
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,7 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{0F
 		appsettings.json = appsettings.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Tests", "ProjectIvy.Tests\ProjectIvy.Tests.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Tests", "ProjectIvy.Tests\ProjectIvy.Tests.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DE435792-D5A8-4C32-967B-BE9B91D22518}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -70,6 +72,7 @@ Global
 		{17E941D2-B071-4E44-99F8-78C33534EC3A} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{A363F585-049A-42D2-9FC1-1001222E45F6} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
+		{EC93E119-6B2D-4C98-8191-EB32416A9B69} = {DE435792-D5A8-4C32-967B-BE9B91D22518}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {094A78B9-5ADC-417E-BC22-075E7229DC0C}
