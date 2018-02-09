@@ -32,6 +32,7 @@ using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using System;
 using ProjectIvy.BL.Handlers.Beer;
+using ProjectIvy.BL.Handlers.Consumation;
 using ProjectIvy.BL.Handlers.File;
 using Swashbuckle.AspNetCore.Swagger;
 
@@ -80,6 +81,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IBeerHandler, BeerHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICardHandler, CardHandler>();
+            services.AddHandler<IConsumationHandler, ConsumationHandler>();
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();

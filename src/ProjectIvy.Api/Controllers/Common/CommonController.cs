@@ -7,7 +7,7 @@ using ProjectIvy.BL.Handlers.Poi;
 using System.Collections.Generic;
 using View = ProjectIvy.Model.View;
 
-namespace ProjectIvy.Api.Controllers.Poi
+namespace ProjectIvy.Api.Controllers.Common
 {
     [Route("[controller]")]
     public class CommonController : BaseController<CommonController>
