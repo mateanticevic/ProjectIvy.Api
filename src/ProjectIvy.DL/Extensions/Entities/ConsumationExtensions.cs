@@ -9,7 +9,8 @@ namespace ProjectIvy.DL.Extensions.Entities
         public static IQueryable<Consumation> Where(this IQueryable<Consumation> query, ConsumationGetBinding binding)
         {
             return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From.Value)
-                        .WhereIf(binding.To.HasValue, x => x.Date <= binding.To.Value);
+                        .WhereIf(binding.To.HasValue, x => x.Date <= binding.To.Value)
+                        .WhereIf(binding.Serving.HasValue, x => x.BeerServingId == (int)binding.Serving.Value);
         }
     }
 }
