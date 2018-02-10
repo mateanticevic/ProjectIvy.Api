@@ -6,6 +6,8 @@ namespace ProjectIvy.Model.Binding.Consumation
     {
         public string BeerId { get; set; }
 
+        public string BeerBrandId { get; set; }
+
         public BeerServing? Serving { get; set; }
     }
 }
