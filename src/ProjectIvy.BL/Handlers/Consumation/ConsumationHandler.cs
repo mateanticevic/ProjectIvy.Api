@@ -1,4 +1,5 @@
-﻿using ProjectIvy.DL.Extensions;
+﻿using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Consumation;
 using System.Linq;
 
@@ -10,13 +11,22 @@ namespace ProjectIvy.BL.Handlers.Consumation
         {
         }
 
+        public int Count(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                              .Where(binding)
+                              .Count();
+            }
+        }
+
         public int VolumeSum(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
-                                           .WhereIf(binding.From.HasValue, x => x.Date >= binding.From.Value)
-                                           .WhereIf(binding.To.HasValue, x => x.Date <= binding.To.Value)
+                                           .Where(binding)
                                            .Sum(x => x.Volume);
             }
         }

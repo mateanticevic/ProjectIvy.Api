@@ -15,10 +15,10 @@ namespace ProjectIvy.Api.Controllers.Consumation
             _consumationHandler = consumationHandler;
         }
 
-        [HttpGet("sum")]
-        public int VolumeSum(ConsumationGetBinding binding)
-        {
-            return _consumationHandler.VolumeSum(binding);
-        }
+        [HttpGet("Count")]
+        public int Count(ConsumationGetBinding binding) => _consumationHandler.Count(binding);
+
+        [HttpGet("Sum")]
+        public int VolumeSum(ConsumationGetBinding binding) => _consumationHandler.VolumeSum(binding);
     }
 }
