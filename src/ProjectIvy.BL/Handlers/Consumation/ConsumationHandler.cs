@@ -16,7 +16,7 @@ namespace ProjectIvy.BL.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
-                              .Where(binding)
+                              .Where(binding, context)
                               .Count();
             }
         }
@@ -26,7 +26,7 @@ namespace ProjectIvy.BL.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
-                                           .Where(binding)
+                                           .Where(binding, context)
                                            .Sum(x => x.Volume);
             }
         }
