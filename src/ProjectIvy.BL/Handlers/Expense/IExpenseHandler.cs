@@ -2,9 +2,8 @@
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.View.Poi;
-using ProjectIvy.Model.View.Vendor;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -23,11 +22,11 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding);
 
-        PagedView<PoiCount> CountByPoi(ExpenseGetBinding binding);
+        PagedView<CountBy<Model.View.Poi.Poi>> CountByPoi(ExpenseGetBinding binding);
 
-        PagedView<ExpenseTypeCount> CountByType(ExpenseGetBinding binding);
+        PagedView<CountBy<ExpenseType>> CountByType(ExpenseGetBinding binding);
 
-        PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding);
+        PagedView<CountBy<Model.View.Vendor.Vendor>> CountByVendor(ExpenseGetBinding binding);
 
         int CountTypes(ExpenseGetBinding binding);
 

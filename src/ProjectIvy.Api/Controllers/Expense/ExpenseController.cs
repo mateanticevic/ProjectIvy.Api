@@ -11,6 +11,7 @@ using ProjectIvy.Model.View.Poi;
 using ProjectIvy.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.Model.Binding;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
@@ -62,13 +63,13 @@ namespace ProjectIvy.Api.Controllers.Expense
         public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
 
         [HttpGet("Count/ByPoi")]
-        public PagedView<PoiCount> GetCountByPoi([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByPoi(binding);
+        public PagedView<CountBy<Model.View.Poi.Poi>> GetCountByPoi([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByPoi(binding);
 
         [HttpGet("Count/ByType")]
-        public PagedView<ExpenseTypeCount> GetCountByType([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByType(binding);
+        public PagedView<CountBy<Model.View.ExpenseType.ExpenseType>> GetCountByType([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByType(binding);
 
         [HttpGet("Count/ByVendor")]
-        public PagedView<VendorCount> GetCountByVendor([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByVendor(binding);
+        public PagedView<CountBy<Model.View.Vendor.Vendor>> GetCountByVendor([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByVendor(binding);
 
         [HttpGet("{expenseId}/File")]
         public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) => _expenseHandler.GetFiles(expenseId);

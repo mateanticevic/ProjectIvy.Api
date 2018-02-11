@@ -121,7 +121,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public PagedView<PoiCount> CountByPoi(ExpenseGetBinding binding)
+        public PagedView<CountBy<Model.View.Poi.Poi>> CountByPoi(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -129,13 +129,13 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .Include(x => x.Poi)
                                        .GroupBy(x => x.Poi)
-                                       .Select(x => new PoiCount(x.Key, x.Count()))
+                                       .Select(x => new CountBy<Model.View.Poi.Poi>(x.Key.ConvertTo(y => new Model.View.Poi.Poi(y)), x.Count()))
                                        .OrderByDescending(x => x.Count)
                                        .ToPagedView(binding);
             }
         }
 
-        public PagedView<ExpenseTypeCount> CountByType(ExpenseGetBinding binding)
+        public PagedView<CountBy<ExpenseType>> CountByType(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -143,21 +143,21 @@ namespace ProjectIvy.BL.Handlers.Expense
                                        .Where(binding, context)
                                        .Include(x => x.ExpenseType)
                                        .GroupBy(x => x.ExpenseType)
-                                       .Select(x => new ExpenseTypeCount(x.Key, x.Count()))
+                                       .Select(x => new CountBy<ExpenseType>(x.Key.ConvertTo(y => new ExpenseType(y)), x.Count()))
                                        .OrderByDescending(x => x.Count)
                                        .ToPagedView(binding);
             }
         }
 
-        public PagedView<VendorCount> CountByVendor(ExpenseGetBinding binding)
+        public PagedView<CountBy<Model.View.Vendor.Vendor>> CountByVendor(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .Include(x => x.Vendor)
-                                       .GroupBy(x => new {x.VendorId, x.Vendor })
-                                       .Select(x => new VendorCount(x.Key.Vendor, x.Count()))
+                                       .GroupBy(x => x.Vendor)
+                                       .Select(x => new CountBy<Model.View.Vendor.Vendor>(x.Key.ConvertTo(y => new Model.View.Vendor.Vendor(y)), x.Count()))
                                        .OrderByDescending(x => x.Count)
                                        .ToPagedView(binding);
             }
