@@ -8,6 +8,8 @@ namespace ProjectIvy.BL.Handlers.Consumation
 
         int CountUniqueBeers(ConsumationGetBinding binding);
 
+        int CountUniqueBrands(ConsumationGetBinding binding);
+
         int VolumeSum(ConsumationGetBinding binding);
     }
 }
