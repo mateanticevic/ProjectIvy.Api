@@ -21,6 +21,18 @@ namespace ProjectIvy.BL.Handlers.Consumation
             }
         }
 
+        public int CountUniqueBeers(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                              .Where(binding, context)
+                              .Select(x => x.BeerId)
+                              .Distinct()
+                              .Count();
+            }
+        }
+
         public int VolumeSum(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
