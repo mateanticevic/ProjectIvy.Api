@@ -43,13 +43,13 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
 
-        IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(ExpenseSumGetBinding binding);
+        IEnumerable<GroupedByMonth<decimal>> SumAmountByMonth(ExpenseSumGetBinding binding);
 
-        IEnumerable<GroupedByYear<decimal>> GetSumByYear(ExpenseSumGetBinding binding);
+        IEnumerable<GroupedByYear<decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding);
 
-        Task<decimal> GetSum(ExpenseSumGetBinding binding);
+        Task<decimal> SumAmount(ExpenseSumGetBinding binding);
 
         bool Update(ExpenseBinding binding);
     }
