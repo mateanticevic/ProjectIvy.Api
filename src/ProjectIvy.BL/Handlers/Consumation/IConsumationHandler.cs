@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Consumation;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Consumation
 {
@@ -9,6 +10,8 @@ namespace ProjectIvy.BL.Handlers.Consumation
         int CountUniqueBeers(ConsumationGetBinding binding);
 
         int CountUniqueBrands(ConsumationGetBinding binding);
+
+        PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding);
 
         int SumVolume(ConsumationGetBinding binding);
     }

@@ -3,6 +3,9 @@ using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Consumation;
 using System.Linq;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Consumation
 {
@@ -44,6 +47,20 @@ namespace ProjectIvy.BL.Handlers.Consumation
                     .Select(x => x.Beer.BeerBrandId)
                     .Distinct()
                     .Count();
+            }
+        }
+
+        public PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .Include(x => x.Beer)
+                                           .GroupBy(x => x.Beer)
+                                           .Select(x => new SumBy<Model.View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Sum(y => y.Volume)))
+                                           .OrderByDescending(x => x.Sum)
+                                           .ToPagedView(binding);
             }
         }
 

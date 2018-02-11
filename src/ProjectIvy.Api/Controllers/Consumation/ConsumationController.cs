@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Consumation;
 using ProjectIvy.Model.Binding.Consumation;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Consumation
 {
@@ -24,7 +25,10 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count/UniqueBrands")]
         public int CountUniqueBrands(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBrands(binding);
 
+        [HttpGet("Sum/ByBeer")]
+        public PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByBeer(binding);
+
         [HttpGet("Sum")]
-        public int VolumeSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);
+        public int SumVolume(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);
     }
 }

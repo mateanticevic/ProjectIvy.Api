@@ -1,4 +1,4 @@
-﻿namespace ProjectIvy.Model.Binding
+﻿namespace ProjectIvy.Model.View
 {
     public class CountBy<T>
     {
