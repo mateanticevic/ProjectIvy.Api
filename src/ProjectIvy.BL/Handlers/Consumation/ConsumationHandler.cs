@@ -5,6 +5,7 @@ using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.View;
 using System.Linq;
+using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.BL.Handlers.Consumation
 {
@@ -60,6 +61,18 @@ namespace ProjectIvy.BL.Handlers.Consumation
                     .Select(x => x.Beer.BeerBrandId)
                     .Distinct()
                     .Count();
+            }
+        }
+
+        public PagedView<View.Consumation> Get(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .Select(x => new View.Consumation(x))
+                                           .OrderByDescending(x => x.Date)
+                                           .ToPagedView(binding);
             }
         }
 
