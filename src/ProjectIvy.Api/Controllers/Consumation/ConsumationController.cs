@@ -19,6 +19,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count")]
         public int Count(ConsumationGetBinding binding) => _consumationHandler.Count(binding);
 
+        [HttpGet("Count/ByBeer")]
+        public PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding) => _consumationHandler.CountByBeer(binding);
+
         [HttpGet("Count/UniqueBeers")]
         public int CountUniqueBeers(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBeers(binding);
 

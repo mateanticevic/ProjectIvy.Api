@@ -2,10 +2,9 @@
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Consumation;
-using System.Linq;
 using ProjectIvy.Common.Extensions;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
+using System.Linq;
 
 namespace ProjectIvy.BL.Handlers.Consumation
 {
@@ -22,6 +21,20 @@ namespace ProjectIvy.BL.Handlers.Consumation
                 return context.Consumations.WhereUser(User)
                               .Where(binding, context)
                               .Count();
+            }
+        }
+
+        public PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .Include(x => x.Beer)
+                                           .GroupBy(x => x.Beer)
+                                           .Select(x => new CountBy<Model.View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Count()))
+                                           .OrderByDescending(x => x.Count)
+                                           .ToPagedView(binding);
             }
         }
 
