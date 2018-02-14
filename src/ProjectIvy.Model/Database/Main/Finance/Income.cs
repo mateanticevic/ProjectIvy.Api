@@ -11,7 +11,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
         [Key]
         public int Id { get; set; }
 
-        public decimal Ammount { get; set; }
+        public decimal Amount { get; set; }
 
         public int CurrencyId { get; set; }
 

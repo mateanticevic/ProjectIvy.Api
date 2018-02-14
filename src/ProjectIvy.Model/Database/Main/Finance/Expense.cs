@@ -20,7 +20,7 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public string ValueId { get; set; }
 
-        public decimal Ammount { get; set; }
+        public decimal Amount { get; set; }
 
         public string Comment { get; set; }
 

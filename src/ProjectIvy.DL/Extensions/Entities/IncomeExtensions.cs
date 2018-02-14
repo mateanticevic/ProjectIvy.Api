@@ -14,7 +14,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                 case IncomeSort.Date:
                     return query.OrderBy(binding.OrderAscending, x => x.Date);
                 case IncomeSort.Amount:
-                    return query.OrderBy(binding.OrderAscending, x => x.Ammount);
+                    return query.OrderBy(binding.OrderAscending, x => x.Amount);
                 default:
                     return query.OrderBy(binding.OrderAscending, x => x.Date);
             }

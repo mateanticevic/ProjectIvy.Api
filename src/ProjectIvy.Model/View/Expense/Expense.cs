@@ -10,7 +10,7 @@ namespace ProjectIvy.Model.View.Expense
     {
         public Expense(DatabaseModel.Finance.Expense x)
         {
-            Amount = x.Ammount;
+            Amount = x.Amount;
             Card = x.Card.ConvertTo(y => new Card.Card(y));
             Comment = x.Comment;
             Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));

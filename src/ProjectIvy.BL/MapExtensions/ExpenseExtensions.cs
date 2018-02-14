@@ -17,7 +17,7 @@ namespace ProjectIvy.BL.MapExtensions
                 entity = new Expense();
             }
 
-            entity.Ammount = binding.Amount;
+            entity.Amount = binding.Amount;
             entity.CardId = context.Cards.GetId(binding.CardId);
             entity.Comment = binding.Comment;
             entity.CurrencyId = context.Currencies.SingleOrDefault(x => x.Code == binding.CurrencyId).Id;

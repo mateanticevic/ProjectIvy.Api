@@ -46,8 +46,8 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
-                        .WhereIf(binding.AmountFrom.HasValue, x => x.Ammount >= binding.AmountFrom)
-                        .WhereIf(binding.AmountTo.HasValue, x => x.Ammount <= binding.AmountTo);
+                        .WhereIf(binding.AmountFrom.HasValue, x => x.Amount >= binding.AmountFrom)
+                        .WhereIf(binding.AmountTo.HasValue, x => x.Amount <= binding.AmountTo);
         }
 
         public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
@@ -61,7 +61,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                 case ExpenseSort.Modified:
                     return query.OrderBy(binding.OrderAscending, x => x.Modified);
                 case ExpenseSort.Amount:
-                    return query.OrderBy(binding.OrderAscending, x => x.Ammount);
+                    return query.OrderBy(binding.OrderAscending, x => x.Amount);
                 default:
                     return query.OrderBy(binding.OrderAscending, x => x.Date);
             }
