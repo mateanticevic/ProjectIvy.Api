@@ -29,29 +29,29 @@ SELECT
 	SUM(
 		CASE WHEN e.ParentCurrencyId IS NULL THEN
 			CASE WHEN e.CurrencyId = @EURId THEN
-				CASE WHEN @TargetCurrencyId = @EURId THEN e.Ammount --04
-				ELSE e.Ammount * crEurToTarget.Rate --05
+				CASE WHEN @TargetCurrencyId = @EURId THEN e.Amount --04
+				ELSE e.Amount * crEurToTarget.Rate --05
 				END
 			ELSE
-				CASE WHEN @TargetCurrencyId = @EURId THEN e.Ammount * (1/crEurToOriginal.Rate) --03
-				WHEN e.CurrencyId = @TargetCurrencyId THEN e.Ammount --01
-				ELSE e.Ammount * (1/crEurToOriginal.Rate) * crEurToTarget.Rate --02
+				CASE WHEN @TargetCurrencyId = @EURId THEN e.Amount * (1/crEurToOriginal.Rate) --03
+				WHEN e.CurrencyId = @TargetCurrencyId THEN e.Amount --01
+				ELSE e.Amount * (1/crEurToOriginal.Rate) * crEurToTarget.Rate --02
 				END
 			END
 		WHEN e.ParentCurrencyId = @EURId THEN
-			CASE WHEN @TargetCurrencyId = @EURId THEN e.Ammount * e.ParentCurrencyExchangeRate --07
-			ELSE e.Ammount * e.ParentCurrencyExchangeRate * crEurToTarget.Rate --06
+			CASE WHEN @TargetCurrencyId = @EURId THEN e.Amount * e.ParentCurrencyExchangeRate --07
+			ELSE e.Amount * e.ParentCurrencyExchangeRate * crEurToTarget.Rate --06
 			END
 		ELSE
 			CASE WHEN e.CurrencyId = @EURId THEN
-				CASE WHEN @TargetCurrencyId = @EURId THEN e.Ammount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) --12
-				WHEN e.ParentCurrencyId = @TargetCurrencyId THEN e.Ammount * e.ParentCurrencyExchangeRate --14
-				ELSE e.Ammount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) * crEurToTarget.Rate --13
+				CASE WHEN @TargetCurrencyId = @EURId THEN e.Amount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) --12
+				WHEN e.ParentCurrencyId = @TargetCurrencyId THEN e.Amount * e.ParentCurrencyExchangeRate --14
+				ELSE e.Amount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) * crEurToTarget.Rate --13
 				END
 			ELSE
-				CASE WHEN @TargetCurrencyId = @EURId THEN e.Ammount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) --08
-				WHEN e.ParentCurrencyId = @TargetCurrencyId THEN e.Ammount * e.ParentCurrencyExchangeRate --10
-				ELSE e.Ammount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) * crEurToTarget.Rate --09 11
+				CASE WHEN @TargetCurrencyId = @EURId THEN e.Amount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) --08
+				WHEN e.ParentCurrencyId = @TargetCurrencyId THEN e.Amount * e.ParentCurrencyExchangeRate --10
+				ELSE e.Amount * e.ParentCurrencyExchangeRate * (1/crEurToParent.Rate) * crEurToTarget.Rate --09 11
 				END
 			END
 		END

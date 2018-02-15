@@ -11,10 +11,10 @@ DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 SELECT
 	SUM
 	(
-		CASE WHEN i.CurrencyId = @TargetCurrencyId THEN i.Ammount
-			 WHEN i.CurrencyId = @EURId THEN i.Ammount * crEurToTarget.Rate
-			 WHEN @TargetCurrencyId = @EURId THEN i.Ammount * (1/crEurToOrigin.Rate)
-			 ELSE i.Ammount * (1/crEurToOrigin.Rate) * crEurToTarget.Rate
+		CASE WHEN i.CurrencyId = @TargetCurrencyId THEN i.Amount
+			 WHEN i.CurrencyId = @EURId THEN i.Amount * crEurToTarget.Rate
+			 WHEN @TargetCurrencyId = @EURId THEN i.Amount * (1/crEurToOrigin.Rate)
+			 ELSE i.Amount * (1/crEurToOrigin.Rate) * crEurToTarget.Rate
 		END
 	)
 FROM Finance.Income i
