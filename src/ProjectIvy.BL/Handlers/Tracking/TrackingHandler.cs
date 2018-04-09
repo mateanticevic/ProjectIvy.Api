@@ -159,7 +159,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
             }
         }
 
-        public View.TrackingCurrent GetLast(DateTime? at = null)
+        public View.Tracking GetLast(DateTime? at = null)
         {
             using (var db = GetMainContext())
             {
@@ -168,7 +168,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
                                            .OrderByDescending(x => x.Timestamp)
                                            .FirstOrDefault();
 
-                return new View.TrackingCurrent(tracking);
+                return new View.Tracking(tracking);
             }
         }
 

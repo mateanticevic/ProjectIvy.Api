@@ -26,7 +26,7 @@ namespace ProjectIvy.BL.Handlers.Tracking
 
         double GetMaxSpeed(FilteredBinding binding);
 
-        View.TrackingCurrent GetLast(DateTime? at = null);
+        View.Tracking GetLast(DateTime? at = null);
 
         int CountUnique(FilteredBinding binding);
 

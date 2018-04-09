@@ -42,7 +42,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         }
 
         [HttpGet("Last")]
-        public View.TrackingCurrent GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
+        public View.Tracking GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
 
         [HttpGet("Count")]
         public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
