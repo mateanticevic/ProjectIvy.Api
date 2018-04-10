@@ -47,6 +47,7 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
                         .WhereIf(binding.AmountFrom.HasValue, x => x.Amount >= binding.AmountFrom)
+                        .WhereIf(binding.ExcludeId != null, x => !binding.ExcludeId.Contains(x.ValueId))
                         .WhereIf(binding.AmountTo.HasValue, x => x.Amount <= binding.AmountTo);
         }
 
