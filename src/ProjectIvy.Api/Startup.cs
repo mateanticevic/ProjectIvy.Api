@@ -34,6 +34,7 @@ using System;
 using ProjectIvy.BL.Handlers.Beer;
 using ProjectIvy.BL.Handlers.Consumation;
 using ProjectIvy.BL.Handlers.File;
+using ProjectIvy.BL.Handlers.Flight;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace ProjectIvy.Api
@@ -86,6 +87,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();
             services.AddHandler<IFileHandler, FileHandler>();
+            services.AddHandler<IFlightHandler, FlightHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
