@@ -32,6 +32,7 @@ namespace ProjectIvy.BL.Handlers.Flight
                                       .Include(x => x.OriginAirport)
                                       .Select(x => new List<Entities.Transport.Airport>(){ x.DestinationAirport, x.OriginAirport })
                                       .SelectMany(x => x)
+                                      .Include(x => x.Poi)
                                       .GroupBy(x => x)
                                       .Select(x => new CountBy<Views.Airport.Airport>(new Model.View.Airport.Airport(x.Key), x.Count()))
                                       .OrderByDescending(x => x.Count)

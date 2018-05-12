@@ -7,7 +7,7 @@ namespace ProjectIvy.Model.View.Poi
     {
         public Poi(DatabaseModel.Travel.Poi x)
         {
-            Category = x.PoiCategory.ConvertTo(y => new PoiCategory(y));
+            Category = x.PoiCategory?.ConvertTo(y => new PoiCategory(y));
             Latitude = x.Latitude;
             Longitude = x.Longitude;
             Name = x.Name;

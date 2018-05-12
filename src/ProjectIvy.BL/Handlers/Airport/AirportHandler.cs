@@ -3,6 +3,7 @@ using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;
 using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using View = ProjectIvy.Model.View.Airport;
 
 namespace ProjectIvy.BL.Handlers.Airport
@@ -27,6 +28,8 @@ namespace ProjectIvy.BL.Handlers.Airport
             using (var context = GetMainContext())
             {
                 return context.Airports.Where(binding, context, User.Id)
+                                       .Include(x => x.Poi)
+                                       .ThenInclude(x => x.PoiCategory)
                                        .Select(x => new View.Airport(x))
                                        .ToPagedView(binding);
             }

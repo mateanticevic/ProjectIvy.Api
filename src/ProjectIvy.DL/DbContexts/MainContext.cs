@@ -144,6 +144,9 @@ namespace ProjectIvy.DL.DbContexts
                         .HasOne(x => x.City)
                         .WithMany(x => x.Airports);
 
+            modelBuilder.Entity<Airport>()
+                        .HasOne(x => x.Poi);
+
             modelBuilder.Entity<AccessToken>()
                         .HasOne(x => x.User);
 

@@ -19,8 +19,10 @@ namespace ProjectIvy.DL.Extensions.Entities
                         .Include(x => x.PaymentType)
                         .Include(x => x.Card)
                         .Include(x => x.ExpenseFiles)
-                        .Include($"{nameof(Expense.ExpenseFiles)}.{nameof(ExpenseFile.File)}.{nameof(Model.Database.Main.Storage.File.FileType)}")
-                        .Include($"{nameof(Expense.ExpenseFiles)}.{nameof(ExpenseFile.ExpenseFileType)}");
+                        .ThenInclude(x => x.ExpenseFileType)
+                        .Include(x => x.ExpenseFiles)
+                        .ThenInclude(x => x.File)
+                        .ThenInclude(x => x.FileType);
         }
 
         public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
