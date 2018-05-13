@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Flight;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Flight
@@ -22,5 +23,8 @@ namespace ProjectIvy.Api.Controllers.Flight
 
         [HttpGet("Count/ByAirport")]
         public IActionResult GetCountByAirport() => Ok(_flightHandler.CountByAirport());
+
+        [HttpGet("")]
+        public IActionResult Get([FromQuery] FilteredPagedBinding binding) => Ok(_flightHandler.Get(binding));
     }
 }

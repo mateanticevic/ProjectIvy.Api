@@ -1,5 +1,7 @@
 ﻿using ProjectIvy.Model.View;
 using System.Collections.Generic;
+using ProjectIvy.Model.Binding;
+using Views = ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Flight
 {
@@ -7,6 +9,8 @@ namespace ProjectIvy.BL.Handlers.Flight
     {
         int Count();
 
-        IEnumerable<CountBy<Model.View.Airport.Airport>> CountByAirport();
+        IEnumerable<CountBy<Views.Airport.Airport>> CountByAirport();
+
+        PagedView<Views.Flight.Flight> Get(FilteredPagedBinding binding);
     }
 }
