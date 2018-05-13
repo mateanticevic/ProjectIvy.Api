@@ -8,18 +8,23 @@ namespace ProjectIvy.Model.View.Flight
     {
         public Flight(DatabaseModel.Transport.Flight f)
         {
-            DestinationAirport = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
-            OriginAirport = f.ConvertTo(x => new Airport.Airport(x.OriginAirport));
-            DateOfArrival = f.DateOfArrival;
-            DateOfDeparture = f.DateOfDeparture;
+            Arrival = f.DateOfArrival;
+            Departure = f.DateOfDeparture;
+            Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
+            Origin = f.ConvertTo(x => new Airport.Airport(x.OriginAirport));
+
+            DistanceInKm = (int)(Origin.Poi.Location.ToGeoCoordinate()
+                                                    .GetDistanceTo(Destination.Poi.Location.ToGeoCoordinate()) / 1000);
         }
 
-        public Airport.Airport DestinationAirport { get; set; }
+        public Airport.Airport Destination { get; set; }
 
-        public Airport.Airport OriginAirport { get; set; }
+        public Airport.Airport Origin { get; set; }
 
-        public DateTime DateOfArrival { get; set; }
+        public DateTime Arrival { get; set; }
 
-        public DateTime DateOfDeparture { get; set; }
+        public DateTime Departure { get; set; }
+
+        public int DistanceInKm { get; set; }
     }
 }

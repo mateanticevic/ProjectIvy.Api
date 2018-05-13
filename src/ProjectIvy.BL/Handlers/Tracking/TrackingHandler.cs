@@ -96,12 +96,12 @@ namespace ProjectIvy.BL.Handlers.Tracking
 
         public int GetDistance(FilteredBinding binding)
         {
-            binding.From = binding.From.HasValue ? binding.From : DateTime.MinValue;
-            binding.To = binding.To.HasValue ? binding.To : DateTime.MaxValue;
+            binding.From = binding.From ?? DateTime.MinValue;
+            binding.To = binding.To ?? DateTime.MaxValue;
 
             using (var db = GetMainContext())
             {
-                int total = 0;
+                var total = 0;
 
                 // Already calculated distance. By day.
                 {

@@ -8,11 +8,10 @@ namespace ProjectIvy.Model.View.Poi
         public Poi(DatabaseModel.Travel.Poi x)
         {
             Category = x.PoiCategory?.ConvertTo(y => new PoiCategory(y));
-            Latitude = x.Latitude;
-            Longitude = x.Longitude;
             Name = x.Name;
             Address = x.Address;
             Id = x.ValueId;
+            Location = new Location(x.Latitude, x.Longitude);
         }
 
         public string Id { get; set; }
@@ -21,10 +20,8 @@ namespace ProjectIvy.Model.View.Poi
 
         public string Address { get; set; }
 
-        public decimal Latitude { get; set; }
-
-        public decimal Longitude { get; set; }
-
         public PoiCategory Category { get; set; }
+
+        public Location Location { get; set; }
     }
 }

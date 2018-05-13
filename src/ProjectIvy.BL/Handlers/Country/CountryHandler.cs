@@ -111,7 +111,7 @@ namespace ProjectIvy.BL.Handlers.Country
                     foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
                     {
                         var path = countryPolygon.OrderBy(x => x.Index)
-                                                 .Select(x => new Location() { Latitude = x.Latitude, Longitude = x.Longitude })
+                                                 .Select(x => new Location(x.Latitude, x.Longitude))
                                                  .ToList();
                         paths.Add(path);
                     }
