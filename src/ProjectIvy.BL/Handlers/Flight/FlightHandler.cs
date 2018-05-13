@@ -1,9 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.DL.Extensions;
+using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
-using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Flight;
 using Entities = ProjectIvy.Model.Database.Main;
 using Views = ProjectIvy.Model.View;
 
@@ -15,20 +16,22 @@ namespace ProjectIvy.BL.Handlers.Flight
         {
         }
 
-        public int Count()
+        public int Count(FlightGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Flights.WhereUser(User)
+                                      .Where(binding)
                                       .Count();
             }
         }
 
-        public IEnumerable<CountBy<Views.Airport.Airport>> CountByAirport()
+        public IEnumerable<CountBy<Views.Airport.Airport>> CountByAirport(FlightGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Flights.WhereUser(User)
+                                      .Where(binding)
                                       .Include(x => x.DestinationAirport)
                                       .Include(x => x.OriginAirport)
                                       .Select(x => new List<Entities.Transport.Airport>(){ x.DestinationAirport, x.OriginAirport })
@@ -42,11 +45,25 @@ namespace ProjectIvy.BL.Handlers.Flight
             }
         }
 
-        public PagedView<Views.Flight.Flight> Get(FilteredPagedBinding binding)
+        public IEnumerable<CountBy<int>> CountByYear(FlightGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Flights.WhereUser(User)
+                                      .Where(binding)
+                                      .GroupBy(x => x.DateOfDeparture.Year)
+                                      .Select(x => new CountBy<int>(x.Key, x.Count()))
+                                      .OrderByDescending(x => x.By)
+                                      .ToList();
+            }
+        }
+
+        public PagedView<Views.Flight.Flight> Get(FlightGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Flights.WhereUser(User)
+                                      .Where(binding)
                                       .Include(x => x.DestinationAirport)
                                       .ThenInclude(x => x.Poi)
                                       .Include(x => x.OriginAirport)

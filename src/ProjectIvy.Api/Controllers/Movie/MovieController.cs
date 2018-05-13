@@ -30,13 +30,13 @@ namespace ProjectIvy.Api.Controllers.Movie
         public View.Movie Get(string imdbId) => _movieHandler.Get(imdbId);
 
         [HttpGet("Count")]
-        public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.GetCount(binding);
+        public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.Count(binding);
 
         [HttpGet("Count/ByMonth")]
-        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] MovieGetBinding binding) => _movieHandler.GetCountByMonth(binding);
+        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] MovieGetBinding binding) => _movieHandler.CountByMonth(binding);
 
         [HttpGet("Count/ByYear")]
-        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.GetCountByYear(binding);
+        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.CountByYear(binding);
 
         #endregion
     }

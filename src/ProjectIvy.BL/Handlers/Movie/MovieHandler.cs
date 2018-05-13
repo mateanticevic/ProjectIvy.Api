@@ -38,7 +38,7 @@ namespace ProjectIvy.BL.Handlers.Movie
             }
         }
 
-        public int GetCount(MovieGetBinding binding)
+        public int Count(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -49,7 +49,7 @@ namespace ProjectIvy.BL.Handlers.Movie
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> GetCountByMonth(MovieGetBinding binding)
+        public IEnumerable<GroupedByMonth<int>> CountByMonth(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -63,7 +63,7 @@ namespace ProjectIvy.BL.Handlers.Movie
             }
         }
 
-        public IEnumerable<GroupedByYear<int>> GetCountByYear(MovieGetBinding binding)
+        public IEnumerable<GroupedByYear<int>> CountByYear(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {

@@ -12,11 +12,11 @@ namespace ProjectIvy.BL.Handlers.Movie
 
         View.Movie Get(string imdbId);
 
-        int GetCount(MovieGetBinding binding);
+        int Count(MovieGetBinding binding);
 
-        IEnumerable<GroupedByMonth<int>> GetCountByMonth(MovieGetBinding binding);
+        IEnumerable<GroupedByMonth<int>> CountByMonth(MovieGetBinding binding);
 
-        IEnumerable<GroupedByYear<int>> GetCountByYear(MovieGetBinding binding);
+        IEnumerable<GroupedByYear<int>> CountByYear(MovieGetBinding binding);
 
         double GetMyRatingAverage(MovieGetBinding binding);
 
