@@ -56,7 +56,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Count/Unique")]
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);
 
-        [HttpGet("DistanceInKm")]
+        [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
 
         [HttpGet("Speed/Average")]
