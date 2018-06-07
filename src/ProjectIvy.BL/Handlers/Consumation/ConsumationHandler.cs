@@ -90,6 +90,20 @@ namespace ProjectIvy.BL.Handlers.Consumation
             }
         }
 
+        public PagedView<SumBy<Model.View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .Include(x => x.BeerServing)
+                                           .GroupBy(x => x.BeerServing)
+                                           .Select(x => new SumBy<Model.View.Beer.BeerServing>(x.Key.ConvertTo(y => new Model.View.Beer.BeerServing(y)), x.Sum(y => y.Volume)))
+                                           .OrderByDescending(x => x.Sum)
+                                           .ToPagedView(binding);
+            }
+        }
+
         public int SumVolume(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
