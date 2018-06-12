@@ -6,6 +6,8 @@ namespace ProjectIvy.BL.Handlers.Consumation
 {
     public interface IConsumationHandler : IHandler
     {
+        void Add(ConsumationBinding binding);
+
         int Count(ConsumationGetBinding binding);
 
         PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding);

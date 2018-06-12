@@ -32,6 +32,13 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("")]
         public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
 
+        [HttpPost]
+        public IActionResult Post([FromBody] ConsumationBinding binding)
+        {
+            _consumationHandler.Add(binding);
+            return Ok();
+        }
+
         [HttpGet("Sum/ByBeer")]
         public PagedView<SumBy<Model.View.Beer.Beer>> GetSumVolumeByBeer(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByBeer(binding);
 

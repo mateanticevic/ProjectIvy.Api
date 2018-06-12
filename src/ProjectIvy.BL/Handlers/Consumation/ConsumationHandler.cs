@@ -5,6 +5,7 @@ using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.View;
 using System.Linq;
+using ProjectIvy.BL.MapExtensions;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.BL.Handlers.Consumation
@@ -13,6 +14,18 @@ namespace ProjectIvy.BL.Handlers.Consumation
     {
         public ConsumationHandler(IHandlerContext<ConsumationHandler> context) : base(context)
         {
+        }
+
+        public void Add(ConsumationBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var consumation = binding.ToEntity(context);
+                consumation.UserId = User.Id;
+
+                context.Consumations.Add(consumation);
+                context.SaveChanges();
+            }
         }
 
         public int Count(ConsumationGetBinding binding)

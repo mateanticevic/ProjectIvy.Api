@@ -10,8 +10,7 @@ namespace ProjectIvy.BL.MapExtensions
     {
         public static Car ToEntity(this CarBinding b, MainContext context, Car entity = null)
         {
-            if (entity == null)
-                entity = new Car();
+            entity = entity ?? new Car();
 
             entity.ManufacturerId = context.Manufacturers.GetId(b.ManufacturerId).Value;
             entity.Model = b.Model;
