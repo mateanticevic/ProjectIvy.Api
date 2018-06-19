@@ -1,10 +1,32 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System;
 
 namespace ProjectIvy.Common.Extensions
 {
     public static class DateTimeExtensions
     {
+        public static IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(this IEnumerable<DateTime> dates)
+        {
+            var ordered = dates.OrderBy(x => x).ToList();
+
+            var left = ordered.First();
+            for (int i = 0; i < ordered.Count; i++)
+            {
+                if (i == ordered.Count - 1)
+                {
+                    yield return (left, ordered[i]);
+                    continue;
+                }
+
+                if (ordered[i + 1] != ordered[i].AddDays(1))
+                {
+                    yield return (left, ordered[i]);
+                    left = ordered[i + 1];
+                }
+            }
+        }
+
         public static IEnumerable<DateTime> Range(this DateTime from, DateTime to)
         {
             yield return from;

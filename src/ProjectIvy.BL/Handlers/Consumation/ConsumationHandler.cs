@@ -1,11 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.DL.Extensions;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using System.Linq;
-using ProjectIvy.BL.MapExtensions;
+using System;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.BL.Handlers.Consumation
@@ -25,6 +27,23 @@ namespace ProjectIvy.BL.Handlers.Consumation
 
                 context.Consumations.Add(consumation);
                 context.SaveChanges();
+            }
+        }
+
+        public IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .Select(x => x.Date)
+                                           .Distinct()
+                                           .ToList()
+                                           .ConsecutiveDates()
+                                           .Select(x => new { Range = x, Count = x.To.Subtract(x.From).Days + 1 })
+                                           .OrderByDescending(x => x.Count)
+                                           .Select(x => x.Range)
+                                           .ToList();
             }
         }
 

@@ -11,7 +11,7 @@ namespace ProjectIvy.DL.Extensions.Entities
         public static IQueryable<Consumation> Where(this IQueryable<Consumation> query, ConsumationGetBinding binding, MainContext context)
         {
             var beerId = context.Beers.GetId(binding.BeerId);
-            var beerBrandId = context.BeerBrands.GetId(binding.BeerBrandId);
+            var beerBrandId = context.BeerBrands.GetId(binding.BrandId);
 
             return query.Include(x => x.Beer)
                         .WhereIf(binding.From.HasValue, x => x.Date >= binding.From.Value)

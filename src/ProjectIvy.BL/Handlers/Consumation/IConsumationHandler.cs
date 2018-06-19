@@ -1,5 +1,7 @@
 ﻿using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
+using System;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.BL.Handlers.Consumation
@@ -7,6 +9,8 @@ namespace ProjectIvy.BL.Handlers.Consumation
     public interface IConsumationHandler : IHandler
     {
         void Add(ConsumationBinding binding);
+
+        IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding);
 
         int Count(ConsumationGetBinding binding);
 

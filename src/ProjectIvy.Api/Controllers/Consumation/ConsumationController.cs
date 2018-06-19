@@ -17,6 +17,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
             _consumationHandler = consumationHandler;
         }
 
+        [HttpGet("Consecutive/Days")]
+        public IActionResult GetConsecutiveDays(ConsumationGetBinding binding) => Ok(_consumationHandler.ConsecutiveDates(binding));
+
         [HttpGet("Count")]
         public int Count(ConsumationGetBinding binding) => _consumationHandler.Count(binding);
 
