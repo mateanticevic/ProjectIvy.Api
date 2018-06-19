@@ -122,6 +122,19 @@ namespace ProjectIvy.BL.Handlers.Consumation
             }
         }
 
+        public PagedView<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .GroupBy(x => new { x.Date.Year, x.Date.Month })
+                                           .Select(x => new GroupedByMonth<int>(x.Sum(y => y.Volume), x.Key.Year, x.Key.Month))
+                                           .OrderByDescending(x => x.Data)
+                                           .ToPagedView(binding);
+            }
+        }
+
         public PagedView<SumBy<Model.View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
