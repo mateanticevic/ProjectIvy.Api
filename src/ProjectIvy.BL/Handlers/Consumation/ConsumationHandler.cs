@@ -22,10 +22,14 @@ namespace ProjectIvy.BL.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                var consumation = binding.ToEntity(context);
-                consumation.UserId = User.Id;
+                foreach (var i in Enumerable.Range(0, binding.Units))
+                {
+                    var consumation = binding.ToEntity(context);
+                    consumation.UserId = User.Id;
 
-                context.Consumations.Add(consumation);
+                    context.Consumations.Add(consumation);
+                }
+
                 context.SaveChanges();
             }
         }

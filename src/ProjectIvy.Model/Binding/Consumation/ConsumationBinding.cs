@@ -10,6 +10,8 @@ namespace ProjectIvy.Model.Binding.Consumation
 
         public DateTime Date { get; set; }
 
+        public int Units { get; set; } = 1;
+
         public int Volume { get; set; }
     }
 }
