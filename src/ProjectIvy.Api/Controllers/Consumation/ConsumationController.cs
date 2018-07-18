@@ -26,11 +26,11 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count/ByBeer")]
         public PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding) => _consumationHandler.CountByBeer(binding);
 
-        [HttpGet("Count/UniqueBeers")]
-        public int CountUniqueBeers(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBeers(binding);
+        [HttpGet("Count/Beers")]
+        public int CountBeers(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBeers(binding);
 
-        [HttpGet("Count/UniqueBrands")]
-        public int CountUniqueBrands(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBrands(binding);
+        [HttpGet("Count/Brands")]
+        public int CountBrands(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBrands(binding);
 
         [HttpGet("")]
         public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
