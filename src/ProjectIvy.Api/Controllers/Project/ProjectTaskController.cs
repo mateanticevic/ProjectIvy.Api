@@ -9,14 +9,14 @@ using ProjectIvy.Model.Constants.Database;
 namespace ProjectIvy.Api.Controllers.Project
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("project/{projectId}/task")]
+    [Route("project/{projectId}/Task")]
     public class ProjectTaskController : BaseController<ProjectTaskController>
     {
         private readonly ITaskHandler _taskHandler;
 
         public ProjectTaskController(ILogger<ProjectTaskController> logger, ITaskHandler taskHandler) : base(logger) => _taskHandler = taskHandler;
 
-        [HttpPost("{taskId}/change")]
+        [HttpPost("{taskId}/Change")]
         public StatusCodeResult PostTaskChange([FromBody] TaskChangeBinding binding, string projectId, string taskId)
         {
             try

@@ -66,7 +66,7 @@ namespace ProjectIvy.Api.Controllers.Trip
 
         #region Post
 
-        [HttpPost("{tripId}/poi/{poiId}")]
+        [HttpPost("{tripId}/Poi/{poiId}")]
         public StatusCodeResult PostPoi(string tripId, string poiId)
         {
             _tripHandler.AddPoi(tripId, poiId);
@@ -74,7 +74,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost("{tripId}/city/{cityId}")]
+        [HttpPost("{tripId}/City/{cityId}")]
         public StatusCodeResult PostCity(string tripId, string cityId)
         {
             _tripHandler.AddCity(tripId, cityId);
@@ -82,7 +82,7 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
 
-        [HttpPost("{tripId}/expense/{expenseId}")]
+        [HttpPost("{tripId}/Expense/{expenseId}")]
         public StatusCodeResult PostExpense(string tripId, string expenseId)
         {
             _tripHandler.AddExpense(tripId, expenseId);
