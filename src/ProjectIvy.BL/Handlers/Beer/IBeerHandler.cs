@@ -9,6 +9,8 @@ namespace ProjectIvy.BL.Handlers.Beer
     {
         PagedView<View.Beer> GetBeers(BeerGetBinding binding);
 
+        IEnumerable<View.BeerBrand> GetBrands();
+
         IEnumerable<View.BeerServing> GetServings();
     }
 }

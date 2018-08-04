@@ -20,5 +20,8 @@ namespace ProjectIvy.Api.Controllers.Beer
         {
             return Ok(_beerHandler.GetBeers(binding));
         }
+
+        [HttpGet("Brand")]
+        public IActionResult GetBrands() => Ok(_beerHandler.GetBrands());
     }
 }

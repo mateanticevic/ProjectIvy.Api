@@ -18,9 +18,21 @@ namespace ProjectIvy.BL.Handlers.Beer
         {
             using (var context = GetMainContext())
             {
-                return context.Beers.OrderBy(binding)
+                int? brandId = context.BeerBrands.GetId(binding.BrandId);
+
+                return context.Beers.WhereIf(brandId.HasValue, x => x.BeerBrandId == brandId).OrderBy(binding)
                                     .Select(x => new View.Beer(x))
                                     .ToPagedView(binding);
+            }
+        }
+
+        public IEnumerable<View.BeerBrand> GetBrands()
+        {
+            using (var context = GetMainContext())
+            {
+                return context.BeerBrands.OrderBy(x => x.Name)
+                                         .Select(x => new View.BeerBrand(x))
+                                         .ToList();
             }
         }
 
