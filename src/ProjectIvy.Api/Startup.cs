@@ -121,9 +121,7 @@ namespace ProjectIvy.Api
             app.UseStaticFiles();
 
             if (env.IsDevelopment())
-            {
                 app.UseDeveloperExceptionPage();
-            }
 
             app.UseSwagger();
 

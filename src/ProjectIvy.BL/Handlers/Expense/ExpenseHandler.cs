@@ -14,6 +14,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
+using ProjectIvy.BL.Exceptions;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View.Poi;
 using View = ProjectIvy.Model.View.Expense;
@@ -227,6 +228,9 @@ namespace ProjectIvy.BL.Handlers.Expense
                                               .Include(x => x.Vendor)
                                               .WhereUser(User)
                                               .SingleOrDefault(x => x.ValueId == expenseId);
+
+                if (expense == null)
+                    throw new ResourceNotFoundException();
 
                 return new View.Expense(expense);
             }

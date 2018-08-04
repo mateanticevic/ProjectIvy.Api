@@ -18,6 +18,11 @@ namespace ProjectIvy.Model.Binding
 
         public DateTime? To { get; set; }
 
+        public int? Last
+        {
+            set => From = DateTime.Now.AddDays(-1 * value.Value);
+        }
+
         public bool OrderAscending { get; set; }
 
         public T OverrideFromTo<T>(DateTime? from, DateTime? to) where T : FilteredBinding

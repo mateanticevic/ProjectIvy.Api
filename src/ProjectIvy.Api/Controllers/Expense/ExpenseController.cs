@@ -6,12 +6,8 @@ using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.Constants;
 using ProjectIvy.Model.View;
-using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.View.Poi;
-using ProjectIvy.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectIvy.Model.Binding;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
