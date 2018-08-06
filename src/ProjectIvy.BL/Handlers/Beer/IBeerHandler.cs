@@ -7,6 +7,10 @@ namespace ProjectIvy.BL.Handlers.Beer
 {
     public interface IBeerHandler
     {
+        string CreateBeer(string brandValueId, BeerBinding binding);
+
+        string CreateBrand(string name);
+
         PagedView<View.Beer> GetBeers(BeerGetBinding binding);
 
         IEnumerable<View.BeerBrand> GetBrands();

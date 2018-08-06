@@ -4,6 +4,9 @@ using ProjectIvy.Model.View;
 using ProjectIvy.DL.Extensions.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using ProjectIvy.BL.Exceptions;
+using ProjectIvy.BL.MapExtensions;
+using ProjectIvy.Model.Database.Main.Beer;
 using View = ProjectIvy.Model.View.Beer;
 
 namespace ProjectIvy.BL.Handlers.Beer
@@ -12,6 +15,40 @@ namespace ProjectIvy.BL.Handlers.Beer
     {
         public BeerHandler(IHandlerContext<BeerHandler> context) : base(context)
         {
+        }
+
+        public string CreateBeer(string brandValueId, BeerBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int? brandId = context.BeerBrands.GetId(brandValueId);
+
+                if (!brandId.HasValue)
+                    throw new ResourceNotFoundException();
+
+                var entity = binding.ToEntity(brandId.Value);
+                context.Beers.Add(entity);
+                context.SaveChanges();
+
+                return entity.ValueId;
+            }
+        }
+
+        public string CreateBrand(string name)
+        {
+            using (var context = GetMainContext())
+            {
+                var beerBrand = new BeerBrand()
+                {
+                    ValueId = name.ToValueId(),
+                    Name = name
+                };
+
+                context.BeerBrands.Add(beerBrand);
+                context.SaveChanges();
+
+                return beerBrand.ValueId;
+            }
         }
 
         public PagedView<View.Beer> GetBeers(BeerGetBinding binding)

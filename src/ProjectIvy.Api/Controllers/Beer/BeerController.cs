@@ -23,5 +23,11 @@ namespace ProjectIvy.Api.Controllers.Beer
 
         [HttpGet("Brand")]
         public IActionResult GetBrands() => Ok(_beerHandler.GetBrands());
+
+        [HttpPost("Brand/{brandId}/Beer")]
+        public IActionResult PostBeer(string brandId, [FromBody] BeerBinding binding) => Ok(_beerHandler.CreateBeer(brandId, binding));
+
+        [HttpPost("Brand")]
+        public IActionResult PostBrand([FromBody] string name) => Ok(_beerHandler.CreateBrand(name));
     }
 }
