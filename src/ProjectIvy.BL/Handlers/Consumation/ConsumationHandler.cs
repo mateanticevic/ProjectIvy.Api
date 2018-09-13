@@ -116,13 +116,14 @@ namespace ProjectIvy.BL.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
-                                           .Where(binding, context)
-                                           .Include(x => x.Beer)
-                                           .GroupBy(x => x.Beer)
-                                           .Select(x => new SumBy<Model.View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Sum(y => y.Volume)))
-                                           .OrderByDescending(x => x.Sum)
-                                           .ToPagedView(binding);
+                var grouped = context.Consumations.WhereUser(User)
+                                     .Where(binding, context)
+                                     .Include(x => x.Beer)
+                                     .GroupBy(x => x.Beer);
+
+                return grouped.Select(x => new SumBy<Model.View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Sum(y => y.Volume)))
+                              .OrderByDescending(x => x.Sum)
+                              .ToPagedView(binding, grouped.Count());
             }
         }
 
@@ -143,13 +144,14 @@ namespace ProjectIvy.BL.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
-                                           .Where(binding, context)
-                                           .Include(x => x.BeerServing)
-                                           .GroupBy(x => x.BeerServing)
-                                           .Select(x => new SumBy<Model.View.Beer.BeerServing>(x.Key.ConvertTo(y => new Model.View.Beer.BeerServing(y)), x.Sum(y => y.Volume)))
-                                           .OrderByDescending(x => x.Sum)
-                                           .ToPagedView(binding);
+                var grouped = context.Consumations.WhereUser(User)
+                                                  .Where(binding, context)
+                                                  .Include(x => x.BeerServing)
+                                                  .GroupBy(x => x.BeerServing);
+
+                return grouped.Select(x => new SumBy<Model.View.Beer.BeerServing>(x.Key.ConvertTo(y => new Model.View.Beer.BeerServing(y)), x.Sum(y => y.Volume)))
+                              .OrderByDescending(x => x.Sum)
+                              .ToPagedView(binding, grouped.Count());
             }
         }
 

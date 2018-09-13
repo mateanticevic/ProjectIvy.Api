@@ -2,10 +2,10 @@
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
 using System;
-using System.Collections.Generic;
 
 namespace ProjectIvy.DL.Extensions
 {
@@ -53,11 +53,11 @@ namespace ProjectIvy.DL.Extensions
                         .Take(binding.PageSize);
         }
 
-        public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding)
+        public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding, long? count = null)
         {
             return new PagedView<T>()
             {
-                Count = query.Count(),
+                Count = count ?? query.Count(),
                 Items = query.Page(binding).ToList()
             };
         }

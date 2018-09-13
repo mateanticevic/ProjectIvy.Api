@@ -1,12 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.BL.Handlers.Consumation;
 using ProjectIvy.Model.Binding.Consumation;
+using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.Api.Controllers.Consumation
 {
+    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class ConsumationController : BaseController<ConsumationController>
     {
