@@ -11,6 +11,8 @@ namespace ProjectIvy.BL.Handlers.Beer
 
         string CreateBrand(string name);
 
+        View.Beer GetBeer(string id);
+
         PagedView<View.Beer> GetBeers(BeerGetBinding binding);
 
         IEnumerable<View.BeerBrand> GetBrands();

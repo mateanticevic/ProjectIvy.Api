@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProjectIvy.BL.Exceptions;
 using ProjectIvy.BL.MapExtensions;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Database.Main.Beer;
 using View = ProjectIvy.Model.View.Beer;
 
@@ -48,6 +49,14 @@ namespace ProjectIvy.BL.Handlers.Beer
                 context.SaveChanges();
 
                 return beerBrand.ValueId;
+            }
+        }
+
+        public View.Beer GetBeer(string id)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Beers.SingleOrDefault(x => x.ValueId == id).ConvertTo(x => new View.Beer(x));
             }
         }
 

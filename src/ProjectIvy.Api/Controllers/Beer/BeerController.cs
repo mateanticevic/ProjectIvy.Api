@@ -16,10 +16,10 @@ namespace ProjectIvy.Api.Controllers.Beer
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] BeerGetBinding binding)
-        {
-            return Ok(_beerHandler.GetBeers(binding));
-        }
+        public IActionResult Get([FromQuery] BeerGetBinding binding) => Ok(_beerHandler.GetBeers(binding));
+
+        [HttpGet("{id}")]
+        public IActionResult Get(string id) => Ok(_beerHandler.GetBeer(id));
 
         [HttpGet("Brand")]
         public IActionResult GetBrands() => Ok(_beerHandler.GetBrands());
