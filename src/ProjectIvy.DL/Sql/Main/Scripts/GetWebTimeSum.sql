@@ -6,7 +6,7 @@
 --DECLARE @PageSize INT = 10
 
 SELECT
-    w.ValueId AS WebValueId,
+    w.ValueId AS WebId,
     SUM(DATEDIFF(s, TimestampStart, TimestampEnd)) AS Seconds
 FROM Log.BrowserLog bl
 JOIN Net.Domain d ON d.Id = bl.DomainId

@@ -23,15 +23,19 @@
     <None Remove="Sql\Main\GetWebTimeSum.sql" />
     <None Remove="Sql\Main\GetWebTimeTotal.sql" />
     <None Remove="Sql\Main\GetWebTimeTotalByDay.sql" />
+    <None Remove="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
+    <None Remove="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
     <None Remove="StyleCop.Cache" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Sql\Main\GetExpenseSumInDefaultCurrency.sql" />
-    <EmbeddedResource Include="Sql\Main\GetIncomeSum.sql" />
-    <EmbeddedResource Include="Sql\Main\GetWebTimeSum.sql" />
-    <EmbeddedResource Include="Sql\Main\GetWebTimeTotal.sql" />
-    <EmbeddedResource Include="Sql\Main\GetWebTimeTotalByDay.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumInDefaultCurrency.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetIncomeSum.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeSum.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotal.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByDay.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
   </ItemGroup>
 
   <ItemGroup>

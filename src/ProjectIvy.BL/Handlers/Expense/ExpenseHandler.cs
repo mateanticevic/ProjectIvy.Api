@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using ProjectIvy.BL.Exceptions;
+using ProjectIvy.DL.Sql.Main.Scripts;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View.Poi;
 using View = ProjectIvy.Model.View.Expense;
@@ -342,7 +343,7 @@ namespace ProjectIvy.BL.Handlers.Expense
                         TargetCurrencyId = targetCurrencyId,
                         UserId = User.Id
                     };
-                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency), parameters), 2);
+                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency), parameters), 2);
                 }
             }
         }

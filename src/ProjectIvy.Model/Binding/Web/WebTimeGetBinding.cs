@@ -1,6 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Web
+﻿namespace ProjectIvy.Model.Binding.Web
 {
     public class WebTimeGetBinding : FilteredBinding
     {
@@ -10,6 +8,6 @@ namespace ProjectIvy.Model.Binding.Web
 
         public bool? IsSecured { get; set; }
 
-        public string Webid { get; set; }
+        public string WebId { get; set; }
     }
 }

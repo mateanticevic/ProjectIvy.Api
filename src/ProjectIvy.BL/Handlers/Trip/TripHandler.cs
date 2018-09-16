@@ -12,6 +12,7 @@ using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.View;
 using System.Linq;
+using ProjectIvy.DL.Sql.Main.Scripts;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Trip
@@ -179,8 +180,8 @@ namespace ProjectIvy.BL.Handlers.Trip
                 using (var db = GetSqlConnection())
                 {
                     int targetCurrencyId = context.GetCurrencyId(null, User.Id);
-                    string sql = SqlLoader.Load(MainSnippets.GetExpenseSumInDefaultCurrency);
-
+                    string sql = SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency);
+                    
                     var query = new GetExpenseSumQuery()
                     {
                         ExpenseIds = expenseIds,

@@ -12,6 +12,7 @@ using System.Linq;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using ProjectIvy.DL.Sql.Main.Scripts;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.BL.Handlers.Income
@@ -68,7 +69,7 @@ namespace ProjectIvy.BL.Handlers.Income
                         UserId = User.Id
                     };
 
-                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(MainSnippets.GetIncomeSum), parameters), 2);
+                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetIncomeSum), parameters), 2);
                 }
             }
         }

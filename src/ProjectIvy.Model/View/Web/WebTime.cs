@@ -4,6 +4,6 @@
     {
         public int Seconds { get; set; }
 
-        public string WebValueId { get; set; }
+        public string WebId { get; set; }
     }
 }
