@@ -1,10 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using ProjectIvy.Model.Binding.Vendor;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.BL.Handlers.Vendor
 {
     public interface IVendorHandler : IHandler
     {
-        IEnumerable<View.Vendor> Get(string contains);
+        View.Vendor Get(string id);
+
+        PagedView<View.Vendor> Get(VendorGetBinding binding);
     }
 }

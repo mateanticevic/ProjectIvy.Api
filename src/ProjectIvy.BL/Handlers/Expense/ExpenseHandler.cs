@@ -1,23 +1,21 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using ProjectIvy.BL.MapExtensions;
-using ProjectIvy.DL.Databases.Main.Queries;
 using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.BL.Exceptions;
 using ProjectIvy.DL.Extensions;
+using ProjectIvy.DL.Databases.Main.Queries;
+using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Sql;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Sql.Main.Scripts;
+using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
-using ProjectIvy.Model.View.Vendor;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System;
-using ProjectIvy.BL.Exceptions;
-using ProjectIvy.DL.Sql.Main.Scripts;
-using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.View.Poi;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.BL.Handlers.Expense
@@ -300,7 +298,7 @@ namespace ProjectIvy.BL.Handlers.Expense
             }
         }
 
-        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding)
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {

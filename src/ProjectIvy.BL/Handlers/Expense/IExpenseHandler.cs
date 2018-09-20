@@ -46,7 +46,7 @@ namespace ProjectIvy.BL.Handlers.Expense
 
         IEnumerable<GroupedByYear<decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
 
-        Task<IEnumerable<KeyValuePair<string, decimal>>> GetSumByTypeSum(ExpenseSumGetBinding binding);
+        Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding);
 
         Task<decimal> SumAmount(ExpenseSumGetBinding binding);
 

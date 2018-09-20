@@ -1,6 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.DL.Extensions;
+using ProjectIvy.Model.Binding.Vendor;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.BL.Handlers.Vendor
@@ -11,18 +13,24 @@ namespace ProjectIvy.BL.Handlers.Vendor
         {
         }
 
-        public IEnumerable<View.Vendor> Get(string contains)
+        public View.Vendor Get(string id)
         {
-            using (var db = GetMainContext())
+            using (var context = GetMainContext())
             {
-                var vendors = db.Vendors.Include(x => x.City)
-                                        .OrderBy(x => x.Name)
-                                        .AsEnumerable();
+                return context.Vendors.SingleOrDefault(x => x.ValueId == id).ConvertTo(x => new View.Vendor(x));
+            }
+        }
 
-                vendors = string.IsNullOrEmpty(contains) ? vendors : vendors.Where(x => x.Name.Contains(contains) || x.ValueId.Contains(contains));
-
-                return vendors.ToList()
-                              .Select(x => new View.Vendor(x));
+        public PagedView<View.Vendor> Get(VendorGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Vendors.WhereIf(binding?.Search != null,
+                        x => x.ValueId.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()) ||
+                             x.Name.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()))
+                              .Select(x => new View.Vendor(x))
+                              .OrderBy(x => x.Name)
+                              .ToPagedView(binding);
             }
         }
     }

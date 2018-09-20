@@ -4,6 +4,8 @@ using ProjectIvy.BL.Handlers.Poi;
 using ProjectIvy.BL.Handlers.Vendor;
 using ProjectIvy.Model.Binding.Poi;
 using System.Collections.Generic;
+using ProjectIvy.Model.Binding.Vendor;
+using ProjectIvy.Model.View;
 using ViewVendor = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.Api.Controllers.Vendor
@@ -22,8 +24,11 @@ namespace ProjectIvy.Api.Controllers.Vendor
 
         #region Get
 
+        [HttpGet("{id}")]
+        public ViewVendor.Vendor Get(string id) => _vendorHandler.Get(id);
+
         [HttpGet]
-        public IEnumerable<ViewVendor.Vendor> Get([FromQuery] string contains) => _vendorHandler.Get(contains);
+        public PagedView<ViewVendor.Vendor> Get([FromQuery] VendorGetBinding binding) => _vendorHandler.Get(binding);
 
         [HttpGet("{vendorId}/Poi")]
         public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true}).Items;

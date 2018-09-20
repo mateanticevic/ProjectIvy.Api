@@ -79,8 +79,8 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Sum/ByYear")]
         public IEnumerable<GroupedByYear<decimal>> GetGroupedByYearSum([FromQuery] ExpenseSumGetBinding binding) => _expenseHandler.SumAmountByYear(binding);
 
-        [HttpGet("Sum/Type")]
-        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.GetSumByTypeSum(binding);
+        [HttpGet("Sum/ByType")]
+        public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.SumByType(binding);
 
         [HttpGet("Type/Count")]
         public int GetTypesCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountTypes(binding);
