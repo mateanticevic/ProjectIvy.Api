@@ -4,6 +4,7 @@
     {
         Pdf = 1,
         Jpg = 2,
-        Png = 3
+        Png = 3,
+        Msg = 4
     }
 }

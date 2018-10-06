@@ -83,7 +83,7 @@ namespace ProjectIvy.BL.Handlers.File
         private string GetFolder(StorageFileType fileType)
         {
             // TODO: Rewrite
-            var documents = new List<StorageFileType>() { StorageFileType.Pdf };
+            var documents = new List<StorageFileType>() { StorageFileType.Pdf, StorageFileType.Msg };
             var images = new List<StorageFileType>() { StorageFileType.Jpg, StorageFileType.Png };
 
             if (images.Contains(fileType))
