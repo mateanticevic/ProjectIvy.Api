@@ -177,19 +177,23 @@ namespace ProjectIvy.BL.Handlers.Trip
                                                .ToList();
 
                 decimal totalSpent = 0;
-                using (var db = GetSqlConnection())
-                {
-                    int targetCurrencyId = context.GetCurrencyId(null, User.Id);
-                    string sql = SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency);
-                    
-                    var query = new GetExpenseSumQuery()
-                    {
-                        ExpenseIds = expenseIds,
-                        TargetCurrencyId = targetCurrencyId,
-                        UserId = User.Id
-                    };
 
-                    totalSpent = db.ExecuteScalar<decimal>(sql, query);
+                if (expenseIds.Any())
+                {
+                    using (var db = GetSqlConnection())
+                    {
+                        int targetCurrencyId = context.GetCurrencyId(null, User.Id);
+                        string sql = SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency);
+
+                        var query = new GetExpenseSumQuery()
+                        {
+                            ExpenseIds = expenseIds,
+                            TargetCurrencyId = targetCurrencyId,
+                            UserId = User.Id
+                        };
+
+                        totalSpent = db.ExecuteScalar<decimal>(sql, query);
+                    }
                 }
 
                 var tripView = new View.Trip.Trip(trip)
