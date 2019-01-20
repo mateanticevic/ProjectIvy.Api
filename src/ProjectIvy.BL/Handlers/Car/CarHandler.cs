@@ -49,6 +49,11 @@ namespace ProjectIvy.BL.Handlers.Car
             }
         }
 
+        public void CreateTorqueLog(CarLogTorqueBinding binding)
+        {
+            
+        }
+
         public IEnumerable<View.Car> Get()
         {
             using (var context = GetMainContext())

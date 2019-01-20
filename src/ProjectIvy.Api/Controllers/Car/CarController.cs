@@ -41,6 +41,13 @@ namespace ProjectIvy.Api.Controllers.Car
             return _carHandler.GetLatestLog(id);
         }
 
+        [AllowAnonymous]
+        [HttpGet("{id}/Log/Torque.php")]
+        public string GetLogTorque([FromQuery] CarLogTorqueBinding binding)
+        {
+            return "OK!";
+        }
+
         #endregion
 
         #region Post
