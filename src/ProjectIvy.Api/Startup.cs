@@ -112,8 +112,6 @@ namespace ProjectIvy.Api
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
 
             var logger = loggerFactory.CreateLogger(nameof(Startup));
             logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
