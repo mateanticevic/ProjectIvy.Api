@@ -30,5 +30,18 @@ namespace ProjectIvy.BL.MapExtensions
 
             return entity;
         }
+
+        public static CarLog ToEntity(this CarLogTorqueBinding b)
+        {
+            return new CarLog()
+            {
+                AmbientAirTemperature = (short?)b.K46,
+                BarometricPressure = (short?)b.K33,
+                CoolantTemperature = (short?)b.K5,
+                EngineRpm = (short?)b.Kc,
+                SpeedKmh = (short?)b.Kd,
+                Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(b.Time).UtcDateTime
+            };
+        }
     }
 }

@@ -10,9 +10,19 @@
         public double? K11 { get; set; }
 
         /// <summary>
+        /// Barometric pressure
+        /// </summary>
+        public double? K33 { get; set; }
+
+        /// <summary>
         /// Engine load
         /// </summary>
         public double? K4 { get; set; }
+
+        /// <summary>
+        /// Ambient air temperature
+        /// </summary>
+        public double? K46 { get; set; }
 
         /// <summary>
         /// Fuel level
@@ -30,7 +40,7 @@
         public double? Kc { get; set; }
 
         /// <summary>
-        /// Speed
+        /// Speed (OBD)
         /// </summary>
         public double? Kd { get; set; }
 

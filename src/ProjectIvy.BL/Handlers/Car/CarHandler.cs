@@ -49,9 +49,17 @@ namespace ProjectIvy.BL.Handlers.Car
             }
         }
 
-        public void CreateTorqueLog(CarLogTorqueBinding binding)
+        public void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding)
         {
-            
+            using (var context = GetMainContext())
+            {
+                int? carId = context.Cars.GetId(carValueId);
+
+                var entity = binding.ToEntity();
+                entity.CarId = carId.Value;
+                context.CarLogs.Add(entity);
+                context.SaveChanges();
+            }
         }
 
         public IEnumerable<View.Car> Get()

@@ -11,6 +11,8 @@ namespace ProjectIvy.BL.Handlers.Car
 
         DateTime CreateLog(CarLogBinding binding);
 
+        void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding);
+
         IEnumerable<View.Car> Get();
 
         int GetLogCount(string carValueId);

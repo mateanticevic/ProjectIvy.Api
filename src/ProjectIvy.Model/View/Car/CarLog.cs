@@ -11,7 +11,7 @@ namespace ProjectIvy.Model.View.Car
             Timestamp = x.Timestamp;
         }
 
-        public int Odometer { get; set; }
+        public int? Odometer { get; set; }
 
         public DateTime Timestamp { get; set; }
     }
