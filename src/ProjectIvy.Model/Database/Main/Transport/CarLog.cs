@@ -14,8 +14,18 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public Car Car { get; set; }
 
-        public int Odometer { get; set; }
+        public int? Odometer { get; set; }
 
         public DateTime Timestamp { get; set; }
+
+        public short? EngineRpm { get; set; }
+
+        public short? SpeedKmh { get; set; }
+
+        public short? CoolantTemperature { get; set; }
+
+        public short? AmbientAirTemperature { get; set; }
+
+        public short? BarometricPressure { get; set; }
     }
 }
