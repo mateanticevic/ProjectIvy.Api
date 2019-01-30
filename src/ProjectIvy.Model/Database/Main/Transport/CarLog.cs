@@ -18,6 +18,14 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public DateTime Timestamp { get; set; }
 
+        public decimal? AccelerationAxisX { get; set; }
+
+        public decimal? AccelerationAxisY { get; set; }
+
+        public decimal? AccelerationAxisZ { get; set; }
+
+        public decimal? AccelerationTotal { get; set; }
+
         public short? EngineRpm { get; set; }
 
         public short? SpeedKmh { get; set; }
@@ -26,6 +34,14 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public short? AmbientAirTemperature { get; set; }
 
+        public short? IntakeAirTemperature { get; set; }
+
+        public short? IntakeManifoldPressure { get; set; }
+
         public short? BarometricPressure { get; set; }
+
+        public int? TripDistance { get; set; }
+
+        public string Session { get; set; }
     }
 }

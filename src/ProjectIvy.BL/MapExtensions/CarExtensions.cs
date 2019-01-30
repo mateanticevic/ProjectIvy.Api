@@ -35,12 +35,20 @@ namespace ProjectIvy.BL.MapExtensions
         {
             return new CarLog()
             {
+                AccelerationAxisX = b.Kff1220,
+                AccelerationAxisY = b.Kff1221,
+                AccelerationAxisZ = b.Kff1222,
+                AccelerationTotal = b.Kff1223,
                 AmbientAirTemperature = (short?)b.K46,
                 BarometricPressure = (short?)b.K33,
                 CoolantTemperature = (short?)b.K5,
                 EngineRpm = (short?)b.Kc,
+                IntakeAirTemperature = (short?)b.Kf,
+                IntakeManifoldPressure = (short?)b.Kb,
+                Session = b.Session,
                 SpeedKmh = (short?)b.Kd,
-                Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(b.Time).UtcDateTime
+                Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(b.Time).UtcDateTime,
+                TripDistance = b.Kff1204.HasValue ? (int)(b.Kff1204 * 1000) : (int?)null
             };
         }
     }

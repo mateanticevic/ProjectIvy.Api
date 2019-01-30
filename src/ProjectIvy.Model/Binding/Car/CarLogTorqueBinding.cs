@@ -7,46 +7,81 @@
         /// <summary>
         /// Throttle position
         /// </summary>
-        public double? K11 { get; set; }
+        public decimal? K11 { get; set; }
+
+        /// <summary>
+        /// Trip distance
+        /// </summary>
+        public decimal? Kff1204 { get; set; }
+
+        /// <summary>
+        /// Acceleration X
+        /// </summary>
+        public decimal? Kff1220 { get; set; }
+
+        /// <summary>
+        /// Acceleration Y
+        /// </summary>
+        public decimal? Kff1221 { get; set; }
+
+        /// <summary>
+        /// Acceleration Z
+        /// </summary>
+        public decimal? Kff1222 { get; set; }
+
+        /// <summary>
+        /// Acceleration total
+        /// </summary>
+        public decimal? Kff1223 { get; set; }
 
         /// <summary>
         /// Barometric pressure
         /// </summary>
-        public double? K33 { get; set; }
+        public decimal? K33 { get; set; }
 
         /// <summary>
         /// Engine load
         /// </summary>
-        public double? K4 { get; set; }
+        public decimal? K4 { get; set; }
 
         /// <summary>
         /// Ambient air temperature
         /// </summary>
-        public double? K46 { get; set; }
+        public decimal? K46 { get; set; }
 
         /// <summary>
         /// Fuel level
         /// </summary>
-        public double? K2F { get; set; }
+        public decimal? K2F { get; set; }
 
         /// <summary>
         /// Engine coolant temperature
         /// </summary>
-        public double? K5 { get; set; }
+        public decimal? K5 { get; set; }
+
+        /// <summary>
+        /// Intake manifold pressure
+        /// </summary>
+        public decimal? Kb { get; set; }
 
         /// <summary>
         /// Engine RPM
         /// </summary>
-        public double? Kc { get; set; }
+        public decimal? Kc { get; set; }
 
         /// <summary>
         /// Speed (OBD)
         /// </summary>
-        public double? Kd { get; set; }
+        public decimal? Kd { get; set; }
 
         /// <summary>
         /// Intake air temperature
         /// </summary>
-        public double? Kf { get; set; }
+        public decimal? Kf { get; set; }
+
+        /// <summary>
+        /// Torque log session
+        /// </summary>
+        public string Session { get; set; }
     }
 }
