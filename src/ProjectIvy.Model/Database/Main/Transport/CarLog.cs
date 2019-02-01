@@ -26,6 +26,12 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public decimal? AccelerationTotal { get; set; }
 
+        public decimal? FuelUsed { get; set; }
+
+        public decimal? MassAirFlowRate { get; set; }
+
+        public decimal? ConsumptionPer100Km { get; set; }
+
         public short? EngineRpm { get; set; }
 
         public short? SpeedKmh { get; set; }
@@ -39,6 +45,12 @@ namespace ProjectIvy.Model.Database.Main.Transport
         public short? IntakeManifoldPressure { get; set; }
 
         public short? BarometricPressure { get; set; }
+
+        public short? ExhaustGasTemperature1 { get; set; }
+
+        public short? FuelRailPressure { get; set; }
+
+        public short? TransmissionTemperature1 { get; set; }
 
         public int? TripDistance { get; set; }
 

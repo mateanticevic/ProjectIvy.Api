@@ -15,6 +15,16 @@
         public decimal? Kff1204 { get; set; }
 
         /// <summary>
+        /// Liters per 100km
+        /// </summary>
+        public decimal? Kff1207 { get; set; }
+
+        /// <summary>
+        /// Fuel used (trip)
+        /// </summary>
+        public decimal? Kff1271 { get; set; }
+
+        /// <summary>
         /// Acceleration X
         /// </summary>
         public decimal? Kff1220 { get; set; }
@@ -33,6 +43,21 @@
         /// Acceleration total
         /// </summary>
         public decimal? Kff1223 { get; set; }
+
+        /// <summary>
+        /// Transmission temperature (Method 1)
+        /// </summary>
+        public decimal? Kfe1805 { get; set; }
+
+        /// <summary>
+        /// Mass air flow rate
+        /// </summary>
+        public decimal? K10 { get; set; }
+
+        /// <summary>
+        /// Fuel rail pressure
+        /// </summary>
+        public decimal? K23 { get; set; }
 
         /// <summary>
         /// Barometric pressure
@@ -58,6 +83,11 @@
         /// Engine coolant temperature
         /// </summary>
         public decimal? K5 { get; set; }
+
+        /// <summary>
+        /// Exhaust Gas Temperature 1
+        /// </summary>
+        public decimal? K78 { get; set; }
 
         /// <summary>
         /// Intake manifold pressure

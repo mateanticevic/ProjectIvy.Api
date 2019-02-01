@@ -41,13 +41,19 @@ namespace ProjectIvy.BL.MapExtensions
                 AccelerationTotal = b.Kff1223,
                 AmbientAirTemperature = (short?)b.K46,
                 BarometricPressure = (short?)b.K33,
+                ConsumptionPer100Km = b.Kff1207,
                 CoolantTemperature = (short?)b.K5,
                 EngineRpm = (short?)b.Kc,
+                ExhaustGasTemperature1 = (short?)b.K78,
+                FuelRailPressure = (short?)b.K23,
+                FuelUsed = b.Kff1271,
                 IntakeAirTemperature = (short?)b.Kf,
                 IntakeManifoldPressure = (short?)b.Kb,
+                MassAirFlowRate = b.K10,
                 Session = b.Session,
                 SpeedKmh = (short?)b.Kd,
                 Timestamp = DateTimeOffset.FromUnixTimeMilliseconds(b.Time).UtcDateTime,
+                TransmissionTemperature1 = (short?)b.Kfe1805,
                 TripDistance = b.Kff1204.HasValue ? (int)(b.Kff1204 * 1000) : (int?)null
             };
         }
