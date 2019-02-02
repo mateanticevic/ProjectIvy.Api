@@ -45,7 +45,7 @@ namespace ProjectIvy.BL.MapExtensions
                 CoolantTemperature = (short?)b.K5,
                 EngineRpm = (short?)b.Kc,
                 ExhaustGasTemperature1 = (short?)b.K78,
-                FuelRailPressure = (short?)b.K23,
+                FuelRailPressure = (int?)b.K23,
                 FuelUsed = b.Kff1271,
                 IntakeAirTemperature = (short?)b.Kf,
                 IntakeManifoldPressure = (short?)b.Kb,

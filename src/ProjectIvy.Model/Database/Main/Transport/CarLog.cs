@@ -48,7 +48,7 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public short? ExhaustGasTemperature1 { get; set; }
 
-        public short? FuelRailPressure { get; set; }
+        public int? FuelRailPressure { get; set; }
 
         public short? TransmissionTemperature1 { get; set; }
 
