@@ -88,6 +88,11 @@ namespace ProjectIvy.DL.Extensions
             return query.SingleOrDefault(x => x.ValueId == valueId);
         }
 
+        public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> queryable, bool ifTrue, Func<T, bool> condition)
+        {
+            return ifTrue ? queryable.Where(condition) : queryable;
+        }
+
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, bool ifTrue, Expression<Func<T, bool>> condition)
         {
             return ifTrue ? queryable.Where(condition) : queryable;

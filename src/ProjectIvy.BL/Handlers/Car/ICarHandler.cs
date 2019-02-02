@@ -17,6 +17,6 @@ namespace ProjectIvy.BL.Handlers.Car
 
         int GetLogCount(string carValueId);
 
-        View.CarLog GetLatestLog(string carValueId);
+        View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
     }
 }

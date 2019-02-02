@@ -33,7 +33,7 @@ namespace ProjectIvy.BL.Handlers.Car
         {
             using (var context = GetMainContext())
             {
-                var lastEntry = GetLatestLog(binding.CarValueId);
+                var lastEntry = GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
 
                 if (binding.Odometer < lastEntry.Odometer)
                 {
@@ -85,7 +85,7 @@ namespace ProjectIvy.BL.Handlers.Car
             }
         }
 
-        public View.CarLog GetLatestLog(string carValueId)
+        public View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -93,6 +93,7 @@ namespace ProjectIvy.BL.Handlers.Car
                                     .Include(x => x.CarLogs)
                                     .SingleOrDefault(x => x.ValueId == carValueId)
                                     .CarLogs
+                                    .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
                                     .OrderByDescending(x => x.Timestamp)
                                     .FirstOrDefault();
 

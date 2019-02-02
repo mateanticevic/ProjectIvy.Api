@@ -36,9 +36,9 @@ namespace ProjectIvy.Api.Controllers.Car
         }
 
         [HttpGet("{id}/Log/Latest")]
-        public View.CarLog GetLogLatest(string id)
+        public View.CarLog GetLogLatest(string id, [FromQuery] CarLogGetBinding binding)
         {
-            return _carHandler.GetLatestLog(id);
+            return _carHandler.GetLatestLog(id, binding);
         }
 
         [AllowAnonymous]
