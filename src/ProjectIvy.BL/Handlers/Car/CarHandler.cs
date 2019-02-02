@@ -1,6 +1,7 @@
 ﻿using ProjectIvy.BL.Exceptions;
 using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.DL.Extensions;
+using ProjectIvy.DL.Extensions.Entities;
 using ProjectIvy.Model.Binding.Car;
 using View = ProjectIvy.Model.View.Car;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +72,34 @@ namespace ProjectIvy.BL.Handlers.Car
                                    .Select(x => new View.Car(x))
                                    .ToList();
             }
+        }
+
+        public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Cars.WhereUser(User)
+                                   .Include(x => x.CarLogs)
+                                   .SingleOrDefault(x => x.ValueId == carValueId)
+                                   .CarLogs
+                                   .AsQueryable()
+                                   .Where(binding)
+                                   .Where(x => !string.IsNullOrEmpty(x.Session))
+                                   .GroupBy(x => x.Session)
+                                   .Select(x => new View.CarLogBySession()
+                                   {
+                                       Count = x.Count(),
+                                       Distance = x.Max(y => y.TripDistance),
+                                       End = x.Min(y => y.Timestamp),
+                                       FuelUsed = x.Max(y => y.FuelUsed),
+                                       MaxEngineRpm = x.Max(y => y.EngineRpm),
+                                       MaxSpeed = x.Max(y => y.SpeedKmh),
+                                       Session = x.Key,
+                                       Start = x.Max(y => y.Timestamp)
+                                   })
+                                   .OrderByDescending(x => x.End);
+            }
+
         }
 
         public int GetLogCount(string carValueId)

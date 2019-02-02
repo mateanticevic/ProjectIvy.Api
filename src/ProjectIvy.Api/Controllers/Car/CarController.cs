@@ -29,16 +29,22 @@ namespace ProjectIvy.Api.Controllers.Car
             return _carHandler.Get();
         }
 
-        [HttpGet("{id}/Log/Count")]
-        public int GetLogCount(string id)
+        [HttpGet("{carId}/Log/BySession")]
+        public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding)
         {
-            return _carHandler.GetLogCount(id);
+            return _carHandler.GetLogBySession(carId, binding);
         }
 
-        [HttpGet("{id}/Log/Latest")]
-        public View.CarLog GetLogLatest(string id, [FromQuery] CarLogGetBinding binding)
+        [HttpGet("{carId}/Log/Count")]
+        public int GetLogCount(string carId)
         {
-            return _carHandler.GetLatestLog(id, binding);
+            return _carHandler.GetLogCount(carId);
+        }
+
+        [HttpGet("{carId}/Log/Latest")]
+        public View.CarLog GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding)
+        {
+            return _carHandler.GetLatestLog(carId, binding);
         }
 
         [AllowAnonymous]

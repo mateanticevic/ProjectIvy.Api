@@ -5,7 +5,7 @@ using System;
 namespace ProjectIvy.Model.Database.Main.Transport
 {
     [Table("CarLog", Schema = "Transport")]
-    public class CarLog
+    public class CarLog : IHasTimestamp
     {
         [Key]
         public int Id { get; set; }
