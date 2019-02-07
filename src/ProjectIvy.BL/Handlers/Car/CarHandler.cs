@@ -90,12 +90,12 @@ namespace ProjectIvy.BL.Handlers.Car
                                    {
                                        Count = x.Count(),
                                        Distance = x.Max(y => y.TripDistance),
-                                       End = x.Min(y => y.Timestamp),
+                                       End = x.Max(y => y.Timestamp),
                                        FuelUsed = x.Max(y => y.FuelUsed),
                                        MaxEngineRpm = x.Max(y => y.EngineRpm),
                                        MaxSpeed = x.Max(y => y.SpeedKmh),
                                        Session = x.Key,
-                                       Start = x.Max(y => y.Timestamp)
+                                       Start = x.Min(y => y.Timestamp)
                                    })
                                    .OrderByDescending(x => x.End);
             }
