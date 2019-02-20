@@ -1,6 +1,6 @@
 ﻿using ProjectIvy.Common.Extensions;
-using ProjectIvy.DL.Extensions;
-using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;

@@ -1,7 +1,7 @@
 ﻿using ProjectIvy.BL.MapExtensions;
 using ProjectIvy.Common.Parsers;
-using ProjectIvy.DL.Extensions.Entities;
-using ProjectIvy.DL.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Tracking;
 using System.Collections.Generic;
 using System.Linq;

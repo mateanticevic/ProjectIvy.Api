@@ -1,9 +1,9 @@
 ﻿using Dapper;
-using ProjectIvy.DL.Sql;
+using ProjectIvy.Data.Sql;
 using ProjectIvy.Model.Binding.Web;
 using ProjectIvy.Model.View.Web;
-using ProjectIvy.DL.Sql.Main.Models;
-using ProjectIvy.DL.Sql.Main.Scripts;
+using ProjectIvy.Data.Sql.Main.Models;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;

@@ -1,7 +1,7 @@
 ﻿using ProjectIvy.BL.Exceptions;
 using ProjectIvy.BL.MapExtensions;
-using ProjectIvy.DL.Extensions;
-using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Car;
 using View = ProjectIvy.Model.View.Car;
 using Microsoft.EntityFrameworkCore;

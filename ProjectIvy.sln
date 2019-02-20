@@ -17,7 +17,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Api", "src\Proje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.BL", "src\ProjectIvy.BL\ProjectIvy.BL.csproj", "{C1D52306-AE37-4299-BD7B-A61405307139}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.DL", "src\ProjectIvy.DL\ProjectIvy.DL.csproj", "{17E941D2-B071-4E44-99F8-78C33534EC3A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Data", "src\ProjectIvy.Data\ProjectIvy.Data.csproj", "{17E941D2-B071-4E44-99F8-78C33534EC3A}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Model", "src\ProjectIvy.Model\ProjectIvy.Model.csproj", "{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3}"
 EndProject
@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{0F
 		appsettings.json = appsettings.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common.Test", "test\ProjectIvy.Tests\ProjectIvy.Common.Test.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common.Test", "test\ProjectIvy.Common.Test\ProjectIvy.Common.Test.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DE435792-D5A8-4C32-967B-BE9B91D22518}"
 EndProject

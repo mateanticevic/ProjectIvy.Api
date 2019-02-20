@@ -1,4 +1,4 @@
-﻿using ProjectIvy.DL.Extensions;
+﻿using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 

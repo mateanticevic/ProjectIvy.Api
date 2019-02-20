@@ -3,13 +3,13 @@
 /src/ProjectIvy.BL/bin
 /src/ProjectIvy.Common/bin
 /src/ProjectIvy.Extensions/bin
-/src/ProjectIvy.DL/bin
+/src/ProjectIvy.Data/bin
 /src/ProjectIvy.Model/bin
 /src/ProjectIvy.Utilities/bin
 /src/obj
 /src/ProjectIvy.BL/obj
 /src/ProjectIvy.Common/obj
-/src/ProjectIvy.DL/obj
+/src/ProjectIvy.Data/obj
 /src/ProjectIvy.Extensions/obj
 /src/ProjectIvy.Model/obj
 /src/ProjectIvy.Utilities/obj
@@ -19,7 +19,7 @@
 /src/ProjectIvy.Tests/project.lock.json
 /src/ProjectIvy.BL/project.lock.json
 /src/ProjectIvy.Common/project.lock.json
-/src/ProjectIvy.DL/project.lock.json
+/src/ProjectIvy.Data/project.lock.json
 /src/ProjectIvy.Extensions/project.lock.json
 /src/ProjectIvy.Model/project.lock.json
 /src/ProjectIvy.Utilities/project.lock.json
@@ -30,7 +30,7 @@ src/ProjectIvy.Api/bin
 /src/ProjectIvy.Api/StyleCop.Cache
 /src/ProjectIvy.BL/StyleCop.Cache
 /src/ProjectIvy.Common/StyleCop.Cache
-/src/ProjectIvy.DL/StyleCop.Cache
+/src/ProjectIvy.Data/StyleCop.Cache
 /src/ProjectIvy.Extensions/StyleCop.Cache
 /src/ProjectIvy.Model/StyleCop.Cache
 /src/ProjectIvy.Tests/StyleCop.Cache

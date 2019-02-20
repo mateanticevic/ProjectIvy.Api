@@ -1,5 +1,5 @@
 ﻿using ProjectIvy.BL.Handlers;
-using ProjectIvy.DL.Services.LastFm;
+using ProjectIvy.Data.Services.LastFm;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View.Services.LastFm;
 using System.Collections.Generic;

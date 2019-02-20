@@ -1,5 +1,5 @@
 ﻿using ProjectIvy.BL.Exceptions;
-using ProjectIvy.DL.Extensions;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Device;
 using ProjectIvy.Model.Binding.Log;
 using ProjectIvy.Model.Database.Main.Log;

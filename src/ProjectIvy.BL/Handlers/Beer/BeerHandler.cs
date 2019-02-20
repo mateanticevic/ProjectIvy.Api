@@ -1,7 +1,7 @@
-﻿using ProjectIvy.DL.Extensions;
+﻿using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.View;
-using ProjectIvy.DL.Extensions.Entities;
+using ProjectIvy.Data.Extensions.Entities;
 using System.Collections.Generic;
 using System.Linq;
 using ProjectIvy.BL.Exceptions;

@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.BL.Exceptions;
-using ProjectIvy.DL.Extensions;
-using ProjectIvy.DL.Services.AzureStorage;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Services.AzureStorage;
 using ProjectIvy.Model.Binding.File;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.File;

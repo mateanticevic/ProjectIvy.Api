@@ -29,7 +29,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ProjectIvy.BL\ProjectIvy.BL.csproj" />
     <ProjectReference Include="..\ProjectIvy.Common\ProjectIvy.Common.csproj" />
-    <ProjectReference Include="..\ProjectIvy.DL\ProjectIvy.DL.csproj" />
+    <ProjectReference Include="..\ProjectIvy.Data\ProjectIvy.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

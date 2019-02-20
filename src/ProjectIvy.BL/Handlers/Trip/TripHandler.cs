@@ -4,15 +4,15 @@ using Microsoft.EntityFrameworkCore;
 using ProjectIvy.BL.Exceptions;
 using ProjectIvy.BL.Handlers.Tracking;
 using ProjectIvy.BL.MapExtensions;
-using ProjectIvy.DL.Databases.Main.Queries;
-using ProjectIvy.DL.Extensions.Entities;
-using ProjectIvy.DL.Extensions;
-using ProjectIvy.DL.Sql;
+using ProjectIvy.Data.Databases.Main.Queries;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Sql;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.View;
 using System.Linq;
-using ProjectIvy.DL.Sql.Main.Scripts;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.BL.Handlers.Trip

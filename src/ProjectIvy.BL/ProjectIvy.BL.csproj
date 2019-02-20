@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <VersionPrefix>0.0.0</VersionPrefix>
@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ProjectIvy.Common\ProjectIvy.Common.csproj" />
-    <ProjectReference Include="..\ProjectIvy.DL\ProjectIvy.DL.csproj" />
+    <ProjectReference Include="..\ProjectIvy.Data\ProjectIvy.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,6 +1,6 @@
 ﻿using Database = ProjectIvy.Model.Database.Main.Finance;
 using Microsoft.EntityFrameworkCore;
-using ProjectIvy.DL.Extensions;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.ExpenseType;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View.Expense;

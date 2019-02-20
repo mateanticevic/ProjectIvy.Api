@@ -1,5 +1,5 @@
 ﻿using ProjectIvy.Common.Extensions;
-using ProjectIvy.DL.Extensions;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.Database.Main.Beer;
 
