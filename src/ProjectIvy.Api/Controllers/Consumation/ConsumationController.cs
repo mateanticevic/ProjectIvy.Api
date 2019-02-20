@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Consumation;
+using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;

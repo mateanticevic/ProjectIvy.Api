@@ -1,4 +1,4 @@
-﻿using ProjectIvy.BL.Handlers.Security;
+﻿using ProjectIvy.Business.Handlers.Security;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 

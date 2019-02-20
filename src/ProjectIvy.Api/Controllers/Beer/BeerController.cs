@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Beer;
+using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Model.Binding.Beer;
 
 namespace ProjectIvy.Api.Controllers.Beer

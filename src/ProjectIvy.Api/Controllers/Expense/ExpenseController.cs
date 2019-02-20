@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Expense;
+using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.Constants;

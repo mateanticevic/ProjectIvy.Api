@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Application;
+using ProjectIvy.Business.Handlers.Application;
 using System.Collections.Generic;
 
 namespace ProjectIvy.Api.Controllers.Application

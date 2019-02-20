@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Poi;
-using ProjectIvy.BL.Handlers.Vendor;
+using ProjectIvy.Business.Handlers.Poi;
+using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Model.Binding.Poi;
 using System.Collections.Generic;
 using ProjectIvy.Model.Binding.Vendor;

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Web;
+using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Model.Binding.Web;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;

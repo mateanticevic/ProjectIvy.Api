@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using ProjectIvy.BL.Handlers;
+using ProjectIvy.Business.Handlers;
 using ProjectIvy.Common.Interfaces;
 using System;
 

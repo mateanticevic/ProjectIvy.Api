@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Device;
+using ProjectIvy.Business.Handlers.Device;
 using ProjectIvy.Model.Binding.Device;
 using ProjectIvy.Model.Constants.Database;
 

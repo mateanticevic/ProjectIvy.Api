@@ -6,7 +6,7 @@ FROM microsoft/dotnet:2.1-sdk-nanoserver-1803 AS build
 WORKDIR /src
 COPY ["src/ProjectIvy.Api/ProjectIvy.Api.csproj", "src/ProjectIvy.Api/"]
 COPY ["src/ProjectIvy.Common/ProjectIvy.Common.csproj", "src/ProjectIvy.Common/"]
-COPY ["src/ProjectIvy.BL/ProjectIvy.BL.csproj", "src/ProjectIvy.BL/"]
+COPY ["src/ProjectIvy.Business/ProjectIvy.Business.csproj", "src/ProjectIvy.Business/"]
 COPY ["src/ProjectIvy.Data/ProjectIvy.Data.csproj", "src/ProjectIvy.Data/"]
 COPY ["src/ProjectIvy.Model/ProjectIvy.Model.csproj", "src/ProjectIvy.Model/"]
 RUN dotnet restore "src/ProjectIvy.Api/ProjectIvy.Api.csproj"

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Movie;
+using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;

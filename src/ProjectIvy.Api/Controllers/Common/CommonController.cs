@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Currency;
-using ProjectIvy.BL.Handlers.Expense;
-using ProjectIvy.BL.Handlers.PaymentType;
-using ProjectIvy.BL.Handlers.Poi;
+using ProjectIvy.Business.Handlers.Currency;
+using ProjectIvy.Business.Handlers.Expense;
+using ProjectIvy.Business.Handlers.PaymentType;
+using ProjectIvy.Business.Handlers.Poi;
 using System.Collections.Generic;
-using ProjectIvy.BL.Handlers.Beer;
+using ProjectIvy.Business.Handlers.Beer;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Common

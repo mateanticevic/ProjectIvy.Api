@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using ProjectIvy.BL.Exceptions;
+using ProjectIvy.Business.Exceptions;
 using System.Net;
 using System.Threading.Tasks;
 using System;

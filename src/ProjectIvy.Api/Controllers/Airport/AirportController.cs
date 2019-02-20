@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using ProjectIvy.BL.Handlers.Airport;
+using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;

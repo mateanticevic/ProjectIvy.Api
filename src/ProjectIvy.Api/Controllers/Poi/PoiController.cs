@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Poi;
+using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Poi;

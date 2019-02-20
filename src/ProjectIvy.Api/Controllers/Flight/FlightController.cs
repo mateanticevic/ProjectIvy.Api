@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Flight;
+using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.Constants.Database;
 

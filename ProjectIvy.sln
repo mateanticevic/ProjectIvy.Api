@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{6077
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Api", "src\ProjectIvy.Api\ProjectIvy.Api.csproj", "{EC4A6C81-DCDB-4F12-9BD5-76DCA1A23146}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.BL", "src\ProjectIvy.BL\ProjectIvy.BL.csproj", "{C1D52306-AE37-4299-BD7B-A61405307139}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Business", "src\ProjectIvy.Business\ProjectIvy.Business.csproj", "{C1D52306-AE37-4299-BD7B-A61405307139}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Data", "src\ProjectIvy.Data\ProjectIvy.Data.csproj", "{17E941D2-B071-4E44-99F8-78C33534EC3A}"
 EndProject

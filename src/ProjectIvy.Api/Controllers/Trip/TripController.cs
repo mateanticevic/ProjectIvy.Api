@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Trip;
+using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;

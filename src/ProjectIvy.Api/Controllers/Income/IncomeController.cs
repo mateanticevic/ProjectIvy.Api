@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Income;
+using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Constants.Database;

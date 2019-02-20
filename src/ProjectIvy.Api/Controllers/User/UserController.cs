@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.User;
+using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Model.Binding.User;
 using ProjectIvy.Model.Constants.Database;
 using View = ProjectIvy.Model.View.User;

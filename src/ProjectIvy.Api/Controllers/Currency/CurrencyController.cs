@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Currency;
+using ProjectIvy.Business.Handlers.Currency;
 using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Currency;
 

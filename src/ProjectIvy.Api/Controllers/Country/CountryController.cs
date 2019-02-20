@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Country;
+using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;

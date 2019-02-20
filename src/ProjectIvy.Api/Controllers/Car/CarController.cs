@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.BL.Handlers.Car;
+using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Constants.Database;
 using System.Collections.Generic;
