@@ -28,9 +28,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{0F
 		appsettings.json = appsettings.json
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Tests", "ProjectIvy.Tests\ProjectIvy.Tests.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common.Test", "test\ProjectIvy.Tests\ProjectIvy.Common.Test.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{DE435792-D5A8-4C32-967B-BE9B91D22518}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DE435792-D5A8-4C32-967B-BE9B91D22518}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

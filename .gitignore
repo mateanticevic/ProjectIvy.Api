@@ -38,3 +38,5 @@ src/ProjectIvy.Api/bin
 /StyleCop.Cache
 /ProjectIvy.Tests/bin
 /ProjectIvy.Tests/obj
+**/bin
+**/obj

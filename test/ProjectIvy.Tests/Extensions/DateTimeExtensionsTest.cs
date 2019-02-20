@@ -3,7 +3,7 @@ using ProjectIvy.Common.Extensions;
 using System.Linq;
 using System;
 
-namespace ProjectIvy.Tests.Common.Extensions
+namespace ProjectIvy.Common.Test.Extensions
 {
     [TestClass]
     public class DateTimeExtensionsTest
