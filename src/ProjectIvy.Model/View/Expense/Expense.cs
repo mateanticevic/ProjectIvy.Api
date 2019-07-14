@@ -25,6 +25,7 @@ namespace ProjectIvy.Model.View.Expense
             ParentCurrencyExchangeRate = x.ParentCurrencyExchangeRate;
             Modified = x.Modified;
             Timestamp = x.Created;
+            NeedsReview = x.NeedsReview;
         }
 
         public decimal Amount { get; set; }
@@ -52,6 +53,8 @@ namespace ProjectIvy.Model.View.Expense
         public Poi.Poi Poi { get; set; }
 
         public string Id { get; set; }
+
+        public bool NeedsReview { get; set; }
 
         public PaymentType.PaymentType PaymentType { get; set; }
 
