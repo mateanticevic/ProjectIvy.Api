@@ -21,9 +21,8 @@ namespace ProjectIvy.Api.Controllers.PaymentProvider
         public async Task<IActionResult> PostTransferWiseNotify([FromQuery] string authorizationCode, [FromBody] TransferWiseTransferEvent transferEvent)
         {
             if (string.IsNullOrWhiteSpace(transferEvent.Message))
-                return Ok(); // If test request
+                await _expenseHandler.NotifyTransferWiseEvent(authorizationCode, transferEvent.ResourceId);
 
-            await _expenseHandler.NotifyTransferWiseEvent(authorizationCode, transferEvent.ResourceId);
             return Ok();
         }
     }
