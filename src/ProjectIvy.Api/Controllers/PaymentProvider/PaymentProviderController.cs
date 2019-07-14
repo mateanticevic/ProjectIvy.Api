@@ -17,10 +17,21 @@ namespace ProjectIvy.Api.Controllers.PaymentProvider
             _expenseHandler = expenseHandler;
         }
 
-        [HttpPost("transferWise/Notify")]
+        [Route("transferWise/Notify")]
+        [HttpPost]
+        [HttpPut]
         public async Task<IActionResult> PostTransferWiseNotify([FromQuery] string authorizationCode, [FromBody] TransferWiseTransferEvent transferEvent)
         {
             await _expenseHandler.NotifyTransferWiseEvent(authorizationCode, transferEvent.ResourceId);
+            return Ok();
+        }
+
+        [Route("transferWise/Notify")]
+        [HttpGet]
+        [HttpHead]
+        [HttpOptions]
+        public async Task<IActionResult> PostTransferWiseNotify()
+        {
             return Ok();
         }
     }
