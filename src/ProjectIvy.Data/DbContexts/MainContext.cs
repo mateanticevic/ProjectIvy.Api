@@ -85,6 +85,10 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Movie> Movies { get; set; }
 
+        public DbSet<PaymentProvider> PaymentProviders { get; set; }
+
+        public DbSet<PaymentProviderAccount> PaymentProviderAccounts { get; set; }
+
         public DbSet<PaymentType> PaymentTypes { get; set; }
 
         public DbSet<Poi> Pois { get; set; }

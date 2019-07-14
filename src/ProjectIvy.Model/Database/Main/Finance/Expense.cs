@@ -46,6 +46,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public int? CardId { get; set; }
 
+        public bool NeedsReview { get; set; }
+
         public Currency Currency { get; set; }
 
         public Currency ParentCurrency { get; set; }

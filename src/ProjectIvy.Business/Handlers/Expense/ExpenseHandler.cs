@@ -17,6 +17,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using System;
 using View = ProjectIvy.Model.View.Expense;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {
@@ -259,6 +262,38 @@ namespace ProjectIvy.Business.Handlers.Expense
                                        .ExpenseFiles
                                        .Select(x => new View.ExpenseFile(x))
                                        .ToList();
+            }
+        }
+
+        public async System.Threading.Tasks.Task NotifyTransferWiseEvent(string authorizationCode, int resourceId)
+        {
+            using (var context = GetMainContext())
+            {
+                string token = context.PaymentProviderAccounts.WhereUser(User).FirstOrDefault().Token;
+
+                using (var httpClient = new HttpClient())
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.transferwise.com/v1/transfers/{resourceId}");
+                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                    var response = await httpClient.SendAsync(request);
+
+                    var responseText = await response.Content.ReadAsStringAsync();
+                    var transfer = JsonConvert.DeserializeObject<Model.Services.TrasnferWise.Transfer>(responseText);
+
+                    var expense = new Model.Database.Main.Finance.Expense()
+                    {
+                        ValueId = context.Expenses.NextValueId(User.Id).ToString(),
+                        Date = DateTime.Now,
+                        ExpenseTypeId = 1,
+                        Amount = transfer.TargetValue,
+                        Comment = transfer.Status,
+                        CurrencyId = 45,
+                        NeedsReview = true,
+                        UserId = 1002
+                    };
+                    context.Expenses.Add(expense);
+                    await context.SaveChangesAsync();
+                }
             }
         }
 

@@ -50,6 +50,8 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         Task<decimal> SumAmount(ExpenseSumGetBinding binding);
 
+        System.Threading.Tasks.Task NotifyTransferWiseEvent(string authorizationCode, int resourceId);
+
         bool Update(ExpenseBinding binding);
     }
 }
