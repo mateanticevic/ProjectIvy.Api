@@ -287,10 +287,17 @@ namespace ProjectIvy.Business.Handlers.Expense
                         ExpenseTypeId = 1,
                         Amount = transfer.TargetValue,
                         Comment = transfer.Status,
-                        CurrencyId = 45,
+                        CurrencyId = context.GetCurrencyId(transfer.TargetCurrency, User.Id),
                         NeedsReview = true,
                         UserId = 1002
                     };
+
+                    if (transfer.TargetCurrency != transfer.SourceCurrency)
+                    {
+                        expense.ParentCurrencyId = context.GetCurrencyId(transfer.SourceCurrency, User.Id);
+                        expense.ParentCurrencyExchangeRate = 1 / transfer.Rate;
+                    }
+
                     context.Expenses.Add(expense);
                     await context.SaveChangesAsync();
                 }
