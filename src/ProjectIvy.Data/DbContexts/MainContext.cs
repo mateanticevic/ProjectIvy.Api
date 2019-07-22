@@ -39,6 +39,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<BrowserLog> BrowserLogs { get; set; }
 
+        public DbSet<Call> Calls { get; set; }
+
         public DbSet<Car> Cars { get; set; }
 
         public DbSet<Card> Cards { get; set; }

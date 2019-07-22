@@ -36,6 +36,7 @@ using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
 using Swashbuckle.AspNetCore.Swagger;
+using ProjectIvy.Business.Handlers.Call;
 
 namespace ProjectIvy.Api
 {
@@ -80,6 +81,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
+            services.AddHandler<ICallHandler, CallHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICardHandler, CardHandler>();
             services.AddHandler<IConsumationHandler, ConsumationHandler>();
