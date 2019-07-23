@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Call;
+using ProjectIvy.Model.Binding;
 
 namespace ProjectIvy.Api.Controllers.Call
 {
@@ -15,6 +16,6 @@ namespace ProjectIvy.Api.Controllers.Call
         }
 
         [HttpGet]
-        public IActionResult Get() => Ok(_callHandler.Get());
+        public IActionResult Get([FromQuery] FilteredPagedBinding binding) => Ok(_callHandler.Get(binding));
     }
 }

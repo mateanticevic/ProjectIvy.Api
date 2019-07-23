@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
-using ProjectIvy.Model.View.Call;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.View;
+using View = ProjectIvy.Model.View.Call;
 
 namespace ProjectIvy.Business.Handlers.Call
 {
     public interface ICallHandler
     {
-        IEnumerable<Model.View.Call.Call> Get();
+        PagedView<View.Call> Get(FilteredPagedBinding binding);
     }
 }

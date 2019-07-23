@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
-using System.Collections.Generic;
+using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.View;
 using System.Linq;
 using View = ProjectIvy.Model.View.Call;
 
@@ -12,14 +13,15 @@ namespace ProjectIvy.Business.Handlers.Call
         {
         }
 
-        public IEnumerable<View.Call> Get()
+        public PagedView<View.Call> Get(FilteredPagedBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Calls.WhereUser(User)
                                     .Include(x => x.File)
+                                    .OrderByDescending(x => x.Timestamp)
                                     .Select(x => new View.Call(x))
-                                    .ToList();
+                                    .ToPagedView(binding);
             }
         }
     }
