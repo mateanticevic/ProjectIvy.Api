@@ -12,7 +12,10 @@ namespace ProjectIvy.Model.View.Call
             File = c.File.ConvertTo(x => new File.File(x));
             Number = c.Number;
             Timestamp = c.Timestamp;
+            Id = c.ValueId;
         }
+
+        public string Id { get; set; }
 
         public DateTime Timestamp { get; set; }
 
