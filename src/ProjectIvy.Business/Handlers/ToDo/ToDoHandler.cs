@@ -2,6 +2,7 @@
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.ToDo;
 using ProjectIvy.Model.View;
+using System;
 using System.Linq;
 using Db = ProjectIvy.Model.Database.Main;
 using View = ProjectIvy.Model.View.ToDo;
@@ -22,7 +23,8 @@ namespace ProjectIvy.Business.Handlers.ToDo
                 {
                     ValueId = context.ToDos.NextValueId(User.Id).ToString(),
                     Name = name,
-                    UserId = User.Id
+                    UserId = User.Id,
+                    Created = DateTime.Now
                 };
                 context.ToDos.Add(toDoEntity);
                 context.SaveChanges();
