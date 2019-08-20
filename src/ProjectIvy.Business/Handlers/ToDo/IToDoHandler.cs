@@ -8,5 +8,7 @@ namespace ProjectIvy.Business.Handlers.ToDo
         string Create(string name);
 
         PagedView<Model.View.ToDo.ToDo> GetPaged(ToDoGetBinding binding);
+
+        void SetDone(string valueId);
     }
 }

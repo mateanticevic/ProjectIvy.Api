@@ -37,9 +37,22 @@ namespace ProjectIvy.Business.Handlers.ToDo
             {
                 return context.ToDos.WhereUser(User)
                                     .WhereIf(binding.IsDone.HasValue, x => x.IsDone == binding.IsDone.Value)
-                                    .OrderBy(x => x.Created)
+                                    .OrderByDescending(x => x.Created)
                                     .Select(x => new View.ToDo(x))
                                     .ToPagedView(binding);
+            }
+        }
+
+        public void SetDone(string valueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int id = context.ToDos.WhereUser(User).GetId(valueId).Value;
+
+                var todo = context.ToDos.Find(id);
+                todo.IsDone = true;
+
+                context.SaveChanges();
             }
         }
     }

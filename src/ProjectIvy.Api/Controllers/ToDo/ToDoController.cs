@@ -23,5 +23,12 @@ namespace ProjectIvy.Api.Controllers.Task
 
         [HttpPost]
         public IActionResult Post([FromBody] string name) => Ok(_toDoHandler.Create(name));
+
+        [HttpPost("{id}/Done")]
+        public IActionResult PostDone(string id)
+        {
+            _toDoHandler.SetDone(id);
+            return Ok();
+        }
     }
 }
