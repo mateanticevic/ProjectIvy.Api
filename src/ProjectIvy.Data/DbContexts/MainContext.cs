@@ -109,6 +109,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<TaskType> TaskTypes { get; set; }
 
+        public DbSet<ToDo> ToDos { get; set; }
+
         public DbSet<Tracking> Trackings { get; set; }
 
         public DbSet<Trip> Trips { get; set; }

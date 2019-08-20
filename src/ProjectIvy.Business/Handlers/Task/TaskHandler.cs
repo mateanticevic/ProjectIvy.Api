@@ -91,8 +91,6 @@ namespace ProjectIvy.Business.Handlers.Task
             }
         }
 
-        #region Get
-
         public IEnumerable<View.Task> Get(string projectValueId)
         {
             using (var db = GetMainContext())
@@ -172,7 +170,5 @@ namespace ProjectIvy.Business.Handlers.Task
                                         .Select(x => new View.Type(x));
             }
         }
-
-        #endregion
     }
 }

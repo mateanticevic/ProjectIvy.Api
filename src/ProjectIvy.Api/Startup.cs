@@ -37,6 +37,7 @@ using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
 using Swashbuckle.AspNetCore.Swagger;
 using ProjectIvy.Business.Handlers.Call;
+using ProjectIvy.Business.Handlers.ToDo;
 
 namespace ProjectIvy.Api
 {
@@ -99,6 +100,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IProjectHandler, ProjectHandler>();
             services.AddHandler<ISecurityHandler, SecurityHandler>();
             services.AddHandler<ITaskHandler, TaskHandler>();
+            services.AddHandler<IToDoHandler, ToDoHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
