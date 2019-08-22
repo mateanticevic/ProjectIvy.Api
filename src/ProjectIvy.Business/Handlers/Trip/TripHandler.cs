@@ -126,10 +126,9 @@ namespace ProjectIvy.Business.Handlers.Trip
             {
                 var query = context.Trips.WhereUser(User.Id)
                                          .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
-                                         .AsQueryable();
-
-                query = binding.From.HasValue ? query.Where(x => x.TimestampEnd > binding.From.Value) : query;
-                query = binding.To.HasValue ? query.Where(x => x.TimestampStart < binding.To.Value) : query;
+                                         .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
+                                         .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
+                                         .WhereIf(!string.IsNullOrWhiteSpace(binding.CountryId), x => x.Cities.Select(y => y.City.Country).Any(y => y.ValueId == binding.CountryId));
 
                 int? cityId = context.Cities.GetId(binding.CityId);
 
