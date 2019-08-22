@@ -13,6 +13,7 @@ using ProjectIvy.Model.Database.Main.User;
 using ProjectIvy.Model.Database.Main.Storage;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Database.Main.Beer;
+using ProjectIvy.Model.Database.Main.Contacts;
 
 namespace ProjectIvy.Data.DbContexts
 {
@@ -50,6 +51,10 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<City> Cities { get; set; }
 
         public DbSet<Consumation> Consumations { get; set; }
+
+        public DbSet<Contact> Contacts { get; set; }
+
+        public DbSet<ContactType> ContactTypes { get; set; }
 
         public DbSet<Country> Countries { get; set; }
 
@@ -92,6 +97,8 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<PaymentProviderAccount> PaymentProviderAccounts { get; set; }
 
         public DbSet<PaymentType> PaymentTypes { get; set; }
+
+        public DbSet<Person> People { get; set; }
 
         public DbSet<Poi> Pois { get; set; }
 

@@ -24,5 +24,7 @@ namespace ProjectIvy.Model.View.Call
         public int Duration { get; set; }
 
         public File.File File { get; set; }
+
+        public Person.Person Person { get; set; }
     }
 }

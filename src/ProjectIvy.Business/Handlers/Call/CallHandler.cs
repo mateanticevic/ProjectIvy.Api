@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Call;
@@ -19,11 +20,20 @@ namespace ProjectIvy.Business.Handlers.Call
         {
             using (var context = GetMainContext())
             {
-                return context.Calls.WhereUser(User)
-                                    .Include(x => x.File)
-                                    .OrderByDescending(x => x.Timestamp)
-                                    .Select(x => new View.Call(x))
-                                    .ToPagedView(binding);
+                var calls = context.Calls
+                                   .WhereUser(User)
+                                   .Include(x => x.File)
+                                   .OrderByDescending(x => x.Timestamp)
+                                   .Select(x => new View.Call(x))
+                                   .ToPagedView(binding);
+
+                foreach (var call in calls.Items)
+                {
+                    var person = context.People.SingleOrDefault(x => x.Contacts.Any(y => y.Identifier == call.Number));
+                    call.Person = person.ConvertTo(p => new Model.View.Person.Person(p));
+                }
+
+                return calls;
             }
         }
 
