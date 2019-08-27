@@ -2,7 +2,8 @@
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System;
-using View = ProjectIvy.Model.View.Consumation;
+using View = ProjectIvy.Model.View;
+using ProjectIvy.Model.Binding;
 
 namespace ProjectIvy.Business.Handlers.Consumation
 {
@@ -16,11 +17,15 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding);
 
-        int CountUniqueBeers(ConsumationGetBinding binding);
+        int CountBeers(ConsumationGetBinding binding);
 
-        int CountUniqueBrands(ConsumationGetBinding binding);
+        int CountBrands(ConsumationGetBinding binding);
 
-        PagedView<View.Consumation> Get(ConsumationGetBinding binding);
+        PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding);
+
+        PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding);
+
+        PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding);
 
         PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding);
 

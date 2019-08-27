@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Consumation;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
@@ -23,6 +24,12 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet]
         public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
 
+        [HttpGet("Beer")]
+        public IActionResult GetBeer(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBeers(binding));
+
+        [HttpGet("Brand")]
+        public IActionResult GetBrands(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBrands(binding));
+
         [HttpGet("Consecutive/Days")]
         public IActionResult GetConsecutiveDays(ConsumationGetBinding binding) => Ok(_consumationHandler.ConsecutiveDates(binding));
 
@@ -33,10 +40,12 @@ namespace ProjectIvy.Api.Controllers.Consumation
         public PagedView<CountBy<Model.View.Beer.Beer>> GetCountByBeer(ConsumationGetBinding binding) => _consumationHandler.CountByBeer(binding);
 
         [HttpGet("Count/Beer")]
-        public int GetCountBeer(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBeers(binding);
+        [HttpGet("Beer/Count")]
+        public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);
 
         [HttpGet("Count/Brand")]
-        public int GetCountBrand(ConsumationGetBinding binding) => _consumationHandler.CountUniqueBrands(binding);
+        [HttpGet("Brand/Count")]
+        public int GetCountBrand(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
 
         [HttpGet("Sum")]
         public int GetSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);

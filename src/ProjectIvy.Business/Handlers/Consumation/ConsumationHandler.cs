@@ -8,7 +8,8 @@ using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
 using System;
-using View = ProjectIvy.Model.View.Consumation;
+using View = ProjectIvy.Model.View;
+using ProjectIvy.Model.Binding;
 
 namespace ProjectIvy.Business.Handlers.Consumation
 {
@@ -75,7 +76,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public int CountUniqueBeers(ConsumationGetBinding binding)
+        public int CountBeers(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -87,7 +88,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public int CountUniqueBrands(ConsumationGetBinding binding)
+        public int CountBrands(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -100,14 +101,40 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<View.Consumation> Get(ConsumationGetBinding binding)
+        public PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
                                            .Where(binding, context)
-                                           .Select(x => new View.Consumation(x))
+                                           .Select(x => new View.Consumation.Consumation(x))
                                            .OrderByDescending(x => x.Date)
+                                           .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding)
+                                           .Select(x => x.Beer)
+                                           .Distinct()
+                                           .Select(x => new View.Beer.Beer(x))
+                                           .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding)
+                                           .Select(x => x.Beer.BeerBrand)
+                                           .Distinct()
+                                           .Select(x => new View.Beer.BeerBrand(x))
                                            .ToPagedView(binding);
             }
         }
