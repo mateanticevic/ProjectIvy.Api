@@ -135,12 +135,13 @@ namespace ProjectIvy.Business.Handlers.Consumation
                 }
 
                 return context.Consumations.WhereUser(User)
+                                           .Include(x => x.Beer)
                                            .Where(binding)
+                                           .GroupBy(x => x.Beer)
+                                           .Select(x => new { Beer = x.Key, Date = x.Min(y => y.Date) })
+                                           .Where(x => !oldBeerIds.Any(y => x.Beer.Id == y))
                                            .OrderByDescending(x => x.Date)
-                                           .Select(x => x.Beer)
-                                           .Where(x => !oldBeerIds.Any(y => x.Id == y))
-                                           .Distinct()
-                                           .Select(x => new View.Beer.Beer(x))
+                                           .Select(x => new View.Beer.Beer(x.Beer))
                                            .ToPagedView(binding);
             }
         }
