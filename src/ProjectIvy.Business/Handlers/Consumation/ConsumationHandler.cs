@@ -136,6 +136,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
                 return context.Consumations.WhereUser(User)
                                            .Where(binding)
+                                           .OrderByDescending(x => x.Date)
                                            .Select(x => x.Beer)
                                            .Where(x => !oldBeerIds.Any(y => x.Id == y))
                                            .Distinct()
