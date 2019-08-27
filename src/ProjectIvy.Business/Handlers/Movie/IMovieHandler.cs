@@ -1,8 +1,8 @@
 ﻿using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
-using View = ProjectIvy.Model.View.Movie;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Business.Handlers.Movie
 {

@@ -11,7 +11,7 @@ namespace ProjectIvy.Model.View.Consumation
         {
             Beer = c.Beer.ConvertTo(x => new Beer.Beer(x));
             Date = c.Date;
-            Serving = (BeerServing) c.BeerServingId;
+            Serving = (BeerServing)c.BeerServingId;
             Volume = c.Volume;
         }
 

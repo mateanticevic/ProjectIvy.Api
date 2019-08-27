@@ -1,6 +1,6 @@
 ﻿using ProjectIvy.Model.Binding.Web;
-using ProjectIvy.Model.View.Web;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Web;
 using System.Collections.Generic;
 
 namespace ProjectIvy.Business.Handlers.Web

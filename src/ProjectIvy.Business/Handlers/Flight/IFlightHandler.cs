@@ -1,6 +1,6 @@
-﻿using ProjectIvy.Model.View;
+﻿using ProjectIvy.Model.Binding.Flight;
+using ProjectIvy.Model.View;
 using System.Collections.Generic;
-using ProjectIvy.Model.Binding.Flight;
 using Views = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Flight

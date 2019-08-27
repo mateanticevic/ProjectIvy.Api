@@ -1,19 +1,19 @@
-﻿using ProjectIvy.Model.Database.Main.App;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Database.Main.App;
+using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.Database.Main.Common;
+using ProjectIvy.Model.Database.Main.Contacts;
 using ProjectIvy.Model.Database.Main.Finance;
 using ProjectIvy.Model.Database.Main.Inv;
 using ProjectIvy.Model.Database.Main.Log;
 using ProjectIvy.Model.Database.Main.Net;
 using ProjectIvy.Model.Database.Main.Org;
 using ProjectIvy.Model.Database.Main.Security;
+using ProjectIvy.Model.Database.Main.Storage;
 using ProjectIvy.Model.Database.Main.Tracking;
 using ProjectIvy.Model.Database.Main.Transport;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.Database.Main.User;
-using ProjectIvy.Model.Database.Main.Storage;
-using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Model.Database.Main.Beer;
-using ProjectIvy.Model.Database.Main.Contacts;
 
 namespace ProjectIvy.Data.DbContexts
 {

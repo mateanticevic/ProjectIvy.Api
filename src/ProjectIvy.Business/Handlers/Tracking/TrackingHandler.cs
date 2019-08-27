@@ -1,14 +1,14 @@
 ﻿using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
-using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
+using ProjectIvy.Model.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
-using System;
-using ProjectIvy.Model.Binding;
-using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Business.Handlers.Tracking

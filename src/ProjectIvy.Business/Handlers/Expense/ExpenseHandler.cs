@@ -1,25 +1,25 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Data.Extensions.Entities;
+using Newtonsoft.Json;
 using ProjectIvy.Business.Exceptions;
-using ProjectIvy.Data.Extensions;
-using ProjectIvy.Data.Databases.Main.Queries;
 using ProjectIvy.Business.MapExtensions;
-using ProjectIvy.Data.Sql;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Data.Databases.Main.Queries;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Data.Sql;
 using ProjectIvy.Data.Sql.Main.Scripts;
-using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.ExpenseType;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System;
-using View = ProjectIvy.Model.View.Expense;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using Newtonsoft.Json;
+using System.Threading.Tasks;
+using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {

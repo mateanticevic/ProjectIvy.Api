@@ -1,6 +1,6 @@
-﻿using ProjectIvy.Common.Configuration;
+﻿using Microsoft.Extensions.Options;
+using ProjectIvy.Common.Configuration;
 using ProjectIvy.Common.Interfaces;
-using Microsoft.Extensions.Options;
 
 namespace ProjectIvy.Data.Services.AzureStorage
 {

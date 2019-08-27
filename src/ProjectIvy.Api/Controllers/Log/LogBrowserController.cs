@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Device;
 using ProjectIvy.Model.Binding.Log;
 using ProjectIvy.Model.Constants.Database;
-using ProjectIvy.Model.View.Device;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Device;
 
 namespace ProjectIvy.Api.Controllers.Log
 {

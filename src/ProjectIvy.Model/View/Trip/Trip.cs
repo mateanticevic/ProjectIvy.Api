@@ -1,8 +1,8 @@
 ﻿using ProjectIvy.Common.Extensions;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Trip
 {

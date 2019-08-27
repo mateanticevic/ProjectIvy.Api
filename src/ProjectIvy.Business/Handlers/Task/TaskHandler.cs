@@ -1,12 +1,12 @@
-﻿using ProjectIvy.Business.MapExtensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Task;
 using ProjectIvy.Model.Constants.Database;
-using Database = ProjectIvy.Model.Database.Main;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using Database = ProjectIvy.Model.Database.Main;
 using View = ProjectIvy.Model.View.Task;
 
 namespace ProjectIvy.Business.Handlers.Task

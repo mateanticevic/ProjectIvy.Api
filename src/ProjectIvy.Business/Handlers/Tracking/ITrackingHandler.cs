@@ -1,9 +1,9 @@
-﻿using ProjectIvy.Model.Binding.Tracking;
-using ProjectIvy.Model.Binding;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
+using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using System;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Business.Handlers.Tracking

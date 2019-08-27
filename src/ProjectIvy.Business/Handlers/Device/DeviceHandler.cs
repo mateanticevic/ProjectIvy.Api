@@ -1,11 +1,11 @@
-﻿using ProjectIvy.Business.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Device;
 using ProjectIvy.Model.Binding.Log;
 using ProjectIvy.Model.Database.Main.Log;
 using ProjectIvy.Model.Database.Main.Net;
 using ProjectIvy.Model.View;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = ProjectIvy.Model.View;
 

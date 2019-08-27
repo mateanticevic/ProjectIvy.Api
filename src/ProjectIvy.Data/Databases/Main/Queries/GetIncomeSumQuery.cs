@@ -1,9 +1,9 @@
 ﻿using ProjectIvy.Data.Databases.Main.UserTypes;
 using ProjectIvy.Data.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System;
 using static Dapper.SqlMapper;
 
 namespace ProjectIvy.Data.Databases.Main.Queries

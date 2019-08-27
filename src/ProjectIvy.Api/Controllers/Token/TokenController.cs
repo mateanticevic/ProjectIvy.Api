@@ -1,6 +1,6 @@
-﻿using ProjectIvy.Business.Handlers.Security;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Business.Handlers.Security;
 
 namespace ProjectIvy.Api.Controllers.Token
 {

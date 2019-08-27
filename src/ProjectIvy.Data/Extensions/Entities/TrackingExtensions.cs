@@ -1,7 +1,7 @@
-﻿using ProjectIvy.Model.Database.Main.Tracking;
-using GeoCoordinatePortable;
-using System.Linq;
+﻿using GeoCoordinatePortable;
+using ProjectIvy.Model.Database.Main.Tracking;
 using System;
+using System.Linq;
 
 namespace ProjectIvy.Data.Extensions.Entities
 {

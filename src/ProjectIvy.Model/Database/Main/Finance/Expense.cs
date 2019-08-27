@@ -1,8 +1,8 @@
 ﻿using ProjectIvy.Model.Database.Main.Common;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Finance
 {
@@ -33,13 +33,13 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public DateTime Date { get; set; }
 
         public int ExpenseTypeId { get; set; }
-        
+
         public DateTime Modified { get; set; }
 
         public DateTime Created { get; set; }
 
         public int? PoiId { get; set; }
-        
+
         public int? VendorId { get; set; }
 
         public int? PaymentTypeId { get; set; }

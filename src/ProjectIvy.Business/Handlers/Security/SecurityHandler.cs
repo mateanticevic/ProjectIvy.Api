@@ -1,8 +1,8 @@
-﻿using ProjectIvy.Common.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Helpers;
 using ProjectIvy.Model.Database.Main.Security;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace ProjectIvy.Business.Handlers.Security
 {

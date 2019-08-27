@@ -1,9 +1,9 @@
-﻿using ProjectIvy.Model.Binding.Consumation;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View;
-using ProjectIvy.Model.Binding;
 
 namespace ProjectIvy.Business.Handlers.Consumation
 {

@@ -1,6 +1,5 @@
 ﻿using ProjectIvy.Common.Extensions;
 using System;
-using ProjectIvy.Model.Services.LastFm;
 
 namespace ProjectIvy.Data.Services.LastFm
 {

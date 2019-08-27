@@ -1,13 +1,13 @@
-﻿using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Binding.Beer;
-using ProjectIvy.Model.View;
-using ProjectIvy.Data.Extensions.Entities;
-using System.Collections.Generic;
-using System.Linq;
-using ProjectIvy.Business.Exceptions;
+﻿using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.Database.Main.Beer;
+using ProjectIvy.Model.View;
+using System.Collections.Generic;
+using System.Linq;
 using View = ProjectIvy.Model.View.Beer;
 
 namespace ProjectIvy.Business.Handlers.Beer

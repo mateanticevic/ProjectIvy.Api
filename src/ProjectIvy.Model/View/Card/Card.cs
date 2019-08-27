@@ -1,5 +1,5 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main.Finance;
-using System;
+﻿using System;
+using DatabaseModel = ProjectIvy.Model.Database.Main.Finance;
 
 namespace ProjectIvy.Model.View.Card
 {

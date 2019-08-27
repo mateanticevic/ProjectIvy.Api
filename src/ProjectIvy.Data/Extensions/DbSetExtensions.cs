@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using ProjectIvy.Model.Database.Main.User;
+﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Database.Main;
-using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Database.Main.User;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectIvy.Data.Extensions

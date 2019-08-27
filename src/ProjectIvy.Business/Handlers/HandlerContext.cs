@@ -1,7 +1,7 @@
-﻿using ProjectIvy.Common.Configuration;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ProjectIvy.Common.Configuration;
 
 namespace ProjectIvy.Business.Handlers
 {

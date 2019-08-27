@@ -1,6 +1,6 @@
 ﻿using ProjectIvy.Common.Helpers;
-using ServiceModel = ProjectIvy.Model.Services.LastFm;
 using System;
+using ServiceModel = ProjectIvy.Model.Services.LastFm;
 
 namespace ProjectIvy.Model.View.Services.LastFm
 {

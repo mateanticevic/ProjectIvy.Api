@@ -49,6 +49,6 @@ namespace ProjectIvy.Common.Parsers
             xdoc.Add(root);
 
             return xdoc;
-        } 
+        }
     }
 }

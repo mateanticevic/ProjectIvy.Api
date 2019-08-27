@@ -1,9 +1,9 @@
-﻿using ProjectIvy.Data.Extensions.Entities;
+﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using View = ProjectIvy.Model.View.Airport;
 
 namespace ProjectIvy.Business.Handlers.Airport

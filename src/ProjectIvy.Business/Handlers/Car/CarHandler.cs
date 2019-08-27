@@ -1,13 +1,13 @@
-﻿using ProjectIvy.Business.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Car;
-using View = ProjectIvy.Model.View.Car;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
+using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Business.Handlers.Car
 {

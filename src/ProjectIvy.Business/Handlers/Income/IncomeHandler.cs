@@ -2,17 +2,17 @@
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
-using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Sql;
-using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.View;
-using System.Linq;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
-using ProjectIvy.Data.Sql.Main.Scripts;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.Business.Handlers.Income

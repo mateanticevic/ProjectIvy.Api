@@ -1,6 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Web
+﻿namespace ProjectIvy.Model.Binding.Web
 {
     public class WebTimeGetPagedBinding : FilteredPagedBinding
     {

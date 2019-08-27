@@ -1,5 +1,5 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
-using System;
+﻿using System;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Car
 {

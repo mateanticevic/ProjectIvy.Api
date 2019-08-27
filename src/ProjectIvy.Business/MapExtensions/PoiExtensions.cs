@@ -1,8 +1,8 @@
-﻿using System;
-using ProjectIvy.Data.DbContexts;
+﻿using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.Database.Main.Travel;
+using System;
 
 namespace ProjectIvy.Business.MapExtensions
 {

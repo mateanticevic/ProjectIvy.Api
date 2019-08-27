@@ -1,7 +1,7 @@
-﻿using ProjectIvy.Model.Database.Main.Org;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Database.Main.Org;
 using System;
+using System.Linq;
 
 namespace ProjectIvy.Data.Extensions
 {

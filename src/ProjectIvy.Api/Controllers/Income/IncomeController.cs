@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Income;
-using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
-using View = ProjectIvy.Model.View.Income;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.Api.Controllers.Income
 {

@@ -1,7 +1,7 @@
 ﻿using ProjectIvy.Model.Binding.ExpenseType;
-using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.View.Expense;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Expense;
+using ProjectIvy.Model.View.ExpenseType;
 using System.Collections.Generic;
 
 namespace ProjectIvy.Business.Handlers.Expense

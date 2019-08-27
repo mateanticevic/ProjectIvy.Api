@@ -1,12 +1,11 @@
-﻿using ProjectIvy.Model.Binding.Common;
+﻿using Newtonsoft.Json.Linq;
+using ProjectIvy.Common.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Services.LastFm;
-using Newtonsoft.Json.Linq;
+using ProjectIvy.Model.Services.LastFm.Request;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using ProjectIvy.Common.Extensions;
-using ProjectIvy.Model.Binding;
-using ProjectIvy.Model.Services.LastFm.Request;
 
 namespace ProjectIvy.Data.Services.LastFm
 {
@@ -38,7 +37,7 @@ namespace ProjectIvy.Data.Services.LastFm
                 return tracks.ToObject<IEnumerable<Track>>();
             }
         }
-        
+
         public async Task<IEnumerable<Artist>> GetTopArtists(string username)
         {
             using (var client = new HttpClient())
@@ -81,7 +80,7 @@ namespace ProjectIvy.Data.Services.LastFm
             using (var client = new HttpClient())
             {
                 var request = new UserGetInfo(_settings.Url, _settings.Key, username);
-                 
+
                 var json = await client.GetStringAsync(request.ToUrl());
 
                 var infoObject = JObject.Parse(json).SelectToken("user");

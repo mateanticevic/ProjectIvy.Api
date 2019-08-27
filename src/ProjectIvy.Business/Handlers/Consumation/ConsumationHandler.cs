@@ -1,15 +1,15 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
-using ProjectIvy.Data.Extensions.Entities;
-using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using View = ProjectIvy.Model.View;
-using ProjectIvy.Model.Binding;
 
 namespace ProjectIvy.Business.Handlers.Consumation
 {

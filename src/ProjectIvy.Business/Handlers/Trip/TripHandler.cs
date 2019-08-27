@@ -1,18 +1,18 @@
 ﻿using Dapper;
-using Database = ProjectIvy.Model.Database.Main;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Databases.Main.Queries;
-using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Sql;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 using ProjectIvy.Model.View;
 using System.Linq;
-using ProjectIvy.Data.Sql.Main.Scripts;
+using Database = ProjectIvy.Model.Database.Main;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Trip

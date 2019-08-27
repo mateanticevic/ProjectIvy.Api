@@ -1,6 +1,6 @@
-﻿using ProjectIvy.Model.Database.Main.Security;
+﻿using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.Database.Main.User;
-using Microsoft.Extensions.Caching.Memory;
 
 namespace ProjectIvy.Api.Cache
 {

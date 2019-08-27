@@ -1,6 +1,6 @@
 ﻿using ProjectIvy.Model.Binding.Car;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Business.Handlers.Car

@@ -1,10 +1,10 @@
-﻿using ProjectIvy.Data.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.View;
-using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using View = ProjectIvy.Model.View.Country;
 
 namespace ProjectIvy.Business.Handlers.Country
@@ -71,7 +71,7 @@ namespace ProjectIvy.Business.Handlers.Country
                 };
             }
         }
-        
+
         public IEnumerable<View.Country> GetVisited()
         {
             using (var context = GetMainContext())

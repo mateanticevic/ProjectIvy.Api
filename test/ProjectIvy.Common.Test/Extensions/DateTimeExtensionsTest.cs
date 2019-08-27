@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ProjectIvy.Common.Extensions;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace ProjectIvy.Common.Test.Extensions
 {
@@ -11,15 +11,15 @@ namespace ProjectIvy.Common.Test.Extensions
         [TestMethod]
         public void RangeMonthsClosed_1()
         {
-            var from = new DateTime(2017,1,1);
-            var to = new DateTime(2017,3,1);
+            var from = new DateTime(2017, 1, 1);
+            var to = new DateTime(2017, 3, 1);
 
             var range = from.RangeMonthsClosed(to)
                             .ToList();
 
             Assert.IsTrue(range.Count == 3);
-            Assert.AreEqual(range[0].from, new DateTime(2017,1,1));
-            Assert.AreEqual(range[0].to, new DateTime(2017,1,31));
+            Assert.AreEqual(range[0].from, new DateTime(2017, 1, 1));
+            Assert.AreEqual(range[0].to, new DateTime(2017, 1, 31));
             Assert.AreEqual(range[1].from, new DateTime(2017, 2, 1));
             Assert.AreEqual(range[1].to, new DateTime(2017, 2, 28));
             Assert.AreEqual(range[2].from, new DateTime(2017, 3, 1));

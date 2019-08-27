@@ -1,10 +1,10 @@
-﻿using ProjectIvy.Data.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System;
+using System.Linq;
 
 namespace ProjectIvy.Business.MapExtensions
 {

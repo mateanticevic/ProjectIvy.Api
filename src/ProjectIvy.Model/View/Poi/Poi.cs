@@ -1,5 +1,5 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
-using ProjectIvy.Common.Extensions;
+﻿using ProjectIvy.Common.Extensions;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Poi
 {

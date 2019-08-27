@@ -1,7 +1,6 @@
-﻿using ProjectIvy.Data.DbContexts;
-using ProjectIvy.Data.Extensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Data.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 

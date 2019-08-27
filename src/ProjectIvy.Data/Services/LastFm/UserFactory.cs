@@ -1,5 +1,5 @@
-﻿using ProjectIvy.Common.Configuration;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
+using ProjectIvy.Common.Configuration;
 using ProjectIvy.Common.Interfaces;
 
 namespace ProjectIvy.Data.Services.LastFm

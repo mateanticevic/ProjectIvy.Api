@@ -1,8 +1,8 @@
-﻿using ProjectIvy.Common.Configuration;
-using ProjectIvy.Data.DbContexts;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using ProjectIvy.Common.Configuration;
+using ProjectIvy.Data.DbContexts;
 using System.Data.SqlClient;
 
 namespace ProjectIvy.Business.Handlers

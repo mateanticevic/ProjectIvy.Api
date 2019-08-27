@@ -1,7 +1,7 @@
-﻿using ProjectIvy.Data.DbContexts;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.Database.Main.Transport;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
 
 namespace ProjectIvy.Data.Extensions.Entities

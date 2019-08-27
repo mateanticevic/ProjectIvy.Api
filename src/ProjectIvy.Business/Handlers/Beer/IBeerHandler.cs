@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using ProjectIvy.Model.Binding.Beer;
+﻿using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Beer;
 
 namespace ProjectIvy.Business.Handlers.Beer

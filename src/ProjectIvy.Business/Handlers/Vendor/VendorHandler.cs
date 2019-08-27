@@ -1,8 +1,8 @@
-﻿using System.Linq;
-using ProjectIvy.Common.Extensions;
+﻿using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Vendor;
 using ProjectIvy.Model.View;
+using System.Linq;
 using View = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.Business.Handlers.Vendor

@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using ProjectIvy.Data.Databases.Main.UserTypes;
+﻿using ProjectIvy.Data.Databases.Main.UserTypes;
 using ProjectIvy.Data.Extensions;
-using System.Data.SqlClient;
-using System.Data;
 using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Data.SqlClient;
 using static Dapper.SqlMapper;
 
 namespace ProjectIvy.Data.Databases.Main.Queries
@@ -31,7 +31,7 @@ namespace ProjectIvy.Data.Databases.Main.Queries
 
             var intList = new IntList(ExpenseIds);
 
-            sqlCommand.Parameters.Add(intList.ToSqlParameter(nameof(ExpenseIds)));        
+            sqlCommand.Parameters.Add(intList.ToSqlParameter(nameof(ExpenseIds)));
             sqlCommand.Parameters.Add(From.ToSqlParameter(nameof(From)));
             sqlCommand.Parameters.Add(To.ToSqlParameter(nameof(To)));
             sqlCommand.Parameters.Add(UserId.ToSqlParameter(nameof(UserId)));

@@ -1,9 +1,8 @@
 ﻿using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.ExpenseType;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectIvy.Model.Binding;
-using ProjectIvy.Model.View.ExpenseType;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Business.Handlers.Expense

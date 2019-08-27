@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
-using ProjectIvy.Model.Binding.Flight;
 using Entities = ProjectIvy.Model.Database.Main;
 using Views = ProjectIvy.Model.View;
 
@@ -34,7 +34,7 @@ namespace ProjectIvy.Business.Handlers.Flight
                                       .Where(binding)
                                       .Include(x => x.DestinationAirport)
                                       .Include(x => x.OriginAirport)
-                                      .Select(x => new List<Entities.Transport.Airport>(){ x.DestinationAirport, x.OriginAirport })
+                                      .Select(x => new List<Entities.Transport.Airport>() { x.DestinationAirport, x.OriginAirport })
                                       .SelectMany(x => x)
                                       .Include(x => x.Poi)
                                       .GroupBy(x => x)

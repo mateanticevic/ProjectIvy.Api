@@ -1,12 +1,12 @@
-﻿using Database = ProjectIvy.Model.Database.Main.Finance;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.ExpenseType;
-using ProjectIvy.Model.View.ExpenseType;
-using ProjectIvy.Model.View.Expense;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Expense;
+using ProjectIvy.Model.View.ExpenseType;
 using System.Collections.Generic;
 using System.Linq;
+using Database = ProjectIvy.Model.Database.Main.Finance;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {

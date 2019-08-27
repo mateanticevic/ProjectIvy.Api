@@ -1,6 +1,6 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
-using ProjectIvy.Common.Interfaces;
+﻿using ProjectIvy.Common.Interfaces;
 using System;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Tracking
 {

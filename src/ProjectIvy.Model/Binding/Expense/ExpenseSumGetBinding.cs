@@ -8,7 +8,7 @@
 
         public ExpenseSumGetBinding Override(string typeId)
         {
-            TypeId = new [] {typeId};
+            TypeId = new[] { typeId };
 
             return this;
         }

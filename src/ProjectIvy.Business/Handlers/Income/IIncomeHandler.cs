@@ -1,8 +1,8 @@
-﻿using ProjectIvy.Model.Binding.Income;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ProjectIvy.Model.Binding;
 using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.Business.Handlers.Income

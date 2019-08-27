@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Model.Binding.Car
+﻿namespace ProjectIvy.Model.Binding.Car
 {
     public class CarLogGetBinding : FilteredPagedBinding
     {

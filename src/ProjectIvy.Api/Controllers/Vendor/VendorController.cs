@@ -3,9 +3,9 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Model.Binding.Poi;
-using System.Collections.Generic;
 using ProjectIvy.Model.Binding.Vendor;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using ViewVendor = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.Api.Controllers.Vendor
@@ -31,7 +31,7 @@ namespace ProjectIvy.Api.Controllers.Vendor
         public PagedView<ViewVendor.Vendor> Get([FromQuery] VendorGetBinding binding) => _vendorHandler.Get(binding);
 
         [HttpGet("{vendorId}/Poi")]
-        public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true}).Items;
+        public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true }).Items;
 
         #endregion
     }

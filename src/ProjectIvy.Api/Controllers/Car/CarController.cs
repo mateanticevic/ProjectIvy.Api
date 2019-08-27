@@ -4,8 +4,8 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Constants.Database;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Api.Controllers.Car

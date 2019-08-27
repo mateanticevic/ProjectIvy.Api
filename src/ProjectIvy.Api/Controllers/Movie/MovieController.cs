@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Api.Controllers.Movie

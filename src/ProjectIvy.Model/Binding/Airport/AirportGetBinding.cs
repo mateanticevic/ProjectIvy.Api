@@ -1,6 +1,4 @@
-﻿using ProjectIvy.Model.Binding.Common;
-
-namespace ProjectIvy.Model.Binding.Airport
+﻿namespace ProjectIvy.Model.Binding.Airport
 {
     public class AirportGetBinding : PagedBinding
     {

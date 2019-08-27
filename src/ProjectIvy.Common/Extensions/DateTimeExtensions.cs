@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace ProjectIvy.Common.Extensions
 {
@@ -68,7 +68,7 @@ namespace ProjectIvy.Common.Extensions
 
                 var current = new DateTime(from.Year, from.Month, 1);
 
-                while ( current.Year != to.Year || to.Month - current.Month > 1)
+                while (current.Year != to.Year || to.Month - current.Month > 1)
                 {
                     current = current.AddMonths(1);
 

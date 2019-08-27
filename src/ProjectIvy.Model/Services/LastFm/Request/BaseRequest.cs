@@ -33,7 +33,7 @@ namespace ProjectIvy.Model.Services.LastFm.Request
             var properties = this.GetType().GetProperties()
                                            .Where(x => x.GetValue(this, null) != null)
                                            .Select(x => x.Name.ToLowerInvariant() + "=" + HttpUtility.UrlEncode(x.GetValue(this, null).ToString()));
-                 
+
             return string.Join("&", properties.ToArray());
         }
     }

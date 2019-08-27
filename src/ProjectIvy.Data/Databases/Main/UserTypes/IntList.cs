@@ -1,8 +1,8 @@
-﻿using ProjectIvy.Common.Extensions;
-using Microsoft.SqlServer.Server;
+﻿using Microsoft.SqlServer.Server;
+using ProjectIvy.Common.Extensions;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 
 namespace ProjectIvy.Data.Databases.Main.UserTypes

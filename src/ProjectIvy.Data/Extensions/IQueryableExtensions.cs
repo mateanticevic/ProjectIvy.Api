@@ -1,11 +1,11 @@
-﻿using ProjectIvy.Model.Binding.Common;
-using ProjectIvy.Model.Binding;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Linq;
 using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 
 namespace ProjectIvy.Data.Extensions
 {

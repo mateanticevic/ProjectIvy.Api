@@ -1,9 +1,9 @@
-﻿using ProjectIvy.Common.Helpers;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.User;
-using Microsoft.EntityFrameworkCore;
-using System.Linq;
 using System;
+using System.Linq;
 using View = ProjectIvy.Model.View.User;
 
 namespace ProjectIvy.Business.Handlers.User

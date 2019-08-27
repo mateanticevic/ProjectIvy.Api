@@ -1,6 +1,6 @@
-﻿using System.Data.SqlClient;
+﻿using System;
 using System.Data;
-using System;
+using System.Data.SqlClient;
 
 namespace ProjectIvy.Data.Extensions
 {

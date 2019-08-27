@@ -1,6 +1,6 @@
-﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
+using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.User
 {
