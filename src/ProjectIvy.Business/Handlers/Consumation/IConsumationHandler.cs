@@ -27,6 +27,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding);
 
+        PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding);
+
         PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding);
 
         PagedView<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding);

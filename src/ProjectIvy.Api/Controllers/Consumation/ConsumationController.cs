@@ -27,6 +27,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Beer")]
         public IActionResult GetBeer(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBeers(binding));
 
+        [HttpGet("Beer/New")]
+        public IActionResult GetBeerNew(FilteredPagedBinding binding) => Ok(_consumationHandler.GetNewBeers(binding));
+
         [HttpGet("Brand")]
         public IActionResult GetBrands(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBrands(binding));
 

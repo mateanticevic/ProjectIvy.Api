@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
@@ -109,6 +110,36 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .Where(binding, context)
                                            .Select(x => new View.Consumation.Consumation(x))
                                            .OrderByDescending(x => x.Date)
+                                           .ToPagedView(binding);
+            }
+        }
+
+        public PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var oldBeerIds = new List<int>();
+
+                if (binding.From.HasValue)
+                {
+                    var filter = new FilteredPagedBinding()
+                    {
+                        To = binding.From.Value.AddDays(-1)
+                    };
+
+                    oldBeerIds.AddRange(context.Consumations.WhereUser(User)
+                                               .Where(filter)
+                                               .Select(x => x.Beer)
+                                               .Distinct()
+                                               .Select(x => x.Id));
+                }
+
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding)
+                                           .Select(x => x.Beer)
+                                           .Where(x => !oldBeerIds.Any(y => x.Id == y))
+                                           .Distinct()
+                                           .Select(x => new View.Beer.Beer(x))
                                            .ToPagedView(binding);
             }
         }
