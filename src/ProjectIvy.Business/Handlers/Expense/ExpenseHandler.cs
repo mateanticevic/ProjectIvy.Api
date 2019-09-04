@@ -193,6 +193,9 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public string Create(ExpenseBinding binding)
         {
+            if (!string.IsNullOrWhiteSpace(binding.VendorName))
+                binding.VendorId = CreateVendor(binding.VendorName);
+
             using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
@@ -390,6 +393,9 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public bool Update(ExpenseBinding binding)
         {
+            if (!string.IsNullOrWhiteSpace(binding.VendorName))
+                binding.VendorId = CreateVendor(binding.VendorName);
+
             using (var context = GetMainContext())
             {
                 var entity = context.Expenses.WhereUser(User.Id).SingleOrDefault(x => x.ValueId == binding.Id);
@@ -400,6 +406,21 @@ namespace ProjectIvy.Business.Handlers.Expense
                 context.SaveChanges();
 
                 return true;
+            }
+        }
+
+        private string CreateVendor(string name)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = new Model.Database.Main.Finance.Vendor()
+                {
+                    Name = name,
+                    ValueId = name.Replace(" ", "-").ToLowerInvariant()
+                };
+                context.Vendors.Add(entity);
+                context.SaveChanges();
+                return entity.ValueId;
             }
         }
     }
