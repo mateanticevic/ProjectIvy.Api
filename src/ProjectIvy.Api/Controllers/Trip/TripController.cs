@@ -11,7 +11,6 @@ using View = ProjectIvy.Model.View.Trip;
 namespace ProjectIvy.Api.Controllers.Trip
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class TripController : BaseController<TripController>
     {
         private readonly ITripHandler _tripHandler;

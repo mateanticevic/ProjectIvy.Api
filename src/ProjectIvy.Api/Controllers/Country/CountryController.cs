@@ -10,7 +10,6 @@ using View = ProjectIvy.Model.View.Country;
 
 namespace ProjectIvy.Api.Controllers.Country
 {
-    [Route("[controller]")]
     public class CountryController : BaseController<CountryController>
     {
         private readonly ICountryHandler _countryHandler;

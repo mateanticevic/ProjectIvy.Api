@@ -10,7 +10,6 @@ using ViewVendor = ProjectIvy.Model.View.Vendor;
 
 namespace ProjectIvy.Api.Controllers.Vendor
 {
-    [Route("[controller]")]
     public class VendorController : BaseController<VendorController>
     {
         private readonly IPoiHandler _poiHandler;

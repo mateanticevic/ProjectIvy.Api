@@ -6,7 +6,6 @@ using ProjectIvy.Model.Binding.Call;
 
 namespace ProjectIvy.Api.Controllers.Call
 {
-    [Route("[controller]")]
     public class CallController : BaseController<CallController>
     {
         private readonly ICallHandler _callHandler;

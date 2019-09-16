@@ -8,7 +8,6 @@ using View = ProjectIvy.Model.View.Poi;
 
 namespace ProjectIvy.Api.Controllers.Poi
 {
-    [Route("[controller]")]
     public class PoiController : BaseController<PoiController>
     {
         private readonly IPoiHandler _poiHandler;

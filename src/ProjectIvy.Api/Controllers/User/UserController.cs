@@ -10,7 +10,6 @@ using View = ProjectIvy.Model.View.User;
 namespace ProjectIvy.Api.Controllers.User
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class UserController : BaseController<UserController>
     {
         private readonly IUserHandler _userHandler;

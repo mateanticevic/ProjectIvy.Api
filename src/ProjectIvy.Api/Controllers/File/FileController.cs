@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.File
 {
-    [Route("[controller]")]
     public class FileController : BaseController<FileController>
     {
         private readonly IFileHandler _fileHandler;

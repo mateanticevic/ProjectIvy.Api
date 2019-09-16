@@ -12,7 +12,6 @@ using ViewTask = ProjectIvy.Model.View.Task;
 namespace ProjectIvy.Api.Controllers.Project
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class ProjectController : BaseController<ProjectController>
     {
         private readonly IProjectHandler _projectHandler;

@@ -8,7 +8,6 @@ using ProjectIvy.Model.Constants.Database;
 namespace ProjectIvy.Api.Controllers.Flight
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class FlightController : BaseController<FlightController>
     {
         private readonly IFlightHandler _flightHandler;

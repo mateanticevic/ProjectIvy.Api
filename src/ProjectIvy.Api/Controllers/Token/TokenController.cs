@@ -4,7 +4,6 @@ using ProjectIvy.Business.Handlers.Security;
 
 namespace ProjectIvy.Api.Controllers.Token
 {
-    [Route("[controller]")]
     public class TokenController : BaseController<TokenController>
     {
         private readonly ISecurityHandler _securityHandler;

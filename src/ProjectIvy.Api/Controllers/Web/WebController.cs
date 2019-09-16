@@ -8,7 +8,6 @@ using View = ProjectIvy.Model.View.Web;
 
 namespace ProjectIvy.Api.Controllers.Web
 {
-    [Route("[controller]")]
     public class WebController : BaseController<WebController>
     {
         private readonly IWebHandler _webHandler;

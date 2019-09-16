@@ -9,7 +9,6 @@ using View = ProjectIvy.Model.View.Airport;
 
 namespace ProjectIvy.Api.Controllers.Airport
 {
-    [Route("[controller]")]
     public class AirportController : BaseController<AirportController>
     {
         private readonly IAirportHandler _airportHandler;

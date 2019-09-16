@@ -8,7 +8,6 @@ using ProjectIvy.Model.Constants.Database;
 namespace ProjectIvy.Api.Controllers.Task
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class ToDoController : BaseController<ToDoController>
     {
         private readonly IToDoHandler _toDoHandler;

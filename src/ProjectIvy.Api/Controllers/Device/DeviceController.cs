@@ -9,7 +9,6 @@ using ProjectIvy.Model.Constants.Database;
 namespace ProjectIvy.Api.Controllers.Device
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class DeviceController : BaseController<DeviceController>
     {
         private readonly IDeviceHandler _deviceHandler;

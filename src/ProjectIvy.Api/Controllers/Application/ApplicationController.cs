@@ -5,7 +5,6 @@ using System.Collections.Generic;
 
 namespace ProjectIvy.Api.Controllers.Application
 {
-    [Route("[controller]")]
     public class ApplicationController : BaseController<ApplicationController>
     {
         private readonly IApplicationHandler _applicationHandler;

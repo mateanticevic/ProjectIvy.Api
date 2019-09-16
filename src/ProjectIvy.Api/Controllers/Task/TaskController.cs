@@ -10,7 +10,6 @@ using ViewModel = ProjectIvy.Model.View.Task;
 namespace ProjectIvy.Api.Controllers.Task
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class TaskController : BaseController<TaskController>
     {
         private readonly ITaskHandler _taskHandler;

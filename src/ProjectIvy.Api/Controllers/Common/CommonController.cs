@@ -10,7 +10,6 @@ using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Common
 {
-    [Route("[controller]")]
     public class CommonController : BaseController<CommonController>
     {
         private readonly ICurrencyHandler _currencyHandler;

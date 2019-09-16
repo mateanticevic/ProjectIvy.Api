@@ -11,7 +11,6 @@ using View = ProjectIvy.Model.View.Movie;
 namespace ProjectIvy.Api.Controllers.Movie
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class MovieController : BaseController<MovieController>
     {
         private readonly IMovieHandler _movieHandler;

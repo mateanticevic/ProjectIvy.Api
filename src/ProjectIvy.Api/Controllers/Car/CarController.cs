@@ -11,7 +11,6 @@ using View = ProjectIvy.Model.View.Car;
 namespace ProjectIvy.Api.Controllers.Car
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class CarController : BaseController<CarController>
     {
         private readonly ICarHandler _carHandler;

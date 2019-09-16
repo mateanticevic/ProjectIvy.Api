@@ -11,7 +11,6 @@ using View = ProjectIvy.Model.View.Consumation;
 namespace ProjectIvy.Api.Controllers.Consumation
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class ConsumationController : BaseController<ConsumationController>
     {
         private readonly IConsumationHandler _consumationHandler;

@@ -5,7 +5,6 @@ using ProjectIvy.Model.Binding.Beer;
 
 namespace ProjectIvy.Api.Controllers.Beer
 {
-    [Route("[controller]")]
     public class BeerController : BaseController<BeerController>
     {
         private readonly IBeerHandler _beerHandler;

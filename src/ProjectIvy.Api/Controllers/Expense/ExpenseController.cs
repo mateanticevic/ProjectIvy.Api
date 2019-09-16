@@ -13,7 +13,6 @@ using View = ProjectIvy.Model.View.Expense;
 namespace ProjectIvy.Api.Controllers.Expense
 {
     [Authorize(Roles = UserRole.User)]
-    [Route("[controller]")]
     public class ExpenseController : BaseController<ExpenseController>
     {
         private readonly IExpenseHandler _expenseHandler;

@@ -7,7 +7,6 @@ using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.ExpenseType
 {
-    [Route("[controller]")]
     public class ExpenseTypeController : BaseController<ExpenseTypeController>
     {
         private readonly IExpenseTypeHandler _expenseTypeHandler;
