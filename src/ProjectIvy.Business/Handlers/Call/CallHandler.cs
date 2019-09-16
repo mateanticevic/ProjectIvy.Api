@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Call;
 using ProjectIvy.Model.View;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Call;
 
 namespace ProjectIvy.Business.Handlers.Call
@@ -52,6 +53,14 @@ namespace ProjectIvy.Business.Handlers.Call
                 context.SaveChanges();
 
                 return entity.ValueId;
+            }
+        }
+
+        public async Task<bool> IsNumberBlacklisted(string number)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.CallBlacklist.WhereUser(User).AnyAsync(x => x.Number == number);
             }
         }
     }

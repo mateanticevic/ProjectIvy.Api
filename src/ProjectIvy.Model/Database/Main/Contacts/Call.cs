@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Contacts
 {
-    [Table(nameof(Contacts), Schema = "User")]
+    [Table(nameof(Call), Schema = nameof(Contacts))]
     public class Call : UserEntity, IHasTimestamp, IHasValueId
     {
         [Key]

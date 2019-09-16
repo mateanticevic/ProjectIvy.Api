@@ -282,7 +282,7 @@ namespace ProjectIvy.Data.DbContexts
                         .HasOne(x => x.Type);
 
             modelBuilder.Entity<TrackingDistance>()
-                        .HasKey(x => new { Timestamp = x.Timestamp, x.UserId });
+                        .HasKey(x => new { x.Timestamp, x.UserId });
 
             modelBuilder.Entity<User>()
                         .HasOne(x => x.BirthCity);
@@ -354,6 +354,9 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<TripCity>()
                         .HasKey(x => new { x.CityId, x.TripId });
+
+            modelBuilder.Entity<CallBlacklist>()
+                        .HasKey(x => new { x.UserId, x.Number });
 
             modelBuilder.Entity<Trip>()
                         .HasMany(x => x.Cities)
