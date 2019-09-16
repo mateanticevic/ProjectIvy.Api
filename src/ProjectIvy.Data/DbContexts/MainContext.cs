@@ -106,18 +106,6 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<PoiCategory> PoiCategories { get; set; }
 
-        public DbSet<Project> Projects { get; set; }
-
-        public DbSet<Task> Tasks { get; set; }
-
-        public DbSet<TaskChange> TaskChanges { get; set; }
-
-        public DbSet<TaskPriority> TaskPriorities { get; set; }
-
-        public DbSet<TaskStatus> TaskStatuses { get; set; }
-
-        public DbSet<TaskType> TaskTypes { get; set; }
-
         public DbSet<ToDo> ToDos { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }
@@ -264,23 +252,6 @@ namespace ProjectIvy.Data.DbContexts
                         .HasOne(x => x.IncomeSource)
                         .WithMany(x => x.Incomes);
 
-            modelBuilder.Entity<Task>()
-                        .HasOne(x => x.Project)
-                        .WithMany(x => x.Tasks);
-
-            modelBuilder.Entity<TaskChange>()
-                        .HasOne(x => x.Task)
-                        .WithMany(x => x.Changes);
-
-            modelBuilder.Entity<TaskChange>()
-                        .HasOne(x => x.Priority);
-
-            modelBuilder.Entity<TaskChange>()
-                        .HasOne(x => x.Status);
-
-            modelBuilder.Entity<Task>()
-                        .HasOne(x => x.Type);
-
             modelBuilder.Entity<TrackingDistance>()
                         .HasKey(x => new { x.Timestamp, x.UserId });
 
@@ -297,23 +268,6 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<UserRole>()
                         .HasOne(x => x.Role)
                         .WithMany(x => x.UserRoles);
-
-            modelBuilder.Entity<RelatedTask>()
-                        .HasOne(x => x.Task);
-
-            modelBuilder.Entity<RelatedTask>()
-                        .HasOne(x => x.Related);
-
-            modelBuilder.Entity<RelatedTask>()
-                        .HasKey(x => new { x.RelatedId, x.TaskId });
-
-            modelBuilder.Entity<RelatedTask>()
-                        .HasOne(x => x.Task)
-                        .WithMany(x => x.WhichRelate);
-
-            modelBuilder.Entity<RelatedTask>()
-                        .HasOne(x => x.Related)
-                        .WithMany(x => x.Related);
 
             modelBuilder.Entity<Device>()
                         .HasOne(x => x.DeviceType)
