@@ -42,7 +42,7 @@ namespace ProjectIvy.Business.Handlers.Call
         {
             using (var context = GetMainContext())
             {
-                if (context.CallBlacklist.Any(x => x.Number == binding.Number))
+                if (context.CallBlacklist.WhereUser(User).Any(x => x.Number == binding.Number))
                     throw new ResourceForbiddenException();
 
                 var entity = binding.ToEntity(context);
