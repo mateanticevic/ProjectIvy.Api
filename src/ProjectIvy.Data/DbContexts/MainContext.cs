@@ -42,6 +42,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Call> Calls { get; set; }
 
+        public DbSet<CallBlacklist> CallBlacklist { get; set; }
+
         public DbSet<Car> Cars { get; set; }
 
         public DbSet<Card> Cards { get; set; }

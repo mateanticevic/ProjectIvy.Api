@@ -27,6 +27,8 @@ namespace ProjectIvy.Api.Middleware
                 statusCode = HttpStatusCode.BadRequest;
             else if (e is ResourceExistsException)
                 statusCode = HttpStatusCode.Conflict;
+            else if (e is ResourceForbiddenException)
+                statusCode = HttpStatusCode.Forbidden;
             else if (e is ResourceNotFoundException)
                 statusCode = HttpStatusCode.NotFound;
 

@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
@@ -41,6 +42,9 @@ namespace ProjectIvy.Business.Handlers.Call
         {
             using (var context = GetMainContext())
             {
+                if (context.CallBlacklist.Any(x => x.Number == binding.Number))
+                    throw new ResourceForbiddenException();
+
                 var entity = binding.ToEntity(context);
                 entity.UserId = User.Id;
 
