@@ -17,8 +17,6 @@ namespace ProjectIvy.Api.Controllers.Trip
 
         public TripController(ILogger<TripController> logger, ITripHandler tripHandler) : base(logger) => _tripHandler = tripHandler;
 
-        #region Delete
-
         [HttpDelete("{tripId}")]
         public StatusCodeResult Delete(string tripId)
         {
@@ -51,19 +49,11 @@ namespace ProjectIvy.Api.Controllers.Trip
             return new StatusCodeResult(StatusCodes.Status200OK);
         }
 
-        #endregion
-
-        #region Get
-
         [HttpGet]
         public PagedView<View.Trip> Get(TripGetBinding binding) => _tripHandler.Get(binding);
 
         [HttpGet("{tripId}")]
         public View.Trip Get(string tripId) => _tripHandler.GetSingle(tripId);
-
-        #endregion
-
-        #region Post
 
         [HttpPost("{tripId}/Poi/{poiId}")]
         public StatusCodeResult PostPoi(string tripId, string poiId)
@@ -96,7 +86,5 @@ namespace ProjectIvy.Api.Controllers.Trip
 
             return new StatusCodeResult(StatusCodes.Status201Created);
         }
-
-        #endregion
     }
 }

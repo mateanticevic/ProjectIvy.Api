@@ -19,8 +19,6 @@ namespace ProjectIvy.Api.Controllers.Income
 
         public IncomeController(ILogger<IncomeController> logger, IIncomeHandler incomeHandler) : base(logger) => _incomeHandler = incomeHandler;
 
-        #region Get
-
         [HttpGet]
         public PagedView<View.Income> Get([FromQuery] IncomeGetBinding binding) => _incomeHandler.Get(binding);
 
@@ -35,7 +33,5 @@ namespace ProjectIvy.Api.Controllers.Income
 
         [HttpGet("Sum/ByYear")]
         public IEnumerable<GroupedByYear<decimal>> GetSumByYear([FromQuery] IncomeGetSumBinding binding) => _incomeHandler.GetSumByYear(binding);
-
-        #endregion
     }
 }

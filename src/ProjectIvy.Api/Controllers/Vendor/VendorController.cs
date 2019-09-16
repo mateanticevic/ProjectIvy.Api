@@ -21,8 +21,6 @@ namespace ProjectIvy.Api.Controllers.Vendor
             _vendorHandler = vendorHandler;
         }
 
-        #region Get
-
         [HttpGet("{id}")]
         public ViewVendor.Vendor Get(string id) => _vendorHandler.Get(id);
 
@@ -31,7 +29,5 @@ namespace ProjectIvy.Api.Controllers.Vendor
 
         [HttpGet("{vendorId}/Poi")]
         public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true }).Items;
-
-        #endregion
     }
 }

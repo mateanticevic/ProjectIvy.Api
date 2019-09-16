@@ -16,8 +16,6 @@ namespace ProjectIvy.Api.Controllers.Country
 
         public CountryController(ILogger<CountryController> logger, ICountryHandler countryHandler) : base(logger) => _countryHandler = countryHandler;
 
-        #region Get
-
         [HttpGet]
         public PagedView<View.Country> Get(CountryGetBinding binding) => _countryHandler.Get(binding);
 
@@ -36,7 +34,5 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet("Visited/Boundaries")]
         public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries() => _countryHandler.GetBoundaries(_countryHandler.GetVisited());
-
-        #endregion
     }
 }

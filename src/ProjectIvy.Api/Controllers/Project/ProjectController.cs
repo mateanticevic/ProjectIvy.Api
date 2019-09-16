@@ -23,8 +23,6 @@ namespace ProjectIvy.Api.Controllers.Project
             _taskHandler = taskHandler;
         }
 
-        #region Get
-
         [HttpGet]
         public IEnumerable<ViewProject.Project> Get() => _projectHandler.Get();
 
@@ -34,18 +32,11 @@ namespace ProjectIvy.Api.Controllers.Project
         [HttpGet("{valueId}/Task/{taskValueId}")]
         public ViewTask.Task GetTask(string valueId, string taskValueId) => _taskHandler.Get(valueId, taskValueId);
 
-        #endregion
-
-        #region Put
-
-        [HttpPut]
-        [Route("{valueId}/Task")]
+        [HttpPut("{valueId}/Task")]
         public string PutTask([FromBody] TaskBinding binding, string valueId)
         {
             binding.ProjectId = valueId;
             return _taskHandler.Create(binding);
         }
-
-        #endregion
     }
 }

@@ -13,7 +13,7 @@ namespace ProjectIvy.Api.Controllers.Airport
     {
         private readonly IAirportHandler _airportHandler;
 
-        public AirportController(IOptions<AppSettings> options, ILogger<AirportController> logger, IAirportHandler airportHandler) : base(logger)
+        public AirportController(ILogger<AirportController> logger, IAirportHandler airportHandler) : base(logger)
         {
             _airportHandler = airportHandler;
         }

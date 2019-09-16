@@ -26,8 +26,6 @@ namespace ProjectIvy.Api.Controllers.Tracking
             _trackingHandler = trackingHandler;
         }
 
-        #region Get
-
         [HttpGet]
         public IEnumerable<View.Tracking> Get([FromQuery] FilteredBinding binding) => _trackingHandler.Get(binding);
 
@@ -64,10 +62,6 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Speed/Max")]
         public double GetMaxSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetMaxSpeed(binding);
 
-        #endregion
-
-        #region Put
-
         [HttpPut]
         public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
 
@@ -78,7 +72,5 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
             return _trackingHandler.ImportFromKml(kml);
         }
-
-        #endregion
     }
 }

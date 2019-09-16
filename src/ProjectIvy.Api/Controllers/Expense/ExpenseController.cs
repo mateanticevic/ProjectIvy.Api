@@ -22,8 +22,6 @@ namespace ProjectIvy.Api.Controllers.Expense
             _expenseHandler = expenseHandler;
         }
 
-        #region Delete
-
         [HttpDelete("{valueId}")]
         public bool Delete(string valueId)
         {
@@ -31,10 +29,6 @@ namespace ProjectIvy.Api.Controllers.Expense
 
             return _expenseHandler.Delete(valueId);
         }
-
-        #endregion
-
-        #region Get
 
         [HttpGet("{expenseId}")]
         public View.Expense Get(string expenseId) => _expenseHandler.Get(expenseId);
@@ -87,20 +81,12 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Vendor/Count")]
         public int GetVendorsCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountVendors(binding);
 
-        #endregion
-
-        #region Put
-
         [HttpPut("{id}")]
         public bool Put(string id, [FromBody] ExpenseBinding binding)
         {
             binding.Id = id;
             return _expenseHandler.Update(binding);
         }
-
-        #endregion
-
-        #region Post
 
         [HttpPost]
         public string Post([FromBody] ExpenseBinding binding) => _expenseHandler.Create(binding);
@@ -112,7 +98,5 @@ namespace ProjectIvy.Api.Controllers.Expense
 
             return Ok();
         }
-
-        #endregion
     }
 }

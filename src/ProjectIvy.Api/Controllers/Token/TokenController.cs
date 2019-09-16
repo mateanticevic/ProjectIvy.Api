@@ -10,8 +10,6 @@ namespace ProjectIvy.Api.Controllers.Token
 
         public TokenController(ILogger<TokenController> logger, ISecurityHandler securityHandler) : base(logger) => _securityHandler = securityHandler;
 
-        #region Get
-
         [HttpPost]
         public ActionResult PostToken([FromQuery] string username, [FromQuery] string password)
         {
@@ -19,7 +17,5 @@ namespace ProjectIvy.Api.Controllers.Token
 
             return new JsonResult(token);
         }
-
-        #endregion
     }
 }

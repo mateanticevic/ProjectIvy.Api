@@ -13,14 +13,10 @@ namespace ProjectIvy.Api.Controllers.ExpenseType
 
         public ExpenseTypeController(ILogger<ExpenseTypeController> logger, IExpenseTypeHandler expenseTypeHandler) : base(logger) => _expenseTypeHandler = expenseTypeHandler;
 
-        #region Get
-
         [HttpGet]
         public IEnumerable<View.ExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding) => _expenseTypeHandler.Get(binding);
 
         [HttpGet("Tree")]
         public IEnumerable<View.Node<View.ExpenseType.ExpenseType>> GetTree() => _expenseTypeHandler.GetTree();
-
-        #endregion
     }
 }

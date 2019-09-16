@@ -20,8 +20,6 @@ namespace ProjectIvy.Api.Controllers.Movie
             _movieHandler = movieHandler;
         }
 
-        #region Get
-
         [HttpGet]
         public PagedView<View.Movie> Get([FromQuery] MovieGetBinding binding) => _movieHandler.Get(binding);
 
@@ -36,7 +34,5 @@ namespace ProjectIvy.Api.Controllers.Movie
 
         [HttpGet("Count/ByYear")]
         public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.CountByYear(binding);
-
-        #endregion
     }
 }

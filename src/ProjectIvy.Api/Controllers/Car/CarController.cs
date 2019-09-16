@@ -20,8 +20,6 @@ namespace ProjectIvy.Api.Controllers.Car
             _carHandler = carHandler;
         }
 
-        #region Get
-
         [HttpGet]
         public IEnumerable<View.Car> Get()
         {
@@ -54,20 +52,12 @@ namespace ProjectIvy.Api.Controllers.Car
             return "OK!";
         }
 
-        #endregion
-
-        #region Post
-
         [HttpPost("{id}/Log")]
         public DateTime PostLog([FromBody] CarLogBinding binding, string id)
         {
             binding.CarValueId = id;
             return _carHandler.CreateLog(binding);
         }
-
-        #endregion
-
-        #region Put
 
         [HttpPut("{id}")]
         public IActionResult PutCar(string id, [FromBody] CarBinding car)
@@ -76,7 +66,5 @@ namespace ProjectIvy.Api.Controllers.Car
 
             return Ok();
         }
-
-        #endregion
     }
 }
