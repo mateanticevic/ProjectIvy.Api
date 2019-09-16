@@ -5,7 +5,8 @@ using ProjectIvy.Model.View.PaymentProvider;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.PaymentProvider
-{
+{
+
     [ApiController]
     public class PaymentProviderController : BaseController<PaymentProviderController>
     {

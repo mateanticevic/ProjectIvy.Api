@@ -19,9 +19,6 @@ namespace ProjectIvy.Api.Controllers.Movie
         }
 
         [HttpGet("Average")]
-        public double GetAverage([FromQuery] MovieGetBinding binding)
-        {
-            return _movieHandler.GetMyRatingAverage(binding);
-        }
+        public double GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetMyRatingAverage(binding);
     }
 }

@@ -18,9 +18,6 @@ namespace ProjectIvy.Api.Controllers.Card
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] CardGetBinding binding)
-        {
-            return Ok(_cardHandler.GetCards(binding));
-        }
+        public IActionResult Get([FromQuery] CardGetBinding binding) => Ok(_cardHandler.GetCards(binding));
     }
 }

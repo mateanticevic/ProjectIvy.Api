@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using ProjectIvy.Business.Handlers.Airport;
-using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Binding.Airport;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Airport;
@@ -19,15 +17,9 @@ namespace ProjectIvy.Api.Controllers.Airport
         }
 
         [HttpGet]
-        public PagedView<View.Airport> Get([FromQuery] AirportGetBinding binding)
-        {
-            return _airportHandler.Get(binding);
-        }
+        public PagedView<View.Airport> Get([FromQuery] AirportGetBinding binding) => _airportHandler.Get(binding);
 
         [HttpGet("Count")]
-        public long GetCount([FromQuery] AirportGetBinding binding)
-        {
-            return _airportHandler.Count(binding);
-        }
+        public long GetCount([FromQuery] AirportGetBinding binding) => _airportHandler.Count(binding);
     }
 }

@@ -21,28 +21,16 @@ namespace ProjectIvy.Api.Controllers.Car
         }
 
         [HttpGet]
-        public IEnumerable<View.Car> Get()
-        {
-            return _carHandler.Get();
-        }
+        public IEnumerable<View.Car> Get() => _carHandler.Get();
 
         [HttpGet("{carId}/Log/BySession")]
-        public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding)
-        {
-            return _carHandler.GetLogBySession(carId, binding);
-        }
+        public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
 
         [HttpGet("{carId}/Log/Count")]
-        public int GetLogCount(string carId)
-        {
-            return _carHandler.GetLogCount(carId);
-        }
+        public int GetLogCount(string carId) => _carHandler.GetLogCount(carId);
 
         [HttpGet("{carId}/Log/Latest")]
-        public View.CarLog GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding)
-        {
-            return _carHandler.GetLatestLog(carId, binding);
-        }
+        public View.CarLog GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLatestLog(carId, binding);
 
         [AllowAnonymous]
         [HttpGet("{carId}/Log/Torque.php")]

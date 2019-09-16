@@ -12,5 +12,11 @@ namespace ProjectIvy.Api.Controllers
         }
 
         protected ILogger Logger { get; }
+
+        protected async System.Threading.Tasks.Task<OkResult> Ok(System.Threading.Tasks.Task task)
+        {
+            await task;
+            return Ok();
+        }
     }
 }

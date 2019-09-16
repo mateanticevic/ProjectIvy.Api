@@ -13,12 +13,7 @@ namespace ProjectIvy.Api.Controllers.File
         public FileController(ILogger<FileController> logger, IFileHandler fileHandler) : base(logger) => _fileHandler = fileHandler;
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(string id)
-        {
-            await _fileHandler.DeleteFile(id);
-
-            return Ok();
-        }
+        public async Task<IActionResult> Delete(string id) => await Ok(_fileHandler.DeleteFile(id));
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(string id)
