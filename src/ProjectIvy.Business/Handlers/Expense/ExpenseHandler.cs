@@ -268,7 +268,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public async System.Threading.Tasks.Task NotifyTransferWiseEvent(string authorizationCode, int resourceId)
+        public async Task NotifyTransferWiseEvent(string authorizationCode, int resourceId)
         {
             using (var context = GetMainContext())
             {
@@ -357,7 +357,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 var tasks = types.Select(x => new KeyValuePair<string, Task<decimal>>(x, SumAmount(binding.Override(x))));
 
-                await System.Threading.Tasks.Task.WhenAll(tasks.Select(x => x.Value));
+                await Task.WhenAll(tasks.Select(x => x.Value));
 
                 return tasks.Select(x => new KeyValuePair<string, decimal>(x.Key, x.Value.Result))
                             .OrderByDescending(x => x.Value);

@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Handlers.File
             _azureStorageHelper = azureStorageHelper;
         }
 
-        public async System.Threading.Tasks.Task DeleteFile(string id)
+        public async Task DeleteFile(string id)
         {
             using (var context = GetMainContext())
             {

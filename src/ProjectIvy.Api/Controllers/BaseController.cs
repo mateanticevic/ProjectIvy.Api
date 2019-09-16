@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers
 {
@@ -13,7 +14,7 @@ namespace ProjectIvy.Api.Controllers
 
         protected ILogger Logger { get; }
 
-        protected async System.Threading.Tasks.Task<OkResult> Ok(System.Threading.Tasks.Task task)
+        protected async Task<OkResult> Ok(Task task)
         {
             await task;
             return Ok();

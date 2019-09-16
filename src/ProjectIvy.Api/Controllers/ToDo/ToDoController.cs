@@ -5,7 +5,7 @@ using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Model.Binding.ToDo;
 using ProjectIvy.Model.Constants.Database;
 
-namespace ProjectIvy.Api.Controllers.Task
+namespace ProjectIvy.Api.Controllers.ToDo
 {
     [Authorize(Roles = UserRole.User)]
     public class ToDoController : BaseController<ToDoController>

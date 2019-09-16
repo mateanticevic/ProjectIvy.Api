@@ -6,7 +6,7 @@ namespace ProjectIvy.Business.Handlers.File
 {
     public interface IFileHandler
     {
-        System.Threading.Tasks.Task DeleteFile(string id);
+        Task DeleteFile(string id);
 
         Task<FileWithData> GetFile(string id);
 
