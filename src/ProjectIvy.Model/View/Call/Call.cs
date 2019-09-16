@@ -6,7 +6,7 @@ namespace ProjectIvy.Model.View.Call
 {
     public class Call
     {
-        public Call(DatabaseModel.User.Call c)
+        public Call(DatabaseModel.Contacts.Call c)
         {
             Duration = c.Duration;
             File = c.File.ConvertTo(x => new File.File(x));

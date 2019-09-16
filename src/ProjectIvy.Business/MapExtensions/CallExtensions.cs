@@ -1,7 +1,7 @@
 ﻿using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Call;
-using ProjectIvy.Model.Database.Main.User;
+using ProjectIvy.Model.Database.Main.Contacts;
 using System.Linq;
 
 namespace ProjectIvy.Business.MapExtensions

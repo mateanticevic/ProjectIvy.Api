@@ -2,9 +2,9 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ProjectIvy.Model.Database.Main.User
+namespace ProjectIvy.Model.Database.Main.Contacts
 {
-    [Table(nameof(Call), Schema = "User")]
+    [Table(nameof(Contacts), Schema = "User")]
     public class Call : UserEntity, IHasTimestamp, IHasValueId
     {
         [Key]
