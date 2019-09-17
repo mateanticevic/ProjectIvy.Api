@@ -8,9 +8,9 @@ namespace ProjectIvy.Business.Handlers.Call
 {
     public interface ICallHandler
     {
-        string Create(CallBinding binding);
+        Task<string> Create(CallBinding binding);
 
-        PagedView<View.Call> Get(FilteredPagedBinding binding);
+        Task<PagedView<View.Call>> Get(FilteredPagedBinding binding);
 
         Task<bool> IsNumberBlacklisted(string number);
     }

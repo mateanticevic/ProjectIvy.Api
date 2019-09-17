@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Call;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Call
 {
@@ -16,9 +17,9 @@ namespace ProjectIvy.Api.Controllers.Call
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] FilteredPagedBinding binding) => Ok(_callHandler.Get(binding));
+        public async Task<IActionResult> Get([FromQuery] FilteredPagedBinding binding) => Ok(await _callHandler.Get(binding));
 
         [HttpPost]
-        public IActionResult Post([FromBody] CallBinding binding) => Ok(_callHandler.Create(binding));
+        public async Task<IActionResult> Post([FromBody] CallBinding binding) => Ok(await _callHandler.Create(binding));
     }
 }

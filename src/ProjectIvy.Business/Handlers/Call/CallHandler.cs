@@ -18,20 +18,20 @@ namespace ProjectIvy.Business.Handlers.Call
         {
         }
 
-        public PagedView<View.Call> Get(FilteredPagedBinding binding)
+        public async Task<PagedView<View.Call>> Get(FilteredPagedBinding binding)
         {
             using (var context = GetMainContext())
             {
-                var calls = context.Calls
-                                   .WhereUser(User)
-                                   .Include(x => x.File)
-                                   .OrderByDescending(x => x.Timestamp)
-                                   .Select(x => new View.Call(x))
-                                   .ToPagedView(binding);
+                var calls = await context.Calls
+                                         .WhereUser(User)
+                                         .Include(x => x.File)
+                                         .OrderByDescending(x => x.Timestamp)
+                                         .Select(x => new View.Call(x))
+                                         .ToPagedViewAsync(binding);
 
                 foreach (var call in calls.Items)
                 {
-                    var person = context.People.SingleOrDefault(x => x.Contacts.Any(y => y.Identifier == call.Number));
+                    var person = await context.People.SingleOrDefaultAsync(x => x.Contacts.Any(y => y.Identifier == call.Number));
                     call.Person = person.ConvertTo(p => new Model.View.Person.Person(p));
                 }
 
@@ -39,7 +39,7 @@ namespace ProjectIvy.Business.Handlers.Call
             }
         }
 
-        public string Create(CallBinding binding)
+        public async Task<string> Create(CallBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -49,8 +49,8 @@ namespace ProjectIvy.Business.Handlers.Call
                 var entity = binding.ToEntity(context);
                 entity.UserId = User.Id;
 
-                context.Calls.Add(entity);
-                context.SaveChanges();
+                await context.Calls.AddAsync(entity);
+                await context.SaveChangesAsync();
 
                 return entity.ValueId;
             }
