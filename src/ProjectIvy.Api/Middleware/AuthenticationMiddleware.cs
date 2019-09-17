@@ -22,6 +22,9 @@ namespace ProjectIvy.Api.Middleware
 
         public Task Invoke(HttpContext httpContext)
         {
+            if (httpContext.Request.Path.Value.Contains("token"))
+                return _next(httpContext);
+
             try
             {
                 string authorizationToken = httpContext.GetAuthorizationToken();
