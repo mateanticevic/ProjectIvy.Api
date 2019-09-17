@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using ProjectIvy.Api.Cache;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Model.Constants.Database;
 using System.Security.Claims;
@@ -46,7 +47,7 @@ namespace ProjectIvy.Api.Middleware
             }
             catch
             {
-                return _next(httpContext);
+                throw new UnauthorizedException();
             }
         }
     }

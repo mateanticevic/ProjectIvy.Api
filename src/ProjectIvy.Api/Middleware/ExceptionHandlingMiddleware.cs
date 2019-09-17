@@ -21,7 +21,7 @@ namespace ProjectIvy.Api.Middleware
         {
             var statusCode = HttpStatusCode.InternalServerError;
 
-            if (e is UnauthorizedAccessException)
+            if (e is UnauthorizedException)
                 statusCode = HttpStatusCode.Unauthorized;
             else if (e is InvalidRequestException)
                 statusCode = HttpStatusCode.BadRequest;
