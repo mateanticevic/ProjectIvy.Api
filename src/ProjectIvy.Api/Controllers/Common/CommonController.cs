@@ -6,6 +6,7 @@ using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Common
@@ -36,7 +37,7 @@ namespace ProjectIvy.Api.Controllers.Common
         public IEnumerable<View.Currency.Currency> GetCurrencies() => _currencyHandler.Get();
 
         [HttpGet("BeerServing")]
-        public IActionResult GetBeerServings() => Ok(_beerHandler.GetServings());
+        public async Task<IActionResult> GetBeerServings() => Ok(await _beerHandler.GetServings());
 
         [HttpGet("ExpenseFileType")]
         public IEnumerable<View.Expense.ExpenseFileType> GetExpenseFileTypes() => _expenseTypeHandler.GetFileTypes();

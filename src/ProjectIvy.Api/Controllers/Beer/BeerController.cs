@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Model.Binding.Beer;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Beer
 {
@@ -15,18 +16,18 @@ namespace ProjectIvy.Api.Controllers.Beer
         }
 
         [HttpGet]
-        public IActionResult Get([FromQuery] BeerGetBinding binding) => Ok(_beerHandler.GetBeers(binding));
+        public async Task<IActionResult> Get([FromQuery] BeerGetBinding binding) => Ok(await _beerHandler.GetBeers(binding));
 
         [HttpGet("{id}")]
-        public IActionResult Get(string id) => Ok(_beerHandler.GetBeer(id));
+        public async Task<IActionResult> Get(string id) => Ok(await _beerHandler.GetBeer(id));
 
         [HttpGet("Brand")]
-        public IActionResult GetBrands() => Ok(_beerHandler.GetBrands());
+        public async Task<IActionResult> GetBrands() => Ok(await _beerHandler.GetBrands());
 
         [HttpPost("Brand/{brandId}/Beer")]
-        public IActionResult PostBeer(string brandId, [FromBody] BeerBinding binding) => Ok(_beerHandler.CreateBeer(brandId, binding));
+        public async Task<IActionResult> PostBeer(string brandId, [FromBody] BeerBinding binding) => Ok(await _beerHandler.CreateBeer(brandId, binding));
 
         [HttpPost("Brand")]
-        public IActionResult PostBrand([FromBody] string name) => Ok(_beerHandler.CreateBrand(name));
+        public async Task<IActionResult> PostBrand([FromBody] string name) => Ok(await _beerHandler.CreateBrand(name));
     }
 }

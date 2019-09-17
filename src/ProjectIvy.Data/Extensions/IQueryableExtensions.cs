@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Model.Binding;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.View;
@@ -6,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 
 namespace ProjectIvy.Data.Extensions
 {
@@ -59,6 +61,15 @@ namespace ProjectIvy.Data.Extensions
             {
                 Count = count ?? query.Count(),
                 Items = query.Page(binding).ToList()
+            };
+        }
+
+        public static async Task<PagedView<T>> ToPagedViewAsync<T>(this IQueryable<T> query, IPagedBinding binding, long? count = null)
+        {
+            return new PagedView<T>()
+            {
+                Count = count ?? query.Count(),
+                Items = await query.Page(binding).ToListAsync()
             };
         }
 
