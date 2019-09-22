@@ -11,6 +11,7 @@ using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Card;
+using ProjectIvy.Business.Handlers.City;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Business.Handlers.Currency;
@@ -83,6 +84,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ICallHandler, CallHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICardHandler, CardHandler>();
+            services.AddHandler<ICityHandler, CityHandler>();
             services.AddHandler<IConsumationHandler, ConsumationHandler>();
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
