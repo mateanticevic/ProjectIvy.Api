@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.MapExtensions;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
@@ -95,8 +96,14 @@ namespace ProjectIvy.Business.Handlers.Trip
             {
                 var trip = binding.ToEntity();
                 trip.UserId = User.Id;
-
                 context.Trips.Add(trip);
+
+                foreach (string cityValueId in binding.CityIds.EmptyIfNull())
+                {
+                    int cityId = context.Cities.GetId(cityValueId).Value;
+                    context.TripCities.Add(new TripCity { CityId = cityId, Trip = trip });
+                }
+
                 context.SaveChanges();
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ProjectIvy.Model.Binding.Trip
 {
@@ -9,5 +10,7 @@ namespace ProjectIvy.Model.Binding.Trip
         public DateTime TimestampEnd { get; set; }
 
         public DateTime TimestampStart { get; set; }
+
+        public IEnumerable<string> CityIds { get; set; }
     }
 }
