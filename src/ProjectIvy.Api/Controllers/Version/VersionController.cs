@@ -9,7 +9,7 @@ namespace ProjectIvy.Api.Controllers.Version
         {
         }
 
-        [HttpGet]
-        public string Get() => Microsoft.Extensions.PlatformAbstractions.PlatformServices.Default.Application.ApplicationVersion;
+        //[HttpGet]
+        //public string Get() => Microsoft.Extensions..PlatformServices.Default.Application.ApplicationVersion;
     }
 }

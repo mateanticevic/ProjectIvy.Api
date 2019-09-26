@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Business.Handlers;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Application;
 using ProjectIvy.Business.Handlers.Beer;
@@ -42,42 +43,35 @@ namespace ProjectIvy.Api
 {
     public class Startup
     {
-        public Startup(IHostingEnvironment env)
+        public Startup(IWebHostEnvironment env)
         {
             var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                                                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                                                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
 
-            if (env.IsDevelopment())
-            {
-                builder.AddApplicationInsightsSettings(developerMode: true);
-            }
-
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            Settings = Configuration.Get<AppSettings>();
         }
 
         public IConfigurationRoot Configuration { get; }
 
         protected AppSettings Settings { get; private set; }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services.AddApplicationInsightsTelemetry(Configuration);
-
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new Info { Title = "ProjectIvy Api", Version = "v1" });
-            });
+            services.AddSwaggerGen();
 
             services.AddLogging()
                     .Configure<AppSettings>(Configuration);
 
-            services.AddSingletonFactory<LastFm.IUserHelper, LastFm.UserFactory>();
-            services.AddSingletonFactory<AzureStorage.IAzureStorageHelper, AzureStorage.AzureStorageFactory>();
+            services.AddHttpContextAccessor();
+            services.AddSingleton<ISecurityHandler, SecurityHandler>();
+            services.AddSingleton<IHandlerContext<ISecurityHandler>, HandlerContext<ISecurityHandler>>();
+            services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Settings.Services.AzureStorage));
+            services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Settings.Services.LastFm));
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
-
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
@@ -97,7 +91,6 @@ namespace ProjectIvy.Api
             services.AddHandler<IMovieHandler, MovieHandler>();
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
-            services.AddHandler<ISecurityHandler, SecurityHandler>();
             services.AddHandler<IToDoHandler, ToDoHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
@@ -105,13 +98,10 @@ namespace ProjectIvy.Api
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
 
-            services.AddMvc()
-                    .AddXmlDataContractSerializerFormatters();
-
-            return services.BuildServiceProvider();
+            services.AddControllers(options => options.EnableEndpointRouting = false);
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
         {
             loggerFactory.AddNLog();
 
@@ -119,9 +109,6 @@ namespace ProjectIvy.Api
             logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
 
             app.UseStaticFiles();
-
-            if (env.IsDevelopment())
-                app.UseDeveloperExceptionPage();
 
             app.UseSwagger();
 
