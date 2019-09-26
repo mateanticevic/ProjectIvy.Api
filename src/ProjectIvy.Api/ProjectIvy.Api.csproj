@@ -6,7 +6,6 @@
     <AssemblyName>ProjectIvy.Api</AssemblyName>
     <OutputType>Exe</OutputType>
     <PackageId>ProjectIvy</PackageId>
-    <RuntimeFrameworkVersion>3.0.0</RuntimeFrameworkVersion>
     <AssetTargetFallback>$(AssetTargetFallback);portable-net45+win8+wp8+wpa81;</AssetTargetFallback>
     <UserSecretsId>474ae495-a728-4bff-b064-ef70af4c93e3</UserSecretsId>
     <DockerTargetOS>Windows</DockerTargetOS>
