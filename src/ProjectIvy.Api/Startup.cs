@@ -36,6 +36,7 @@ using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Constants;
 using Swashbuckle.AspNetCore.Swagger;
 using System;
+using System.Text.Json.Serialization;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
 
@@ -98,7 +99,10 @@ namespace ProjectIvy.Api
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
 
-            services.AddControllers(options => options.EnableEndpointRouting = false);
+            services.AddControllers(options => options.EnableEndpointRouting = false).AddJsonOptions(options => {
+                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+                options.JsonSerializerOptions.IgnoreNullValues = true;
+            });
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
