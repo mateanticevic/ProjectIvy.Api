@@ -30,7 +30,7 @@ namespace ProjectIvy.Api.Controllers.File
 
             using (var ms = new System.IO.MemoryStream(bytes.Length))
             {
-                HttpContext.Request.Body.CopyTo(ms);
+                await HttpContext.Request.Body.CopyToAsync(ms);
                 bytes = ms.ToArray();
                 string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
 
