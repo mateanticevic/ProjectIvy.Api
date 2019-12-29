@@ -76,7 +76,8 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                var countries = context.Trips.WhereUser(User)
+                var countries = context.Trips
+                                       .WhereUser(User)
                                        .Where(x => x.TimestampEnd < DateTime.Now)
                                        .Include(x => x.Cities)
                                        .OrderBy(x => x.TimestampStart)

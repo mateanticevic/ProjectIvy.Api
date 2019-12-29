@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Common.Extensions;
+using System.Collections.Generic;
 using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.City
@@ -9,7 +10,7 @@ namespace ProjectIvy.Model.View.City
         {
             Name = x.Name;
             Id = x.ValueId;
-            Country = x.Country?.ConvertTo(y => new View.Country.Country(y));
+            Country = x.Country?.ConvertTo(y => new Country.Country(y));
         }
 
         public string Id { get; set; }
@@ -17,5 +18,12 @@ namespace ProjectIvy.Model.View.City
         public string Name { get; set; }
 
         public Country.Country Country { get; set; }
+    }
+
+    public class CityComparer : IEqualityComparer<City>
+    {
+        public bool Equals(City x, City y) => x.Id == y.Id;
+
+        public int GetHashCode(City obj) => obj.Id.GetHashCode();
     }
 }
