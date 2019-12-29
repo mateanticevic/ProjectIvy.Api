@@ -34,8 +34,6 @@ using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Services.LastFm;
 using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Constants;
-using Swashbuckle.AspNetCore.Swagger;
-using System;
 using System.Text.Json.Serialization;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
@@ -99,7 +97,8 @@ namespace ProjectIvy.Api
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
 
-            services.AddControllers(options => options.EnableEndpointRouting = false).AddNewtonsoftJson().AddJsonOptions(options => {
+            services.AddControllers(options => options.EnableEndpointRouting = false).AddNewtonsoftJson().AddJsonOptions(options =>
+            {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });

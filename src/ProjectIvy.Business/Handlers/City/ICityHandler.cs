@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
-using ProjectIvy.Model.Binding.City;
+﻿using ProjectIvy.Model.Binding.City;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
 
 namespace ProjectIvy.Business.Handlers.City

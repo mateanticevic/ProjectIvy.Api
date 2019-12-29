@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Business.Exceptions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
@@ -8,7 +9,6 @@ using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Beer;
 
