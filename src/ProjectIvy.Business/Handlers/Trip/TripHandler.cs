@@ -131,15 +131,13 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                var query = context.Trips.WhereUser(User.Id)
-                                         .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
-                                         .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
-                                         .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
-                                         .WhereIf(!string.IsNullOrWhiteSpace(binding.CountryId), x => x.Cities.Select(y => y.City.Country).Any(y => y.ValueId == binding.CountryId));
-
-                int? cityId = context.Cities.GetId(binding.CityId);
-
-                query = cityId.HasValue ? query.Where(x => x.Cities.Select(y => y.CityId).Contains(cityId.Value)) : query;
+                var query = context.Trips
+                                   .WhereUser(User.Id)
+                                   .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
+                                   .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
+                                   .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
+                                   .WhereIf(binding.CityId, x => x.Cities.Select(y => y.City.ValueId).Any(y => binding.CityId.Contains(y)))
+                                   .WhereIf(binding.CountryId, x => x.Cities.Select(y => y.City.Country.ValueId).Any(y => binding.CountryId.Contains(y)));
 
                 return query.OrderBy(binding)
                             .Select(x => new View.Trip.Trip(x))

@@ -25,33 +25,33 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .ThenInclude(x => x.FileType);
         }
 
-        public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding binding, MainContext context)
+        public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding b, MainContext context)
         {
-            var cardIds = context.Cards.GetIds(binding.CardId);
-            var currencyIds = context.Currencies.GetIds(binding.CurrencyId);
-            var expenseTypeIds = context.ExpenseTypes.GetIds(binding.TypeId);
-            var paymentTypeIds = context.PaymentTypes.GetIds(binding.PaymentTypeId);
-            var vendorIds = context.Vendors.GetIds(binding.VendorId);
+            var cardIds = context.Cards.GetIds(b.CardId);
+            var currencyIds = context.Currencies.GetIds(b.CurrencyId);
+            var expenseTypeIds = context.ExpenseTypes.GetIds(b.TypeId);
+            var paymentTypeIds = context.PaymentTypes.GetIds(b.PaymentTypeId);
+            var vendorIds = context.Vendors.GetIds(b.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
             if (expenseTypeIds != null && expenseTypeIds.Any())
                 expenseTypes = context.ExpenseTypes.GetAll();
 
-            return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
-                        .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
+            return query.WhereIf(b.From.HasValue, x => x.Date >= b.From)
+                        .WhereIf(b.To.HasValue, x => x.Date <= b.To)
                         .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
                         .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
-                        .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
-                        .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
-                        .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
-                        .WhereIf(binding.NeedsReview.HasValue, x => !(binding.NeedsReview.Value ^ x.NeedsReview))
-                        .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
-                        .WhereIf(binding.AmountFrom.HasValue, x => x.Amount >= binding.AmountFrom)
-                        .WhereIf(binding.ExcludeId != null, x => !binding.ExcludeId.Contains(x.ValueId))
-                        .WhereIf(binding.AmountTo.HasValue, x => x.Amount <= binding.AmountTo);
+                        .WhereIf(b.Day != null, x => b.Day.Contains(x.Date.DayOfWeek))
+                        .WhereIf(b.HasLinkedFiles.HasValue, x => !(b.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
+                        .WhereIf(b.HasPoi.HasValue, x => !(b.HasPoi.Value ^ x.PoiId.HasValue))
+                        .WhereIf(b.NeedsReview.HasValue, x => !(b.NeedsReview.Value ^ x.NeedsReview))
+                        .WhereIf(!string.IsNullOrWhiteSpace(b.Description), x => x.Comment.Contains(b.Description))
+                        .WhereIf(b.AmountFrom.HasValue, x => x.Amount >= b.AmountFrom)
+                        .WhereIf(b.ExcludeId != null, x => !b.ExcludeId.Contains(x.ValueId))
+                        .WhereIf(b.AmountTo.HasValue, x => x.Amount <= b.AmountTo);
         }
 
         public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
