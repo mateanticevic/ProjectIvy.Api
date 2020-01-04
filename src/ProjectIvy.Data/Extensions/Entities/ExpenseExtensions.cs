@@ -47,6 +47,7 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                         .WhereIf(binding.HasLinkedFiles.HasValue, x => !(binding.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(binding.HasPoi.HasValue, x => !(binding.HasPoi.Value ^ x.PoiId.HasValue))
+                        .WhereIf(binding.NeedsReview.HasValue, x => !(binding.NeedsReview.Value ^ x.NeedsReview))
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.Description), x => x.Comment.Contains(binding.Description))
                         .WhereIf(binding.AmountFrom.HasValue, x => x.Amount >= binding.AmountFrom)
                         .WhereIf(binding.ExcludeId != null, x => !binding.ExcludeId.Contains(x.ValueId))

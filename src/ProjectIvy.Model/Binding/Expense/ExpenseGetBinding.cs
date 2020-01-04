@@ -13,6 +13,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public bool? HasPoi { get; set; }
 
+        public bool? NeedsReview { get; set; }
+
         public decimal? AmountFrom { get; set; }
 
         public decimal? AmountTo { get; set; }
