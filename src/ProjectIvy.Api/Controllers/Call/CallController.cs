@@ -17,7 +17,7 @@ namespace ProjectIvy.Api.Controllers.Call
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] FilteredPagedBinding binding) => Ok(await _callHandler.Get(binding));
+        public async Task<IActionResult> Get([FromQuery] CallGetBinding binding) => Ok(await _callHandler.Get(binding));
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] CallBinding binding) => Ok(await _callHandler.Create(binding));

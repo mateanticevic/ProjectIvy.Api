@@ -18,12 +18,15 @@ namespace ProjectIvy.Business.Handlers.Call
         {
         }
 
-        public async Task<PagedView<View.Call>> Get(FilteredPagedBinding binding)
+        public async Task<PagedView<View.Call>> Get(CallGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 var calls = await context.Calls
                                          .WhereUser(User)
+                                         .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From.Value)
+                                         .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To.Value)
+                                         .WhereIf(!string.IsNullOrEmpty(binding.Number), x => x.Number == binding.Number)
                                          .Include(x => x.File)
                                          .OrderByDescending(x => x.Timestamp)
                                          .Select(x => new View.Call(x))
