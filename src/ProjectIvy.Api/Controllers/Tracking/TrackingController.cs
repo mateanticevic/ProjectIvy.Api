@@ -11,6 +11,7 @@ using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
 
@@ -52,6 +53,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet("Count/Unique")]
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);
+
+        [HttpGet("Day")]
+        public async Task<IActionResult> GetDaysInsideRectangle(TrackingGetBinding binding) => Ok(await _trackingHandler.GetDays(binding));
 
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);

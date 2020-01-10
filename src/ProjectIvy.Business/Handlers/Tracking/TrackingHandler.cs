@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Business.MapExtensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
@@ -8,6 +9,7 @@ using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
 
@@ -91,6 +93,19 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
                                    .Select(x => new View.Tracking(x));
+            }
+        }
+
+        public async Task<IEnumerable<DateTime>> GetDays(TrackingGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Trackings.WhereUser(User)
+                                              .Where(x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
+                                              .Select(x => x.Timestamp.Date)
+                                              .Distinct()
+                                              .OrderByDescending(x => x)
+                                              .ToListAsync();
             }
         }
 
