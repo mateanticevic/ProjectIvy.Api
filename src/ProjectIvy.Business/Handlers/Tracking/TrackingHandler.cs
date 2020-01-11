@@ -96,13 +96,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
-        public async Task<IEnumerable<DateTime>> GetDays(TrackingGetBinding binding)
+        public async Task<IEnumerable<string>> GetDays(TrackingGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return await context.Trackings.WhereUser(User)
                                               .Where(x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
-                                              .Select(x => x.Timestamp.Date)
+                                              .Select(x => x.Timestamp.Date.ToString("yyyy-MM-dd"))
                                               .Distinct()
                                               .OrderByDescending(x => x)
                                               .ToListAsync();

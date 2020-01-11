@@ -23,7 +23,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         double GetAverageSpeed(FilteredBinding binding);
 
-        Task<IEnumerable<DateTime>> GetDays(TrackingGetBinding binding);
+        Task<IEnumerable<string>> GetDays(TrackingGetBinding binding);
 
         int GetDistance(FilteredBinding binding);
 
