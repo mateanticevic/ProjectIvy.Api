@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Country;
+using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Country;
@@ -17,6 +18,6 @@ namespace ProjectIvy.Business.Handlers.Country
 
         IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries);
 
-        IEnumerable<View.Country> GetVisited();
+        IEnumerable<View.Country> GetVisited(TripGetBinding binding);
     }
 }

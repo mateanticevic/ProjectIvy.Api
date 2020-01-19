@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Model.Binding.Country;
+using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
@@ -27,12 +28,12 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet("Visited")]
         [Authorize(Roles = UserRole.User)]
-        public IEnumerable<View.Country> GetVisited() => _countryHandler.GetVisited();
+        public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
 
         [HttpGet("Visited/Count")]
         public long GetVisitedCount() => _countryHandler.CountVisited();
 
         [HttpGet("Visited/Boundaries")]
-        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries() => _countryHandler.GetBoundaries(_countryHandler.GetVisited());
+        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(_countryHandler.GetVisited(binding));
     }
 }
