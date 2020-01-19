@@ -89,6 +89,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                     .GroupBy(x => x.Date.DayOfWeek)
                     .OrderByDescending(x => x.Key)
                     .Select(x => new KeyValuePair<DayOfWeek, int>(x.Key, x.Count()))
+                    .OrderBy(x => (int)x.Key)
                     .ToList()
                     .Select(x => new KeyValuePair<string, int>(x.Key.ToString(), x.Value));
             }

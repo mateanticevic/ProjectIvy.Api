@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Country;
+using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
@@ -72,17 +73,20 @@ namespace ProjectIvy.Business.Handlers.Country
             }
         }
 
-        public IEnumerable<View.Country> GetVisited()
+        public IEnumerable<View.Country> GetVisited(TripGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 var countries = context.Trips
                                        .WhereUser(User)
                                        .Where(x => x.TimestampEnd < DateTime.Now)
+                                       .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
+                                       .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
                                        .Include(x => x.Cities)
                                        .OrderBy(x => x.TimestampStart)
                                        .SelectMany(x => x.Cities)
                                        .Select(x => x.City.Country)
+                                       .Distinct()
                                        .Select(x => new View.Country(x))
                                        .ToList();
 
@@ -91,7 +95,13 @@ namespace ProjectIvy.Business.Handlers.Country
                                                                              .Country : null;
 
                 if (birthCountry != null)
+                {
+                    var existingBirthCountry = countries.SingleOrDefault(x => x.Id == birthCountry.ValueId);
+                    if (existingBirthCountry != null)
+                        countries.Remove(existingBirthCountry);
+
                     countries.Insert(0, new View.Country(birthCountry));
+                }
 
                 return countries.Distinct(new View.CountryComparer());
             }
