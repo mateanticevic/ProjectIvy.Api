@@ -94,7 +94,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> CountByMonth(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<string, int>> CountByMonth(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -105,11 +105,12 @@ namespace ProjectIvy.Business.Handlers.Expense
                                        .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                        .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
                                        .ToList()
-                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to);
+                                       .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to)
+                                       .Select(x => new KeyValuePair<string, int>($"{x.Year}-{x.Month}", x.Data));
             }
         }
 
-        public IEnumerable<GroupedByYear<int>> CountByYear(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<string, int>> CountByYear(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -120,7 +121,8 @@ namespace ProjectIvy.Business.Handlers.Expense
                                        .GroupBy(x => x.Date.Year)
                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
                                        .ToList()
-                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From?.Year, to.Year);
+                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From?.Year, to.Year)
+                                       .Select(x => new KeyValuePair<string, int>(x.Year.ToString(), x.Data));
             }
         }
 

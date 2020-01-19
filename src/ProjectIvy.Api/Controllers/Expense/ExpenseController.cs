@@ -46,10 +46,10 @@ namespace ProjectIvy.Api.Controllers.Expense
         public IEnumerable<KeyValuePair<string, int>> GetCountByDayOfWekk([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByDayOfWeek(binding);
 
         [HttpGet("Count/ByMonth")]
-        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonth(binding);
+        public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonth(binding);
 
         [HttpGet("Count/ByYear")]
-        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
+        public IEnumerable<KeyValuePair<string, int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
 
         [HttpGet("Count/ByPoi")]
         public PagedView<CountBy<Model.View.Poi.Poi>> GetCountByPoi([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByPoi(binding);
