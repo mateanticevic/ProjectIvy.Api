@@ -17,6 +17,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding);
 
+        IEnumerable<KeyValuePair<string, int>> CountByMonth(ConsumationGetBinding binding);
+
         int CountBeers(ConsumationGetBinding binding);
 
         int CountBrands(ConsumationGetBinding binding);

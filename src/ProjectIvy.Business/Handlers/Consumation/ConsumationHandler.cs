@@ -76,6 +76,20 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public IEnumerable<KeyValuePair<string, int>> CountByMonth(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var to = binding.To ?? DateTime.Now;
+
+                return context.Consumations.WhereUser(User.Id)
+                                           .Where(binding, context)
+                                           .GroupBy(x => x.Date.ToString("MMMM"))
+                                           .Select(x => new KeyValuePair<string, int>(x.Key, x.Count()))
+                                           .ToList();
+            }
+        }
+
         public int CountBeers(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
@@ -93,11 +107,11 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
-                    .Where(binding, context)
-                    .Include(x => x.Beer)
-                    .Select(x => x.Beer.BeerBrandId)
-                    .Distinct()
-                    .Count();
+                                           .Where(binding, context)
+                                           .Include(x => x.Beer)
+                                           .Select(x => x.Beer.BeerBrandId)
+                                           .Distinct()
+                                           .Count();
             }
         }
 

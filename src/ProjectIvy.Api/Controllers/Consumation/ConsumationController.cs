@@ -6,6 +6,7 @@ using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
+using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.Api.Controllers.Consumation
@@ -41,6 +42,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count/ByBeer")]
         public PagedView<CountBy<Model.View.Beer.Beer>> GetCountByBeer(ConsumationGetBinding binding) => _consumationHandler.CountByBeer(binding);
 
+        [HttpGet("Count/ByMonth")]
+        public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonth(binding);
+
         [HttpGet("Count/Beer")]
         [HttpGet("Beer/Count")]
         public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);
@@ -56,10 +60,10 @@ namespace ProjectIvy.Api.Controllers.Consumation
         public PagedView<SumBy<Model.View.Beer.Beer>> GetSumVolumeByBeer(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByBeer(binding);
 
         [HttpGet("Sum/ByMonth")]
-        public PagedView<GroupedByMonth<int>> GetSumVolumeByMonth(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByMonth(binding);
+        public PagedView<GroupedByMonth<int>> GetSumByMonth(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByMonth(binding);
 
         [HttpGet("Sum/ByServing")]
-        public PagedView<SumBy<Model.View.Beer.BeerServing>> GetSumVolumeByServing(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByServing(binding);
+        public PagedView<SumBy<Model.View.Beer.BeerServing>> GetSumByServing(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByServing(binding);
 
         [HttpPost]
         public IActionResult Post([FromBody] ConsumationBinding binding)
