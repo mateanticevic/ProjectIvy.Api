@@ -90,6 +90,22 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var to = binding.To ?? DateTime.Now;
+
+                return context.Consumations.WhereUser(User.Id)
+                                           .Where(binding, context)
+                                           .GroupBy(x => new { x.Date.Year, x.Date.Month })
+                                           .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                                           .ToList()
+                                           .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to)
+                                           .Select(x => new KeyValuePair<string, int>($"{x.Year}-{x.Month}", x.Data));
+            }
+        }
+
         public int CountBeers(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())

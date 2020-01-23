@@ -45,6 +45,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count/ByMonth")]
         public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonth(binding);
 
+        [HttpGet("Count/ByMonthOfYear")]
+        public IEnumerable<KeyValuePair<string, int>> GetCountByMonthOfYear([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonthOfYear(binding);
+
         [HttpGet("Count/Beer")]
         [HttpGet("Beer/Count")]
         public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);

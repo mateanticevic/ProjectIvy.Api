@@ -19,6 +19,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         IEnumerable<KeyValuePair<string, int>> CountByMonth(ConsumationGetBinding binding);
 
+        IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ConsumationGetBinding binding);
+
         int CountBeers(ConsumationGetBinding binding);
 
         int CountBrands(ConsumationGetBinding binding);
