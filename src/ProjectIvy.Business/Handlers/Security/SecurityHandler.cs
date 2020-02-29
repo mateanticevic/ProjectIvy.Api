@@ -23,7 +23,7 @@ namespace ProjectIvy.Business.Handlers.Security
             using (var db = GetMainContext())
             {
                 return db.AccessTokens.Include(x => x.User)
-                                      .SingleOrDefault(x => x.Token == token)
+                                      .SingleOrDefault(x => x.Token == token && x.IsActive)
                                       .User;
             }
         }
