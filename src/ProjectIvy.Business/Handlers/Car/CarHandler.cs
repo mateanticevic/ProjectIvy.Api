@@ -68,6 +68,8 @@ namespace ProjectIvy.Business.Handlers.Car
             using (var context = GetMainContext())
             {
                 return context.Cars.WhereUser(User)
+                                   .Include(x => x.CarModel)
+                                   .ThenInclude(x => x.Manufacturer)
                                    .ToList()
                                    .Select(x => new View.Car(x))
                                    .ToList();

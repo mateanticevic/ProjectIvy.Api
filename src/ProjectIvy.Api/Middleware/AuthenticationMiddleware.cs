@@ -48,7 +48,7 @@ namespace ProjectIvy.Api.Middleware
 
                 return _next(httpContext);
             }
-            catch
+            catch(System.Exception e)
             {
                 throw new UnauthorizedException();
             }

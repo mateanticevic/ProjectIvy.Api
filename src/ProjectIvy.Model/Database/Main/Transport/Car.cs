@@ -10,13 +10,13 @@ namespace ProjectIvy.Model.Database.Main.Transport
         [Key]
         public int Id { get; set; }
 
-        public string Model { get; set; }
-
         public string ValueId { get; set; }
 
-        public int ManufacturerId { get; set; }
+        public int CarModelId { get; set; }
 
         public short ProductionYear { get; set; }
+
+        public CarModel CarModel { get; set; }
 
         public ICollection<CarLog> CarLogs { get; set; }
     }

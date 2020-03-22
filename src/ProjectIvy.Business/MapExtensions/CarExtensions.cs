@@ -12,8 +12,6 @@ namespace ProjectIvy.Business.MapExtensions
         {
             entity = entity ?? new Car();
 
-            entity.ManufacturerId = context.Manufacturers.GetId(b.ManufacturerId).Value;
-            entity.Model = b.Model;
             entity.ProductionYear = b.ProductionYear;
 
             return entity;
