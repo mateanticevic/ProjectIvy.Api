@@ -1,6 +1,7 @@
 ﻿using ProjectIvy.Model.Binding.Car;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Business.Handlers.Car
@@ -22,5 +23,7 @@ namespace ProjectIvy.Business.Handlers.Car
         int GetLogCount(string carValueId);
 
         View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
+
+        Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
     }
 }

@@ -4,8 +4,8 @@
     {
         public CarServiceType(Database.Main.Transport.CarServiceType c)
         {
-            Name = c.Name;
             Id = c.ValueId;
+            Name = c.Name;
         }
 
         public string Id { get; set; }

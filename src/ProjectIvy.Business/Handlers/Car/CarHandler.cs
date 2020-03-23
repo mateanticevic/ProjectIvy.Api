@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding.Car;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Business.Handlers.Car
@@ -144,6 +145,19 @@ namespace ProjectIvy.Business.Handlers.Car
                                     .FirstOrDefault();
 
                 return new View.CarLog(carLog);
+            }
+        }
+
+        public async Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int? carModelId = context.CarModels.GetId(carModelValueId);
+
+                return await context.CarServiceIntervals.Where(x => x.CarModelId == carModelId)
+                                                        .Include(x => x.CarServiceType)
+                                                        .Select(x => new View.CarServiceInterval(x))
+                                                        .ToListAsync();
             }
         }
     }

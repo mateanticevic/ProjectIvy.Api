@@ -46,6 +46,10 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Car> Cars { get; set; }
 
+        public DbSet<CarModel> CarModels { get; set; }
+
+        public DbSet<CarServiceInterval> CarServiceIntervals { get; set; }
+
         public DbSet<Card> Cards { get; set; }
 
         public DbSet<CarLog> CarLogs { get; set; }
@@ -167,6 +171,9 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<Car>()
                         .HasOne(x => x.User);
+
+            modelBuilder.Entity<CarServiceInterval>()
+                        .HasKey(x => new { x.CarModelId, x.CarServiceTypeId });
 
             modelBuilder.Entity<City>()
                         .HasOne(x => x.Country)
