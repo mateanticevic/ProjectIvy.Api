@@ -76,6 +76,21 @@ namespace ProjectIvy.Business.Handlers.Car
             }
         }
 
+        public View.Car Get(string carId)
+        {
+            using (var context = GetMainContext())
+            {
+                var car = context.Cars.WhereUser(User)
+                                      .Include(x => x.CarServices)
+                                      .Include($"{nameof(Model.Database.Main.Transport.Car.CarServices)}.{nameof(Model.Database.Main.Transport.CarServiceType)}")
+                                      .Include(x => x.CarModel)
+                                      .ThenInclude(x => x.Manufacturer)
+                                      .SingleOrDefault(x => x.ValueId == carId);
+
+                return new View.Car(car);
+            }
+        }
+
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
         {
             using (var context = GetMainContext())

@@ -1,10 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Transport
 {
-    class CarServiceType
+    [Table(nameof(CarServiceType), Schema = nameof(Transport))]
+    public class CarServiceType
     {
+        [Key]
+        public int Id { get; set; }
+
+        public string ValueId { get; set; }
+
+        public string Name { get; set; }
+
+        public ICollection<CarService> CarServices { get; set; }
     }
 }

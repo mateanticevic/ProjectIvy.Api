@@ -7,12 +7,15 @@ namespace ProjectIvy.Model.View.Car
         public CarModel(Database.Main.Transport.CarModel c)
         {
             EngineDisplacement = c.EngineDisplacement;
+            ModelYear = c.ModelYear;
             Name = c.Name;
             Power = c.Power;
             Manufacturer = c.ConvertTo(x => new Manufacturer(x.Manufacturer));
         }
 
         public short EngineDisplacement { get; set; }
+
+        public short ModelYear { get; set; }
 
         public string Name { get; set; }
 

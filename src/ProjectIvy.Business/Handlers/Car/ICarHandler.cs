@@ -15,6 +15,8 @@ namespace ProjectIvy.Business.Handlers.Car
 
         IEnumerable<View.Car> Get();
 
+        View.Car Get(string carId);
+
         IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding);
 
         int GetLogCount(string carValueId);

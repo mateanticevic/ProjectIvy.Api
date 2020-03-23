@@ -1,4 +1,6 @@
 ﻿using ProjectIvy.Common.Extensions;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ProjectIvy.Model.View.Car
 {
@@ -9,6 +11,7 @@ namespace ProjectIvy.Model.View.Car
             Id = c.ValueId;
             Model = c.ConvertTo(x => new CarModel(x.CarModel));
             ProductionYear = c.ProductionYear;
+            Services = c.CarServices.EmptyIfNull().OrderByDescending(x => x.Date).Select(x => x.ConvertTo(y => new CarService(y)));
         }
 
         public string Id { get; set; }
@@ -16,5 +19,9 @@ namespace ProjectIvy.Model.View.Car
         public CarModel Model { get; set; }
 
         public short ProductionYear { get; set; }
+
+        public IEnumerable<CarService> Services { get; set; }
+
+        public IEnumerable<CarServiceDue> ServiceDue { get; set; }
     }
 }

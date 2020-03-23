@@ -176,6 +176,14 @@ namespace ProjectIvy.Data.DbContexts
                         .HasOne(x => x.Car)
                         .WithMany(x => x.CarLogs);
 
+            modelBuilder.Entity<CarService>()
+                        .HasOne(x => x.Car)
+                        .WithMany(x => x.CarServices);
+
+            modelBuilder.Entity<CarService>()
+                        .HasOne(x => x.CarServiceType)
+                        .WithMany(x => x.CarServices);
+
             modelBuilder.Entity<CountryPolygon>()
                         .HasKey(x => new { x.CountryId, x.GroupId, x.Index });
 

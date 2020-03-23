@@ -23,6 +23,9 @@ namespace ProjectIvy.Api.Controllers.Car
         [HttpGet]
         public IEnumerable<View.Car> Get() => _carHandler.Get();
 
+        [HttpGet("{carId}")]
+        public View.Car Get(string carId) => _carHandler.Get(carId);
+
         [HttpGet("{carId}/Log/BySession")]
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
 
