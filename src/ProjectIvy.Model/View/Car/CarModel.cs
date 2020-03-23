@@ -8,6 +8,7 @@ namespace ProjectIvy.Model.View.Car
         {
             EngineDisplacement = c.EngineDisplacement;
             ModelYear = c.ModelYear;
+            Id = c.ValueId;
             Name = c.Name;
             Power = c.Power;
             Manufacturer = c.ConvertTo(x => new Manufacturer(x.Manufacturer));
@@ -16,6 +17,8 @@ namespace ProjectIvy.Model.View.Car
         public short EngineDisplacement { get; set; }
 
         public short ModelYear { get; set; }
+
+        public string Id { get; set; }
 
         public string Name { get; set; }
 
