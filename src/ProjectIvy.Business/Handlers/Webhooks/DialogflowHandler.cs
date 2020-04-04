@@ -38,6 +38,8 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             switch (request.QueryResult.Intent.Name)
             {
+                case "projects/projectivy-rkgwxr/agent/intents/2f5e913e-036d-437f-b33e-4ab91e3fbdc7":
+                    return await GetConsecutiveConsumationDays(request);
                 case "projects/projectivy-rkgwxr/agent/intents/6aed36d0-3e1c-406b-9acf-39bc6fcece99":
                     return await GetDistance(request);
                 case "projects/projectivy-rkgwxr/agent/intents/c7020a73-a387-4d04-8c3f-961e6de9f99a":
@@ -55,6 +57,16 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             throw new NotImplementedException();
         }
 
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsecutiveConsumationDays(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var consecutive = _consumationHandler.ConsecutiveDates(new ConsumationGetBinding()).FirstOrDefault();
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"{consecutive.To.Subtract(consecutive.From).TotalDays} days, from {consecutive.From} to {consecutive.To}"
+            };
+        }
+        
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsumationSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
             var binding = new ConsumationGetBinding(request.ToFilteredBinding());
