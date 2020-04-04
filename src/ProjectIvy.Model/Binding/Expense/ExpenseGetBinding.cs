@@ -5,6 +5,14 @@ namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>
     {
+        public ExpenseGetBinding() { }
+
+        public ExpenseGetBinding(FilteredBinding binding)
+        {
+            From = binding.From;
+            To = binding.To;
+        }
+
         public IEnumerable<DayOfWeek> Day { get; set; }
 
         public ExpenseSort OrderBy { get; set; }

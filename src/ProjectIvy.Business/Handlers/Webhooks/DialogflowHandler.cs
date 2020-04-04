@@ -1,8 +1,11 @@
 ﻿using Google.Apis.Dialogflow.v2.Data;
 using Newtonsoft.Json.Linq;
 using ProjectIvy.Business.Handlers.Car;
+using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Expense;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Model.Binding.Car;
+using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Binding.Expense;
 using System;
 using System.Linq;
@@ -13,11 +16,16 @@ namespace ProjectIvy.Business.Handlers.Webhooks
     public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
     {
         private readonly ICarHandler _carHandler;
+        private readonly IConsumationHandler _consumationHandler;
         private readonly IExpenseHandler _expenseHandler;
 
-        public DialogflowHandler(IHandlerContext<DialogflowHandler> context, ICarHandler carHandler, IExpenseHandler expenseHandler) : base(context)
+        public DialogflowHandler(IHandlerContext<DialogflowHandler> context,
+                                 ICarHandler carHandler,
+                                 IConsumationHandler consumationHandler,
+                                 IExpenseHandler expenseHandler) : base(context)
         {
             _carHandler = carHandler;
+            _consumationHandler = consumationHandler;
             _expenseHandler = expenseHandler;
         }
 
@@ -27,6 +35,8 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             {
                 case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
                     return await SetLatestOdometer(request);
+                case "projects/projectivy-rkgwxr/agent/intents/45356f36-e342-4c71-ae0d-c9c06e3df76d":
+                    return await GetConsumationSum(request);
                 case "projects/projectivy-rkgwxr/agent/intents/a26b869b-23ff-4426-9158-8566fffc843b":
                     return await GetExpenseSum(request);
                 default:
@@ -36,16 +46,21 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             throw new NotImplementedException();
         }
 
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsumationSum(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var binding = new ConsumationGetBinding(request.ToFilteredBinding());
+
+            int sum = _consumationHandler.SumVolume(binding);
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"You've drank {sum/1000} liters."
+            };
+        }
+        
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
-            var datePeriod = request.QueryResult.Parameters["date-period"];
-            var dateTime = request.QueryResult.Parameters["date-time"];
-
-            var binding = new ExpenseSumGetBinding()
-            {
-                From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)((JObject)datePeriod)["startDate"],
-                To = dateTime is DateTime toDate ? toDate.Date : (DateTime)((JObject)datePeriod)["endDate"]
-            };
+            var binding = new ExpenseSumGetBinding(request.ToFilteredBinding());
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 
