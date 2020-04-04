@@ -63,7 +63,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             var binding = new ExpenseBinding()
             {
-                Amount = (decimal)request.QueryResult.Parameters["amount"],
+                Amount = Convert.ToDecimal(request.QueryResult.Parameters["amount"]),
                 CurrencyId = User.DefaultCurrency.Code,
                 Date = (DateTime)request.QueryResult.Parameters["date"],
                 ExpenseTypeId = (string)request.QueryResult.Parameters["ExpenseType"],
