@@ -61,10 +61,12 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> CreateExpense(GoogleCloudDialogflowV2WebhookRequest request)
         {
+            var unitCurrency = (JObject)request.QueryResult.Parameters["amount"];
+
             var binding = new ExpenseBinding()
             {
-                Amount = Convert.ToDecimal(request.QueryResult.Parameters["amount"]),
-                CurrencyId = User.DefaultCurrency.Code,
+                Amount = Convert.ToDecimal(unitCurrency["amount"]),
+                CurrencyId = (string)unitCurrency["currency"],
                 Date = (DateTime)request.QueryResult.Parameters["date"],
                 ExpenseTypeId = (string)request.QueryResult.Parameters["ExpenseType"],
                 NeedsReview = true,
