@@ -1,9 +1,12 @@
 ﻿using Google.Apis.Dialogflow.v2.Data;
 using Newtonsoft.Json.Linq;
 using ProjectIvy.Business.Handlers.Car;
+using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Car;
+using ProjectIvy.Model.Binding.Expense;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,10 +16,12 @@ namespace ProjectIvy.Business.Handlers.Webhooks
     public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
     {
         private readonly ICarHandler _carHandler;
+        private readonly IExpenseHandler _expenseHandler;
 
-        public DialogflowHandler(IHandlerContext<DialogflowHandler> context, ICarHandler carHandler) : base(context)
+        public DialogflowHandler(IHandlerContext<DialogflowHandler> context, ICarHandler carHandler, IExpenseHandler expenseHandler) : base(context)
         {
             _carHandler = carHandler;
+            _expenseHandler = expenseHandler;
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> ProcessWebhook(GoogleCloudDialogflowV2WebhookRequest request)
@@ -25,11 +30,31 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             {
                 case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
                     return await SetLatestOdometer(request);
+                case "projects/projectivy-rkgwxr/agent/intents/a26b869b-23ff-4426-9158-8566fffc843b":
+                    return await GetExpenseSum(request);
                 default:
                     return await GetLatestOdometer();
             }
 
             throw new NotImplementedException();
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var datePeriod = (JObject)request.QueryResult.Parameters.FirstOrDefault().Value;
+
+            var binding = new ExpenseSumGetBinding()
+            {
+                From = (DateTime)datePeriod["startDate"],
+                To = (DateTime)datePeriod["endDate"]
+            };
+
+            decimal sum = await _expenseHandler.SumAmount(binding);
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"You've spent {sum} HRK"
+            };
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetLatestOdometer()
