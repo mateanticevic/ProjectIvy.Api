@@ -44,7 +44,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             var binding = new ExpenseSumGetBinding()
             {
                 From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)((JObject)datePeriod)["startDate"],
-                To = dateTime is DateTime toDate ? toDate.Date.AddDays(1) : (DateTime)((JObject)datePeriod)["endDate"]
+                To = dateTime is DateTime toDate ? toDate.Date : (DateTime)((JObject)datePeriod)["endDate"]
             };
 
             decimal sum = await _expenseHandler.SumAmount(binding);
