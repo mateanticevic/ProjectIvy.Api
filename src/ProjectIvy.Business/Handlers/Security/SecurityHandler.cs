@@ -23,6 +23,7 @@ namespace ProjectIvy.Business.Handlers.Security
             using (var db = GetMainContext())
             {
                 return db.AccessTokens.Include(x => x.User)
+                                      .ThenInclude(x => x.DefaultCurrency)
                                       .SingleOrDefault(x => x.Token == token && x.IsActive)
                                       .User;
             }

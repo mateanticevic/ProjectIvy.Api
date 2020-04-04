@@ -5,10 +5,7 @@ using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Binding.Expense;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Business.Handlers.Webhooks
@@ -41,19 +38,20 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
-            var datePeriod = (JObject)request.QueryResult.Parameters.FirstOrDefault().Value;
+            var datePeriod = (JObject)request.QueryResult.Parameters["date-period"];
+            var dateTime = request.QueryResult.Parameters["date-time"];
 
             var binding = new ExpenseSumGetBinding()
             {
-                From = (DateTime)datePeriod["startDate"],
-                To = (DateTime)datePeriod["endDate"]
+                From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)datePeriod["startDate"],
+                To = dateTime is DateTime toDate ? toDate.Date.AddDays(1) : (DateTime)datePeriod["endDate"]
             };
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
-                FulfillmentText = $"You've spent {sum} HRK"
+                FulfillmentText = $"You've spent {sum} {User.DefaultCurrency.Code}"
             };
         }
 

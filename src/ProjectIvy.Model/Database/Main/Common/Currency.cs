@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Common
@@ -16,5 +17,7 @@ namespace ProjectIvy.Model.Database.Main.Common
         public string Name { get; set; }
 
         public string Symbol { get; set; }
+
+        public ICollection<User.User> Users { get; set; }
     }
 }
