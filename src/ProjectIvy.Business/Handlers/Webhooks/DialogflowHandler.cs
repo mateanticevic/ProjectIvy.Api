@@ -9,6 +9,7 @@ using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Binding.Expense;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -68,17 +69,19 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetDistance(GoogleCloudDialogflowV2WebhookRequest request)
         {
-            int distance = _trackingHandler.GetDistance(request.ToFilteredBinding());
+            int distance = _trackingHandler.GetDistance(request.ToFilteredBinding(true));
 
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
-                FulfillmentText = $"You covered {distance / 1000}km"
+                FulfillmentText = $"You covered {Math.Ceiling((decimal)distance / 1000)}km"
             };
         }
         
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
             var binding = new ExpenseSumGetBinding(request.ToFilteredBinding());
+
+            binding.TypeId = request.QueryResult.Parameters.ContainsKey("ExpenseType") ? ((JArray)request.QueryResult.Parameters["ExpenseType"]).Select(x => (string)x) : null;
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 

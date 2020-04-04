@@ -14,8 +14,8 @@ namespace ProjectIvy.Business.MapExtensions
 
             return new FilteredBinding()
             {
-                From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)((JObject)datePeriod)["startDate"],
-                To = dateTime is DateTime toDate ? (includeTime ? toDate.Date.AddDays(1) : toDate.Date) : (DateTime)((JObject)datePeriod)["endDate"]
+                From = dateTime is DateTime fromDate ? fromDate.Date : datePeriod is JObject datePeriodStart ? (DateTime)datePeriodStart["startDate"] : (DateTime?)null,
+                To = dateTime is DateTime toDate ? (includeTime ? toDate.Date.AddDays(1) : toDate.Date) : datePeriod is JObject datePeriodEnd ? (DateTime)datePeriodEnd["endDate"] : (DateTime?)null
             };
         }
     }
