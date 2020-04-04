@@ -35,9 +35,12 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var context = GetMainContext())
             {
+                if (string.IsNullOrWhiteSpace(binding.CarValueId))
+                    binding.CarValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == User.Id).DefaultCar.ValueId;
+
                 var lastEntry = GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
 
-                if (binding.Odometer < lastEntry.Odometer)
+                if (lastEntry != null && binding.Odometer < lastEntry.Odometer)
                 {
                     throw new InvalidRequestException($"Odometer must be {lastEntry.Odometer}km or higher.");
                 }
@@ -144,7 +147,7 @@ namespace ProjectIvy.Business.Handlers.Car
                                     .OrderByDescending(x => x.Timestamp)
                                     .FirstOrDefault();
 
-                return new View.CarLog(carLog);
+                return carLog == null ? null : new View.CarLog(carLog);
             }
         }
 

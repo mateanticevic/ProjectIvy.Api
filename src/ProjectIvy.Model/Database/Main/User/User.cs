@@ -11,6 +11,8 @@ namespace ProjectIvy.Model.Database.Main.User
         [Key]
         public int Id { get; set; }
 
+        public int? DefaultCarId { get; set; }
+
         public int DefaultCurrencyId { get; set; }
 
         public int DefaultLanguageId { get; set; }
@@ -38,6 +40,8 @@ namespace ProjectIvy.Model.Database.Main.User
         public Common.Currency DefaultCurrency { get; set; }
 
         public Common.City BirthCity { get; set; }
+
+        public Transport.Car DefaultCar { get; set; }
 
         public ICollection<UserRole> UserRoles { get; set; }
 

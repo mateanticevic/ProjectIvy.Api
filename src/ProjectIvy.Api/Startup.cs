@@ -31,6 +31,7 @@ using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Web;
+using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
 using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Constants;
@@ -82,6 +83,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDeviceHandler, DeviceHandler>();
+            services.AddHandler<IDialogflowHandler, DialogflowHandler>();
             services.AddHandler<IFileHandler, FileHandler>();
             services.AddHandler<IFlightHandler, FlightHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();

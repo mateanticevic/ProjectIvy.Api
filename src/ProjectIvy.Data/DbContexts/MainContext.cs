@@ -273,6 +273,12 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<User>()
                         .HasOne(x => x.BirthCity);
 
+            modelBuilder.Entity<User>()
+                        .HasOne(x => x.DefaultCar)
+                        .WithOne(x => x.User)
+                        .HasForeignKey<User>(x => x.DefaultCarId);
+
+
             modelBuilder.Entity<UserRole>()
                         .HasKey(x => new { x.UserId, x.RoleId });
 
