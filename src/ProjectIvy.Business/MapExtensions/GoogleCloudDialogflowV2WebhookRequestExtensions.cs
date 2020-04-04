@@ -7,7 +7,7 @@ namespace ProjectIvy.Business.MapExtensions
 {
     public static class GoogleCloudDialogflowV2WebhookRequestExtensions
     {
-        public static FilteredBinding ToFilteredBinding(this GoogleCloudDialogflowV2WebhookRequest request)
+        public static FilteredBinding ToFilteredBinding(this GoogleCloudDialogflowV2WebhookRequest request, bool includeTime = false)
         {
             var datePeriod = request.QueryResult.Parameters.ContainsKey("date-period") ? request.QueryResult.Parameters["date-period"] : null;
             var dateTime = request.QueryResult.Parameters.ContainsKey("date-time") ? request.QueryResult.Parameters["date-time"] : null;
@@ -15,7 +15,7 @@ namespace ProjectIvy.Business.MapExtensions
             return new FilteredBinding()
             {
                 From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)((JObject)datePeriod)["startDate"],
-                To = dateTime is DateTime toDate ? toDate.Date : (DateTime)((JObject)datePeriod)["endDate"]
+                To = dateTime is DateTime toDate ? (includeTime ? toDate.Date.AddDays(1) : toDate.Date) : (DateTime)((JObject)datePeriod)["endDate"]
             };
         }
     }
