@@ -37,6 +37,8 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             switch (request.QueryResult.Intent.Name)
             {
+                case "projects/projectivy-rkgwxr/agent/intents/6aed36d0-3e1c-406b-9acf-39bc6fcece99":
+                    return await GetDistance(request);
                 case "projects/projectivy-rkgwxr/agent/intents/c7020a73-a387-4d04-8c3f-961e6de9f99a":
                     return await GetTopSpeed(request);
                 case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
@@ -61,6 +63,16 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
                 FulfillmentText = $"You've drank {sum/1000} liters."
+            };
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetDistance(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            int distance = _trackingHandler.GetDistance(request.ToFilteredBinding());
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"You covered {distance / 1000}km"
             };
         }
         
