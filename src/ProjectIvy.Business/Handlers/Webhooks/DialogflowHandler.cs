@@ -38,13 +38,13 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
-            var datePeriod = (JObject)request.QueryResult.Parameters["date-period"];
+            var datePeriod = request.QueryResult.Parameters["date-period"];
             var dateTime = request.QueryResult.Parameters["date-time"];
 
             var binding = new ExpenseSumGetBinding()
             {
-                From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)datePeriod["startDate"],
-                To = dateTime is DateTime toDate ? toDate.Date.AddDays(1) : (DateTime)datePeriod["endDate"]
+                From = dateTime is DateTime fromDate ? fromDate.Date : (DateTime)((JObject)datePeriod)["startDate"],
+                To = dateTime is DateTime toDate ? toDate.Date.AddDays(1) : (DateTime)((JObject)datePeriod)["endDate"]
             };
 
             decimal sum = await _expenseHandler.SumAmount(binding);
