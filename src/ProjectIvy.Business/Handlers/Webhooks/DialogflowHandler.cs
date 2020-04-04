@@ -25,9 +25,21 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             {
                 case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
                     return await SetLatestOdometer(request);
+                default:
+                    return await GetLatestOdometer();
             }
 
             throw new NotImplementedException();
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetLatestOdometer()
+        {
+            var carLog = _carHandler.GetLatestLog(new CarLogGetBinding() { HasOdometer = true });
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"Latest odometer value is {carLog.Odometer} kilometers."
+            };
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> SetLatestOdometer(GoogleCloudDialogflowV2WebhookRequest request)
@@ -39,9 +51,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             };
             _carHandler.CreateLog(carLog);
 
-            return new GoogleCloudDialogflowV2WebhookResponse()
-            {
-            };
+            return new GoogleCloudDialogflowV2WebhookResponse();
         }
     }
 }

@@ -135,6 +135,15 @@ namespace ProjectIvy.Business.Handlers.Car
             }
         }
 
+        public View.CarLog GetLatestLog(CarLogGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == User.Id).DefaultCar.ValueId;
+                return GetLatestLog(carValueId, binding);
+            }
+        }
+
         public View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding)
         {
             using (var db = GetMainContext())

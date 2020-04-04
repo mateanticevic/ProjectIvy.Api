@@ -22,6 +22,8 @@ namespace ProjectIvy.Business.Handlers.Car
 
         int GetLogCount(string carValueId);
 
+        View.CarLog GetLatestLog(CarLogGetBinding binding);
+
         View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
 
         Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
