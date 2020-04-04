@@ -38,6 +38,8 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             switch (request.QueryResult.Intent.Name)
             {
+                case "projects/projectivy-rkgwxr/agent/intents/f55a44e6-65c8-44c8-a418-e1f535c7bb89":
+                    return await CreateExpense(request);
                 case "projects/projectivy-rkgwxr/agent/intents/2f5e913e-036d-437f-b33e-4ab91e3fbdc7":
                     return await GetConsecutiveConsumationDays(request);
                 case "projects/projectivy-rkgwxr/agent/intents/6aed36d0-3e1c-406b-9acf-39bc6fcece99":
@@ -55,6 +57,23 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             }
 
             throw new NotImplementedException();
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> CreateExpense(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var binding = new ExpenseBinding()
+            {
+                Amount = (decimal)request.QueryResult.Parameters["amount"],
+                CurrencyId = User.DefaultCurrency.Code,
+                Date = (DateTime)request.QueryResult.Parameters["date"],
+                ExpenseTypeId = (string)request.QueryResult.Parameters["ExpenseType"],
+                NeedsReview = true,
+                PaymentTypeId = (string)request.QueryResult.Parameters["payment-type"]
+            };
+
+            _expenseHandler.Create(binding);
+
+            return new GoogleCloudDialogflowV2WebhookResponse();
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsecutiveConsumationDays(GoogleCloudDialogflowV2WebhookRequest request)

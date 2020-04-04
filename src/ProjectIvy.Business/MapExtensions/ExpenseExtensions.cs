@@ -24,7 +24,7 @@ namespace ProjectIvy.Business.MapExtensions
             entity.Date = binding.Date;
             entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
             entity.Modified = DateTime.Now;
-            entity.NeedsReview = false;
+            entity.NeedsReview = binding.NeedsReview;
             entity.ParentCurrencyId = string.IsNullOrEmpty(binding.ParentCurrencyId) ? null : context.Currencies.SingleOrDefault(x => x.Code == binding.ParentCurrencyId)?.Id;
             entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
             entity.ParentCurrencyExchangeRate = binding.ParentCurrencyExchangeRate;

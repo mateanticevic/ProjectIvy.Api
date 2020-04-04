@@ -16,6 +16,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public string ExpenseTypeId { get; set; }
 
+        public bool NeedsReview { get; set; }
+
         public string PaymentTypeId { get; set; }
 
         public string ParentCurrencyId { get; set; }
