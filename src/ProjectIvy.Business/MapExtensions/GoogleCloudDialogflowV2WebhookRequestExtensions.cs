@@ -9,8 +9,8 @@ namespace ProjectIvy.Business.MapExtensions
     {
         public static FilteredBinding ToFilteredBinding(this GoogleCloudDialogflowV2WebhookRequest request)
         {
-            var datePeriod = request.QueryResult.Parameters["date-period"];
-            var dateTime = request.QueryResult.Parameters["date-time"];
+            var datePeriod = request.QueryResult.Parameters.ContainsKey("date-period") ? request.QueryResult.Parameters["date-period"] : null;
+            var dateTime = request.QueryResult.Parameters.ContainsKey("date-time") ? request.QueryResult.Parameters["date-time"] : null;
 
             return new FilteredBinding()
             {
