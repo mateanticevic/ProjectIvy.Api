@@ -114,7 +114,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
-                FulfillmentText = $"You covered {Math.Ceiling((decimal)distance / 1000)}km"
+                FulfillmentText = $"You covered {FormatDistance(distance)}"
             };
         }
         
@@ -170,6 +170,22 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             await _userHandler.SetWeight((decimal)unitWeight["amount"]);
 
             return new GoogleCloudDialogflowV2WebhookResponse();
+        }
+
+        private string FormatDistance(int distanceInMeters)
+        {
+            if (distanceInMeters < 1000)
+            {
+                return $"{distanceInMeters}m";
+            }
+            else if (distanceInMeters < 10000)
+            {
+                return $"{Math.Round((decimal)distanceInMeters/1000, 1)}km";
+            }
+            else
+            {
+                return $"{Math.Floor((decimal)distanceInMeters / 1000)}km";
+            }
         }
     }
 }
