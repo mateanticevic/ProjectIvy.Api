@@ -28,7 +28,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                                  ICarHandler carHandler,
                                  IConsumationHandler consumationHandler,
                                  IExpenseHandler expenseHandler,
-                                 ITrackingHandler trackingHandler
+                                 ITrackingHandler trackingHandler,
                                  IUserHandler userHandler) : base(context)
         {
             _carHandler = carHandler;

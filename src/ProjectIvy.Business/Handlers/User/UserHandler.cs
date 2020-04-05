@@ -61,7 +61,7 @@ namespace ProjectIvy.Business.Handlers.User
             {
                 var entity = new Weight()
                 {
-                    User = User,
+                    UserId = User.Id,
                     Date = DateTime.Now,
                     Value = weight
                 };
