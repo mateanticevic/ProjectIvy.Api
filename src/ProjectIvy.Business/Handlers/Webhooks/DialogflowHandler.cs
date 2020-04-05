@@ -44,25 +44,39 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             {
                 case "projects/projectivy-rkgwxr/agent/intents/f55a44e6-65c8-44c8-a418-e1f535c7bb89":
                     return await CreateExpense(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/2f5e913e-036d-437f-b33e-4ab91e3fbdc7":
                     return await GetConsecutiveConsumationDays(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/6aed36d0-3e1c-406b-9acf-39bc6fcece99":
                     return await GetDistance(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/c7020a73-a387-4d04-8c3f-961e6de9f99a":
                     return await GetTopSpeed(request);
+
+                case "projects/projectivy-rkgwxr/agent/intents/9a170975-9470-4719-a6cc-d9f611d34dab":
+                    return await GetLatestOdometer();
+
                 case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
                     return await SetLatestOdometer(request);
+
+                case "projects/projectivy-rkgwxr/agent/intents/2a0a54f2-d03a-4ee5-aefb-af9b24916eb4":
+                    return await GetConsumationCount(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/45356f36-e342-4c71-ae0d-c9c06e3df76d":
                     return await GetConsumationSum(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/a26b869b-23ff-4426-9158-8566fffc843b":
                     return await GetExpenseSum(request);
+
                 case "projects/projectivy-rkgwxr/agent/intents/970e9c94-06f0-482f-b459-568af5b631e8":
                     return await SetWeight(request);
                 default:
-                    return await GetLatestOdometer();
+                    return new GoogleCloudDialogflowV2WebhookResponse()
+                    {
+                        FulfillmentText = "Unknown intent"
+                    };
             }
-
-            throw new NotImplementedException();
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> CreateExpense(GoogleCloudDialogflowV2WebhookRequest request)
@@ -95,7 +109,19 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                 FulfillmentText = $"{consecutive.To.Subtract(consecutive.From).TotalDays} days, from {consecutive.From} to {consecutive.To}"
             };
         }
-        
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsumationCount(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var binding = new ConsumationGetBinding(request.ToFilteredBinding());
+
+            int count = _consumationHandler.Count(binding);
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"You've drank {count} beers."
+            };
+        }
+
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsumationSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
             var binding = new ConsumationGetBinding(request.ToFilteredBinding());

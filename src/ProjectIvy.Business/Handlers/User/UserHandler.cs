@@ -67,6 +67,7 @@ namespace ProjectIvy.Business.Handlers.User
                 };
 
                 await context.Weights.AddAsync(entity);
+                await context.SaveChangesAsync();
             }
         }
     }
