@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.User;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.User;
 
 namespace ProjectIvy.Business.Handlers.User
@@ -10,5 +11,7 @@ namespace ProjectIvy.Business.Handlers.User
         View.User Get(int? id = null);
 
         void SetPassword(PasswordSetBinding binding);
+
+        Task SetWeight(decimal weight);
     }
 }

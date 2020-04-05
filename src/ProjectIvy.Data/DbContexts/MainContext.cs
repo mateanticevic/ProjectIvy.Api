@@ -136,6 +136,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Web> Webs { get; set; }
 
+        public DbSet<Weight> Weights { get; set; }
+
         public string ConnectionString { get; private set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

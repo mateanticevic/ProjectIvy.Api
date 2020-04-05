@@ -4,6 +4,7 @@ using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Tracking;
+using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Binding.Consumation;
@@ -21,17 +22,20 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         private readonly IConsumationHandler _consumationHandler;
         private readonly IExpenseHandler _expenseHandler;
         private readonly ITrackingHandler _trackingHandler;
+        private readonly IUserHandler _userHandler;
 
         public DialogflowHandler(IHandlerContext<DialogflowHandler> context,
                                  ICarHandler carHandler,
                                  IConsumationHandler consumationHandler,
                                  IExpenseHandler expenseHandler,
-                                 ITrackingHandler trackingHandler) : base(context)
+                                 ITrackingHandler trackingHandler
+                                 IUserHandler userHandler) : base(context)
         {
             _carHandler = carHandler;
             _consumationHandler = consumationHandler;
             _expenseHandler = expenseHandler;
             _trackingHandler = trackingHandler;
+            _userHandler = userHandler;
         }
 
         public async Task<GoogleCloudDialogflowV2WebhookResponse> ProcessWebhook(GoogleCloudDialogflowV2WebhookRequest request)
@@ -52,6 +56,8 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                     return await GetConsumationSum(request);
                 case "projects/projectivy-rkgwxr/agent/intents/a26b869b-23ff-4426-9158-8566fffc843b":
                     return await GetExpenseSum(request);
+                case "projects/projectivy-rkgwxr/agent/intents/970e9c94-06f0-482f-b459-568af5b631e8":
+                    return await SetWeight(request);
                 default:
                     return await GetLatestOdometer();
             }
@@ -154,6 +160,14 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                 Odometer = (int)odometer["amount"]
             };
             _carHandler.CreateLog(carLog);
+
+            return new GoogleCloudDialogflowV2WebhookResponse();
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> SetWeight(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var unitWeight = (JObject)request.QueryResult.Parameters["unit-weight"];
+            await _userHandler.SetWeight((decimal)unitWeight["amount"]);
 
             return new GoogleCloudDialogflowV2WebhookResponse();
         }

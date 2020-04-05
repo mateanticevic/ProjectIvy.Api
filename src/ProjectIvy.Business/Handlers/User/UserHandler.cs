@@ -2,8 +2,10 @@
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.User;
+using ProjectIvy.Model.Database.Main.User;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.User;
 
 namespace ProjectIvy.Business.Handlers.User
@@ -50,6 +52,21 @@ namespace ProjectIvy.Business.Handlers.User
                 userEntity.PasswordModified = DateTime.Now;
 
                 db.SaveChanges();
+            }
+        }
+
+        public async Task SetWeight(decimal weight)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = new Weight()
+                {
+                    User = User,
+                    Date = DateTime.Now,
+                    Value = weight
+                };
+
+                await context.Weights.AddAsync(entity);
             }
         }
     }
