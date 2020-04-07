@@ -46,5 +46,7 @@ namespace ProjectIvy.Model.Database.Main.User
         public ICollection<UserRole> UserRoles { get; set; }
 
         public ICollection<Tracking.Tracking> Trackings { get; set; }
+
+        public ICollection<UserModule> Modules { get; set; } 
     }
 }

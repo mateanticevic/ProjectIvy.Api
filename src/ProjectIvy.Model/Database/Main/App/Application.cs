@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.App
 {
-    [Table("Application", Schema = "App")]
+    [Table(nameof(Application), Schema = nameof(App))]
     public class Application : IHasValueId
     {
         [Key]

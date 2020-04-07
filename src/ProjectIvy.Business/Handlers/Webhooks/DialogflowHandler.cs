@@ -90,7 +90,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                 CurrencyId = string.IsNullOrEmpty(currencyId) ? User.DefaultCurrency.Code : currencyId,
                 Comment = (string)request.QueryResult.Parameters["description"],
                 Date = (DateTime)request.QueryResult.Parameters["date"],
-                ExpenseTypeId = (string)request.QueryResult.Parameters["expense-type"],
+                ExpenseTypeId = ((string)request.QueryResult.Parameters["expense-type"]).Replace(" ", "-"),
                 NeedsReview = true,
                 PaymentTypeId = (string)request.QueryResult.Parameters["payment-type"]
             };
@@ -148,7 +148,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             var binding = new ExpenseSumGetBinding(request.ToFilteredBinding());
 
-            binding.TypeId = request.QueryResult.Parameters.ContainsKey("ExpenseType") ? ((JArray)request.QueryResult.Parameters["ExpenseType"]).Select(x => (string)x) : null;
+            binding.TypeId = request.QueryResult.Parameters.ContainsKey("ExpenseType") ? ((JArray)request.QueryResult.Parameters["ExpenseType"]).Select(x => ((string)x).Replace(" ", "-")) : null;
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 

@@ -14,6 +14,7 @@ namespace ProjectIvy.Model.View.User
             Email = x.Email;
             Username = x.Username;
             Roles = x.UserRoles.Select(y => new Role.Role(y.Role));
+            Modules = x.Modules.Where(x => x.IsActive).Select(x => x.Module.ValueId);
         }
 
         public Currency.Currency DefaultCurrency { get; set; }
@@ -27,5 +28,7 @@ namespace ProjectIvy.Model.View.User
         public string Username { get; set; }
 
         public IEnumerable<Role.Role> Roles { get; set; }
+
+        public IEnumerable<string> Modules { get; set; }
     }
 }

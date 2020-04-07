@@ -37,6 +37,8 @@ namespace ProjectIvy.Business.Handlers.User
                 var userEntity = db.Users.Include(x => x.UserRoles)
                                          .ThenInclude(x => x.Role)
                                          .Include(x => x.DefaultCurrency)
+                                         .Include(x => x.Modules)
+                                         .Include("Modules.Module")
                                          .SingleOrDefault(x => x.Id == id);
 
                 return new View.User(userEntity);
