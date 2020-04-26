@@ -19,6 +19,9 @@
       "launchBrowser": true,
       "launchUrl": "http://localhost:5000/api/values",
       "environmentVariables": {
+        "LAST_FM_KEY": "60ace6d94d756d1a7b417bbcd0e42b34",
+        "CONNECTION_STRING_AZURE_STORAGE": "DefaultEndpointsProtocol=https;AccountName=projectivy;AccountKey=TLTf1/6bdfpQZaXGLO7FIqmSY8ClkzNDUV09mqfwSCEOhwc3QCmxvq50bpu5lTnk471/lOa2x9dEajPjZ0nakw==;EndpointSuffix=core.windows.net",
+        "CONNECTION_STRING_MAIN": "Server=db.anticevic.net;Database=ProjectIvy;User Id=ApiUser;Password=ydeq5cYVyN8Mdx6F;",
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },

@@ -1,6 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using ProjectIvy.Common.Configuration;
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Database.Main.Security;
@@ -11,12 +9,6 @@ namespace ProjectIvy.Business.Handlers.Security
 {
     public class SecurityHandler : ISecurityHandler
     {
-        public SecurityHandler(IOptions<AppSettings> options)
-        {
-            Settings = options.Value;
-        }
-
-        public AppSettings Settings { get; set; }
 
         public Model.Database.Main.User.User GetUser(string token)
         {
@@ -61,7 +53,7 @@ namespace ProjectIvy.Business.Handlers.Security
 
         protected MainContext GetMainContext()
         {
-            return new MainContext(Settings.ConnectionStrings.Main);
+            return new MainContext(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
         }
     }
 }

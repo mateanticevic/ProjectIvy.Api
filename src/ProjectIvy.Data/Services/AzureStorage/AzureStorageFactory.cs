@@ -1,15 +1,11 @@
-﻿using Microsoft.Extensions.Options;
-using ProjectIvy.Common.Configuration;
-using ProjectIvy.Common.Interfaces;
+﻿using ProjectIvy.Common.Interfaces;
+using System;
 
 namespace ProjectIvy.Data.Services.AzureStorage
 {
     public class AzureStorageFactory : IServiceFactory<IAzureStorageHelper>
     {
-        private readonly Common.Configuration.Services.AzureStorage _settings;
 
-        public AzureStorageFactory(IOptions<AppSettings> options) => _settings = options.Value.Services.AzureStorage;
-
-        public IAzureStorageHelper Build() => new AzureStorageHelper(_settings);
+        public IAzureStorageHelper Build() => new AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE"));
     }
 }

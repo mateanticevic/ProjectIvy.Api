@@ -9,9 +9,9 @@ namespace ProjectIvy.Data.Services.AzureStorage
         private readonly CloudStorageAccount _account;
         private readonly CloudFileClient _client;
 
-        public AzureStorageHelper(Common.Configuration.Services.AzureStorage settings)
+        public AzureStorageHelper(string connectionString)
         {
-            _account = CloudStorageAccount.Parse(settings.ConnectionString);
+            _account = CloudStorageAccount.Parse(connectionString);
             _client = _account.CreateCloudFileClient();
         }
 

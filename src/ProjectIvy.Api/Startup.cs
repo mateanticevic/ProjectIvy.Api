@@ -33,8 +33,8 @@ using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
-using ProjectIvy.Common.Configuration;
 using ProjectIvy.Model.Constants;
+using System;
 using System.Text.Json.Serialization;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
@@ -51,25 +51,21 @@ namespace ProjectIvy.Api
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            Settings = Configuration.Get<AppSettings>();
         }
 
         public IConfigurationRoot Configuration { get; }
-
-        protected AppSettings Settings { get; private set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddSwaggerGen();
 
-            services.AddLogging()
-                    .Configure<AppSettings>(Configuration);
+            services.AddLogging();
 
             services.AddHttpContextAccessor();
             services.AddSingleton<ISecurityHandler, SecurityHandler>();
             services.AddSingleton<IHandlerContext<ISecurityHandler>, HandlerContext<ISecurityHandler>>();
-            services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Settings.Services.AzureStorage));
-            services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Settings.Services.LastFm));
+            services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));
+            services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY")));
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();

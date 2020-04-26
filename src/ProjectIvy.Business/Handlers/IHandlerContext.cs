@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using ProjectIvy.Common.Configuration;
 
 namespace ProjectIvy.Business.Handlers
 {
@@ -10,7 +8,5 @@ namespace ProjectIvy.Business.Handlers
         IHttpContextAccessor Context { get; }
 
         ILogger<THandler> Logger { get; }
-
-        IOptions<AppSettings> Settings { get; }
     }
 }

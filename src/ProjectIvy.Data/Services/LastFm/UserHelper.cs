@@ -11,21 +11,19 @@ namespace ProjectIvy.Data.Services.LastFm
 {
     public class UserHelper : IUserHelper
     {
-        private readonly string _url;
+        private readonly string _key;
+        private readonly string _url = "http://ws.audioscrobbler.com/2.0/?method={method}&user={username}&api_key={key}&format=json";
 
-        private readonly Common.Configuration.Services.LastFm _settings;
-
-        public UserHelper(Common.Configuration.Services.LastFm settings)
+        public UserHelper(string key)
         {
-            _url = settings.Url.SetKey(settings.Key);
-            _settings = settings;
+            _key = key;
         }
 
         public async Task<IEnumerable<Track>> GetLovedTracks(string username)
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetLovedTracks(_settings.Url, _settings.Key, username)
+                var request = new UserGetLovedTracks(_url, _key, username)
                 {
                 };
 
@@ -42,7 +40,7 @@ namespace ProjectIvy.Data.Services.LastFm
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetTopArtists(_settings.Url, _settings.Key, username)
+                var request = new UserGetTopArtists(_url, _key, username)
                 {
                 };
 
@@ -59,9 +57,9 @@ namespace ProjectIvy.Data.Services.LastFm
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetTopTracks(_settings.Url, _settings.Key, username)
+                var request = new UserGetTopTracks(_url, _key, username)
                 {
-                    Api_Key = _settings.Key,
+                    Api_Key = _key,
                     Period = Period.Overall,
                     User = username
                 };
@@ -79,7 +77,7 @@ namespace ProjectIvy.Data.Services.LastFm
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetInfo(_settings.Url, _settings.Key, username);
+                var request = new UserGetInfo(_url, _key, username);
 
                 var json = await client.GetStringAsync(request.ToUrl());
 
@@ -93,9 +91,9 @@ namespace ProjectIvy.Data.Services.LastFm
         {
             using (var client = new HttpClient())
             {
-                var request = new UserGetRecentTracks(_settings.Url, _settings.Key, username)
+                var request = new UserGetRecentTracks(_url, _key, username)
                 {
-                    Api_Key = _settings.Key,
+                    Api_Key = _key,
                     From = filter.From?.ToUnix().ToString(),
                     User = username,
                     To = filter.To?.ToUnix().ToString()
