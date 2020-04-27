@@ -37,12 +37,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="before-deploy.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="deploy.ps1">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <None Update="nlog.config">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>

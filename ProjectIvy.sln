@@ -4,14 +4,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 16.0.29411.108
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}"
-	ProjectSection(SolutionItems) = preProject
-		src\appveyor.yml = src\appveyor.yml
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "scripts", "scripts", "{607772D1-62BE-4F0F-A8EB-8E5AD8827085}"
-	ProjectSection(SolutionItems) = preProject
-		scripts\set-version.ps1 = scripts\set-version.ps1
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Api", "src\ProjectIvy.Api\ProjectIvy.Api.csproj", "{EC4A6C81-DCDB-4F12-9BD5-76DCA1A23146}"
 EndProject
@@ -22,11 +14,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Model", "src\ProjectIvy.Model\ProjectIvy.Model.csproj", "{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common", "src\ProjectIvy.Common\ProjectIvy.Common.csproj", "{A363F585-049A-42D2-9FC1-1001222E45F6}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "settings", "settings", "{0F11251C-1155-4BD4-A366-FA95B6C7E27A}"
-	ProjectSection(SolutionItems) = preProject
-		appsettings.json = appsettings.json
-	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common.Test", "test\ProjectIvy.Common.Test\ProjectIvy.Common.Test.csproj", "{EC93E119-6B2D-4C98-8191-EB32416A9B69}"
 EndProject
