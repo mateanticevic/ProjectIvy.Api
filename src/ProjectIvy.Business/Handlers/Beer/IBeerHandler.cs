@@ -16,7 +16,7 @@ namespace ProjectIvy.Business.Handlers.Beer
 
         Task<PagedView<View.Beer>> GetBeers(BeerGetBinding binding);
 
-        Task<IEnumerable<View.BeerBrand>> GetBrands();
+        Task<IEnumerable<View.BeerBrand>> GetBrands(BrandGetBinding binding);
 
         Task<IEnumerable<View.BeerServing>> GetServings();
 

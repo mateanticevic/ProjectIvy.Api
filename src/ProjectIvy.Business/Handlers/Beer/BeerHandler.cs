@@ -70,11 +70,14 @@ namespace ProjectIvy.Business.Handlers.Beer
             }
         }
 
-        public async Task<IEnumerable<View.BeerBrand>> GetBrands()
+        public async Task<IEnumerable<View.BeerBrand>> GetBrands(BrandGetBinding binding)
         {
             using (var context = GetMainContext())
             {
-                return await context.BeerBrands.OrderBy(x => x.Name)
+                return await context.BeerBrands.Include(x => x.Country)
+                                               .WhereIf(binding.HasCountry.HasValue, x => !(binding.HasCountry.Value ^ x.CountryId.HasValue))
+                                               .WhereIf(!string.IsNullOrWhiteSpace(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
+                                               .OrderBy(x => x.Name)
                                                .Select(x => new View.BeerBrand(x))
                                                .ToListAsync();
             }
