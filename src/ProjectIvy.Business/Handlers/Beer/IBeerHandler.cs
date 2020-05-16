@@ -10,7 +10,7 @@ namespace ProjectIvy.Business.Handlers.Beer
     {
         Task<string> CreateBeer(string brandValueId, BeerBinding binding);
 
-        Task<string> CreateBrand(string name);
+        Task<string> CreateBrand(BrandBinding binding);
 
         Task<View.Beer> GetBeer(string id);
 
@@ -21,5 +21,9 @@ namespace ProjectIvy.Business.Handlers.Beer
         Task<IEnumerable<View.BeerServing>> GetServings();
 
         Task<IEnumerable<View.BeerStyle>> GetStyles();
+
+        Task UpdateBeer(string id, BeerBinding binding);
+
+        Task UpdateBrand(string id, BrandBinding binding);
     }
 }

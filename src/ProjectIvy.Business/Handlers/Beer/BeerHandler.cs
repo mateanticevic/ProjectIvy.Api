@@ -24,14 +24,8 @@ namespace ProjectIvy.Business.Handlers.Beer
         {
             using (var context = GetMainContext())
             {
-                int? brandId = context.BeerBrands.GetId(brandValueId);
-                int? styleId = context.BeerStyles.GetId(binding.StyleId);
-
-                if (!brandId.HasValue)
-                    throw new ResourceNotFoundException();
-
-                var entity = binding.ToEntity(brandId.Value);
-                entity.BeerStyleId = styleId;
+                binding.BrandId = brandValueId;
+                var entity = binding.ToEntity(context);
                 await context.Beers.AddAsync(entity);
                 await context.SaveChangesAsync();
 
@@ -39,20 +33,16 @@ namespace ProjectIvy.Business.Handlers.Beer
             }
         }
 
-        public async Task<string> CreateBrand(string name)
+        public async Task<string> CreateBrand(BrandBinding binding)
         {
             using (var context = GetMainContext())
             {
-                var beerBrand = new BeerBrand()
-                {
-                    ValueId = name.ToValueId(),
-                    Name = name
-                };
+                var entity = binding.ToEntity(context);
 
-                await context.BeerBrands.AddAsync(beerBrand);
+                await context.BeerBrands.AddAsync(entity);
                 await context.SaveChangesAsync();
 
-                return beerBrand.ValueId;
+                return entity.ValueId;
             }
         }
 
@@ -103,6 +93,28 @@ namespace ProjectIvy.Business.Handlers.Beer
             using (var context = GetMainContext())
             {
                 return await context.BeerStyles.OrderBy(x => x.Name).Select(x => new View.BeerStyle(x)).ToListAsync();
+            }
+        }
+
+        public async Task UpdateBeer(string id, BeerBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var beer = await context.Beers.SingleOrDefaultAsync(x => x.ValueId == id);
+                var entity = binding.ToEntity(context, beer);
+
+                await context.SaveChangesAsync();
+            }
+        }
+
+        public async Task UpdateBrand(string id, BrandBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var brand = await context.BeerBrands.SingleOrDefaultAsync(x => x.ValueId == id);
+                var entity = binding.ToEntity(context, brand);
+
+                await context.SaveChangesAsync();
             }
         }
     }

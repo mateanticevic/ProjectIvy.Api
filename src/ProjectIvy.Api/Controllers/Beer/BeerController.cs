@@ -28,6 +28,12 @@ namespace ProjectIvy.Api.Controllers.Beer
         public async Task<IActionResult> PostBeer(string brandId, [FromBody] BeerBinding binding) => Ok(await _beerHandler.CreateBeer(brandId, binding));
 
         [HttpPost("Brand")]
-        public async Task<IActionResult> PostBrand([FromBody] string name) => Ok(await _beerHandler.CreateBrand(name));
+        public async Task<IActionResult> PostBrand([FromBody] BrandBinding binding) => Ok(await _beerHandler.CreateBrand(binding));
+
+        [HttpPut("{beerId}")]
+        public async Task PutBeer(string beerId, [FromBody] BeerBinding binding) => await _beerHandler.UpdateBeer(beerId, binding);
+
+        [HttpPut("Brand/{brandId}")]
+        public async Task PutBrand(string brandId, [FromBody] BrandBinding binding) => await _beerHandler.UpdateBrand(brandId, binding);
     }
 }
