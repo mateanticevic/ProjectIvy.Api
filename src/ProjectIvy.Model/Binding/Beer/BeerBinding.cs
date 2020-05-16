@@ -5,5 +5,7 @@
         public decimal Abv { get; set; }
 
         public string Name { get; set; }
+
+        public string StyleId { get; set; }
     }
 }

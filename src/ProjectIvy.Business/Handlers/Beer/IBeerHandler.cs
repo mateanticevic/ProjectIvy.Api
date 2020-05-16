@@ -19,5 +19,7 @@ namespace ProjectIvy.Business.Handlers.Beer
         Task<IEnumerable<View.BeerBrand>> GetBrands();
 
         Task<IEnumerable<View.BeerServing>> GetServings();
+
+        Task<IEnumerable<View.BeerStyle>> GetStyles();
     }
 }

@@ -15,8 +15,12 @@ namespace ProjectIvy.Model.Database.Main.Beer
 
         public int BeerBrandId { get; set; }
 
+        public int? BeerStyleId { get; set; }
+
         public decimal Abv { get; set; }
 
         public BeerBrand BeerBrand { get; set; }
+
+        public BeerStyle BeerStyle { get; set; }
     }
 }

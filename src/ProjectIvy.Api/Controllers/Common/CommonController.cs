@@ -39,6 +39,9 @@ namespace ProjectIvy.Api.Controllers.Common
         [HttpGet("BeerServing")]
         public async Task<IActionResult> GetBeerServings() => Ok(await _beerHandler.GetServings());
 
+        [HttpGet("BeerStyle")]
+        public async Task<IActionResult> GetBeerStyles() => Ok(await _beerHandler.GetStyles());
+
         [HttpGet("ExpenseFileType")]
         public IEnumerable<View.Expense.ExpenseFileType> GetExpenseFileTypes() => _expenseTypeHandler.GetFileTypes();
 

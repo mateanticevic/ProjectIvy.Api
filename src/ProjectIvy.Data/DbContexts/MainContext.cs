@@ -38,6 +38,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<BeerServing> BeerServings { get; set; }
 
+        public DbSet<BeerStyle> BeerStyles { get; set; }
+
         public DbSet<BrowserLog> BrowserLogs { get; set; }
 
         public DbSet<Call> Calls { get; set; }

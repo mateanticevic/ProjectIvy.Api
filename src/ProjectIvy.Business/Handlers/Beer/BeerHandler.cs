@@ -25,11 +25,13 @@ namespace ProjectIvy.Business.Handlers.Beer
             using (var context = GetMainContext())
             {
                 int? brandId = context.BeerBrands.GetId(brandValueId);
+                int? styleId = context.BeerStyles.GetId(binding.StyleId);
 
                 if (!brandId.HasValue)
                     throw new ResourceNotFoundException();
 
                 var entity = binding.ToEntity(brandId.Value);
+                entity.BeerStyleId = styleId;
                 await context.Beers.AddAsync(entity);
                 await context.SaveChangesAsync();
 
@@ -58,7 +60,8 @@ namespace ProjectIvy.Business.Handlers.Beer
         {
             using (var context = GetMainContext())
             {
-                var beers = await context.Beers.SingleOrDefaultAsync(x => x.ValueId == id);
+                var beers = await context.Beers.Include(x => x.BeerStyle)
+                                               .SingleOrDefaultAsync(x => x.ValueId == id);
 
                 return beers.ConvertTo(x => new View.Beer(x));
             }
@@ -92,6 +95,14 @@ namespace ProjectIvy.Business.Handlers.Beer
             using (var context = GetMainContext())
             {
                 return await context.BeerServings.Select(x => new View.BeerServing(x)).ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<View.BeerStyle>> GetStyles()
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.BeerStyles.OrderBy(x => x.Name).Select(x => new View.BeerStyle(x)).ToListAsync();
             }
         }
     }
