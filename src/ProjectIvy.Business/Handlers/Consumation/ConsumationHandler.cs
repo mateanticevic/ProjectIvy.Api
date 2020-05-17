@@ -280,6 +280,24 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public PagedView<SumBy<View.Beer.BeerStyle>> SumVolumeByStyle(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var grouped = context.Consumations
+                                     .WhereUser(User)
+                                     .Where(binding, context)
+                                     .Include(x => x.Beer)
+                                     .ThenInclude(x => x.BeerStyle)
+                                     .Select(x => new { x.Beer.BeerStyle, x.Volume })
+                                     .GroupBy(x => x.BeerStyle);
+
+                return grouped.Select(x => new SumBy<View.Beer.BeerStyle>(x.Key.ConvertTo(y => new View.Beer.BeerStyle(y)), x.Sum(y => y.Volume)))
+                              .OrderByDescending(x => x.Sum)
+                              .ToPagedView(binding, grouped.Count());
+            }
+        }
+
         public int SumVolume(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
