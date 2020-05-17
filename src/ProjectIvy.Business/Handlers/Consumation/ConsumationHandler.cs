@@ -62,7 +62,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<CountBy<Model.View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding)
+        public PagedView<CountBy<View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -217,16 +217,36 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding)
+        public PagedView<SumBy<View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
-                var grouped = context.Consumations.WhereUser(User)
+                var grouped = context.Consumations
+                                     .WhereUser(User)
                                      .Where(binding, context)
                                      .Include(x => x.Beer)
                                      .GroupBy(x => x.Beer);
 
-                return grouped.Select(x => new SumBy<Model.View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Sum(y => y.Volume)))
+                return grouped.Select(x => new SumBy<View.Beer.Beer>(x.Key.ConvertTo(y => new Model.View.Beer.Beer(y)), x.Sum(y => y.Volume)))
+                              .OrderByDescending(x => x.Sum)
+                              .ToPagedView(binding, grouped.Count());
+            }
+        }
+
+        public PagedView<SumBy<View.Country.Country>> SumVolumeByCountry(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var grouped = context.Consumations
+                                     .WhereUser(User)
+                                     .Where(binding, context)
+                                     .Include(x => x.Beer)
+                                     .ThenInclude(x => x.BeerBrand)
+                                     .ThenInclude(x => x.Country)
+                                     .Select(x => new { x.Beer.BeerBrand.Country, x.Volume })
+                                     .GroupBy(x => x.Country);
+
+                return grouped.Select(x => new SumBy<View.Country.Country>(x.Key.ConvertTo(y => new View.Country.Country(y)), x.Sum(y => y.Volume)))
                               .OrderByDescending(x => x.Sum)
                               .ToPagedView(binding, grouped.Count());
             }
@@ -245,7 +265,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<SumBy<Model.View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding)
+        public PagedView<SumBy<View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {

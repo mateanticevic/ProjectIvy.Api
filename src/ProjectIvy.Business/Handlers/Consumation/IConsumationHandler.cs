@@ -37,6 +37,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<SumBy<Model.View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding);
 
+        PagedView<SumBy<View.Country.Country>> SumVolumeByCountry(ConsumationGetBinding binding);
+
         PagedView<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding);
 
         PagedView<SumBy<Model.View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding);
