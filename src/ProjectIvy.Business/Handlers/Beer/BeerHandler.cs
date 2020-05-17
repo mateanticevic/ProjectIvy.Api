@@ -1,11 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Beer;
-using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +61,8 @@ namespace ProjectIvy.Business.Handlers.Beer
             {
                 int? brandId = context.BeerBrands.GetId(binding.BrandId);
 
-                return await context.Beers.WhereIf(brandId.HasValue, x => x.BeerBrandId == brandId).OrderBy(binding)
+                return await context.Beers.Include(x => x.BeerStyle)
+                                          .WhereIf(brandId.HasValue, x => x.BeerBrandId == brandId).OrderBy(binding)
                                           .WhereIf(!string.IsNullOrWhiteSpace(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
                                           .Select(x => new View.Beer(x))
                                           .ToPagedViewAsync(binding);

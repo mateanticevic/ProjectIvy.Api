@@ -57,7 +57,7 @@ namespace ProjectIvy.Api.Controllers.Consumation
 
         [HttpGet("Count/Brand")]
         [HttpGet("Brand/Count")]
-        public int GetCountBrand(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
+        public int GetBrandCount(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
 
         [HttpGet("Sum")]
         public int GetSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);

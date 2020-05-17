@@ -16,7 +16,7 @@ namespace ProjectIvy.Business.MapExtensions
             b.Name = binding.Name;
             b.ValueId = beer?.ValueId ?? binding.Name.ToValueId();
 
-            b.BeerBrandId = context.BeerBrands.GetId(binding.BrandId).Value;
+            b.BeerBrandId = string.IsNullOrWhiteSpace(binding.BrandId) ? b.BeerBrandId : context.BeerBrands.GetId(binding.BrandId).Value;
             b.BeerStyleId = context.BeerStyles.GetId(binding.StyleId);
 
             return b;
