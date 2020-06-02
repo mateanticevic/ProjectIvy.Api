@@ -84,6 +84,20 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
+        public async Task Create(IEnumerable<TrackingBinding> binding)
+        {
+            using (var db = GetMainContext())
+            {
+                await db.Trackings.AddRangeAsync(binding.Select(x =>
+                {
+                    var entity = x.ToEntity();
+                    entity.UserId = User.Id;
+                    return entity;
+                }));
+                await db.SaveChangesAsync();
+            }
+        }
+
         public IEnumerable<View.Tracking> Get(FilteredBinding binding)
         {
             using (var db = GetMainContext())

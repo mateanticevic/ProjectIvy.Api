@@ -69,6 +69,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpPut]
         public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
 
+        [HttpPost]
+        public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
+
         [HttpPut("Kml")]
         public bool PutKml([FromBody] string kmlRaw)
         {

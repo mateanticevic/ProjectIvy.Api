@@ -13,6 +13,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
     {
         bool Create(TrackingBinding binding);
 
+        Task Create(IEnumerable<TrackingBinding> binding);
+
         IEnumerable<View.Tracking> Get(FilteredBinding binding);
 
         int Count(FilteredBinding binding);
