@@ -83,11 +83,11 @@ namespace ProjectIvy.Business.Handlers.Country
                                        .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
                                        .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
                                        .Include(x => x.Cities)
-                                       .OrderBy(x => x.TimestampStart)
                                        .SelectMany(x => x.Cities)
-                                       .Select(x => x.City.Country)
-                                       .Distinct()
-                                       .Select(x => new View.Country(x))
+                                       .Select(x => new { x.EnteredOn, x.City.Country, x.Trip.TimestampStart })
+                                       .OrderBy(x => x.TimestampStart)
+                                       .ThenBy(x => x.EnteredOn)
+                                       .Select(x => new View.Country(x.Country))
                                        .ToList();
 
                 var birthCountry = User.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
@@ -96,7 +96,7 @@ namespace ProjectIvy.Business.Handlers.Country
 
                 if (birthCountry != null)
                 {
-                    var existingBirthCountry = countries.SingleOrDefault(x => x.Id == birthCountry.ValueId);
+                    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
                     if (existingBirthCountry != null)
                         countries.Remove(existingBirthCountry);
 
