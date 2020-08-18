@@ -40,3 +40,6 @@ src/ProjectIvy.Api/bin
 /ProjectIvy.Tests/obj
 **/bin
 **/obj
+/src/ProjectIvy.Api/launchSettings.json
+launchSettings.json
+Properties
