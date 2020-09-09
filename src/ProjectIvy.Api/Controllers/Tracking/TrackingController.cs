@@ -28,10 +28,10 @@ namespace ProjectIvy.Api.Controllers.Tracking
         }
 
         [HttpGet]
-        public IEnumerable<View.Tracking> Get([FromQuery] FilteredBinding binding) => _trackingHandler.Get(binding);
+        public IEnumerable<View.Tracking> Get([FromQuery] TrackingGetBinding binding) => _trackingHandler.Get(binding);
 
         [HttpGet("Gpx")]
-        public string GetGpx([FromQuery] FilteredBinding binding)
+        public string GetGpx([FromQuery] TrackingGetBinding binding)
         {
             return _trackingHandler.Get(binding)
                                    .Select(x => (ITracking)x)
@@ -55,7 +55,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);
 
         [HttpGet("Day")]
-        public async Task<IActionResult> GetDaysInsideRectangle(TrackingGetBinding binding) => Ok(await _trackingHandler.GetDays(binding));
+        public async Task<IActionResult> GetDays(TrackingGetBinding binding) => Ok(await _trackingHandler.GetDays(binding));
 
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
