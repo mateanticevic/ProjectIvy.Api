@@ -98,12 +98,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
-        public IEnumerable<View.Tracking> Get(FilteredBinding binding)
+        public IEnumerable<View.Tracking> Get(TrackingGetBinding binding)
         {
             using (var db = GetMainContext())
             {
                 return db.Trackings.WhereUser(User.Id)
                                    .WhereTimestampInclusive(binding)
+                                   .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
                                    .Select(x => new View.Tracking(x));
@@ -115,7 +116,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             using (var context = GetMainContext())
             {
                 return await context.Trackings.WhereUser(User)
-                                              .Where(x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
+                                              .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
                                               .Select(x => x.Timestamp.Date.ToString("yyyy-MM-dd"))
                                               .Distinct()
                                               .OrderByDescending(x => x)

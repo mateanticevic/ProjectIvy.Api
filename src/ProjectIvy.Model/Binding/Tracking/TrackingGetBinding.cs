@@ -2,7 +2,7 @@
 
 namespace ProjectIvy.Model.Binding.Tracking
 {
-    public class TrackingGetBinding
+    public class TrackingGetBinding : FilteredBinding
     {
         public LocationBinding BottomRight { get; set; }
 
