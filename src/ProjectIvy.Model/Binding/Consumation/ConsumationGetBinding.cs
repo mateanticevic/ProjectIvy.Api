@@ -16,6 +16,8 @@ namespace ProjectIvy.Model.Binding.Consumation
 
         public string BrandId { get; set; }
 
+        public string CountryId { get; set; }
+
         public BeerServing? Serving { get; set; }
     }
 }

@@ -20,11 +20,13 @@ namespace ProjectIvy.Data.Extensions.Entities
         {
             var beerId = context.Beers.GetId(binding.BeerId);
             var beerBrandId = context.BeerBrands.GetId(binding.BrandId);
+            var countryId = context.Countries.GetId(binding.CountryId);
 
             return query.Include(x => x.Beer)
                         .WhereIf(binding.From.HasValue, x => x.Date >= binding.From.Value)
                         .WhereIf(binding.To.HasValue, x => x.Date <= binding.To.Value)
                         .WhereIf(binding.Serving.HasValue, x => x.BeerServingId == (int)binding.Serving.Value)
+                        .WhereIf(!string.IsNullOrWhiteSpace(binding.CountryId), x => x.Beer.BeerBrand.CountryId == countryId.Value)
                         .WhereIf(beerId.HasValue, x => x.BeerId == beerId.Value)
                         .WhereIf(beerBrandId.HasValue, x => x.Beer.BeerBrandId == beerBrandId.Value);
         }
