@@ -21,6 +21,7 @@ namespace ProjectIvy.Data.Extensions.Entities
             var beerId = context.Beers.GetId(binding.BeerId);
             var beerBrandId = context.BeerBrands.GetId(binding.BrandId);
             var countryId = context.Countries.GetId(binding.CountryId);
+            var beerStyleId = context.BeerStyles.GetId(binding.StyleId);
 
             return query.Include(x => x.Beer)
                         .WhereIf(binding.From.HasValue, x => x.Date >= binding.From.Value)
@@ -28,6 +29,7 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .WhereIf(binding.Serving.HasValue, x => x.BeerServingId == (int)binding.Serving.Value)
                         .WhereIf(!string.IsNullOrWhiteSpace(binding.CountryId), x => x.Beer.BeerBrand.CountryId == countryId.Value)
                         .WhereIf(beerId.HasValue, x => x.BeerId == beerId.Value)
+                        .WhereIf(!string.IsNullOrWhiteSpace(binding.StyleId), x => x.Beer.BeerStyleId == beerStyleId)
                         .WhereIf(beerBrandId.HasValue, x => x.Beer.BeerBrandId == beerBrandId.Value);
         }
     }
