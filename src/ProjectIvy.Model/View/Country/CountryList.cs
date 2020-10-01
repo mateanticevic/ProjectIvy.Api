@@ -10,7 +10,7 @@ namespace ProjectIvy.Model.View.Country
         {
             Id = x.ValueId;
             Name = x.Name;
-            Countries = x.Countries.Select(x => new Country(x.Country));
+            Countries = x.Countries.Select(y => new Country(y.Country));
         }
 
         public string Id { get; set; }
