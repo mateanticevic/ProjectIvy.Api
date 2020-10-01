@@ -66,6 +66,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<CountryList> CountryLists { get; set; }
+
         public DbSet<CountryPolygon> CountryPolygons { get; set; }
 
         public DbSet<Currency> Currencies { get; set; }
@@ -197,6 +199,12 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<CountryPolygon>()
                         .HasKey(x => new { x.CountryId, x.GroupId, x.Index });
+
+            modelBuilder.Entity<CountryList>()
+                        .HasMany(x => x.Countries);
+
+            modelBuilder.Entity<CountryListCountry>()
+                        .HasKey(x => new { x.CountryId, x.CountryListId });
 
             modelBuilder.Entity<Tracking>()
                         .HasOne(x => x.User)

@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Country;
 
 namespace ProjectIvy.Api.Controllers.Country
@@ -35,5 +36,8 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet("Visited/Boundaries")]
         public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(_countryHandler.GetVisited(binding));
+
+        [HttpGet("List")]
+        public async Task<IActionResult> GetCountryLists() => Ok(await _countryHandler.GetLists());
     }
 }

@@ -6,6 +6,7 @@ using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Country;
 
 namespace ProjectIvy.Business.Handlers.Country
@@ -70,6 +71,18 @@ namespace ProjectIvy.Business.Handlers.Country
                     Count = count,
                     Items = items
                 };
+            }
+        }
+
+        public async Task<IEnumerable<View.CountryList>> GetLists()
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.CountryLists.Include(x => x.Countries)
+                                                 .ThenInclude(x => x.Country)
+                                                 .Where(x => !x.UserId.HasValue || x.UserId == User.Id)
+                                                 .Select(x => new View.CountryList(x))
+                                                 .ToListAsync();
             }
         }
 
