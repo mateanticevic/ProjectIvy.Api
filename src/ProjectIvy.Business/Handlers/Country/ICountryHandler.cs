@@ -21,6 +21,8 @@ namespace ProjectIvy.Business.Handlers.Country
 
         Task<IEnumerable<View.CountryList>> GetLists();
 
+        Task<IEnumerable<View.CountryListVisited>> GetListsVisited();
+
         IEnumerable<View.Country> GetVisited(TripGetBinding binding);
     }
 }

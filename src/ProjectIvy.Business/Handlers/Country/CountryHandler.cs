@@ -86,6 +86,18 @@ namespace ProjectIvy.Business.Handlers.Country
             }
         }
 
+        public async Task<IEnumerable<View.CountryListVisited>> GetListsVisited()
+        {
+            var lists = await GetLists();
+            var visitedCountries = GetVisited(new TripGetBinding()).Select(x => x.Id).ToList();
+
+            return lists.Select(x => new View.CountryListVisited(x)
+            {
+                CountriesNotVisited = x.Countries.Where(y => !visitedCountries.Contains(y.Id)),
+                CountriesVisited = x.Countries.Where(y => visitedCountries.Contains(y.Id))
+            });
+        }
+
         public IEnumerable<View.Country> GetVisited(TripGetBinding binding)
         {
             using (var context = GetMainContext())

@@ -39,5 +39,8 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet("List")]
         public async Task<IActionResult> GetCountryLists() => Ok(await _countryHandler.GetLists());
+
+        [HttpGet("List/Visited")]
+        public async Task<IActionResult> GetCountryListsVisited() => Ok(await _countryHandler.GetListsVisited());
     }
 }
