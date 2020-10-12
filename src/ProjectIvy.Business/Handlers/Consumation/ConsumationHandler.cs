@@ -18,7 +18,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         public ConsumationHandler(IHandlerContext<ConsumationHandler> context) : base(context)
         {
         }
-
+        
         public void Add(ConsumationBinding binding)
         {
             using (var context = GetMainContext())
@@ -252,7 +252,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding)
+        public IEnumerable<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -260,8 +260,9 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .Where(binding, context)
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                            .Select(x => new GroupedByMonth<int>(x.Sum(y => y.Volume), x.Key.Year, x.Key.Month))
-                                           .OrderByDescending(x => x.Data)
-                                           .ToPagedView(binding);
+                                           .ToList()
+                                           .OrderByDescending(x => x.Year)
+                                           .ThenByDescending(x => x.Month);
             }
         }
 

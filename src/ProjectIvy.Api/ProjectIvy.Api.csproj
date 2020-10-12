@@ -10,6 +10,8 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Custom' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'ProjectIvy' " />
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
   </ItemGroup>
