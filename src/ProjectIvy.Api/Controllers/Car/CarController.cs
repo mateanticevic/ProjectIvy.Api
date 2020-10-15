@@ -6,6 +6,7 @@ using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Constants.Database;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Api.Controllers.Car
@@ -34,6 +35,9 @@ namespace ProjectIvy.Api.Controllers.Car
 
         [HttpGet("{carId}/Log/Latest")]
         public View.CarLog GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLatestLog(carId, binding);
+
+        [HttpGet("{carId}/Log")]
+        public async Task<IActionResult> GetLogs(string carId, [FromQuery] CarLogGetBinding binding) => Ok(await _carHandler.GetLogs(carId, binding));
 
         [AllowAnonymous]
         [HttpGet("{carId}/Log/Torque.php")]

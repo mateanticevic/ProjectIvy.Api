@@ -14,9 +14,7 @@ namespace ProjectIvy.Business.Handlers.Car
 {
     public class CarHandler : Handler<CarHandler>, ICarHandler
     {
-        public CarHandler(IHandlerContext<CarHandler> context) : base(context)
-        {
-        }
+        public CarHandler(IHandlerContext<CarHandler> context) : base(context) {}
 
         public void Create(string valueId, CarBinding car)
         {
@@ -132,6 +130,21 @@ namespace ProjectIvy.Business.Handlers.Car
                                     .SingleOrDefault(x => x.ValueId == carValueId)
                                     .CarLogs
                                     .Count;
+            }
+        }
+
+        public async Task<IEnumerable<View.CarLog>> GetLogs(string carValueId, CarLogGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int? carId = context.Cars.GetId(carValueId);
+
+                return await context.CarLogs
+                                    .Where(x => x.CarId == carId.Value)
+                                    .Where(binding)
+                                    .OrderByDescending(x => x.Timestamp)
+                                    .Select(x => new View.CarLog(x))
+                                    .ToListAsync();
             }
         }
 
