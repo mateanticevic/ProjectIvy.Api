@@ -56,9 +56,9 @@ namespace ProjectIvy.Business.Handlers.Movie
                 return db.Movies.WhereUser(User.Id)
                                 .Where(binding)
                                 .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
+                                .OrderBy(x => x.Key.Year)
+                                .ThenBy(x => x.Key.Month)
                                 .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                                .OrderByDescending(x => x.Year)
-                                .ThenByDescending(x => x.Month)
                                 .ToList();
             }
         }
@@ -70,8 +70,8 @@ namespace ProjectIvy.Business.Handlers.Movie
                 return db.Movies.WhereUser(User.Id)
                                 .Where(binding)
                                 .GroupBy(x => x.Timestamp.Year)
+                                .OrderBy(x => x.Key)
                                 .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
-                                .OrderByDescending(x => x.Year)
                                 .ToList();
             }
         }
