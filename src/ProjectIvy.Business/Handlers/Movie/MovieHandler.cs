@@ -49,7 +49,33 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> CountByMonth(MovieGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => ((int)x.Timestamp.DayOfWeek + 6) % 7 + 1)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Timestamp.Month)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<GroupedByMonth<int>> CountByMonthOfYear(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -59,6 +85,58 @@ namespace ProjectIvy.Business.Handlers.Movie
                                 .OrderBy(x => x.Key.Year)
                                 .ThenBy(x => x.Key.Month)
                                 .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Year - x.Year % 10)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<string, int>($"{x.Key}'s", x.Count()))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<short, int>> CountByMovieYear(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Year)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<short, int>(x.Key, x.Count()))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<short, int>> CountByMyRating(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.MyRating)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<short, int>(x.Key, x.Count()))
+                                .ToList();
+            }
+        }
+
+        public IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Runtime - (x.Runtime % 10) + 10)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<string, int>($"~{x.Key}min", x.Count()))
                                 .ToList();
             }
         }

@@ -14,7 +14,19 @@ namespace ProjectIvy.Business.Handlers.Movie
 
         int Count(MovieGetBinding binding);
 
-        IEnumerable<GroupedByMonth<int>> CountByMonth(MovieGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding);
+
+        IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);
+
+        IEnumerable<GroupedByMonth<int>> CountByMonthOfYear(MovieGetBinding binding);
+
+        IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding);
+
+        IEnumerable<KeyValuePair<short, int>> CountByMovieYear(MovieGetBinding binding);
+
+        IEnumerable<KeyValuePair<short, int>> CountByMyRating(MovieGetBinding binding);
+
+        IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
 
         IEnumerable<GroupedByYear<int>> CountByYear(MovieGetBinding binding);
 

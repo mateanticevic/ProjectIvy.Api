@@ -29,8 +29,26 @@ namespace ProjectIvy.Api.Controllers.Movie
         [HttpGet("Count")]
         public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.Count(binding);
 
+        [HttpGet("Count/ByDayOfWeek")]
+        public IActionResult GetCountByDayOfWeek([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByDayOfWeek(binding));
+
         [HttpGet("Count/ByMonth")]
-        public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] MovieGetBinding binding) => _movieHandler.CountByMonth(binding);
+        public IActionResult GetCountByMonth([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMonth(binding));
+
+        [HttpGet("Count/ByMovieDecade")]
+        public IActionResult GetCountByMovieDecade([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMovieDecade(binding));
+
+        [HttpGet("Count/ByMovieYear")]
+        public IActionResult GetCountByMovieYear([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMovieYear(binding));
+
+        [HttpGet("Count/ByMyRating")]
+        public IActionResult GetCountByMyRating([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMyRating(binding));
+
+        [HttpGet("Count/ByMonthOfYear")]
+        public IActionResult GetCountByMonthOfYear([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMonthOfYear(binding));
+
+        [HttpGet("Count/ByRuntime")]
+        public IActionResult GetCountByRuntime([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByRuntime(binding));
 
         [HttpGet("Count/ByYear")]
         public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.CountByYear(binding);
