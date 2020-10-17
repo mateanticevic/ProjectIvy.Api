@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,6 +16,8 @@ namespace ProjectIvy.Model.Database.Main.Transport
         public int CarModelId { get; set; }
 
         public short ProductionYear { get; set; }
+
+        public DateTime? FirstRegistered { get; set; }
 
         public CarModel CarModel { get; set; }
 

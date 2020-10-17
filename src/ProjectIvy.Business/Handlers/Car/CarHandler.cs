@@ -89,7 +89,41 @@ namespace ProjectIvy.Business.Handlers.Car
                                       .ThenInclude(x => x.Manufacturer)
                                       .SingleOrDefault(x => x.ValueId == carId);
 
-                return new View.Car(car);
+                int? lastOdometer = context.CarLogs.GetLastOdometer(car.Id);
+
+                var serviceDue = new List<View.CarServiceDue>();
+                foreach (var serviceInterval in context.CarServiceIntervals
+                                                       .Include(x => x.CarServiceType)
+                                                       .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue)))
+                {
+                    var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
+                                                     .OrderByDescending(x => x.Date)
+                                                     .FirstOrDefault();
+
+                    if (lastService == null)
+                    {
+                        if (car.FirstRegistered.HasValue)
+                            serviceDue.Add(new View.CarServiceDue
+                            {
+                                DueAt = serviceInterval.Range.HasValue ? serviceInterval.Range : null,
+                                DueBefore = serviceInterval.Days.HasValue ? car.FirstRegistered.Value.AddDays(serviceInterval.Days.Value) : (DateTime?)null,
+                                ServiceType = new View.CarServiceType(serviceInterval.CarServiceType)
+                            });
+
+                        continue;
+                    }
+
+                    int? aproximateOdometer = context.CarLogs.GetAproximateOdometer(car.Id, lastService.Date);                    
+                    serviceDue.Add(new View.CarServiceDue()
+                    {
+                        DueAt = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range.Value : null,
+                        DueIn = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range - lastOdometer : null,
+                        DueBefore = serviceInterval.Days.HasValue ? lastService.Date.AddDays(serviceInterval.Days.Value) : (DateTime?)null,
+                        ServiceType = new View.CarServiceType(lastService.CarServiceType)
+                    });
+                }
+
+                return new View.Car(car) { ServiceDue = serviceDue };
             }
         }
 
@@ -142,7 +176,7 @@ namespace ProjectIvy.Business.Handlers.Car
                 return await context.CarLogs
                                     .Where(x => x.CarId == carId.Value)
                                     .Where(binding)
-                                    .OrderByDescending(x => x.Timestamp)
+                                    .OrderBy(x => x.Timestamp)
                                     .Select(x => new View.CarLog(x))
                                     .ToListAsync();
             }
