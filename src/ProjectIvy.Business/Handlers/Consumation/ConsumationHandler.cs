@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Dapper;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Data.Sql;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
@@ -252,7 +255,22 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding)
+        {
+            using (var sqlConnection = GetSqlConnection())
+            {
+                return sqlConnection.Query<KeyValuePair<int, int>>(SqlLoader.Load(Constants.GetConsumationSumByDayOfWeek),
+                                        new {
+                                            binding.From,
+                                            binding.To,
+                                            UserId = User.Id
+                                        })
+                                    .Select(x => new KeyValuePair<int, int>(x.Key == 1 ? 7 : x.Key - 1, x.Value))
+                                    .OrderBy(x => x.Key);
+            }
+        }
+
+        public IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -261,8 +279,21 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                            .Select(x => new GroupedByMonth<int>(x.Sum(y => y.Volume), x.Key.Year, x.Key.Month))
                                            .ToList()
-                                           .OrderByDescending(x => x.Year)
-                                           .ThenByDescending(x => x.Month);
+                                           .OrderBy(x => x.Year)
+                                           .ThenBy(x => x.Month);
+            }
+        }
+
+        public IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .GroupBy(x => x.Date.Year)
+                                           .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
+                                           .ToList()
+                                           .OrderBy(x => x.Key);
             }
         }
 

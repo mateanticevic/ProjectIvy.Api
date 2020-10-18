@@ -68,8 +68,14 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Sum/ByCountry")]
         public PagedView<SumBy<Model.View.Country.Country>> GetSumVolumeByCountry(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByCountry(binding);
 
-        [HttpGet("Sum/ByMonth")]
-        public IActionResult GetSumByMonth(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonth(binding));
+        [HttpGet("Sum/ByDayOfWeek")]
+        public IActionResult GetSumByDayOfWeek(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByDayOfWeek(binding));
+
+        [HttpGet("Sum/ByMonthOfYear")]
+        public IActionResult GetSumByMonthOfYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonthOfYear(binding));
+
+        [HttpGet("Sum/ByYear")]
+        public IActionResult GetSumByYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByYear(binding));
 
         [HttpGet("Sum/ByServing")]
         public PagedView<SumBy<Model.View.Beer.BeerServing>> GetSumByServing(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByServing(binding);

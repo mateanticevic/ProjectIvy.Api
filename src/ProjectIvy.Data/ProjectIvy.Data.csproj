@@ -17,6 +17,7 @@
     <None Remove="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
     <None Remove="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
     <None Remove="StyleCop.Cache" />
+    <None Remove="Sql\Main\Scripts\GetConsumationSumByDayOfWeek.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +28,7 @@
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByDay.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetConsumationSumByDayOfWeek.sql" />
   </ItemGroup>
 
   <ItemGroup>

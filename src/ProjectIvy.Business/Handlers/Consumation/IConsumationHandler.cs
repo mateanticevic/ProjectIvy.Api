@@ -39,7 +39,11 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<SumBy<View.Country.Country>> SumVolumeByCountry(ConsumationGetBinding binding);
 
-        IEnumerable<GroupedByMonth<int>> SumVolumeByMonth(ConsumationGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding);
+
+        IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding);
+
+        IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
 
         PagedView<SumBy<View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding);
 
