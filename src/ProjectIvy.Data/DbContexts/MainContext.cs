@@ -50,7 +50,11 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<CarModel> CarModels { get; set; }
 
+        public DbSet<CarService> CarServices { get; set; }
+
         public DbSet<CarServiceInterval> CarServiceIntervals { get; set; }
+
+        public DbSet<CarServiceType> CarServiceTypes { get; set; }
 
         public DbSet<Card> Cards { get; set; }
 

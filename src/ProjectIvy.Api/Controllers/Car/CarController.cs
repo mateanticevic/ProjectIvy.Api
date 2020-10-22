@@ -54,6 +54,9 @@ namespace ProjectIvy.Api.Controllers.Car
             return _carHandler.CreateLog(binding);
         }
 
+        [HttpPost("{id}/Service")]
+        public async Task<IActionResult> PostService(string id, [FromBody] CarServiceBinding binding) => Ok(await _carHandler.CreateService(id, binding));
+
         [HttpPut("{id}")]
         public IActionResult PutCar(string id, [FromBody] CarBinding car)
         {

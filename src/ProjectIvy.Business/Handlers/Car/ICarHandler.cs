@@ -12,6 +12,8 @@ namespace ProjectIvy.Business.Handlers.Car
 
         DateTime CreateLog(CarLogBinding binding);
 
+        Task<string> CreateService(string carValueId, CarServiceBinding binding);
+
         void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding);
 
         IEnumerable<View.Car> Get();
@@ -29,5 +31,7 @@ namespace ProjectIvy.Business.Handlers.Car
         View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
 
         Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
+
+        Task<IEnumerable<View.CarServiceType>> GetServiceTypes(string carModelValueId);
     }
 }

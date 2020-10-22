@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectIvy.Model.Database.Main.Transport
 {
     [Table(nameof(CarServiceType), Schema = nameof(Transport))]
-    public class CarServiceType
+    public class CarServiceType : IHasValueId
     {
         [Key]
         public int Id { get; set; }

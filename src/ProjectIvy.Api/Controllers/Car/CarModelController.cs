@@ -20,5 +20,8 @@ namespace ProjectIvy.Api.Controllers.Car
 
         [HttpGet("{carModelId}/ServiceInterval")]
         public async Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelId) => await _carHandler.GetServiceIntervals(carModelId);
+
+        [HttpGet("{carModelId}/ServiceType")]
+        public async Task<IEnumerable<View.CarServiceType>> GetServiceTypes(string carModelId) => await _carHandler.GetServiceTypes(carModelId);
     }
 }

@@ -52,6 +52,20 @@ namespace ProjectIvy.Business.Handlers.Car
             }
         }
 
+        public async Task<string> CreateService(string carValueId, CarServiceBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = binding.ToEntity(context);
+                entity.CarId = context.Cars.GetId(carValueId).Value;
+
+                context.CarServices.Add(entity);
+                await context.SaveChangesAsync();
+
+                return entity.ValueId;
+            }
+        }
+
         public void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding)
         {
             using (var context = GetMainContext())
@@ -106,6 +120,7 @@ namespace ProjectIvy.Business.Handlers.Car
                             serviceDue.Add(new View.CarServiceDue
                             {
                                 DueAt = serviceInterval.Range.HasValue ? serviceInterval.Range : null,
+                                DueIn = serviceInterval.Range.HasValue ? serviceInterval.Range - lastOdometer : null,
                                 DueBefore = serviceInterval.Days.HasValue ? car.FirstRegistered.Value.AddDays(serviceInterval.Days.Value) : (DateTime?)null,
                                 ServiceType = new View.CarServiceType(serviceInterval.CarServiceType)
                             });
@@ -216,6 +231,20 @@ namespace ProjectIvy.Business.Handlers.Car
                 return await context.CarServiceIntervals.Where(x => x.CarModelId == carModelId)
                                                         .Include(x => x.CarServiceType)
                                                         .Select(x => new View.CarServiceInterval(x))
+                                                        .ToListAsync();
+            }
+        }
+
+        public async Task<IEnumerable<View.CarServiceType>> GetServiceTypes(string carModelValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int? carModelId = context.CarModels.GetId(carModelValueId);
+
+                return await context.CarServiceIntervals.Where(x => x.CarModelId == carModelId)
+                                                        .Include(x => x.CarServiceType)
+                                                        .OrderBy(x => x.CarServiceType.Name)
+                                                        .Select(x => new View.CarServiceType(x.CarServiceType))
                                                         .ToListAsync();
             }
         }

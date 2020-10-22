@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Data.DbContexts;
+﻿using ProjectIvy.Common.Helpers;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Database.Main.Transport;
@@ -54,6 +55,19 @@ namespace ProjectIvy.Business.MapExtensions
                 TransmissionTemperature1 = (short?)b.Kfe1805,
                 TripDistance = b.Kff1204.HasValue ? (int)(b.Kff1204 * 1000) : (int?)null
             };
+        }
+
+        public static CarService ToEntity(this CarServiceBinding b, MainContext context, CarService entity = null)
+        {
+            if (entity == null)
+                entity = new CarService();
+
+            entity.CarServiceTypeId = context.CarServiceTypes.GetId(b.TypeId).Value;
+            entity.Date = b.Date;
+            entity.Description = b.Description;
+            entity.ValueId = IdHelper.Generate();
+
+            return entity;
         }
     }
 }
