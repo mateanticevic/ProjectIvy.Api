@@ -43,10 +43,9 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var userMovies = db.Movies.WhereUser(User.Id)
-                                          .Where(binding);
-
-                return userMovies.Count();
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .Count();
             }
         }
 
@@ -183,10 +182,9 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var userMovies = db.Movies.WhereUser(User.Id)
-                                          .Where(binding);
-
-                return (int)userMovies.Average(x => x.Runtime);
+                return (int) db.Movies.WhereUser(User.Id)
+                                      .Where(binding)
+                                      .Average(x => x.Runtime);
             }
         }
 
@@ -194,10 +192,9 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var userMovies = db.Movies.WhereUser(User.Id)
-                                          .Where(binding);
-
-                return userMovies.Sum(selector);
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .Sum(selector);
             }
         }
     }

@@ -84,7 +84,8 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Expenses.WhereUser(User.Id)
+                return context.Expenses
+                    .WhereUser(User.Id)
                     .Where(binding, context)
                     .GroupBy(x => x.Date.DayOfWeek)
                     .OrderByDescending(x => x.Key)
