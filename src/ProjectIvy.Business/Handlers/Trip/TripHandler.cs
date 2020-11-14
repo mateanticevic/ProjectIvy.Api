@@ -31,16 +31,8 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
-                int cityId = context.Cities.GetId(cityValueId).Value;
-
-                var tripCity = new TripCity()
-                {
-                    CityId = cityId,
-                    TripId = tripId
-                };
-
-                context.TripCities.Add(tripCity);
+                var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
+                context.Trips.Include(x => x.Cities).SingleOrDefault(x => x.ValueId == tripValueId).Cities.Add(city);
                 context.SaveChanges();
             }
         }
@@ -100,8 +92,8 @@ namespace ProjectIvy.Business.Handlers.Trip
 
                 foreach (string cityValueId in binding.CityIds.EmptyIfNull())
                 {
-                    int cityId = context.Cities.GetId(cityValueId).Value;
-                    context.TripCities.Add(new TripCity { CityId = cityId, Trip = trip });
+                    var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
+                    trip.Cities.Add(city);
                 }
 
                 context.SaveChanges();
@@ -133,11 +125,12 @@ namespace ProjectIvy.Business.Handlers.Trip
             {
                 var query = context.Trips
                                    .WhereUser(User.Id)
-                                   .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
+                                   .Include(x => x.Cities)
+                                   .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(Database.Common.City.Country)}")
                                    .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
                                    .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
-                                   .WhereIf(binding.CityId, x => x.Cities.Select(y => y.City.ValueId).Any(y => binding.CityId.Contains(y)))
-                                   .WhereIf(binding.CountryId, x => x.Cities.Select(y => y.City.Country.ValueId).Any(y => binding.CountryId.Contains(y)));
+                                   .WhereIf(binding.CityId, x => x.Cities.Select(y => y.ValueId).Any(y => binding.CityId.Contains(y)))
+                                   .WhereIf(binding.CountryId, x => x.Cities.Select(y => y.Country.ValueId).Any(y => binding.CountryId.Contains(y)));
 
                 return query.OrderBy(binding)
                             .Select(x => new View.Trip.Trip(x))
@@ -215,20 +208,10 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                int cityId = context.Cities.GetId(cityValueId).Value;
-                int tripId = context.Trips.WhereUser(User.Id).GetId(tripValueId).Value;
-
-                var tripCity = context.TripCities.SingleOrDefault(x => x.CityId == cityId && x.TripId == tripId);
-
-                if (tripCity != null)
-                {
-                    context.TripCities.Remove(tripCity);
-                    context.SaveChanges();
-                }
-                else
-                {
-                    throw new ResourceNotFoundException();
-                }
+                var trip = context.Trips.WhereUser(User).Include(x => x.Cities).SingleOrDefault(tripValueId);
+                var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
+                trip.Cities.Remove(city);
+                context.SaveChanges();
             }
         }
 

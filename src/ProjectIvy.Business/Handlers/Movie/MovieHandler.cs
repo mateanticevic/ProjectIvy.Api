@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Common.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Movie;

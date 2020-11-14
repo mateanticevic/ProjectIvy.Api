@@ -5,6 +5,8 @@ namespace ProjectIvy.Model.View.Beer
 {
     public class Beer
     {
+        public Beer() { }
+
         public Beer(DatabaseModel.Beer.Beer b)
         {
             Id = b.ValueId;

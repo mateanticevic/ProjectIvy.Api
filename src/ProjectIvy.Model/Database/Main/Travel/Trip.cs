@@ -14,7 +14,6 @@ namespace ProjectIvy.Model.Database.Main.Travel
             Modified = DateTime.Now;
         }
 
-        [Key]
         public int Id { get; set; }
 
         public string ValueId { get; set; }
@@ -29,7 +28,7 @@ namespace ProjectIvy.Model.Database.Main.Travel
 
         public DateTime Modified { get; set; }
 
-        public ICollection<TripCity> Cities { get; set; }
+        public ICollection<Common.City> Cities { get; set; }
 
         public ICollection<TripPoi> Pois { get; set; }
     }

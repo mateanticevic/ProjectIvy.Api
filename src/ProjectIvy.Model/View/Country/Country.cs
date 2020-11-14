@@ -5,6 +5,8 @@ namespace ProjectIvy.Model.View.Country
 {
     public class Country
     {
+        public Country() { }
+
         public Country(DatabaseModel.Common.Country x)
         {
             Name = x.Name;

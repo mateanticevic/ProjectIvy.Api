@@ -35,7 +35,7 @@ namespace ProjectIvy.Business.Handlers.Country
                                     .Where(x => x.TimestampEnd < DateTime.Now)
                                     .Include(x => x.Cities)
                                     .SelectMany(x => x.Cities)
-                                    .Select(x => x.City.Country)
+                                    .Select(x => x.Country)
                                     .Distinct()
                                     .Select(x => x)
                                     .LongCount();
@@ -102,14 +102,14 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                var countries = context.Trips
-                                       .WhereUser(User)
-                                       .Where(x => x.TimestampEnd < DateTime.Now)
-                                       .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
-                                       .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
-                                       .Include(x => x.Cities)
-                                       .SelectMany(x => x.Cities)
-                                       .Select(x => new { x.EnteredOn, x.City.Country, x.Trip.TimestampStart })
+                var countries = context.TripCities
+                                       .Include(x => x.Trip)
+                                       .Include(x => x.City)
+                                       .Where(x => x.Trip.UserId == User.Id)
+                                       .Where(x => x.Trip.TimestampEnd < DateTime.Now)
+                                       .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
+                                       .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
+                                       .Select(x => new { EnteredOn = x.EnteredOn, x.City.Country, TimestampStart = x.Trip.TimestampStart })
                                        .OrderBy(x => x.TimestampStart)
                                        .ThenBy(x => x.EnteredOn)
                                        .Select(x => new View.Country(x.Country))
@@ -136,9 +136,10 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                var polygons = context.CountryPolygons.Where(x => countries.Any(y => y.Id == x.Country.ValueId))
-                                                        .Include(x => x.Country)
-                                                        .ToList();
+                var countryValueIds = countries.Select(x => x.Id);
+                var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
+                                                      .Include(x => x.Country)
+                                                      .ToList();
 
                 foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
                 {

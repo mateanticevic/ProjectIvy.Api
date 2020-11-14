@@ -17,7 +17,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         IEnumerable<KeyValuePair<string, int>> CountByDayOfWeek(ExpenseGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, int>> CountByMonth(ExpenseGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByMonth(ExpenseGetBinding binding);
 
         IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ExpenseGetBinding binding);
 
@@ -25,9 +25,9 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         PagedView<CountBy<Model.View.Poi.Poi>> CountByPoi(ExpenseGetBinding binding);
 
-        PagedView<CountBy<ExpenseType>> CountByType(ExpenseGetBinding binding);
+        PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding);
 
-        PagedView<CountBy<Model.View.Vendor.Vendor>> CountByVendor(ExpenseGetBinding binding);
+        PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> CountByVendor(ExpenseGetBinding binding);
 
         int CountTypes(ExpenseGetBinding binding);
 

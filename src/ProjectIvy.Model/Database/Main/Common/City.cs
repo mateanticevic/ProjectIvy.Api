@@ -22,5 +22,7 @@ namespace ProjectIvy.Model.Database.Main.Common
         public ICollection<Transport.Airport> Airports { get; set; }
 
         public ICollection<Vendor> Vendors { get; set; }
+
+        public ICollection<Travel.Trip> Trips { get; set; }
     }
 }

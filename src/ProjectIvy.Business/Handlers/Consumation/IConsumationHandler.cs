@@ -35,9 +35,9 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding);
 
-        PagedView<SumBy<View.Beer.Beer>> SumVolumeByBeer(ConsumationGetBinding binding);
+        PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding);
 
-        PagedView<SumBy<View.Country.Country>> SumVolumeByCountry(ConsumationGetBinding binding);
+        PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding);
 
@@ -45,7 +45,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
 
-        PagedView<SumBy<View.Beer.BeerServing>> SumVolumeByServing(ConsumationGetBinding binding);
+        IEnumerable<KeyValuePair<View.Beer.BeerServing, int>> SumVolumeByServing(ConsumationGetBinding binding);
 
         PagedView<SumBy<View.Beer.BeerStyle>> SumVolumeByStyle(ConsumationGetBinding binding);
 

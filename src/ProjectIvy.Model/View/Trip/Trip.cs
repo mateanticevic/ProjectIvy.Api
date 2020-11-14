@@ -11,8 +11,8 @@ namespace ProjectIvy.Model.View.Trip
         public Trip(DatabaseModel.Travel.Trip x)
         {
             Id = x.ValueId;
-            Cities = x.Cities.Select(y => new City.City(y.City));
-            Countries = x.Cities.Select(y => new Country.Country(y.City.Country))
+            Cities = x.Cities.Select(y => new City.City(y));
+            Countries = x.Cities.Select(y => new Country.Country(y.Country))
                                 .GroupBy(y => y.Id)
                                 .Select(y => y.FirstOrDefault());
             Name = x.Name;

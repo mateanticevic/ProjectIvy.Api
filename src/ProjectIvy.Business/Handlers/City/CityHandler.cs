@@ -23,8 +23,8 @@ namespace ProjectIvy.Business.Handlers.City
                 var query = context.Cities.Include(x => x.Country)
                                           .WhereIf(!string.IsNullOrEmpty(binding.Search), city => city.Name.ToLower().Contains(binding.Search.ToLower()))
                                           .WhereIf(!string.IsNullOrEmpty(binding.CountryId), city => city.Country.ValueId == binding.CountryId)
-                                          .Select(x => new View.City(x))
-                                          .OrderBy(x => x.Name);
+                                          .OrderBy(x => x.Name)
+                                          .Select(x => new View.City(x));
 
                 return await query.ToPagedViewAsync(binding);
             }
@@ -40,7 +40,7 @@ namespace ProjectIvy.Business.Handlers.City
                                     .Include(x => x.Cities)
                                     .OrderBy(x => x.TimestampStart)
                                     .SelectMany(x => x.Cities)
-                                    .Select(x => new View.City(x.City))
+                                    .Select(x => new View.City(x))
                                     .ToList();
 
                 return cities.Distinct(new View.CityComparer());

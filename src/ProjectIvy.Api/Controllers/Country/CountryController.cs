@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Country;
 

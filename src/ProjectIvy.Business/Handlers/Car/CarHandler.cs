@@ -210,10 +210,12 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var db = GetMainContext())
             {
-                var carLog = db.Cars.WhereUser(User.Id)
-                                    .Include(x => x.CarLogs)
-                                    .SingleOrDefault(x => x.ValueId == carValueId)
-                                    .CarLogs
+                int? carId = db.Cars.GetId(carValueId);
+
+                //TODO: check if car belongs to user
+
+                var carLog = db.CarLogs
+                                    .Where(x => x.CarId == carId)
                                     .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
                                     .OrderByDescending(x => x.Timestamp)
                                     .FirstOrDefault();

@@ -88,14 +88,14 @@ namespace ProjectIvy.Business.Handlers.Expense
                     .Where(binding, context)
                     .GroupBy(x => x.Date.DayOfWeek)
                     .OrderByDescending(x => x.Key)
-                    .Select(x => new KeyValuePair<DayOfWeek, int>(x.Key, x.Count()))
                     .OrderBy(x => (int)x.Key)
+                    .Select(x => new KeyValuePair<DayOfWeek, int>(x.Key, x.Count()))
                     .ToList()
                     .Select(x => new KeyValuePair<string, int>(x.Key.ToString(), x.Value));
             }
         }
 
-        public IEnumerable<KeyValuePair<string, int>> CountByMonth(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByMonth(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -103,8 +103,8 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
-                                       .GroupBy(x => x.Date.ToString("MMMM"))
-                                       .Select(x => new KeyValuePair<string, int>(x.Key, x.Count()))
+                                       .GroupBy(x => x.Date.Month)
+                                       .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                        .ToList();
             }
         }
@@ -155,30 +155,42 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public PagedView<CountBy<ExpenseType>> CountByType(ExpenseGetBinding binding)
+        public PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .Include(x => x.ExpenseType)
-                                       .GroupBy(x => x.ExpenseType)
-                                       .Select(x => new CountBy<ExpenseType>(x.Key.ConvertTo(y => new ExpenseType(y)), x.Count()))
-                                       .OrderByDescending(x => x.Count)
+                                       .GroupBy(x => new
+                                       {
+                                           x.ExpenseType.Name,
+                                           x.ExpenseType.ValueId
+                                       })
+                                       .OrderByDescending(x => x.Count())
+                                       .Select(x => new KeyValuePair<ExpenseType, int>(new ExpenseType()
+                                       {
+                                           Id = x.Key.ValueId,
+                                           Name = x.Key.Name,
+                                       }, x.Count()))
                                        .ToPagedView(binding);
             }
         }
 
-        public PagedView<CountBy<Model.View.Vendor.Vendor>> CountByVendor(ExpenseGetBinding binding)
+        public PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> CountByVendor(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .Include(x => x.Vendor)
-                                       .GroupBy(x => x.Vendor)
-                                       .Select(x => new CountBy<Model.View.Vendor.Vendor>(x.Key.ConvertTo(y => new Model.View.Vendor.Vendor(y)), x.Count()))
-                                       .OrderByDescending(x => x.Count)
+                                       .GroupBy(x => new
+                                       {
+                                           x.Vendor.ValueId,
+                                           x.Vendor.Name
+                                       })
+                                       .OrderByDescending(x => x.Count())
+                                       .Select(x => new KeyValuePair<Model.View.Vendor.Vendor, int>(new() { Id = x.Key.ValueId, Name = x.Key.Name }, x.Count()))
                                        .ToPagedView(binding);
             }
         }

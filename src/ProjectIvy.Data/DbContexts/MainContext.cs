@@ -155,6 +155,25 @@ namespace ProjectIvy.Data.DbContexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder
+        .Entity<Trip>()
+        .HasMany(p => p.Cities)
+        .WithMany(p => p.Trips)
+        .UsingEntity<TripCity>(
+            j => j
+                .HasOne(tc => tc.City)
+                .WithMany()
+                .HasForeignKey(tc => tc.CityId),
+            j => j
+                .HasOne(tc => tc.Trip)
+                .WithMany()
+                .HasForeignKey(tc => tc.TripId),
+            j =>
+            {
+                j.Property(tc => tc.EnteredOn);
+                j.HasKey(tc => new { tc.TripId, tc.CityId });
+            });
+
             modelBuilder.Entity<ApplicationSetting>()
                         .HasOne(x => x.Application)
                         .WithMany(x => x.Settings);
@@ -222,9 +241,9 @@ namespace ProjectIvy.Data.DbContexts
                         .Property(x => x.Longitude)
                         .HasColumnType("numeric(9, 6)");
 
-            modelBuilder.Entity<Expense>()
-                        .HasOne(x => x.ExpenseType)
-                        .WithMany(x => x.Expenses);
+            //modelBuilder.Entity<Expense>()
+            //            .HasOne(x => x.ExpenseType)
+            //            .WithMany(x => x.Expenses);
 
             modelBuilder.Entity<ExpenseType>()
                         .HasOne(x => x.ParentType)
@@ -247,18 +266,18 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<File>()
                         .HasOne(x => x.FileType);
 
-            modelBuilder.Entity<Expense>()
-                        .HasOne(x => x.Vendor)
-                        .WithMany(x => x.Expenses);
+            //modelBuilder.Entity<Expense>()
+            //            .HasOne(x => x.Vendor)
+            //            .WithMany(x => x.Expenses);
 
-            modelBuilder.Entity<Expense>()
-                        .HasOne(x => x.Currency);
+            //modelBuilder.Entity<Expense>()
+            //            .HasOne(x => x.Currency);
 
-            modelBuilder.Entity<Expense>()
-                        .HasOne(x => x.ParentCurrency);
+            //modelBuilder.Entity<Expense>()
+            //            .HasOne(x => x.ParentCurrency);
 
-            modelBuilder.Entity<Expense>()
-                        .HasOne(x => x.Poi);
+            //modelBuilder.Entity<Expense>()
+            //            .HasOne(x => x.Poi);
 
             modelBuilder.Entity<Vendor>()
                         .HasOne(x => x.City)
@@ -267,21 +286,21 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<VendorPoi>()
                         .HasKey(x => new { x.PoiId, x.VendorId });
 
-            modelBuilder.Entity<Flight>()
-                        .HasOne(x => x.DestinationAirport);
+            //modelBuilder.Entity<Flight>()
+            //            .HasOne(x => x.DestinationAirport);
 
-            modelBuilder.Entity<Flight>()
-                        .HasOne(x => x.OriginAirport);
+            //modelBuilder.Entity<Flight>()
+            //            .HasOne(x => x.OriginAirport);
 
-            modelBuilder.Entity<Income>()
-                        .HasOne(x => x.User);
+            //modelBuilder.Entity<Income>()
+            //            .HasOne(x => x.User);
 
-            modelBuilder.Entity<Income>()
-                        .HasOne(x => x.Currency);
+            //modelBuilder.Entity<Income>()
+            //            .HasOne(x => x.Currency);
 
-            modelBuilder.Entity<Income>()
-                        .HasOne(x => x.IncomeSource)
-                        .WithMany(x => x.Incomes);
+            //modelBuilder.Entity<Income>()
+            //            .HasOne(x => x.IncomeSource)
+            //            .WithMany(x => x.Incomes);
 
             modelBuilder.Entity<TrackingDistance>()
                         .HasKey(x => new { x.Timestamp, x.UserId });
@@ -345,19 +364,19 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<TripExpenseInclude>()
                         .HasKey(x => new { x.ExpenseId, x.TripId });
 
-            modelBuilder.Entity<TripCity>()
-                        .HasKey(x => new { x.CityId, x.TripId });
+            //modelBuilder.Entity<TripCity>()
+            //            .HasKey(x => new { x.CityId, x.TripId });
 
             modelBuilder.Entity<CallBlacklist>()
                         .HasKey(x => new { x.UserId, x.Number });
 
-            modelBuilder.Entity<Trip>()
-                        .HasMany(x => x.Cities)
-                        .WithOne(x => x.Trip);
+            //modelBuilder.Entity<Trip>()
+            //            .HasMany(x => x.Cities)
+            //            .WithOne(x => x.Trip);
 
-            modelBuilder.Entity<Trip>()
-                        .HasMany(x => x.Pois)
-                        .WithOne(x => x.Trip);
+            //modelBuilder.Entity<Trip>()
+            //            .HasMany(x => x.Pois)
+            //            .WithOne(x => x.Trip);
         }
     }
 }

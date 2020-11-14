@@ -4,6 +4,8 @@ namespace ProjectIvy.Model.View.ExpenseType
 {
     public class ExpenseType
     {
+        public ExpenseType() { }
+
         public ExpenseType(DatabaseModel.Finance.ExpenseType x)
         {
             Icon = x.Icon;

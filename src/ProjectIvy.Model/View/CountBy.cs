@@ -2,6 +2,8 @@
 {
     public class CountBy<T>
     {
+        public CountBy() { }
+
         public CountBy(T by, long count)
         {
             By = by;

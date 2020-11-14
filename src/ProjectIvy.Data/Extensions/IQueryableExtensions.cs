@@ -57,7 +57,7 @@ namespace ProjectIvy.Data.Extensions
 
         public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding, long? count = null)
         {
-            return new PagedView<T>()
+             return new PagedView<T>()
             {
                 Count = count ?? query.Count(),
                 Items = query.Page(binding).ToList()

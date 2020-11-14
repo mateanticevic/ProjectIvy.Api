@@ -46,7 +46,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         public IEnumerable<KeyValuePair<string, int>> GetCountByDayOfWekk([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByDayOfWeek(binding);
 
         [HttpGet("Count/ByMonth")]
-        public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonth(binding);
+        public IActionResult GetCountByMonth([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByMonth(binding));
 
         [HttpGet("Count/ByMonthOfYear")]
         public IEnumerable<KeyValuePair<string, int>> GetCountByMonthOfYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonthOfYear(binding);
@@ -58,10 +58,10 @@ namespace ProjectIvy.Api.Controllers.Expense
         public PagedView<CountBy<Model.View.Poi.Poi>> GetCountByPoi([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByPoi(binding);
 
         [HttpGet("Count/ByType")]
-        public PagedView<CountBy<Model.View.ExpenseType.ExpenseType>> GetCountByType([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByType(binding);
+        public IActionResult GetCountByType([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByType(binding));
 
         [HttpGet("Count/ByVendor")]
-        public PagedView<CountBy<Model.View.Vendor.Vendor>> GetCountByVendor([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByVendor(binding);
+        public IActionResult GetCountByVendor([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByVendor(binding));
 
         [HttpGet("{expenseId}/File")]
         public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) => _expenseHandler.GetFiles(expenseId);

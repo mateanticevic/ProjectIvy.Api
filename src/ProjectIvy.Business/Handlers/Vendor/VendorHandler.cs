@@ -28,8 +28,8 @@ namespace ProjectIvy.Business.Handlers.Vendor
                 return context.Vendors.WhereIf(binding?.Search != null,
                         x => x.ValueId.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()) ||
                              x.Name.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()))
-                              .Select(x => new View.Vendor(x))
                               .OrderBy(x => x.Name)
+                              .Select(x => new View.Vendor(x))
                               .ToPagedView(binding);
             }
         }
