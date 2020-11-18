@@ -34,14 +34,18 @@ namespace ProjectIvy.Data.Extensions.Entities
             var vendorIds = context.Vendors.GetIds(b.VendorId);
 
             IEnumerable<ExpenseType> expenseTypes = null;
-            if (expenseTypeIds != null && expenseTypeIds.Any())
-                expenseTypes = context.ExpenseTypes.GetAll();
+            IEnumerable<int> childTypeIds = null;
+            if (expenseTypeIds?.Any() != null)
+            {
+                expenseTypes = context.ExpenseTypes.GetAll().ToList();
+                childTypeIds = expenseTypes.ToChildTypeIds(expenseTypeIds);
+            }
 
             return query.WhereIf(b.From.HasValue, x => x.Date >= b.From)
                         .WhereIf(b.To.HasValue, x => x.Date <= b.To)
                         .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
                         .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
-                        .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || expenseTypes.SingleOrDefault(y => y.Id == x.ExpenseTypeId).IsChildType(expenseTypeIds))
+                        .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || childTypeIds.Contains(x.ExpenseTypeId))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
                         .WhereIf(b.Day != null, x => b.Day.Contains(x.Date.DayOfWeek))

@@ -6,25 +6,20 @@ namespace ProjectIvy.Data.Extensions.Entities
 {
     public static class ExpenseTypesExtensions
     {
-        public static bool IsChildType(this ExpenseType type, IEnumerable<int> parentIds)
+        public static IEnumerable<int> ToChildTypeIds(this IEnumerable<ExpenseType> types, IEnumerable<int> parentTypeIds)
         {
-            foreach (int parentId in parentIds)
-            {
-                if (type.IsChildType(parentId))
-                    return true;
-            }
-            return false;
+            var firstLevelIds = types.Where(x => x.ParentTypeId.HasValue && parentTypeIds.Contains(x.ParentTypeId.Value))
+                                     .Select(x => x.Id);
+            var recursiveIds = firstLevelIds.Any() ? types.ToChildTypeIds(firstLevelIds) : new List<int>();
+
+            return firstLevelIds.Concat(recursiveIds);
         }
 
-        public static bool IsChildType(this ExpenseType type, int parentId)
+        public static IEnumerable<int> ToParentTypeIds(this ExpenseType type)
         {
-            while (true)
+            while (type.ParentTypeId.HasValue)
             {
-                if (!type.ParentTypeId.HasValue)
-                    return false;
-                if (type.ParentTypeId == parentId)
-                    return true;
-
+                yield return type.ParentTypeId.Value;
                 type = type.ParentType;
             }
         }
