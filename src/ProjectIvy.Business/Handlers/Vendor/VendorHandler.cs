@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Common.Extensions;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Vendor;
 using ProjectIvy.Model.View;
@@ -23,11 +24,13 @@ namespace ProjectIvy.Business.Handlers.Vendor
 
         public PagedView<View.Vendor> Get(VendorGetBinding binding)
         {
+            string searchPattern = $"%{binding.Search}%";
+
             using (var context = GetMainContext())
             {
                 return context.Vendors.WhereIf(binding?.Search != null,
-                        x => x.ValueId.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()) ||
-                             x.Name.ToLowerInvariant().Contains(binding.Search.ToLowerInvariant()))
+                        x => EF.Functions.Like(x.ValueId, searchPattern) ||
+                             EF.Functions.Like(x.Name, searchPattern))
                               .OrderBy(x => x.Name)
                               .Select(x => new View.Vendor(x))
                               .ToPagedView(binding);

@@ -38,7 +38,7 @@ namespace ProjectIvy.Business.MapExtensions
         public static string LastValueId(this DbSet<Expense> set, int userId)
         {
             return set.WhereUser(userId)
-                      .OrderByDescending(x => x.ValueId.Count())
+                      .OrderByDescending(x => EF.Functions.DataLength(x.ValueId))
                       .ThenByDescending(x => x.ValueId)
                       .FirstOrDefault()
                       ?.ValueId;
