@@ -10,14 +10,10 @@ namespace ProjectIvy.Api.Extensions
         {
             string authorizationHeader = context.Request.Headers.SingleOrDefault(x => x.Key == "Authorization").Value;
 
-            if (AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorizationHeaderValue))
-            {
-                return authorizationHeaderValue.Parameter;
-            }
-            else
-            {
-                return authorizationHeader;
-            }
+            if (string.IsNullOrEmpty(authorizationHeader))
+                authorizationHeader = context.Request.Cookies["Token"];
+
+            return AuthenticationHeaderValue.TryParse(authorizationHeader, out var authorizationHeaderValue) ? authorizationHeaderValue.Parameter : authorizationHeader;
         }
     }
 }
