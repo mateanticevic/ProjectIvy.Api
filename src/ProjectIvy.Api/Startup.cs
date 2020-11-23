@@ -118,7 +118,7 @@ namespace ProjectIvy.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy V1");
             });
 
-            app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseExceptionHandlingMiddleware();
             app.UseAuthenticationMiddleware();

@@ -126,7 +126,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                 var query = context.Trips
                                    .WhereUser(User.Id)
                                    .Include(x => x.Cities)
-                                   .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(Database.Common.City.Country)}")
+                                   .ThenInclude(x => x.Country)
                                    .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
                                    .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
                                    .WhereIf(binding.CityId, x => x.Cities.Select(y => y.ValueId).Any(y => binding.CityId.Contains(y)))
@@ -143,8 +143,8 @@ namespace ProjectIvy.Business.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var trip = context.Trips.WhereUser(User.Id)
-                                        .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}")
-                                        .Include($"{nameof(Database.Travel.Trip.Cities)}.{nameof(TripCity.City)}.{nameof(Database.Common.City.Country)}")
+                                        .Include(x => x.Cities)
+                                        .ThenInclude(x => x.Country)
                                         .Include($"{nameof(Database.Travel.Trip.Pois)}.{nameof(TripPoi.Poi)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
