@@ -15,6 +15,7 @@ namespace ProjectIvy.Model.View.Trip
             Countries = x.Cities.Select(y => new Country.Country(y.Country))
                                 .GroupBy(y => y.Id)
                                 .Select(y => y.FirstOrDefault());
+            Files = x.Files?.Select(x => new File.File(x));
             Name = x.Name;
             Pois = x.Pois.IsNullOrEmpty() ? null : x.Pois.Select(y => new Poi.Poi(y.Poi));
             TimestampEnd = x.TimestampEnd;
@@ -34,6 +35,8 @@ namespace ProjectIvy.Model.View.Trip
         public IEnumerable<Country.Country> Countries { get; set; }
 
         public IEnumerable<City.City> Cities { get; set; }
+
+        public IEnumerable<File.File> Files { get; set; }
 
         public IEnumerable<Expense.Expense> Expenses { get; set; }
 

@@ -21,6 +21,7 @@ namespace ProjectIvy.Business.Handlers.Trip
     public class TripHandler : Handler<TripHandler>, ITripHandler
     {
         private readonly ITrackingHandler _trackingHandler;
+        private object x;
 
         public TripHandler(IHandlerContext<TripHandler> context, ITrackingHandler trackingHandler) : base(context)
         {
@@ -145,6 +146,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                 var trip = context.Trips.WhereUser(User.Id)
                                         .Include(x => x.Cities)
                                         .ThenInclude(x => x.Country)
+                                        .Include(x => x.Files)
                                         .Include($"{nameof(Database.Travel.Trip.Pois)}.{nameof(TripPoi.Poi)}")
                                         .SingleOrDefault(x => x.ValueId == valueId);
 

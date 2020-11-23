@@ -173,6 +173,24 @@ namespace ProjectIvy.Data.DbContexts
                                 j.HasKey(tc => new { tc.TripId, tc.CityId });
                             });
 
+            modelBuilder.Entity<Trip>()
+                        .HasMany(p => p.Files)
+                        .WithMany(p => p.Trips)
+                        .UsingEntity<TripFile>(
+                            j => j
+                                .HasOne(tf => tf.File)
+                                .WithMany()
+                                .HasForeignKey(tf => tf.FileId),
+                            j => j
+                                .HasOne(tf => tf.Trip)
+                                .WithMany()
+                                .HasForeignKey(tf => tf.TripId),
+                            j =>
+                            {
+                                j.Property(tf => tf.Name);
+                                j.HasKey(tf => new { tf.TripId, tf.FileId });
+                            });
+
             modelBuilder.Entity<ApplicationSetting>()
                         .HasOne(x => x.Application)
                         .WithMany(x => x.Settings);

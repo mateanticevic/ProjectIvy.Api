@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Travel
@@ -29,6 +28,8 @@ namespace ProjectIvy.Model.Database.Main.Travel
         public DateTime Modified { get; set; }
 
         public ICollection<Common.City> Cities { get; set; }
+
+        public ICollection<Storage.File> Files { get; set; }
 
         public ICollection<TripPoi> Pois { get; set; }
     }

@@ -26,5 +26,7 @@ namespace ProjectIvy.Model.Database.Main.Storage
         public FileType FileType { get; set; }
 
         public ICollection<Finance.ExpenseFile> ExpenseFiles { get; set; }
+
+        public ICollection<Travel.Trip> Trips { get; set; }
     }
 }
