@@ -108,7 +108,8 @@ namespace ProjectIvy.Business.Handlers.Car
                 var serviceDue = new List<View.CarServiceDue>();
                 foreach (var serviceInterval in context.CarServiceIntervals
                                                        .Include(x => x.CarServiceType)
-                                                       .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue)))
+                                                       .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
+                                                       .ToList())
                 {
                     var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
                                                      .OrderByDescending(x => x.Date)
