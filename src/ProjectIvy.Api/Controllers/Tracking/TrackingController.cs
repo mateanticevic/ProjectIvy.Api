@@ -39,9 +39,6 @@ namespace ProjectIvy.Api.Controllers.Tracking
                                    .ToString();
         }
 
-        [HttpGet("Last")]
-        public View.Tracking GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
-
         [HttpGet("Count")]
         public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
 
@@ -59,6 +56,12 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
+
+        [HttpGet("Last")]
+        public View.Tracking GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
+
+        [HttpGet("LastLocation")]
+        public async Task<IActionResult> GetLastLocation() => Ok(await _trackingHandler.GetLastLocation());
 
         [HttpGet("Speed/Average")]
         public double GetAverageSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetAverageSpeed(binding);

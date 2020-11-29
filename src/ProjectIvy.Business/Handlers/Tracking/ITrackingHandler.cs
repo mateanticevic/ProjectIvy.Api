@@ -33,6 +33,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         View.Tracking GetLast(DateTime? at = null);
 
+        Task<View.TrackingLocation> GetLastLocation();
+
         int CountUnique(FilteredBinding binding);
 
         bool ImportFromKml(XDocument kml);

@@ -26,5 +26,7 @@ namespace ProjectIvy.Data.Extensions.Entities
 
             return (int)sum;
         }
+
+        public static GeoCoordinate ToGeoCoordinate(this Tracking t) => new GeoCoordinate((double)t.Latitude, (double)t.Longitude, t.Altitude ?? 0);
     }
 }

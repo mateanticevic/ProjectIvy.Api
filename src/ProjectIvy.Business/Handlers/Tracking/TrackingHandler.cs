@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using GeoCoordinatePortable;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Data.Extensions;
@@ -199,6 +200,24 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                            .FirstOrDefault();
 
                 return new View.Tracking(tracking);
+            }
+        }
+
+        public async Task<View.TrackingLocation> GetLastLocation()
+        {
+            var tracking = GetLast();
+            var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
+
+            using (var context = GetMainContext())
+            {
+                var userLocations = await context.Locations.WhereUser(User)
+                                                           .ToListAsync();
+                var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
+                return new View.TrackingLocation()
+                {
+                    Tracking = tracking,
+                    Location = new View.Location(location)
+                };
             }
         }
 
