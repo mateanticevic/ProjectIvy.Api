@@ -216,7 +216,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 return new View.TrackingLocation()
                 {
                     Tracking = tracking,
-                    Location = new View.Location(location)
+                    Location = location != null ? new View.Location(location) : null
                 };
             }
         }
