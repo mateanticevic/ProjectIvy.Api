@@ -17,5 +17,11 @@ namespace ProjectIvy.Model.Database.Main.Security
         public DateTime ValidFrom { get; set; }
 
         public DateTime ValidUntil { get; set; }
+
+        public string UserAgent { get; set; }
+
+        public string OperatingSystem { get; set; }
+
+        public string IpAddress { get; set; }
     }
 }

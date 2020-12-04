@@ -2,6 +2,7 @@
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Database.Main.Security;
+using ProjectIvy.Model.View;
 using System;
 using System.Linq;
 
@@ -22,7 +23,7 @@ namespace ProjectIvy.Business.Handlers.Security
             }
         }
 
-        public string CreateToken(string username, string password)
+        public string CreateToken(string username, string password, RequestContext requestContext)
         {
             using (var db = GetMainContext())
             {
@@ -41,7 +42,10 @@ namespace ProjectIvy.Business.Handlers.Security
                     IsActive = true,
                     UserId = user.Id,
                     ValidFrom = DateTime.Now,
-                    ValidUntil = DateTime.Now.AddMonths(1)
+                    ValidUntil = DateTime.Now.AddMonths(1),
+                    IpAddress = requestContext.IpAddress,
+                    UserAgent = requestContext.UserAgent,
+                    OperatingSystem = requestContext.OperatingSystem
                 };
 
                 db.AccessTokens.Add(accessToken);
