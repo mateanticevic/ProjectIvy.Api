@@ -23,5 +23,7 @@ namespace ProjectIvy.Model.Database.Main.Security
         public string OperatingSystem { get; set; }
 
         public string IpAddress { get; set; }
+
+        public long? IpAddressValue { get; set; }
     }
 }

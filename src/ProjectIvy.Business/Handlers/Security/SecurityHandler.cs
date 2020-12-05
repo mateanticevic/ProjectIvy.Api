@@ -5,6 +5,7 @@ using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.View;
 using System;
 using System.Linq;
+using System.Net;
 
 namespace ProjectIvy.Business.Handlers.Security
 {
@@ -47,6 +48,9 @@ namespace ProjectIvy.Business.Handlers.Security
                     UserAgent = requestContext.UserAgent,
                     OperatingSystem = requestContext.OperatingSystem
                 };
+
+                if (IPAddress.TryParse(requestContext.IpAddress, out var ipAddress))
+                    accessToken.IpAddressValue = (uint)IPAddress.NetworkToHostOrder((int)BitConverter.ToUInt32(ipAddress.GetAddressBytes(), 0));
 
                 db.AccessTokens.Add(accessToken);
                 db.SaveChanges();

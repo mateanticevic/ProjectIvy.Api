@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Net
 {
-    [Table(nameof(Domain), Schema = "Net")]
+    [Table(nameof(Domain), Schema = nameof(Net))]
     public class Domain : IHasValueId
     {
         [Key]

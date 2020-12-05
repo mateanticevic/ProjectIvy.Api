@@ -70,6 +70,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Country> Countries { get; set; }
 
+        public DbSet<CountryIpRange> CountryIpRanges { get; set; }
+
         public DbSet<CountryList> CountryLists { get; set; }
 
         public DbSet<CountryPolygon> CountryPolygons { get; set; }

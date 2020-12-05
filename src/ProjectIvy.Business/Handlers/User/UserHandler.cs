@@ -3,7 +3,9 @@ using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.User;
 using ProjectIvy.Model.Database.Main.User;
+using ProjectIvy.Model.View.User;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.User;
@@ -42,6 +44,31 @@ namespace ProjectIvy.Business.Handlers.User
                                          .SingleOrDefault(x => x.Id == id);
 
                 return new View.User(userEntity);
+            }
+        }
+
+        public async Task<IEnumerable<UserSession>> GetSessions()
+        {
+            using (var context = GetMainContext())
+            {
+                var sessions = await context.AccessTokens
+                                          .WhereUser(User)
+                                          .Where(x => x.IsActive && x.ValidUntil > DateTime.Now)
+                                          .Select(x => new UserSession() { IpAddressValue = x.IpAddressValue })
+                                          .ToListAsync();
+
+                foreach (var session in sessions.Where(x => x.IpAddressValue != null))
+                {
+                    var country = await context.CountryIpRanges
+                                                   .Include(x => x.Country)
+                                                   .Where(x => x.FromIpValue <= session.IpAddressValue && x.ToIpValue >= session.IpAddressValue)
+                                                   .Select(x => x.Country)
+                                                   .FirstOrDefaultAsync();
+                    if (country != null)
+                        session.Country = new Model.View.Country.Country(country);
+                }
+
+                return sessions;
             }
         }
 
