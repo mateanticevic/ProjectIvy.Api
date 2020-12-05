@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.User;
@@ -16,6 +17,25 @@ namespace ProjectIvy.Business.Handlers.User
     {
         public UserHandler(IHandlerContext<UserHandler> context) : base(context)
         {
+        }
+
+        public async Task CloseSession(long id)
+        {
+            using (var context = GetMainContext())
+            {
+                var validFrom = id.FromUnixTimestamp();
+
+                var token = await context.AccessTokens
+                                   .WhereUser(User)
+                                   .Where(x => x.ValidFrom == validFrom)
+                                   .FirstOrDefaultAsync();
+
+                if (token == null)
+                    throw new Exception();
+
+                token.IsActive = false;
+                await context.SaveChangesAsync();
+            }
         }
 
         public View.User Get(string username)
@@ -54,7 +74,8 @@ namespace ProjectIvy.Business.Handlers.User
                 var sessions = await context.AccessTokens
                                           .WhereUser(User)
                                           .Where(x => x.IsActive && x.ValidUntil > DateTime.Now)
-                                          .Select(x => new UserSession() { IpAddressValue = x.IpAddressValue })
+                                          .OrderByDescending(x => x.ValidFrom)
+                                          .Select(x => new UserSession(x))
                                           .ToListAsync();
 
                 foreach (var session in sessions.Where(x => x.IpAddressValue != null))
