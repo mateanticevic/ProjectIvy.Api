@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
-using ProjectIvy.Api.Cache;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Business.Cache;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Model.Constants.Database;
@@ -38,6 +38,7 @@ namespace ProjectIvy.Api.Middleware
                 }
 
                 httpContext.Items.Add("User", user);
+                httpContext.Items.Add("Token", authorizationToken);
 
                 var claimIdentity = new ClaimsIdentity();
 

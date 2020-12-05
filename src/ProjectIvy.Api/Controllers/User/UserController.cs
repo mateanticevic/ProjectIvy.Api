@@ -17,8 +17,8 @@ namespace ProjectIvy.Api.Controllers.User
 
         public UserController(ILogger<UserController> logger, IUserHandler userHandler) : base(logger) => _userHandler = userHandler;
 
-        [HttpDelete("Session/{id:long}")]
-        public async Task DeleteSession(long id) => await _userHandler.CloseSession(id);
+        [HttpDelete("Session/{id:long?}")]
+        public async Task DeleteSession(long? id) => await _userHandler.CloseSession(id);
 
         [HttpGet]
         public View.User Get() => _userHandler.Get();

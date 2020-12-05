@@ -3,7 +3,7 @@ using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.Database.Main.User;
 using System;
 
-namespace ProjectIvy.Api.Cache
+namespace ProjectIvy.Business.Cache
 {
     public class TokenCache
     {
@@ -22,9 +22,8 @@ namespace ProjectIvy.Api.Cache
             return CacheHandler.Instance.Cache.Get<User>($"User.{token}");
         }
 
-        public static void SetUser(User user, string token)
-        {
-            CacheHandler.Instance.Cache.Set($"User.{token}", user);
-        }
+        public static void Remove(string token) => CacheHandler.Instance.Cache.Remove($"User.{token}");
+
+        public static void SetUser(User user, string token) => CacheHandler.Instance.Cache.Set($"User.{token}", user);
     }
 }

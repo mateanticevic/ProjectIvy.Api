@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 
-namespace ProjectIvy.Api.Cache
+namespace ProjectIvy.Business.Cache
 {
     public class CacheHandler
     {
