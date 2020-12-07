@@ -298,6 +298,22 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        public async Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Expenses
+                                    .WhereUser(User)
+                                    .Where(binding, context)
+                                    .GroupBy(x => x.Comment)
+                                    .Select(x => new { x.Key, Count = x.Count() })
+                                    .OrderByDescending(x => x.Count)
+                                    .Take(5)
+                                    .Select(x => x.Key)
+                                    .ToListAsync();
+            }
+        }
+
         public async Task NotifyTransferWiseEvent(string authorizationCode, int resourceId)
         {
             using (var context = GetMainContext())

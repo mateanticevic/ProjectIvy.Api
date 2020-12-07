@@ -29,6 +29,7 @@ namespace ProjectIvy.Business.Handlers.User
                 var token = await context.AccessTokens
                                    .WhereUser(User)
                                    .Where(x => x.ValidFrom == validFrom || x.Token == AccessToken)
+                                   .Where(x => x.IsActive)
                                    .FirstOrDefaultAsync();
 
                 if (token == null)

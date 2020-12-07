@@ -81,6 +81,9 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Type/Count")]
         public int GetTypesCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountTypes(binding);
 
+        [HttpGet("Top/Description")]
+        public async Task<IActionResult> GetTopDescriptions([FromQuery] ExpenseGetBinding binding) => Ok(await _expenseHandler.GetTopDescriptions(binding));
+
         [HttpGet("Vendor/Count")]
         public int GetVendorsCount([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountVendors(binding);
 
