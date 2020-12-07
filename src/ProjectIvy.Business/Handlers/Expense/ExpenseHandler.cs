@@ -305,6 +305,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 return await context.Expenses
                                     .WhereUser(User)
                                     .Where(binding, context)
+                                    .Where(x => !string.IsNullOrEmpty(x.Comment))
                                     .GroupBy(x => x.Comment)
                                     .Select(x => new { x.Key, Count = x.Count() })
                                     .OrderByDescending(x => x.Count)
