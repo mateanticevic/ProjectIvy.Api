@@ -10,7 +10,7 @@ namespace ProjectIvy.Data.Extensions.Entities
 {
     public static class ExpenseExtensions
     {
-        public static readonly DateTime FirstSunday = new DateTime(1753, 1, 7);
+        public static readonly DateTime FirstSunday = new DateTime(2000, 1, 2);
 
         public static IQueryable<Expense> IncludeAll(this IQueryable<Expense> query)
         {

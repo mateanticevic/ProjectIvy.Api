@@ -13,6 +13,8 @@ namespace ProjectIvy.Business.Handlers.Movie
 {
     public class MovieHandler : Handler<MovieHandler>, IMovieHandler
     {
+        public static readonly DateTime FirstSunday = new DateTime(2000, 1, 2);
+
         public MovieHandler(IHandlerContext<MovieHandler> context) : base(context)
         {
         }
@@ -55,7 +57,7 @@ namespace ProjectIvy.Business.Handlers.Movie
             {
                 return db.Movies.WhereUser(User.Id)
                                 .Where(binding)
-                                .GroupBy(x => ((int)x.Timestamp.DayOfWeek + 6) % 7 + 1)
+                                .GroupBy(x => (int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Timestamp) % 7)
                                 .OrderBy(x => x.Key)
                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                 .ToList();

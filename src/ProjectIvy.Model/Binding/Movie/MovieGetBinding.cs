@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace ProjectIvy.Model.Binding.Movie
 {
     public class MovieGetBinding : FilteredPagedBinding
     {
+        public IEnumerable<DayOfWeek> Day { get; set; }
+
         public decimal? RatingHigher { get; set; }
 
         public decimal? RatingLower { get; set; }

@@ -95,28 +95,18 @@ namespace ProjectIvy.Data.Extensions
         }
 
         public static T SingleOrDefault<T>(this IQueryable<T> query, string valueId) where T : IHasValueId
-        {
-            return query.SingleOrDefault(x => x.ValueId == valueId);
-        }
+            => query.SingleOrDefault(x => x.ValueId == valueId);
 
         public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> queryable, bool ifTrue, Func<T, bool> condition)
-        {
-            return ifTrue ? queryable.Where(condition) : queryable;
-        }
+            => ifTrue ? queryable.Where(condition) : queryable;
 
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, bool ifTrue, Expression<Func<T, bool>> condition)
-        {
-            return ifTrue ? queryable.Where(condition) : queryable;
-        }
+            => ifTrue ? queryable.Where(condition) : queryable;
 
         public static IQueryable<T> WhereIf<T>(this IQueryable<T> queryable, object ifNotNull, Expression<Func<T, bool>> condition)
-        {
-            return ifNotNull != null ? queryable.Where(condition) : queryable;
-        }
+            => ifNotNull != null ? queryable.Where(condition) : queryable;
 
         public static IQueryable<T> WhereIf<T, TItem>(this IQueryable<T> queryable, IEnumerable<TItem> ifHasItems, Expression<Func<T, bool>> condition)
-        {
-            return ifHasItems != null && ifHasItems.Any() ? queryable.Where(condition) : queryable;
-        }
+            => ifHasItems != null && ifHasItems.Any() ? queryable.Where(condition) : queryable;
     }
 }
