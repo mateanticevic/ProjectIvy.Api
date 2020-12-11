@@ -2,6 +2,7 @@
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,6 +10,8 @@ namespace ProjectIvy.Data.Extensions.Entities
 {
     public static class ExpenseExtensions
     {
+        public static readonly DateTime FirstSunday = new DateTime(1753, 1, 7);
+
         public static IQueryable<Expense> IncludeAll(this IQueryable<Expense> query)
         {
             return query.Include(x => x.ExpenseType)
@@ -41,6 +44,8 @@ namespace ProjectIvy.Data.Extensions.Entities
                 childTypeIds = expenseTypes.ToChildTypeIds(expenseTypeIds);
             }
 
+            var days = b.Day?.Select(x => (int)x).ToList();
+
             return query.WhereIf(b.From.HasValue, x => x.Date >= b.From)
                         .WhereIf(b.To.HasValue, x => x.Date <= b.To)
                         .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
@@ -48,7 +53,7 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || childTypeIds.Contains(x.ExpenseTypeId))
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
-                        .WhereIf(b.Day != null, x => b.Day.Contains(x.Date.DayOfWeek))
+                        .WhereIf(days != null, x => days.Contains(((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date)) % 7))
                         .WhereIf(b.HasLinkedFiles.HasValue, x => !(b.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(b.HasPoi.HasValue, x => !(b.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(b.NeedsReview.HasValue, x => !(b.NeedsReview.Value ^ x.NeedsReview))
