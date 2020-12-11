@@ -78,21 +78,20 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public IEnumerable<KeyValuePair<string, int>> CountByDayOfWeek(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
+                DateTime FirstSunday = new DateTime(2000, 1, 2);
                 var to = binding.To ?? DateTime.Now;
 
                 return context.Expenses
                     .WhereUser(User.Id)
                     .Where(binding, context)
-                    .GroupBy(x => x.Date.DayOfWeek)
-                    .OrderByDescending(x => x.Key)
-                    .OrderBy(x => (int)x.Key)
-                    .Select(x => new KeyValuePair<DayOfWeek, int>(x.Key, x.Count()))
-                    .ToList()
-                    .Select(x => new KeyValuePair<string, int>(x.Key.ToString(), x.Value));
+                    .GroupBy(x => ((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date) - 1) % 7)
+                    .OrderBy(x => x.Key)
+                    .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                    .ToList();
             }
         }
 

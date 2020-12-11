@@ -15,7 +15,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         IEnumerable<KeyValuePair<string, int>> CountByDay(ExpenseGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, int>> CountByDayOfWeek(ExpenseGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(ExpenseGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> CountByMonth(ExpenseGetBinding binding);
 

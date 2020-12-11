@@ -57,7 +57,7 @@ namespace ProjectIvy.Business.Handlers.Movie
             {
                 return db.Movies.WhereUser(User.Id)
                                 .Where(binding)
-                                .GroupBy(x => (int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Timestamp) % 7)
+                                .GroupBy(x => ((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Timestamp) - 1) % 7)
                                 .OrderBy(x => x.Key)
                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                 .ToList();
