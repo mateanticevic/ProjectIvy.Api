@@ -281,7 +281,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                             binding.To,
                                             UserId = User.Id
                                         })
-                                    .Select(x => new KeyValuePair<int, int>(x.Key == 1 ? 7 : x.Key - 1, x.Value))
+                                    .Select(x => new KeyValuePair<int, int>(x.Key == 1 ? 6 : x.Key - 2, x.Value))
                                     .OrderBy(x => x.Key);
             }
         }
