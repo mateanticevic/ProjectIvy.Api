@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Movie;
@@ -20,5 +21,8 @@ namespace ProjectIvy.Api.Controllers.Movie
 
         [HttpGet("Average")]
         public double GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetRatingAverage(binding);
+
+        [HttpGet("ByYear")]
+        public async Task<IActionResult> GetAveragerByYear([FromQuery] MovieGetBinding binding) => Ok(await _movieHandler.GetRatingAverageByYear(binding));
     }
 }

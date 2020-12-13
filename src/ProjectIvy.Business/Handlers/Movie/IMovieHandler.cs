@@ -2,6 +2,7 @@
 using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Business.Handlers.Movie
@@ -32,7 +33,11 @@ namespace ProjectIvy.Business.Handlers.Movie
 
         double GetMyRatingAverage(MovieGetBinding binding);
 
+        Task<IEnumerable<KeyValuePair<int, decimal>>> GetMyRatingAverageByYear(MovieGetBinding binding);
+
         double GetRatingAverage(MovieGetBinding binding);
+
+        Task<IEnumerable<KeyValuePair<int, decimal>>> GetRatingAverageByYear(MovieGetBinding binding);
 
         int GetRuntimeAverage(MovieGetBinding binding);
 

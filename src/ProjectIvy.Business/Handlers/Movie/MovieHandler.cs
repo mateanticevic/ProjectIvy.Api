@@ -7,6 +7,7 @@ using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Business.Handlers.Movie
@@ -169,6 +170,19 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetMyRatingAverageByYear(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return await db.Movies.WhereUser(User)
+                                      .Where(binding)
+                                      .GroupBy(x => x.Timestamp.Year)
+                                      .OrderBy(x => x.Key)
+                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, (decimal)Math.Round(x.Average(y => y.MyRating), 1)))
+                                      .ToListAsync();
+            }
+        }
+
         public double GetRatingAverage(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
@@ -177,6 +191,19 @@ namespace ProjectIvy.Business.Handlers.Movie
                                           .Where(binding);
 
                 return Math.Round((double)userMovies.Average(x => x.Rating), 1);
+            }
+        }
+
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetRatingAverageByYear(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return await db.Movies.WhereUser(User)
+                                      .Where(binding)
+                                      .GroupBy(x => x.Timestamp.Year)
+                                      .OrderBy(x => x.Key)
+                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, Math.Round(x.Average(y => y.Rating), 1)))
+                                      .ToListAsync();
             }
         }
 
