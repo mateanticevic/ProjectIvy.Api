@@ -354,6 +354,26 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByDayOfWeek(ExpenseSumGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var tasks = Enumerable.Range(0, 7)
+                                      .Select(x => (DayOfWeek)x)
+                                      .Where(x => binding.Day == null || binding.Day.Contains(x))
+                                      .ToList()
+                                      .Select(x => new KeyValuePair<DayOfWeek, Task<decimal>>(
+                                          x,
+                                          SumAmount(binding.OverrideDay(x)))
+                                      )
+                                      .ToList();
+
+                await Task.WhenAll(tasks.Select(x => x.Value));
+                return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key == DayOfWeek.Sunday ? 6 : (int)x.Key - 1, x.Value.Result))
+                            .OrderBy(x => x.Key);
+            }
+        }
+
         public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())

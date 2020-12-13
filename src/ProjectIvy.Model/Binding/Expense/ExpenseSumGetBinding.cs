@@ -1,4 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Expense
+﻿using System;
+
+namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseSumGetBinding : ExpenseGetBinding, IOrderable<GroupedSort>
     {
@@ -13,6 +15,13 @@
         public ExpenseSumGetBinding Override(string typeId)
         {
             TypeId = new[] { typeId };
+
+            return this;
+        }
+
+        public ExpenseSumGetBinding OverrideDay(DayOfWeek day)
+        {
+            Day = new DayOfWeek[] { day };
 
             return this;
         }
