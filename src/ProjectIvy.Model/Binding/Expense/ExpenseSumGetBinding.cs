@@ -16,5 +16,12 @@
 
             return this;
         }
+
+        public ExpenseSumGetBinding OverrideMonth(int month)
+        {
+            Month = new int[] { month };
+
+            return this;
+        }
     }
 }

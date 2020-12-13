@@ -104,6 +104,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Month)
+                                       .OrderBy(x => x.Key)
                                        .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                        .ToList();
             }
@@ -353,7 +354,21 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public IEnumerable<GroupedByMonth<decimal>> SumAmountByMonth(ExpenseSumGetBinding binding)
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var tasks = Enumerable.Range(1, 12)
+                                      .Select(x => new KeyValuePair<int, Task<decimal>>(
+                                          x,
+                                          SumAmount(binding.OverrideMonth(x))));
+
+                await Task.WhenAll(tasks.Select(x => x.Value));
+                return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
+            }
+        }
+
+        public IEnumerable<KeyValuePair<string, decimal>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -366,12 +381,11 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
 
-                return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month))
-                            .OrderBy(binding);
+                return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
             }
         }
 
-        public IEnumerable<GroupedByYear<decimal>> SumAmountByYear(ExpenseSumGetBinding binding)
+        public IEnumerable<KeyValuePair<int, decimal>> SumAmountByYear(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -384,8 +398,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
 
-                return tasks.Select(x => new GroupedByYear<decimal>(x.Value.Result, x.Key))
-                            .OrderBy(binding);
+                return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
             }
         }
 
@@ -424,16 +437,14 @@ namespace ProjectIvy.Business.Handlers.Expense
                 if (!expenseIds.Any())
                     return 0;
 
-                using (var sql = GetSqlConnection())
+                var query = new GetExpenseSumQuery()
                 {
-                    var parameters = new GetExpenseSumQuery()
-                    {
-                        ExpenseIds = expenseIds,
-                        TargetCurrencyId = targetCurrencyId,
-                        UserId = User.Id
-                    };
-                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency), parameters), 2);
-                }
+                    ExpenseIds = expenseIds,
+                    TargetCurrencyId = targetCurrencyId,
+                    UserId = User.Id
+                };
+
+                return await SumAmount(query);
             }
         }
 
@@ -467,6 +478,14 @@ namespace ProjectIvy.Business.Handlers.Expense
                 context.Vendors.Add(entity);
                 context.SaveChanges();
                 return entity.ValueId;
+            }
+        }
+
+        private async Task<decimal> SumAmount(GetExpenseSumQuery query)
+        {
+            using (var sql = GetSqlConnection())
+            {
+                return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency), query), 2);
             }
         }
     }

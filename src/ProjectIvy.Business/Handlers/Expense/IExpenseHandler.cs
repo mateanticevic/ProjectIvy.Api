@@ -45,9 +45,11 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding);
 
-        IEnumerable<GroupedByMonth<decimal>> SumAmountByMonth(ExpenseSumGetBinding binding);
+        Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding);
 
-        IEnumerable<GroupedByYear<decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
+        IEnumerable<KeyValuePair<string, decimal>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding);
+
+        IEnumerable<KeyValuePair<int, decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding);
 

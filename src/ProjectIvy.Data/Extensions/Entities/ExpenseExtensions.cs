@@ -54,6 +54,7 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                         .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
                         .WhereIf(days != null, x => days.Contains(((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date)) % 7))
+                        .WhereIf(b.Month, x => b.Month.Contains(x.Date.Month))
                         .WhereIf(b.HasLinkedFiles.HasValue, x => !(b.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                         .WhereIf(b.HasPoi.HasValue, x => !(b.HasPoi.Value ^ x.PoiId.HasValue))
                         .WhereIf(b.NeedsReview.HasValue, x => !(b.NeedsReview.Value ^ x.NeedsReview))

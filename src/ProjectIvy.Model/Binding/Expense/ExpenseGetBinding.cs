@@ -15,6 +15,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public IEnumerable<DayOfWeek> Day { get; set; }
 
+        public IEnumerable<int> Month { get; set; }
+
         public ExpenseSort OrderBy { get; set; }
 
         public bool? HasLinkedFiles { get; set; }

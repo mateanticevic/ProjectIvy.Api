@@ -14,6 +14,8 @@ namespace ProjectIvy.Data.Databases.Main.Queries
 
         public DateTime? To { get; set; }
 
+        public int? Month { get; set; }
+
         public int UserId { get; set; }
 
         public int TargetCurrencyId { get; set; }
@@ -34,6 +36,7 @@ namespace ProjectIvy.Data.Databases.Main.Queries
             sqlCommand.Parameters.Add(intList.ToSqlParameter(nameof(ExpenseIds)));
             sqlCommand.Parameters.Add(From.ToSqlParameter(nameof(From)));
             sqlCommand.Parameters.Add(To.ToSqlParameter(nameof(To)));
+            sqlCommand.Parameters.Add(Month.ToSqlParameter(nameof(Month)));
             sqlCommand.Parameters.Add(UserId.ToSqlParameter(nameof(UserId)));
             sqlCommand.Parameters.Add(TargetCurrencyId.ToSqlParameter(nameof(TargetCurrencyId)));
             sqlCommand.Parameters.Add(VendorValueId.ToSqlParameter(nameof(VendorValueId)));
