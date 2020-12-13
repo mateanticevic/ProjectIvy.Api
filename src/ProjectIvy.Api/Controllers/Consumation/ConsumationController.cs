@@ -71,6 +71,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Sum/ByDayOfWeek")]
         public IActionResult GetSumByDayOfWeek(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByDayOfWeek(binding));
 
+        [HttpGet("Sum/ByMonth")]
+        public IActionResult GetSumByMonth(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonth(binding));
+
         [HttpGet("Sum/ByMonthOfYear")]
         public IActionResult GetSumByMonthOfYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonthOfYear(binding));
 

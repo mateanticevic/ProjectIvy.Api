@@ -286,6 +286,19 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public IEnumerable<KeyValuePair<int, int>> SumVolumeByMonth(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Consumations.WhereUser(User)
+                                           .Where(binding, context)
+                                           .GroupBy(x => x.Date.Month)
+                                           .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
+                                           .ToList()
+                                           .OrderBy(x => x.Key);
+            }
+        }
+
         public IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())

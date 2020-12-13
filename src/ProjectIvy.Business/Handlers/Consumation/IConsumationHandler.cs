@@ -41,6 +41,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding);
 
+        IEnumerable<KeyValuePair<int, int>> SumVolumeByMonth(ConsumationGetBinding binding);
+
         IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
