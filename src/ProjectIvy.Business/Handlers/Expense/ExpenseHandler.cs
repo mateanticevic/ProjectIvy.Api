@@ -409,8 +409,11 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                int startYear = context.Expenses.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
-                int endYear = DateTime.Now.Year;
+                int startYear = context.Expenses.WhereUser(User.Id)
+                                                .Where(binding, context)
+                                                .OrderBy(x => x.Date)
+                                                .FirstOrDefault().Date.Year;
+                int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
                 var years = Enumerable.Range(startYear, endYear - startYear + 1);
 
