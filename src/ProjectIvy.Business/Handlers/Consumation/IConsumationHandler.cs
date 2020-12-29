@@ -49,7 +49,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         IEnumerable<KeyValuePair<View.Beer.BeerServing, int>> SumVolumeByServing(ConsumationGetBinding binding);
 
-        PagedView<SumBy<View.Beer.BeerStyle>> SumVolumeByStyle(ConsumationGetBinding binding);
+        PagedView<KeyValuePair<View.Beer.BeerStyle, int>> SumVolumeByStyle(ConsumationGetBinding binding);
 
         int SumVolume(ConsumationGetBinding binding);
     }

@@ -84,7 +84,7 @@ namespace ProjectIvy.Api.Controllers.Consumation
         public IActionResult GetSumByServing(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByServing(binding));
 
         [HttpGet("Sum/ByStyle")]
-        public PagedView<SumBy<Model.View.Beer.BeerStyle>> GetSumVolumeByStyle(ConsumationGetBinding binding) => _consumationHandler.SumVolumeByStyle(binding);
+        public IActionResult GetSumVolumeByStyle(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByStyle(binding));
 
         [HttpPost]
         public IActionResult Post([FromBody] ConsumationBinding binding)

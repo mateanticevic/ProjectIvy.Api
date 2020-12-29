@@ -349,7 +349,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<SumBy<View.Beer.BeerStyle>> SumVolumeByStyle(ConsumationGetBinding binding)
+        public PagedView<KeyValuePair<View.Beer.BeerStyle, int>> SumVolumeByStyle(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -358,11 +358,19 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                      .Where(binding, context)
                                      .Include(x => x.Beer)
                                      .ThenInclude(x => x.BeerStyle)
-                                     .Select(x => new { x.Beer.BeerStyle, x.Volume })
-                                     .GroupBy(x => x.BeerStyle);
+                                     .GroupBy(x => new
+                                     {
+                                         x.Beer.BeerStyle.ValueId,
+                                         x.Beer.BeerStyle.Name
+                                     });
 
-                return grouped.Select(x => new SumBy<View.Beer.BeerStyle>(x.Key.ConvertTo(y => new View.Beer.BeerStyle(y)), x.Sum(y => y.Volume)))
-                              .OrderByDescending(x => x.Sum)
+                return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+                              .Select(x => new KeyValuePair<View.Beer.BeerStyle, int>(
+                                  new ()
+                                  {
+                                      Id = x.Key.ValueId,
+                                      Name = x.Key.Name
+                                  }, x.Sum(y => y.Volume)))
                               .ToPagedView(binding, grouped.Count());
             }
         }
