@@ -40,7 +40,7 @@ namespace ProjectIvy.Api.Controllers.Consumation
         public int GetCount(ConsumationGetBinding binding) => _consumationHandler.Count(binding);
 
         [HttpGet("Count/ByBeer")]
-        public PagedView<CountBy<Model.View.Beer.Beer>> GetCountByBeer(ConsumationGetBinding binding) => _consumationHandler.CountByBeer(binding);
+        public IActionResult GetCountByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.CountByBeer(binding));
 
         [HttpGet("Count/ByMonth")]
         public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonth(binding);

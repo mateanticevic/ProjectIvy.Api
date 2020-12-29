@@ -65,16 +65,24 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public PagedView<CountBy<View.Beer.Beer>> CountByBeer(ConsumationGetBinding binding)
+        public PagedView<KeyValuePair<View.Beer.Beer, int>> CountByBeer(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(User)
                                            .Where(binding, context)
                                            .Include(x => x.Beer)
-                                           .GroupBy(x => x.Beer)
-                                           .Select(x => new CountBy<View.Beer.Beer>(x.Key.ConvertTo(y => new View.Beer.Beer(y)), x.Count()))
-                                           .OrderByDescending(x => x.Count)
+                                           .GroupBy(x => new
+                                           {
+                                               x.Beer.ValueId,
+                                               x.Beer.Name
+                                           })
+                                           .OrderByDescending(x => x.Count())
+                                           .Select(x => new KeyValuePair<View.Beer.Beer, int>(new View.Beer.Beer()
+                                           {
+                                               Id = x.Key.ValueId,
+                                               Name = x.Key.Name
+                                           }, x.Count()))
                                            .ToPagedView(binding);
             }
         }
