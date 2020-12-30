@@ -9,7 +9,7 @@ namespace ProjectIvy.Business.Handlers.Flight
     {
         int Count(FlightGetBinding binding);
 
-        IEnumerable<CountBy<Views.Airport.Airport>> CountByAirport(FlightGetBinding binding);
+        IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
 
         IEnumerable<CountBy<int>> CountByYear(FlightGetBinding binding);
 

@@ -142,20 +142,6 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public PagedView<CountBy<Model.View.Poi.Poi>> CountByPoi(ExpenseGetBinding binding)
-        {
-            using (var context = GetMainContext())
-            {
-                return context.Expenses.WhereUser(User.Id)
-                                       .Where(binding, context)
-                                       .Include(x => x.Poi)
-                                       .GroupBy(x => x.Poi)
-                                       .Select(x => new CountBy<Model.View.Poi.Poi>(x.Key.ConvertTo(y => new Model.View.Poi.Poi(y)), x.Count()))
-                                       .OrderByDescending(x => x.Count)
-                                       .ToPagedView(binding);
-            }
-        }
-
         public PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())

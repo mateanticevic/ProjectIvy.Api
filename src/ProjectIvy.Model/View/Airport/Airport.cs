@@ -5,6 +5,8 @@ namespace ProjectIvy.Model.View.Airport
 {
     public class Airport
     {
+        public Airport() { }
+
         public Airport(DatabaseModel.Transport.Airport x)
         {
             Iata = x.Iata;

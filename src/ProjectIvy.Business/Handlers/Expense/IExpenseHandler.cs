@@ -23,8 +23,6 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         IEnumerable<KeyValuePair<string, int>> CountByYear(ExpenseGetBinding binding);
 
-        PagedView<CountBy<Model.View.Poi.Poi>> CountByPoi(ExpenseGetBinding binding);
-
         PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding);
 
         PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> CountByVendor(ExpenseGetBinding binding);

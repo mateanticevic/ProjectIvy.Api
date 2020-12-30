@@ -54,9 +54,6 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Count/ByYear")]
         public IEnumerable<KeyValuePair<string, int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
 
-        [HttpGet("Count/ByPoi")]
-        public PagedView<CountBy<Model.View.Poi.Poi>> GetCountByPoi([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByPoi(binding);
-
         [HttpGet("Count/ByType")]
         public IActionResult GetCountByType([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByType(binding));
 

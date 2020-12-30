@@ -26,22 +26,42 @@ namespace ProjectIvy.Business.Handlers.Flight
             }
         }
 
-        public IEnumerable<CountBy<Views.Airport.Airport>> CountByAirport(FlightGetBinding binding)
+        public IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding)
         {
             using (var context = GetMainContext())
             {
-                return context.Flights.WhereUser(User)
-                                      .Where(binding)
-                                      .Include(x => x.DestinationAirport)
-                                      .Include(x => x.OriginAirport)
-                                      .Select(x => new List<Entities.Transport.Airport>() { x.DestinationAirport, x.OriginAirport })
-                                      .SelectMany(x => x)
-                                      .Include(x => x.Poi)
-                                      .GroupBy(x => x)
-                                      .Select(x => new CountBy<Views.Airport.Airport>(new Model.View.Airport.Airport(x.Key), x.Count()))
-                                      .OrderByDescending(x => x.Count)
-                                      .ToList();
+                var userAirports = context.Flights.WhereUser(User)
+                                                  .Where(binding)
+                                                  .Include(x => x.DestinationAirport)
+                                                  .Include(x => x.OriginAirport);
+                string s = userAirports.Select(x => x.DestinationAirport)
+                                   .Concat(userAirports.Select(x => x.OriginAirport))
+                                   .GroupBy(x => new
+                                   {
+                                       x.Iata,
+                                       x.Name
+                                   })
+                                   .OrderByDescending(x => x.Count())
+                                   .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
+                                   {
+                                       Iata = x.Key.Iata,
+                                       Name = x.Key.Name
+                                   }, x.Count())).ToQueryString();
 
+                return userAirports.Select(x => x.DestinationAirport)
+                                   .Concat(userAirports.Select(x => x.OriginAirport))
+                                   .GroupBy(x => new
+                                   {
+                                       x.Iata,
+                                       x.Name
+                                   })
+                                   .OrderByDescending(x => x.Count())
+                                   .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
+                                   {
+                                       Iata = x.Key.Iata,
+                                       Name = x.Key.Name
+                                   }, x.Count()))
+                                   .ToList();
             }
         }
 
