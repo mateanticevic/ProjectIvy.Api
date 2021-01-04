@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding);
 
-        IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
 
         double GetAverageSpeed(FilteredBinding binding);
 

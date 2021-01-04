@@ -5,7 +5,6 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Api.Controllers.Movie
@@ -51,6 +50,6 @@ namespace ProjectIvy.Api.Controllers.Movie
         public IActionResult GetCountByRuntime([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByRuntime(binding));
 
         [HttpGet("Count/ByYear")]
-        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] MovieGetBinding binding) => _movieHandler.CountByYear(binding);
+        public IActionResult GetCountByYear([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByYear(binding));
     }
 }

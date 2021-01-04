@@ -46,7 +46,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] FilteredBinding binding) => _trackingHandler.CountByMonth(binding);
 
         [HttpGet("Count/ByYear")]
-        public IEnumerable<GroupedByYear<int>> GetCountByYear([FromQuery] FilteredBinding binding) => _trackingHandler.CountByYear(binding);
+        public IActionResult GetCountByYear([FromQuery] FilteredBinding binding) => Ok(_trackingHandler.CountByYear(binding));
 
         [HttpGet("Count/Unique")]
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);

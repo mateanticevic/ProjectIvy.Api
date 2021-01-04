@@ -97,7 +97,7 @@ namespace ProjectIvy.Business.Handlers.Web
             }
         }
 
-        public IEnumerable<GroupedByYear<int>> GetTimeTotalByYear(WebTimeGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> GetTimeTotalByYear(WebTimeGetBinding binding)
         {
             using (var db = GetSqlConnection())
             {
@@ -115,7 +115,8 @@ namespace ProjectIvy.Business.Handlers.Web
                 var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByYear), parameters);
 
                 return db.Query<GetWebTimeTotalByYear>(command)
-                         .Select(x => new GroupedByYear<int>(x.Seconds, x.Year));
+                         .OrderByDescending(x => x.Year)
+                         .Select(x => new KeyValuePair<int, int>(x.Year, x.Seconds));
             }
         }
     }

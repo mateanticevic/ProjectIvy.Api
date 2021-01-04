@@ -32,6 +32,6 @@ namespace ProjectIvy.Api.Controllers.Income
         public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => _incomeHandler.GetSumByMonth(binding);
 
         [HttpGet("Sum/ByYear")]
-        public IEnumerable<GroupedByYear<decimal>> GetSumByYear([FromQuery] IncomeGetSumBinding binding) => _incomeHandler.GetSumByYear(binding);
+        public IActionResult GetSumByYear([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByYear(binding));
     }
 }

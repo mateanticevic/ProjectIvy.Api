@@ -21,9 +21,9 @@ namespace ProjectIvy.Model.View
                                 .ThenByDescending(x => x.Month);
         }
 
-        public static IEnumerable<GroupedByYear<T>> FillMissingYears<T>(this IEnumerable<GroupedByYear<T>> items, Func<int, GroupedByYear<T>> factory, int? fromYear, int toYear)
+        public static IEnumerable<KeyValuePair<TKey, int>> FillMissingYears<TKey>(this IEnumerable<KeyValuePair<TKey, int>> items, Func<int, KeyValuePair<TKey, int>> factory, int? fromYear, int toYear)
         {
-            var existingYears = items.Select(x => x.Year).ToList();
+            var existingYears = items.Select(x => x.Value).ToList();
 
             int fromYearValue = fromYear ?? existingYears.Min();
 
@@ -32,7 +32,7 @@ namespace ProjectIvy.Model.View
             return allYears.Except(existingYears)
                            .Select(factory)
                            .Union(items)
-                           .OrderByDescending(x => x.Year);
+                           .OrderByDescending(x => x.Value);
         }
     }
 }

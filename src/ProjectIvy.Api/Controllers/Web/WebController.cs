@@ -28,6 +28,6 @@ namespace ProjectIvy.Api.Controllers.Web
         public IEnumerable<GroupedByMonth<int>> GetTimeTotalByMonth([FromQuery] WebTimeGetBinding binding) => _webHandler.GetTimeTotalByMonth(binding);
 
         [HttpGet("Time/Total/ByYear")]
-        public IEnumerable<GroupedByYear<int>> GetTimeTotalByYear([FromQuery] WebTimeGetBinding binding) => _webHandler.GetTimeTotalByYear(binding);
+        public IActionResult GetTimeTotalByYear([FromQuery] WebTimeGetBinding binding) => Ok(_webHandler.GetTimeTotalByYear(binding));
     }
 }

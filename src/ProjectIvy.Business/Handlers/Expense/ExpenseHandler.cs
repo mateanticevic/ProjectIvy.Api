@@ -126,7 +126,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public IEnumerable<KeyValuePair<string, int>> CountByYear(ExpenseGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByYear(ExpenseGetBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -135,10 +135,9 @@ namespace ProjectIvy.Business.Handlers.Expense
                 return context.Expenses.WhereUser(User.Id)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Year)
-                                       .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                       .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                        .ToList()
-                                       .FillMissingYears(year => new GroupedByYear<int>(0, year), binding.From?.Year, to.Year)
-                                       .Select(x => new KeyValuePair<string, int>(x.Year.ToString(), x.Data));
+                                       .FillMissingYears(year => new KeyValuePair<int, int>(0, year), binding.From?.Year, to.Year);
             }
         }
 

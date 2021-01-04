@@ -29,7 +29,7 @@ namespace ProjectIvy.Business.Handlers.Movie
 
         IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
 
-        IEnumerable<GroupedByYear<int>> CountByYear(MovieGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding);
 
         double GetMyRatingAverage(MovieGetBinding binding);
 

@@ -15,6 +15,6 @@ namespace ProjectIvy.Business.Handlers.Web
 
         IEnumerable<GroupedByMonth<int>> GetTimeTotalByMonth(WebTimeGetBinding binding);
 
-        IEnumerable<GroupedByYear<int>> GetTimeTotalByYear(WebTimeGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> GetTimeTotalByYear(WebTimeGetBinding binding);
     }
 }

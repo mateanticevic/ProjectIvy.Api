@@ -47,7 +47,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
-        public IEnumerable<GroupedByYear<int>> CountByYear(FilteredBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -55,7 +55,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                         .WhereTimestampInclusive(binding.From, binding.To)
                                         .GroupBy(x => x.Timestamp.Year)
                                         .OrderByDescending(x => x.Key)
-                                        .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                        .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
                                         .ToList();
             }
         }

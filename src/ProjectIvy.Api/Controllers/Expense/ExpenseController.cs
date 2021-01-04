@@ -52,7 +52,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         public IEnumerable<KeyValuePair<string, int>> GetCountByMonthOfYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByMonthOfYear(binding);
 
         [HttpGet("Count/ByYear")]
-        public IEnumerable<KeyValuePair<string, int>> GetCountByYear([FromQuery] ExpenseGetBinding binding) => _expenseHandler.CountByYear(binding);
+        public IActionResult GetCountByYear([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByYear(binding));
 
         [HttpGet("Count/ByType")]
         public IActionResult GetCountByType([FromQuery] ExpenseGetBinding binding) => Ok(_expenseHandler.CountByType(binding));

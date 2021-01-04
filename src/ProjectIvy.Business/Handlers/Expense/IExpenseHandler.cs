@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ExpenseGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, int>> CountByYear(ExpenseGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByYear(ExpenseGetBinding binding);
 
         PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding);
 

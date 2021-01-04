@@ -144,7 +144,7 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
-        public IEnumerable<GroupedByYear<int>> CountByYear(MovieGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -152,7 +152,7 @@ namespace ProjectIvy.Business.Handlers.Movie
                                 .Where(binding)
                                 .GroupBy(x => x.Timestamp.Year)
                                 .OrderBy(x => x.Key)
-                                .Select(x => new GroupedByYear<int>(x.Count(), x.Key))
+                                .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                 .ToList();
             }
         }
