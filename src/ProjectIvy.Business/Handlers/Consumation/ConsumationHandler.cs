@@ -12,6 +12,7 @@ using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Consumation
@@ -35,6 +36,21 @@ namespace ProjectIvy.Business.Handlers.Consumation
                 }
 
                 context.SaveChanges();
+            }
+        }
+
+        public async Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                //TODO: Take leap years into account
+
+                return await context.Consumations.WhereUser(User)
+                                                 .Where(binding, context)
+                                                 .GroupBy(x => x.Date.Year)
+                                                 .OrderBy(x => x.Key)
+                                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume) / 365))
+                                                 .ToListAsync();
             }
         }
 

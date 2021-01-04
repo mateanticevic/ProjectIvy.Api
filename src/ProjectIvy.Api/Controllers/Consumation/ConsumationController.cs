@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Consumation;
 
 namespace ProjectIvy.Api.Controllers.Consumation
@@ -20,6 +21,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         {
             _consumationHandler = consumationHandler;
         }
+
+        [HttpGet("Average/ByYear")]
+        public async Task<IActionResult> GetAverageByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AverageByMonth(binding));
 
         [HttpGet]
         public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);

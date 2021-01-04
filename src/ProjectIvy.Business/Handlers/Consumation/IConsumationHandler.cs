@@ -3,6 +3,7 @@ using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Consumation
@@ -10,6 +11,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
     public interface IConsumationHandler : IHandler
     {
         void Add(ConsumationBinding binding);
+
+        Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding);
 
         IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding);
 
