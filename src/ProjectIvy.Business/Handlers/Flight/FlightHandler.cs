@@ -5,7 +5,6 @@ using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
-using Entities = ProjectIvy.Model.Database.Main;
 using Views = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Flight
@@ -65,15 +64,15 @@ namespace ProjectIvy.Business.Handlers.Flight
             }
         }
 
-        public IEnumerable<CountBy<int>> CountByYear(FlightGetBinding binding)
+        public IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Flights.WhereUser(User)
                                       .Where(binding)
                                       .GroupBy(x => x.DateOfDeparture.Year)
-                                      .Select(x => new CountBy<int>(x.Key, x.Count()))
-                                      .OrderByDescending(x => x.By)
+                                      .OrderByDescending(x => x.Key)
+                                      .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                       .ToList();
             }
         }

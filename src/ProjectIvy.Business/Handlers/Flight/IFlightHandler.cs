@@ -11,7 +11,7 @@ namespace ProjectIvy.Business.Handlers.Flight
 
         IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
 
-        IEnumerable<CountBy<int>> CountByYear(FlightGetBinding binding);
+        IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
 
         PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
     }
