@@ -4,6 +4,10 @@ namespace ProjectIvy.Model.View.Currency
 {
     public class Currency
     {
+        public Currency()
+        {
+        }
+
         public Currency(DatabaseModel.Common.Currency x)
         {
             Code = x.Code;

@@ -410,6 +410,25 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Expenses.WhereUser(User)
+                                             .Where(binding, context)
+                                             .Include(x => x.Currency)
+                                             .GroupBy(x => new { x.Currency.ValueId, x.Currency.Name })
+                                             .Select(x => new KeyValuePair<Model.View.Currency.Currency, decimal>(
+                                                 new()
+                                                 {
+                                                     Id = x.Key.ValueId,
+                                                     Name = x.Key.Name
+                                                 }, x.Sum(y => y.Amount)
+                                                 ))
+                                             .ToListAsync();
+            }
+        }
+
         public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())

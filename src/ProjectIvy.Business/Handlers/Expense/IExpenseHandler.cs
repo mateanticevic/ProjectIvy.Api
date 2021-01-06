@@ -43,6 +43,8 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding);
 
+        Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding);
+
         Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByDayOfWeek(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding);
