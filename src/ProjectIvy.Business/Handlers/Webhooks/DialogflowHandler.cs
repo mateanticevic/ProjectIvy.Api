@@ -3,12 +3,14 @@ using Newtonsoft.Json.Linq;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Expense;
+using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Binding.Movie;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,6 +22,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         private readonly ICarHandler _carHandler;
         private readonly IConsumationHandler _consumationHandler;
         private readonly IExpenseHandler _expenseHandler;
+        private readonly IMovieHandler _movieHandler;
         private readonly ITrackingHandler _trackingHandler;
         private readonly IUserHandler _userHandler;
 
@@ -27,12 +30,14 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                                  ICarHandler carHandler,
                                  IConsumationHandler consumationHandler,
                                  IExpenseHandler expenseHandler,
+                                 IMovieHandler movieHandler,
                                  ITrackingHandler trackingHandler,
                                  IUserHandler userHandler) : base(context)
         {
             _carHandler = carHandler;
             _consumationHandler = consumationHandler;
             _expenseHandler = expenseHandler;
+            _movieHandler = movieHandler;
             _trackingHandler = trackingHandler;
             _userHandler = userHandler;
         }
@@ -70,6 +75,9 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
                 case "projects/projectivy-rkgwxr/agent/intents/970e9c94-06f0-482f-b459-568af5b631e8":
                     return await SetWeight(request);
+
+                case "projects/projectivy-rkgwxr/agent/intents/b8c5e20f-7c00-42a2-b70f-23611cb677b8":
+                    return await GetMovieCount(request);
                 default:
                     return new GoogleCloudDialogflowV2WebhookResponse()
                     {
@@ -129,7 +137,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
-                FulfillmentText = $"You've drank {sum/1000} liters."
+                FulfillmentText = $"You've drank {sum / 1000} liters."
             };
         }
 
@@ -142,7 +150,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
                 FulfillmentText = $"You covered {FormatDistance(distance)}"
             };
         }
-        
+
         public async Task<GoogleCloudDialogflowV2WebhookResponse> GetExpenseSum(GoogleCloudDialogflowV2WebhookRequest request)
         {
             var binding = new ExpenseSumGetBinding(request.ToFilteredBinding());
@@ -177,6 +185,22 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             };
         }
 
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetMovieCount(GoogleCloudDialogflowV2WebhookRequest request)
+        {
+            var filteredBinding = request.ToFilteredBinding();
+            var movieGetBinding = new MovieGetBinding()
+            {
+                From = filteredBinding.From,
+                To = filteredBinding.To
+            };
+            int movieCount = _movieHandler.Count(movieGetBinding);
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = $"You've watched {movieCount} movies."
+            };
+        }
+
         public async Task<GoogleCloudDialogflowV2WebhookResponse> SetLatestOdometer(GoogleCloudDialogflowV2WebhookRequest request)
         {
             var odometer = (JObject)request.QueryResult.Parameters.FirstOrDefault().Value;
@@ -205,7 +229,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             }
             else if (distanceInMeters < 10000)
             {
-                return $"{Math.Round((decimal)distanceInMeters/1000, 1)}km";
+                return $"{Math.Round((decimal)distanceInMeters / 1000, 1)}km";
             }
             else
             {
