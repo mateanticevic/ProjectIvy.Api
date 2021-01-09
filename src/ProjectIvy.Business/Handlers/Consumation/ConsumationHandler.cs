@@ -318,6 +318,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .GroupBy(x => x.Date.Month)
                                            .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
                                            .ToList()
+                                           .FillMissingMonths()
                                            .OrderBy(x => x.Key);
             }
         }

@@ -7,6 +7,9 @@ namespace ProjectIvy.Model.View
 {
     public static class Extensions
     {
+        public static IEnumerable<KeyValuePair<int, T>> FillMissingMonths<T>(this IEnumerable<KeyValuePair<int, T>> items)
+            => Enumerable.Range(1, 12).Select(x => new KeyValuePair<int, T>(x, items.Any(y => y.Key == x) ? items.Single(y => y.Key == x).Value : default));
+
         public static IEnumerable<GroupedByMonth<T>> FillMissingMonths<T>(this IEnumerable<GroupedByMonth<T>> items, Func<DateTime, GroupedByMonth<T>> factory, DateTime? fromMonth, DateTime toMonth)
         {
             var existingMonths = items.Select(x => new DateTime(x.Year, x.Month, 1)).ToList();

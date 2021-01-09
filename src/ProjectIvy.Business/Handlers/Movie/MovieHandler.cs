@@ -74,7 +74,8 @@ namespace ProjectIvy.Business.Handlers.Movie
                                 .GroupBy(x => x.Timestamp.Month)
                                 .OrderBy(x => x.Key)
                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                                .ToList();
+                                .ToList()
+                                .FillMissingMonths();
             }
         }
 
