@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Cache;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Model.Constants.Database;
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -12,11 +14,13 @@ namespace ProjectIvy.Api.Middleware
     public class AuthenticationMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
         private readonly ISecurityHandler _securityHandler;
 
-        public AuthenticationMiddleware(RequestDelegate next, ISecurityHandler securityHandler)
+        public AuthenticationMiddleware(RequestDelegate next, ISecurityHandler securityHandler, ILogger<AuthenticationMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
             _securityHandler = securityHandler;
         }
 
@@ -49,8 +53,9 @@ namespace ProjectIvy.Api.Middleware
 
                 return _next(httpContext);
             }
-            catch(System.Exception e)
+            catch
             {
+                _logger.LogWarning("Unauthorized access attempt");
                 throw new UnauthorizedException();
             }
         }

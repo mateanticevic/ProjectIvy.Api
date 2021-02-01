@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using NLog.Extensions.Logging;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers;
 using ProjectIvy.Business.Handlers.Airport;
@@ -102,10 +101,8 @@ namespace ProjectIvy.Api
             });
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerProvider loggerFactory)
         {
-            loggerFactory.AddNLog();
-
             var logger = loggerFactory.CreateLogger(nameof(Startup));
             logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
 

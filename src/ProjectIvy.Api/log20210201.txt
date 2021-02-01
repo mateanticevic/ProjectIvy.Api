@@ -1,0 +1,54 @@
+2021-02-01 21:59:28.470 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-01 21:59:28.707 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-01 21:59:28.707 +01:00 [INF] Hosting environment: Development
+2021-02-01 21:59:28.707 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-01 21:59:28.712 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 21:59:31.594 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 54
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 21:59:31.797 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 401 - application/json 3088.0195ms
+2021-02-01 21:59:32.883 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 21:59:33.347 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 404 0 - 463.4310ms
+2021-02-01 22:02:18.115 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-01 22:02:18.192 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-01 22:02:18.192 +01:00 [INF] Hosting environment: Development
+2021-02-01 22:02:18.193 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-01 22:02:18.218 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 22:02:20.609 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 54
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 22:02:20.781 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 401 - application/json 2565.4632ms
+2021-02-01 22:02:21.846 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 22:02:22.278 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 404 0 - 432.0893ms
+2021-02-01 22:08:06.282 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-01 22:08:06.365 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-01 22:08:06.365 +01:00 [INF] Hosting environment: Development
+2021-02-01 22:08:06.365 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-01 22:08:06.368 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 22:08:08.867 +01:00 [WRN] Unauthorized access attempt
+2021-02-01 22:08:09.002 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 22:08:09.229 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 401 - application/json 2846.8074ms
+2021-02-01 22:08:10.285 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 22:08:10.741 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 404 0 - 456.4468ms
+2021-02-01 22:08:34.338 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/ - -
+2021-02-01 22:08:34.339 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/ - - - 404 0 - 1.1907ms
+2021-02-01 22:08:46.076 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/expense - -
+2021-02-01 22:08:46.125 +01:00 [INF] Route matched with {action = "Get", controller = "Expense"}. Executing controller action with signature ProjectIvy.Model.View.PagedView`1[ProjectIvy.Model.View.Expense.Expense] Get(ProjectIvy.Model.Binding.Expense.ExpenseGetBinding) on controller ProjectIvy.Api.Controllers.Expense.ExpenseController (ProjectIvy.Api).
+2021-02-01 22:08:46.133 +01:00 [INF] Authorization was successful.
+2021-02-01 22:08:46.477 +01:00 [INF] Executing ObjectResult, writing value of type 'ProjectIvy.Model.View.PagedView`1[[ProjectIvy.Model.View.Expense.Expense, ProjectIvy.Model, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]'.
+2021-02-01 22:08:46.527 +01:00 [INF] Executed action ProjectIvy.Api.Controllers.Expense.ExpenseController.Get (ProjectIvy.Api) in 395.3013ms
+2021-02-01 22:08:46.529 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/expense - - - 200 6550 application/json;+charset=utf-8 453.5308ms
+2021-02-01 22:08:46.888 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/favicon.ico - -
+2021-02-01 22:08:46.890 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/favicon.ico - - - 404 0 - 5.3460ms
+2021-02-01 22:09:20.524 +01:00 [INF] Request starting HTTP/1.1 GET http://localhost:54452/expense - -
+2021-02-01 22:09:20.704 +01:00 [WRN] Unauthorized access attempt
+2021-02-01 22:09:20.838 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 22:09:20.839 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/expense - - - 401 - application/json 315.2121ms
