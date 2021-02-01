@@ -52,3 +52,21 @@ ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'Project
    at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
    at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
 2021-02-01 22:09:20.839 +01:00 [INF] Request finished HTTP/1.1 GET http://localhost:54452/expense - - - 401 - application/json 315.2121ms
+2021-02-01 23:03:44.373 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-01 23:03:44.469 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-01 23:03:44.469 +01:00 [INF] Hosting environment: Development
+2021-02-01 23:03:44.469 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-01 23:03:46.919 +01:00 [WRN] Unauthorized access attempt
+2021-02-01 23:03:47.045 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 23:03:47.249 +01:00 [INF] HTTP GET / responded 401 in 2733.1910 ms
+2021-02-01 23:03:48.798 +01:00 [INF] HTTP GET / responded 404 in 404.2612 ms
+2021-02-01 23:03:59.227 +01:00 [INF] HTTP GET /expense responded 200 in 447.1616 ms
+2021-02-01 23:06:19.540 +01:00 [WRN] Unauthorized access attempt
+2021-02-01 23:06:19.660 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-01 23:06:19.661 +01:00 [INF] HTTP GET /expense responded 401 in 259.7096 ms

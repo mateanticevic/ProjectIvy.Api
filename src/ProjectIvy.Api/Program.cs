@@ -12,6 +12,7 @@ namespace ProjectIvy.Api
         {
             Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
                                                   .MinimumLevel.Override(nameof(Microsoft), LogEventLevel.Information)
+                                                  .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                                                   .Enrich.FromLogContext()
                                                   .WriteTo.Console()
                                                   .WriteTo.File("./log.txt",

@@ -33,6 +33,7 @@ using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
 using ProjectIvy.Model.Constants;
+using Serilog;
 using System;
 using System.Text.Json.Serialization;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
@@ -115,6 +116,7 @@ namespace ProjectIvy.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy V1");
             });
 
+            app.UseSerilogRequestLogging();
             app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseExceptionHandlingMiddleware();
