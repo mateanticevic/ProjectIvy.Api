@@ -1,0 +1,48 @@
+2021-02-02 21:03:13.062 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-02 21:03:13.568 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-02 21:03:13.568 +01:00 [INF] Hosting environment: Development
+2021-02-02 21:03:13.569 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-02 21:03:15.959 +01:00 [WRN] Unauthorized access attempt
+2021-02-02 21:03:16.097 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-02 21:03:16.185 +01:00 [INF] HTTP GET / responded 401 in 2882.4912 ms
+2021-02-02 21:03:17.744 +01:00 [INF] HTTP GET / responded 404 in 409.4275 ms
+2021-02-02 21:14:15.273 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-02 21:14:15.626 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-02 21:14:15.627 +01:00 [INF] Hosting environment: Development
+2021-02-02 21:14:15.627 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-02 21:14:17.798 +01:00 [WRN] Unauthorized access attempt
+2021-02-02 21:14:17.929 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-02 21:14:17.996 +01:00 [INF] HTTP GET / responded 401 in 2512.0742 ms
+2021-02-02 21:14:19.528 +01:00 [INF] HTTP GET / responded 404 in 403.6967 ms
+2021-02-02 21:14:23.776 +01:00 [INF] HTTP GET /expense responded 200 in 457.7280 ms
+2021-02-02 21:16:31.751 +01:00 [INF] HTTP GET / responded 404 in 5.5180 ms
+2021-02-02 21:16:34.525 +01:00 [INF] HTTP GET /expense responded 200 in 53.4321 ms
+2021-02-02 21:17:43.531 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-02 21:17:43.940 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-02 21:17:43.941 +01:00 [INF] Hosting environment: Development
+2021-02-02 21:17:43.941 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-02 21:17:46.030 +01:00 [WRN] Unauthorized access attempt
+2021-02-02 21:17:46.166 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-02 21:17:46.244 +01:00 [INF] HTTP GET / responded 401 in 2513.3661 ms
+2021-02-02 21:17:47.809 +01:00 [INF] HTTP GET / responded 404 in 416.3031 ms
+2021-02-02 21:17:51.313 +01:00 [INF] HTTP GET /expense responded 200 in 408.1338 ms
+2021-02-02 21:19:10.488 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-02 21:19:10.882 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-02 21:19:10.882 +01:00 [INF] Hosting environment: Development
+2021-02-02 21:19:10.882 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-02 21:19:13.043 +01:00 [WRN] Unauthorized access attempt
+2021-02-02 21:19:13.173 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-02 21:19:13.248 +01:00 [INF] HTTP GET / responded 401 in 2523.0459 ms
+2021-02-02 21:19:14.739 +01:00 [INF] HTTP GET / responded 404 in 402.4085 ms

@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
+using Serilog.Sinks.Graylog;
+using Serilog.Sinks.Graylog.Core.Transport;
 
 namespace ProjectIvy.Api
 {
@@ -15,6 +17,13 @@ namespace ProjectIvy.Api
                                                   .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                                                   .Enrich.FromLogContext()
                                                   .WriteTo.Console()
+                                                  .WriteTo.Graylog(new GraylogSinkOptions()
+                                                  {
+                                                      Facility = "project-ivy-api",
+                                                      HostnameOrAddress = "10.0.1.24",
+                                                      Port = 12201,
+                                                      TransportType = TransportType.Tcp
+                                                  })
                                                   .WriteTo.File("./log.txt",
                                                                 LogEventLevel.Debug,
                                                                 fileSizeLimitBytes: 1_000_000,
