@@ -60,6 +60,9 @@ namespace ProjectIvy.Business.Handlers.Income
                                                .Select(x => x.Id)
                                                .ToList();
 
+                if (incomeIds.Count == 0)
+                    return 0;
+
                 using (var sql = GetSqlConnection())
                 {
                     var parameters = new GetIncomeSumQuery()

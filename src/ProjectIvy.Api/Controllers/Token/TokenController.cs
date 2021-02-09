@@ -21,6 +21,7 @@ namespace ProjectIvy.Api.Controllers.Token
                 string userAgentHeader = Request.Headers["User-Agent"].ToString();
                 requestContext.UserAgent = UAParser.Parser.GetDefault().ParseUserAgent(userAgentHeader).ToString();
                 requestContext.OperatingSystem = UAParser.Parser.GetDefault().ParseOS(userAgentHeader).ToString();
+
                 requestContext.IpAddress = Request.Headers["X-Forwarded-For"].ToString() ?? HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString();
             }
             catch
