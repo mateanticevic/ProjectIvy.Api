@@ -49,6 +49,17 @@ namespace ProjectIvy.Business.Handlers.Income
             }
         }
 
+        public async Task<IEnumerable<View.IncomeSource>> GetSources()
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.IncomeSources.WhereUser(User)
+                                                  .OrderBy(x => x.Name)
+                                                  .Select(x => new View.IncomeSource(x))
+                                                  .ToListAsync();
+            }
+        }
+
         public async Task<decimal> GetSum(IncomeGetSumBinding binding)
         {
             using (var context = GetMainContext())
@@ -108,6 +119,16 @@ namespace ProjectIvy.Business.Handlers.Income
                 var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
 
                 return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
+            }
+        }
+
+        public async Task<IEnumerable<View.IncomeType>> GetTypes()
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.IncomeTypes.OrderBy(x => x.Name)
+                                                .Select(x => new View.IncomeType(x))
+                                                .ToListAsync();
             }
         }
     }

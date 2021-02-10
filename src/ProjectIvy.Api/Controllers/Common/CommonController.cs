@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Business.Handlers.Currency;
 using ProjectIvy.Business.Handlers.Expense;
+using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using System.Collections.Generic;
@@ -16,6 +17,7 @@ namespace ProjectIvy.Api.Controllers.Common
         private readonly ICurrencyHandler _currencyHandler;
         private readonly IBeerHandler _beerHandler;
         private readonly IExpenseTypeHandler _expenseTypeHandler;
+        private readonly IIncomeHandler _incomeHandler;
         private readonly IPaymentTypeHandler _paymentHandler;
         private readonly IPoiHandler _poiHandler;
 
@@ -24,11 +26,13 @@ namespace ProjectIvy.Api.Controllers.Common
                                 IBeerHandler beerHandler,
                                 IPaymentTypeHandler paymentTypeHandler,
                                 IPoiHandler poiHandler,
+                                IIncomeHandler incomeHandler,
                                 IExpenseTypeHandler expenseTypeHandler) : base(logger)
         {
             _beerHandler = beerHandler;
             _currencyHandler = currencyHandler;
             _expenseTypeHandler = expenseTypeHandler;
+            _incomeHandler = incomeHandler;
             _paymentHandler = paymentTypeHandler;
             _poiHandler = poiHandler;
         }
@@ -50,5 +54,8 @@ namespace ProjectIvy.Api.Controllers.Common
 
         [HttpGet("PoiCategory")]
         public IEnumerable<View.Poi.PoiCategory> GetPoiCategories() => _poiHandler.GetCategories();
+
+        [HttpGet("IncomeType")]
+        public async Task<IActionResult> GetIncomeTypes() => Ok(await _incomeHandler.GetTypes());
     }
 }

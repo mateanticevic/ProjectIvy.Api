@@ -6,11 +6,11 @@ namespace ProjectIvy.Model.View.Income
     {
         public IncomeSource(DatabaseModel.Finance.IncomeSource x)
         {
-            ValueId = x.ValueId;
+            Id = x.ValueId;
             Name = x.Name;
         }
 
-        public string ValueId { get; set; }
+        public string Id { get; set; }
 
         public string Name { get; set; }
     }

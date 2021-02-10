@@ -25,6 +25,9 @@ namespace ProjectIvy.Api.Controllers.Income
         [HttpGet("Count")]
         public int GetCount([FromQuery] FilteredBinding binding) => _incomeHandler.GetCount(binding);
 
+        [HttpGet("Source")]
+        public async Task<IActionResult> GetSources() => Ok(await _incomeHandler.GetSources());
+
         [HttpGet("Sum")]
         public async Task<decimal> GetSum([FromQuery] IncomeGetSumBinding binding) => await _incomeHandler.GetSum(binding);
 

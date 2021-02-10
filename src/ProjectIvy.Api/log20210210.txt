@@ -1,0 +1,59 @@
+2021-02-10 00:04:57.234 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-10 00:04:58.046 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-10 00:04:58.046 +01:00 [INF] Hosting environment: Development
+2021-02-10 00:04:58.047 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-10 00:05:02.839 +01:00 [WRN] Unauthorized access attempt
+2021-02-10 00:05:03.231 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-10 00:05:03.357 +01:00 [INF] HTTP GET / responded 401 in 5745.9208 ms
+2021-02-10 00:05:05.202 +01:00 [INF] HTTP GET / responded 404 in 698.3016 ms
+2021-02-10 00:07:01.107 +01:00 [INF] HTTP GET /income?page=1&pageSize=10 responded 200 in 502.0898 ms
+2021-02-10 00:07:01.315 +01:00 [INF] HTTP GET /user responded 200 in 713.5605 ms
+2021-02-10 00:07:01.863 +01:00 [INF] HTTP GET /income/sum/byyear?page=1&pageSize=10 responded 200 in 1261.4053 ms
+2021-02-10 00:07:15.966 +01:00 [INF] HTTP GET /vendor?search=&pageSize=5 responded 200 in 231.4586 ms
+2021-02-10 00:07:15.970 +01:00 [INF] HTTP GET /expense/type/count?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 58.7050 ms
+2021-02-10 00:07:16.048 +01:00 [INF] HTTP GET /expense/sum?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 248.3577 ms
+2021-02-10 00:07:16.065 +01:00 [INF] HTTP GET /expense/vendor/count?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 95.1629 ms
+2021-02-10 00:07:16.108 +01:00 [INF] HTTP GET /common/expenseFileType responded 200 in 56.5887 ms
+2021-02-10 00:07:16.112 +01:00 [INF] HTTP GET /card responded 200 in 113.7076 ms
+2021-02-10 00:07:16.126 +01:00 [INF] HTTP GET /common/paymentType responded 200 in 57.8855 ms
+2021-02-10 00:07:16.127 +01:00 [INF] HTTP GET /vendor responded 200 in 10.9379 ms
+2021-02-10 00:07:16.144 +01:00 [INF] HTTP GET /user responded 200 in 9.8157 ms
+2021-02-10 00:07:16.145 +01:00 [INF] HTTP GET /currency responded 200 in 32.7860 ms
+2021-02-10 00:07:16.227 +01:00 [INF] HTTP GET /user responded 200 in 78.9209 ms
+2021-02-10 00:07:16.306 +01:00 [INF] HTTP GET /expense/count/bytype?from=2021-01-01&orderAscending=false&pageSize=10&page=1&pageAll=true responded 200 in 531.9015 ms
+2021-02-10 00:07:16.319 +01:00 [INF] HTTP GET /expense/sum/byCurrency?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 446.4068 ms
+2021-02-10 00:07:16.399 +01:00 [INF] HTTP GET /expense/sum/byMonthOfYear?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 198.6108 ms
+2021-02-10 00:07:16.448 +01:00 [INF] HTTP GET /expenseType responded 200 in 314.4712 ms
+2021-02-10 00:07:16.666 +01:00 [INF] HTTP GET /expense?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 902.7419 ms
+2021-02-10 00:07:17.585 +01:00 [INF] HTTP GET /expense/count/byvendor?from=2021-01-01&orderAscending=false&pageSize=10&page=1 responded 200 in 106.2949 ms
+2021-02-10 00:07:21.615 +01:00 [INF] HTTP GET /user responded 200 in 10.4763 ms
+2021-02-10 00:07:21.621 +01:00 [INF] HTTP GET /income?page=1&pageSize=10 responded 200 in 19.9865 ms
+2021-02-10 00:07:21.785 +01:00 [INF] HTTP GET /income/sum/byyear?page=1&pageSize=10 responded 200 in 181.2118 ms
+2021-02-10 20:18:00.574 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-10 20:18:01.006 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-10 20:18:01.006 +01:00 [INF] Hosting environment: Development
+2021-02-10 20:18:01.006 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-10 20:18:03.174 +01:00 [WRN] Unauthorized access attempt
+2021-02-10 20:18:03.302 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-10 20:18:03.412 +01:00 [INF] HTTP GET / responded 401 in 2624.3778 ms
+2021-02-10 20:18:05.031 +01:00 [INF] HTTP GET / responded 404 in 454.7346 ms
+2021-02-10 20:20:19.418 +01:00 [INF] HTTP GET /tracking/last responded 200 in 153.2472 ms
+2021-02-10 20:24:01.119 +01:00 [INF] HTTP GET /common/incometype responded 200 in 109.4144 ms
+2021-02-10 20:54:15.202 +01:00 [INF] Now listening on: http://localhost:54452
+2021-02-10 20:54:15.624 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-02-10 20:54:15.625 +01:00 [INF] Hosting environment: Development
+2021-02-10 20:54:15.625 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-02-10 20:54:17.708 +01:00 [WRN] Unauthorized access attempt
+2021-02-10 20:54:17.835 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-02-10 20:54:17.912 +01:00 [INF] HTTP GET / responded 401 in 2559.0615 ms
+2021-02-10 20:54:19.565 +01:00 [INF] HTTP GET / responded 404 in 433.7045 ms
+2021-02-10 20:54:32.510 +01:00 [INF] HTTP GET /income/source responded 200 in 167.4921 ms

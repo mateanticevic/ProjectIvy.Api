@@ -13,10 +13,14 @@ namespace ProjectIvy.Business.Handlers.Income
 
         int GetCount(FilteredBinding binding);
 
+        Task<IEnumerable<View.IncomeSource>> GetSources();
+
         Task<decimal> GetSum(IncomeGetSumBinding binding);
 
         IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(IncomeGetSumBinding binding);
 
         IEnumerable<KeyValuePair<int, decimal>> GetSumByYear(IncomeGetSumBinding binding);
+
+        Task<IEnumerable<View.IncomeType>> GetTypes();
     }
 }
