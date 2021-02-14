@@ -24,6 +24,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public string Comment { get; set; }
 
+        public string InstallmentRef { get; set; }
+
         public int CurrencyId { get; set; }
 
         public int? ParentCurrencyId { get; set; }

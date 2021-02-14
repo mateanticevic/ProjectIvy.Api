@@ -28,6 +28,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public string Id { get; set; }
 
+        public string InstallmentRef { get; set; }
+
         public string VendorId { get; set; }
 
         public string VendorName { get; set; }

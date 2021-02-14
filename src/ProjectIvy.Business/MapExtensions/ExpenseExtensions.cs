@@ -31,6 +31,7 @@ namespace ProjectIvy.Business.MapExtensions
             entity.PoiId = context.Pois.GetId(binding.PoiId);
             entity.ValueId = binding.Id;
             entity.VendorId = context.Vendors.GetId(binding.VendorId);
+            entity.InstallmentRef = binding.InstallmentRef;
 
             return entity;
         }

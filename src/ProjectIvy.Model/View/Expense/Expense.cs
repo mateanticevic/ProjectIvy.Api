@@ -26,6 +26,7 @@ namespace ProjectIvy.Model.View.Expense
             Modified = x.Modified;
             Timestamp = x.Created;
             NeedsReview = x.NeedsReview;
+            InstallmentRef = x.InstallmentRef;
         }
 
         public decimal Amount { get; set; }
@@ -53,6 +54,8 @@ namespace ProjectIvy.Model.View.Expense
         public Poi.Poi Poi { get; set; }
 
         public string Id { get; set; }
+
+        public string InstallmentRef { get; set; }
 
         public bool NeedsReview { get; set; }
 
