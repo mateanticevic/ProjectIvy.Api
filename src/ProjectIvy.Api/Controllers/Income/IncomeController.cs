@@ -36,5 +36,12 @@ namespace ProjectIvy.Api.Controllers.Income
 
         [HttpGet("Sum/ByYear")]
         public IActionResult GetSumByYear([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByYear(binding));
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] IncomeBinding binding)
+        {
+            await _incomeHandler.Add(binding);
+            return Ok();
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
 using ProjectIvy.Data.Extensions;
@@ -21,6 +22,18 @@ namespace ProjectIvy.Business.Handlers.Income
     {
         public IncomeHandler(IHandlerContext<IncomeHandler> context) : base(context)
         {
+        }
+
+        public async Task Add(IncomeBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = binding.ToEntity(context);
+                entity.UserId = User.Id;
+
+                await context.Incomes.AddAsync(entity);
+                await context.SaveChangesAsync();
+            }
         }
 
         public PagedView<View.Income> Get(IncomeGetBinding binding)

@@ -9,6 +9,8 @@ namespace ProjectIvy.Business.Handlers.Income
 {
     public interface IIncomeHandler : IHandler
     {
+        Task Add(IncomeBinding binding);
+
         PagedView<View.Income> Get(IncomeGetBinding binding);
 
         int GetCount(FilteredBinding binding);
