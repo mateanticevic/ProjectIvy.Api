@@ -44,4 +44,4 @@ src/ProjectIvy.Api/bin
 /src/ProjectIvy.Api/launchSettings.json
 launchSettings.json
 Properties
-.DS_Store
+*.DS_Store
