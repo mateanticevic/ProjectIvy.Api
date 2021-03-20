@@ -14,8 +14,6 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public string Name { get; set; }
 
-        public string Icon { get; set; }
-
         public int? ParentTypeId { get; set; }
 
         public ICollection<ExpenseType> Children { get; set; }
