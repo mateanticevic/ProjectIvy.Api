@@ -1,0 +1,24 @@
+2021-03-20 17:30:55.318 +01:00 [INF] Now listening on: http://localhost:54452
+2021-03-20 17:30:55.735 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-03-20 17:30:55.764 +01:00 [INF] Hosting environment: Development
+2021-03-20 17:30:55.766 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-03-20 17:30:58.175 +01:00 [WRN] Unauthorized access attempt
+2021-03-20 17:30:58.309 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-03-20 17:30:58.386 +01:00 [INF] HTTP GET / responded 401 in 2843.6718 ms
+2021-03-20 17:30:59.907 +01:00 [INF] HTTP GET / responded 404 in 439.6439 ms
+2021-03-20 17:31:05.045 +01:00 [INF] HTTP GET /expense responded 200 in 444.1709 ms
+2021-03-20 17:32:21.986 +01:00 [INF] Now listening on: http://localhost:54452
+2021-03-20 17:32:22.426 +01:00 [INF] Application started. Press Ctrl+C to shut down.
+2021-03-20 17:32:22.444 +01:00 [INF] Hosting environment: Development
+2021-03-20 17:32:22.445 +01:00 [INF] Content root path: /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api
+2021-03-20 17:32:24.998 +01:00 [WRN] Unauthorized access attempt
+2021-03-20 17:32:25.212 +01:00 [ERR] 
+ProjectIvy.Business.Exceptions.UnauthorizedException: Exception of type 'ProjectIvy.Business.Exceptions.UnauthorizedException' was thrown.
+   at ProjectIvy.Api.Middleware.AuthenticationMiddleware.Invoke(HttpContext httpContext) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/AuthenticationMiddleware.cs:line 59
+   at ProjectIvy.Api.Middleware.ExceptionHandlingMiddleware.Invoke(HttpContext httpContext, ILogger`1 logger) in /Users/manticevic/Git.MA/ProjectIvy.Api/src/ProjectIvy.Api/Middleware/ExceptionHandlingMiddleware.cs:line 46
+2021-03-20 17:32:25.409 +01:00 [INF] HTTP GET / responded 401 in 3216.5289 ms
+2021-03-20 17:32:27.015 +01:00 [INF] HTTP GET / responded 404 in 480.7384 ms
+2021-03-20 17:32:32.599 +01:00 [INF] HTTP GET /expense/sum responded 200 in 1753.3087 ms
