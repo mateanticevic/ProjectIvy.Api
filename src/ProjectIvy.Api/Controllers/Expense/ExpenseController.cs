@@ -64,7 +64,7 @@ namespace ProjectIvy.Api.Controllers.Expense
         public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) => _expenseHandler.GetFiles(expenseId);
 
         [HttpGet("Sum")]
-        public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding) => await _expenseHandler.SumAmount(binding);
+        public async Task<IActionResult> GetSum([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumAmount(binding));
 
         [HttpGet("Sum/ByCurrency")]
         public async Task<IActionResult> GetSumByCurrency([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumByCurrency(binding));

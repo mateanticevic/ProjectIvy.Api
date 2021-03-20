@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers;
 using ProjectIvy.Business.Handlers.Airport;
@@ -57,8 +59,6 @@ namespace ProjectIvy.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen();
-
             services.AddLogging();
 
             services.AddHttpContextAccessor();
@@ -100,20 +100,25 @@ namespace ProjectIvy.Api
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
                 options.JsonSerializerOptions.IgnoreNullValues = true;
             });
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
+            });
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerProvider loggerFactory)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            var logger = loggerFactory.CreateLogger(nameof(Startup));
-            logger.LogInformation((int)LogEvent.ApiInitiated, "Started!");
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
 
             app.UseStaticFiles();
 
             app.UseSwagger();
-
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy V1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
             });
 
             app.UseSerilogRequestLogging();

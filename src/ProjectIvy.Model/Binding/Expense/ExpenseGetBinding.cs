@@ -17,7 +17,7 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public IEnumerable<int> Month { get; set; }
 
-        public ExpenseSort OrderBy { get; set; }
+        public virtual ExpenseSort OrderBy { get; set; }
 
         public bool? HasLinkedFiles { get; set; }
 
