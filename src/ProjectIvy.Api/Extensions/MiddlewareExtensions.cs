@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using ProjectIvy.Api.Middleware;
+using ProjectIvy.Api.Middlewares;
 
 namespace ProjectIvy.Api.Extensions
 {

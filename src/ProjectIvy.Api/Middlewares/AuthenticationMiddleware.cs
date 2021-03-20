@@ -9,7 +9,7 @@ using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace ProjectIvy.Api.Middleware
+namespace ProjectIvy.Api.Middlewares
 {
     public class AuthenticationMiddleware
     {

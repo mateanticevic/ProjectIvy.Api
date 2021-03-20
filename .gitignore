@@ -1,3 +1,4 @@
+/src/ProjectIvy.Api/logs
 /src/bin
 /src/ProjectIvy.Api/bin
 /src/ProjectIvy.Business/bin
@@ -43,3 +44,4 @@ src/ProjectIvy.Api/bin
 /src/ProjectIvy.Api/launchSettings.json
 launchSettings.json
 Properties
+.DS_Store

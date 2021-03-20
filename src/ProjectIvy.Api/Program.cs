@@ -24,7 +24,7 @@ namespace ProjectIvy.Api
                                                       Port = 12201,
                                                       TransportType = TransportType.Tcp
                                                   })
-                                                  .WriteTo.File("./log.txt",
+                                                  .WriteTo.File("./logs/log.txt",
                                                                 LogEventLevel.Debug,
                                                                 fileSizeLimitBytes: 1_000_000,
                                                                 rollingInterval: RollingInterval.Day,

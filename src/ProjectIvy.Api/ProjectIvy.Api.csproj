@@ -17,6 +17,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
+    <None Remove="logs\log20210320.txt" />
   </ItemGroup>
 
   <ItemGroup>
