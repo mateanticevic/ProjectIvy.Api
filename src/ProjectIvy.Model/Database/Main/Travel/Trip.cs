@@ -11,6 +11,7 @@ namespace ProjectIvy.Model.Database.Main.Travel
         {
             Created = DateTime.Now;
             Modified = DateTime.Now;
+            Cities = new List<Common.City>();
         }
 
         public int Id { get; set; }
