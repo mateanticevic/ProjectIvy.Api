@@ -128,6 +128,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                                    .WhereUser(User.Id)
                                    .Include(x => x.Cities)
                                    .ThenInclude(x => x.Country)
+                                   .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
                                    .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
                                    .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
                                    .WhereIf(binding.CityId, x => x.Cities.Select(y => y.ValueId).Any(y => binding.CityId.Contains(y)))

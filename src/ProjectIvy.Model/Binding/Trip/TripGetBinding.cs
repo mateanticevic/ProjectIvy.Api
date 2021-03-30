@@ -9,5 +9,7 @@ namespace ProjectIvy.Model.Binding.Trip
         public IEnumerable<string> CountryId { get; set; }
 
         public TripSort OrderBy { get; set; }
+
+        public string Search { get; set; }
     }
 }
