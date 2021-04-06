@@ -1,11 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Business.Handlers.Currency;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
+using ProjectIvy.Model.Binding.Airline;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
@@ -14,6 +16,7 @@ namespace ProjectIvy.Api.Controllers.Common
 {
     public class CommonController : BaseController<CommonController>
     {
+        private readonly IAirlineHandler _airlineHandler;
         private readonly ICurrencyHandler _currencyHandler;
         private readonly IBeerHandler _beerHandler;
         private readonly IExpenseTypeHandler _expenseTypeHandler;
@@ -27,6 +30,7 @@ namespace ProjectIvy.Api.Controllers.Common
                                 IPaymentTypeHandler paymentTypeHandler,
                                 IPoiHandler poiHandler,
                                 IIncomeHandler incomeHandler,
+                                IAirlineHandler airlineHandler,
                                 IExpenseTypeHandler expenseTypeHandler) : base(logger)
         {
             _beerHandler = beerHandler;
@@ -35,7 +39,11 @@ namespace ProjectIvy.Api.Controllers.Common
             _incomeHandler = incomeHandler;
             _paymentHandler = paymentTypeHandler;
             _poiHandler = poiHandler;
+            _airlineHandler = airlineHandler;
         }
+
+        [HttpGet("Airline")]
+        public async Task<IActionResult> GetAirlines(AirlineGetBinding binding) => Ok(await _airlineHandler.Get(binding));
 
         [HttpGet("Currency")]
         public IEnumerable<View.Currency.Currency> GetCurrencies() => _currencyHandler.Get();

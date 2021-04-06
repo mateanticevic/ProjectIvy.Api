@@ -4,11 +4,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Transport
 {
-    [Table("Flight", Schema = "Transport")]
+    [Table(nameof(Flight), Schema = nameof(Transport))]
     public class Flight : UserEntity
     {
         [Key]
         public int Id { get; set; }
+
+        public Airline Airline { get; set; }
+
+        public int AirlineId { get; set; }
 
         public int DestinationAirportId { get; set; }
 

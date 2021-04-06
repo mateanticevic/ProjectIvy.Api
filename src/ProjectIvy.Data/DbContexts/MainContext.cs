@@ -26,6 +26,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<AccessToken> AccessTokens { get; set; }
 
+        public DbSet<Airline> Airlines { get; set; }
+
         public DbSet<Airport> Airports { get; set; }
 
         public DbSet<Application> Applications { get; set; }

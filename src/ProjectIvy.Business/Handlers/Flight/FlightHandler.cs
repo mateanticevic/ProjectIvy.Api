@@ -1,10 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Views = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Flight
@@ -22,6 +24,18 @@ namespace ProjectIvy.Business.Handlers.Flight
                 return context.Flights.WhereUser(User)
                                       .Where(binding)
                                       .Count();
+            }
+        }
+
+        public async Task Create(FlightBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = binding.ToEntity(context);
+                entity.UserId = User.Id;
+
+                await context.Flights.AddAsync(entity);
+                await context.SaveChangesAsync();
             }
         }
 

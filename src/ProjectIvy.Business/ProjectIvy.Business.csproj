@@ -32,6 +32,7 @@
   <ItemGroup>
     <Folder Include="Properties\" />
     <Folder Include="Cache\" />
+    <Folder Include="Handlers\Airline\" />
   </ItemGroup>
 
 </Project>

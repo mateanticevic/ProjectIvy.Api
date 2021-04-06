@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Flight;
@@ -26,7 +27,14 @@ namespace ProjectIvy.Api.Controllers.Flight
         [HttpGet("Count/ByYear")]
         public IActionResult GetCountByYear(FlightGetBinding binding) => Ok(_flightHandler.CountByYear(binding));
 
-        [HttpGet("")]
+        [HttpGet]
         public IActionResult Get([FromQuery] FlightGetBinding binding) => Ok(_flightHandler.Get(binding));
+
+        [HttpPost]
+        public async Task<IActionResult> Post([FromBody] FlightBinding binding)
+        {
+            await _flightHandler.Create(binding);
+            return Ok();
+        }
     }
 }

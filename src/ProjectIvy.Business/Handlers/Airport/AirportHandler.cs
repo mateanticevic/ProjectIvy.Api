@@ -28,8 +28,10 @@ namespace ProjectIvy.Business.Handlers.Airport
             using (var context = GetMainContext())
             {
                 return context.Airports.Where(binding, context, User.Id)
+                                       .WhereIf(binding.Search, x => x.Iata == binding.Search.ToUpper() || x.Name.ToLower().Contains(binding.Search.ToLower()))
                                        .Include(x => x.Poi)
                                        .ThenInclude(x => x.PoiCategory)
+                                       .OrderByDescending(x => x.Iata == binding.Search)
                                        .Select(x => new View.Airport(x))
                                        .ToPagedView(binding);
             }

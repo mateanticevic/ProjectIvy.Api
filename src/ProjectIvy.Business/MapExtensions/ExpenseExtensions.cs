@@ -13,9 +13,7 @@ namespace ProjectIvy.Business.MapExtensions
         public static Expense ToEntity(this ExpenseBinding binding, MainContext context, Expense entity = null)
         {
             if (entity == null)
-            {
                 entity = new Expense();
-            }
 
             entity.Amount = binding.Amount;
             entity.CardId = context.Cards.GetId(binding.CardId);

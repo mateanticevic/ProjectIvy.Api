@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers;
@@ -34,7 +33,6 @@ using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
-using ProjectIvy.Model.Constants;
 using Serilog;
 using System;
 using System.Text.Json.Serialization;
@@ -69,6 +67,7 @@ namespace ProjectIvy.Api
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
+            services.AddHandler<IAirlineHandler, AirlineHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
             services.AddHandler<ICallHandler, CallHandler>();

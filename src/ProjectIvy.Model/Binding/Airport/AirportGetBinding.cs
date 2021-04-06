@@ -7,5 +7,7 @@
         public string CityId { get; set; }
 
         public string Countryid { get; set; }
+
+        public string Search { get; set; }
     }
 }
