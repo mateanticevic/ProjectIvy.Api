@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Consumation;
+using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Constants.Database;
@@ -16,10 +17,14 @@ namespace ProjectIvy.Api.Controllers.Consumation
     public class ConsumationController : BaseController<ConsumationController>
     {
         private readonly IConsumationHandler _consumationHandler;
+        private readonly ICountryHandler _countryHandler;
 
-        public ConsumationController(ILogger<ConsumationController> logger, IConsumationHandler consumationHandler) : base(logger)
+        public ConsumationController(ILogger<ConsumationController> logger,
+                                     IConsumationHandler consumationHandler,
+                                     ICountryHandler countryHandler) : base(logger)
         {
             _consumationHandler = consumationHandler;
+            _countryHandler = countryHandler;
         }
 
         [HttpGet("Average/ByYear")]
@@ -62,6 +67,16 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Count/Brand")]
         [HttpGet("Brand/Count")]
         public int GetBrandCount(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
+
+        [HttpGet("Country")]
+        public async Task<IActionResult> GetCountries(ConsumationGetBinding binding) => Ok(await _consumationHandler.GetCountries(binding));
+
+        [HttpGet("Country/Boundaries")]
+        public async Task<IActionResult> GetCountryBoundaries(ConsumationGetBinding binding)
+        {
+            var countries = await _consumationHandler.GetCountries(binding);
+            return Ok(_countryHandler.GetBoundaries(countries));
+        }
 
         [HttpGet("Sum")]
         public int GetSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);

@@ -32,6 +32,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding);
 
+        Task<IEnumerable<View.Country.Country>> GetCountries(ConsumationGetBinding binding);
+
         PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding);
 
         PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding);

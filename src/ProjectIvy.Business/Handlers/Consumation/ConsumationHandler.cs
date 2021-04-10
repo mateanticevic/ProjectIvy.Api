@@ -185,6 +185,24 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public async Task<IEnumerable<View.Country.Country>> GetCountries(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Consumations
+                                    .WhereUser(User)
+                                    .Where(binding, context)
+                                    .Include(x => x.Beer)
+                                    .ThenInclude(x => x.BeerBrand)
+                                    .ThenInclude(x => x.Country)
+                                    .Select(x => x.Beer.BeerBrand.Country)
+                                    .Where(x => x != null)
+                                    .Distinct()
+                                    .Select(x => new View.Country.Country(x))
+                                    .ToListAsync();
+            }
+        }
+
         public PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding)
         {
             using (var context = GetMainContext())
