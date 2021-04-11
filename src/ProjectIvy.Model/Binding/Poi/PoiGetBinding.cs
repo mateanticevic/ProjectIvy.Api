@@ -13,5 +13,7 @@ namespace ProjectIvy.Model.Binding.Poi
         public LocationBinding X { get; set; }
 
         public LocationBinding Y { get; set; }
+
+        public string Search { get; set; }
     }
 }

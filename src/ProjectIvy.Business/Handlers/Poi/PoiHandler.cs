@@ -36,6 +36,7 @@ namespace ProjectIvy.Business.Handlers.Poi
                                        .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
                                        .WhereIf(!string.IsNullOrWhiteSpace(binding.Name), x => x.Name.Contains(binding.Name))
                                        .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId))
+                                       .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
                                        .InsideRectangle(binding.X, binding.Y);
 
                 var result = new PagedView<Model.View.Poi.Poi>();

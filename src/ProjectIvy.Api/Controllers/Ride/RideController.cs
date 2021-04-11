@@ -19,9 +19,9 @@ namespace ProjectIvy.Api.Controllers.Flight
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok(await _rideHandler.GetRides());
+        public async Task<IActionResult> Get([FromQuery] RideGetBinding binding) => Ok(await _rideHandler.GetRides(binding));
 
         [HttpPost]
-        public async Task Post(RideBinding binding) => await _rideHandler.Create(binding);
+        public async Task Post([FromBody] RideBinding binding) => await _rideHandler.Create(binding);
     }
 }

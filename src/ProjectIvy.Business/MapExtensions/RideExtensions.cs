@@ -13,8 +13,10 @@ namespace ProjectIvy.Business.MapExtensions
 
             entity.DateOfArrival = b.Arrival;
             entity.DateOfDeparture = b.Departure;
-            entity.DestinationCityId = b.DesinationCityId is null ? null : context.Cities.GetId(b.DesinationCityId);
+            entity.DestinationCityId = b.DestinationCityId is null ? null : context.Cities.GetId(b.DestinationCityId);
             entity.OriginCityId = b.OriginCityId is null ? null : context.Cities.GetId(b.OriginCityId);
+            entity.DestinationPoiId = b.DestinationPoiId is null ? null : context.Pois.GetId(b.DestinationPoiId);
+            entity.OriginPoiId = b.OriginPoiId is null ? null : context.Pois.GetId(b.OriginPoiId);
             entity.RideTypeId = context.RideTypes.GetId(b.TypeId).Value;
 
             return entity;

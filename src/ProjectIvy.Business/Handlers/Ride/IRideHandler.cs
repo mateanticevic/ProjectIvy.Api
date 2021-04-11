@@ -8,6 +8,6 @@ namespace ProjectIvy.Business.Handlers.Ride
     {
         Task Create(RideBinding binding);
 
-        Task<IEnumerable<Model.View.Ride.Ride>> GetRides();
+        Task<IEnumerable<Model.View.Ride.Ride>> GetRides(RideGetBinding binding);
     }
 }

@@ -3,9 +3,9 @@ namespace ProjectIvy.Model.Binding.Ride
 {
     public class RideBinding
     {
-        public string DesinationCityId { get; set; }
+        public string DestinationCityId { get; set; }
 
-        public string DesinationPoiId { get; set; }
+        public string DestinationPoiId { get; set; }
 
         public string OriginCityId { get; set; }
 

@@ -6,6 +6,7 @@ using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Ride;
 using ProjectIvy.Business.MapExtensions;
 using View = ProjectIvy.Model.View;
+using ProjectIvy.Data.Extensions.Entities;
 
 namespace ProjectIvy.Business.Handlers.Ride
 {
@@ -27,12 +28,13 @@ namespace ProjectIvy.Business.Handlers.Ride
             }
         }
 
-        public async Task<IEnumerable<View.Ride.Ride>> GetRides()
+        public async Task<IEnumerable<View.Ride.Ride>> GetRides(RideGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return await context.Rides
                                     .WhereUser(User)
+                                    .Where(binding)
                                     .Include(x => x.DestinationCity)
                                     .Include(x => x.OriginCity)
                                     .OrderBy(x => x.DateOfDeparture)
