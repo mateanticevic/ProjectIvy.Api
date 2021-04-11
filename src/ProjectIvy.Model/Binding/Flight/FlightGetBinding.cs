@@ -2,5 +2,8 @@
 {
     public class FlightGetBinding : FilteredPagedBinding
     {
+        public string DestinationId { get; set; }
+
+        public string OriginId { get; set; }
     }
 }

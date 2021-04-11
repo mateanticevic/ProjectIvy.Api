@@ -124,6 +124,10 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<PoiCategory> PoiCategories { get; set; }
 
+        public DbSet<Ride> Rides { get; set; }
+
+        public DbSet<RideType> RideTypes { get; set; }
+
         public DbSet<ToDo> ToDos { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }

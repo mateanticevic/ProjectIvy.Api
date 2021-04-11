@@ -95,8 +95,13 @@ namespace ProjectIvy.Business.Handlers.Flight
         {
             using (var context = GetMainContext())
             {
+                int? destinationAirportId = binding.DestinationId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.DestinationId)?.Id;
+                int? originAirportId = binding.OriginId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.OriginId)?.Id;
+
                 return context.Flights.WhereUser(User)
                                       .Where(binding)
+                                      .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
+                                      .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)
                                       .Include(x => x.DestinationAirport)
                                       .ThenInclude(x => x.Poi)
                                       .Include(x => x.OriginAirport)

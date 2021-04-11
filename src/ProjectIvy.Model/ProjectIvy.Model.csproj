@@ -29,6 +29,8 @@
     <Folder Include="Properties\" />
     <Folder Include="View\Airline\" />
     <Folder Include="Binding\Airline\" />
+    <Folder Include="View\Ride\" />
+    <Folder Include="Binding\Ride\" />
   </ItemGroup>
 
 </Project>
