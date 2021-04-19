@@ -116,12 +116,12 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                return await context.Trackings.WhereUser(User)
+                return (await context.Trackings.WhereUser(User)
                                               .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
-                                              .Select(x => x.Timestamp.Date.ToString("yyyy-MM-dd"))
+                                              .Select(x => x.Timestamp.Date)
                                               .Distinct()
                                               .OrderByDescending(x => x)
-                                              .ToListAsync();
+                                              .ToListAsync()).Select(x => x.ToString("yyyy-MM-dd"));
             }
         }
 
