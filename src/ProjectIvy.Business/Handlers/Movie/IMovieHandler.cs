@@ -15,6 +15,8 @@ namespace ProjectIvy.Business.Handlers.Movie
 
         int Count(MovieGetBinding binding);
 
+        IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding);
+
         IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);

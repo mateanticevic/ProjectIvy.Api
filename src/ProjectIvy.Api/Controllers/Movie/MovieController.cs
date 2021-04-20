@@ -28,6 +28,9 @@ namespace ProjectIvy.Api.Controllers.Movie
         [HttpGet("Count")]
         public int GetCount([FromQuery] MovieGetBinding binding) => _movieHandler.Count(binding);
 
+        [HttpGet("Count/ByDay")]
+        public IActionResult GetCountByDay([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByDay(binding));
+
         [HttpGet("Count/ByDayOfWeek")]
         public IActionResult GetCountByDayOfWeek([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByDayOfWeek(binding));
 

@@ -52,6 +52,19 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
+        public IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding)
+        {
+            using (var db = GetMainContext())
+            {
+                return db.Movies.WhereUser(User.Id)
+                                .Where(binding)
+                                .GroupBy(x => x.Timestamp.Date)
+                                .OrderBy(x => x.Key)
+                                .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
+                                .ToList();
+            }
+        }
+
         public IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
