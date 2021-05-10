@@ -10,6 +10,8 @@ namespace ProjectIvy.Model.View.Car
 
         public DateTime? DueBefore { get; set; }
 
+        public DateTime? DueBeforeApprox { get; set; }
+
         public CarServiceType ServiceType { get; set; }
     }
 }
