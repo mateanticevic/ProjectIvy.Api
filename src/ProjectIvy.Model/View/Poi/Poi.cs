@@ -5,6 +5,8 @@ namespace ProjectIvy.Model.View.Poi
 {
     public class Poi
     {
+        public Poi() { }
+
         public Poi(DatabaseModel.Travel.Poi x)
         {
             Category = x.PoiCategory?.ConvertTo(y => new PoiCategory(y));

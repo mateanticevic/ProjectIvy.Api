@@ -46,33 +46,28 @@ namespace ProjectIvy.Business.Handlers.Flight
                 var userAirports = context.Flights.WhereUser(User)
                                                   .Where(binding)
                                                   .Include(x => x.DestinationAirport)
-                                                  .Include(x => x.OriginAirport);
-                string s = userAirports.Select(x => x.DestinationAirport)
-                                   .Concat(userAirports.Select(x => x.OriginAirport))
-                                   .GroupBy(x => new
-                                   {
-                                       x.Iata,
-                                       x.Name
-                                   })
-                                   .OrderByDescending(x => x.Count())
-                                   .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
-                                   {
-                                       Iata = x.Key.Iata,
-                                       Name = x.Key.Name
-                                   }, x.Count())).ToQueryString();
+                                                  .ThenInclude(x => x.Poi)
+                                                  .Include(x => x.OriginAirport)
+                                                  .ThenInclude(x => x.Poi);
 
                 return userAirports.Select(x => x.DestinationAirport)
                                    .Concat(userAirports.Select(x => x.OriginAirport))
                                    .GroupBy(x => new
                                    {
                                        x.Iata,
-                                       x.Name
+                                       x.Name,
+                                       x.Poi.Latitude,
+                                       x.Poi.Longitude
                                    })
                                    .OrderByDescending(x => x.Count())
                                    .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
                                    {
                                        Iata = x.Key.Iata,
-                                       Name = x.Key.Name
+                                       Name = x.Key.Name,
+                                       Poi = new Views.Poi.Poi()
+                                       {
+                                           Location = new Location(x.Key.Latitude, x.Key.Longitude)
+                                       }
                                    }, x.Count()))
                                    .ToList();
             }
