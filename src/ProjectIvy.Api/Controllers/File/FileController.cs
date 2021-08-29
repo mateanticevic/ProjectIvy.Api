@@ -23,8 +23,8 @@ namespace ProjectIvy.Api.Controllers.File
             return File(file.Data, file.Type.MimeType);
         }
 
-        [HttpPost("")]
-        public async Task<IActionResult> Post()
+        [HttpPost]
+        public async Task<IActionResult> Post([FromQuery] double? imageResize)
         {
             var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
@@ -32,7 +32,7 @@ namespace ProjectIvy.Api.Controllers.File
             {
                 await HttpContext.Request.Body.CopyToAsync(ms);
                 bytes = ms.ToArray();
-                string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
+                string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType, ImageResize = imageResize });
 
                 return Ok(fileName);
             }

@@ -7,5 +7,7 @@
         public string Name { get; set; }
 
         public string MimeType { get; set; }
+
+        public double? ImageResize { get; set; }
     }
 }

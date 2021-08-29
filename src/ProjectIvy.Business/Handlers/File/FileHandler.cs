@@ -9,6 +9,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
+using System.IO;
+using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace ProjectIvy.Business.Handlers.File
 {
@@ -61,14 +65,16 @@ namespace ProjectIvy.Business.Handlers.File
 
                 string fullPath = $"{GetFolder((StorageFileType)fileType.Id)}/{fileName}.{fileType.Extension}";
 
-                await _azureStorageHelper.UploadFile(fullPath, file.Data);
+                var data = await ProcessFile(file);
+
+                await _azureStorageHelper.UploadFile(fullPath, data);
 
                 var fileEntity = new Model.Database.Main.Storage.File()
                 {
                     Created = DateTime.Now,
                     FileTypeId = fileType.Id,
                     ProviderId = (int)StorageProvider.AzureStorage,
-                    SizeInBytes = file.Data.Length,
+                    SizeInBytes = data.Length,
                     Uri = fullPath,
                     UserId = User.Id,
                     ValueId = fileName
@@ -97,6 +103,23 @@ namespace ProjectIvy.Business.Handlers.File
                 return "audio";
 
             return "other";
+        }
+
+        private async Task<byte[]> ProcessFile(FileBinding file)
+        {
+            if (file.ImageResize.HasValue)
+            {
+                var image = Image.Load(file.Data);
+                image.Mutate(x => x.Resize((int)(image.Width * file.ImageResize.Value), 0));
+
+                using (var ms = new MemoryStream())
+                {
+                    await image.SaveAsJpegAsync(ms);
+                    return ms.ToArray();
+                }
+            }
+            else
+                return file.Data;
         }
     }
 }

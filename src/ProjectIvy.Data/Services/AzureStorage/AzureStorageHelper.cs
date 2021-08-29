@@ -1,5 +1,6 @@
 ﻿using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.File;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Data.Services.AzureStorage
@@ -36,13 +37,11 @@ namespace ProjectIvy.Data.Services.AzureStorage
 
             var file = directory.GetFileReference(parts[1]);
 
-            //if (!await file.ExistsAsync())
-            //    return null;
-
-            var data = new byte[file.StreamWriteSizeInBytes];
-            await file.DownloadToByteArrayAsync(data, 0);
-
-            return data;
+            using (var stream = new MemoryStream())
+            {
+                await file.DownloadToStreamAsync(stream);
+                return stream.ToArray();
+            }
         }
 
         public async Task UploadFile(string fileName, byte[] fileData)

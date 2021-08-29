@@ -1,4 +1,6 @@
-﻿namespace ProjectIvy.Model.View.File
+﻿using System.IO;
+
+namespace ProjectIvy.Model.View.File
 {
     public class FileWithData : File
     {
@@ -7,5 +9,7 @@
         }
 
         public byte[] Data { get; set; }
+
+        public Stream Stream { get; set; }
     }
 }
