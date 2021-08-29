@@ -1,21 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
-<<<<<<< HEAD
-using Serilog;
-using Serilog.Events;
-using Serilog.Sinks.Graylog;
-using Serilog.Sinks.Graylog.Core.Transport;
-
-namespace ProjectIvy.Api
-{
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-       
-            CreateHostBuilder(args).Build().Run();
-=======
 using Serilog;
 using Serilog.Events;
 using Serilog.Sinks.Graylog;
@@ -32,13 +17,13 @@ namespace ProjectIvy.Api
                                                   .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
                                                   .Enrich.FromLogContext()
                                                   .WriteTo.Console()
-                                                  //.WriteTo.Graylog(new GraylogSinkOptions()
-                                                  //{
-                                                  //    Facility = "project-ivy-api",
-                                                  //    HostnameOrAddress = "10.0.1.24",
-                                                  //    Port = 12201,
-                                                  //    TransportType = TransportType.Tcp
-                                                  //})
+                                                  .WriteTo.Graylog(new GraylogSinkOptions()
+                                                  {
+                                                      Facility = "project-ivy-api",
+                                                      HostnameOrAddress = "10.0.1.24",
+                                                      Port = 12201,
+                                                      TransportType = TransportType.Tcp
+                                                  })
                                                   .WriteTo.File("./logs/log.txt",
                                                                 LogEventLevel.Debug,
                                                                 fileSizeLimitBytes: 1_000_000,
@@ -49,7 +34,6 @@ namespace ProjectIvy.Api
                                                   .CreateLogger();
 
             CreateHostBuilder(args).Build().Run();
->>>>>>> feef617... Image resizing support
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
@@ -57,6 +41,7 @@ namespace ProjectIvy.Api
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();
-                });
+                })
+            .UseSerilog();
     }
 }
