@@ -20,9 +20,9 @@ namespace ProjectIvy.Api
                                                   .WriteTo.Graylog(new GraylogSinkOptions()
                                                   {
                                                       Facility = "project-ivy-api",
-                                                      HostnameOrAddress = "10.0.1.24",
-                                                      Port = 12201,
-                                                      TransportType = TransportType.Tcp
+                                                      HostnameOrAddress = Environment.GetEnvironmentVariable("GRAYLOG_HOST"),
+                                                      Port = Convert.ToInt32(Environment.GetEnvironmentVariable("GRAYLOG_PORT")),
+                                                      TransportType = TransportType.Udp
                                                   })
                                                   .WriteTo.File("./logs/log.txt",
                                                                 LogEventLevel.Debug,
