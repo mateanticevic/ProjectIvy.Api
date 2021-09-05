@@ -18,6 +18,7 @@
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
     <None Remove="logs\log20210320.txt" />
+    <None Remove="Controllers\Geohash\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -47,5 +48,6 @@
 
   <ItemGroup>
     <Folder Include="Controllers\Ride\" />
+    <Folder Include="Controllers\Geohash\" />
   </ItemGroup>
 </Project>

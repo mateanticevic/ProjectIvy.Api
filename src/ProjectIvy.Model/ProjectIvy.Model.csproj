@@ -13,6 +13,7 @@
   </PropertyGroup>
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
+    <None Remove="Binding\Geohash\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,6 +32,7 @@
     <Folder Include="Binding\Airline\" />
     <Folder Include="View\Ride\" />
     <Folder Include="Binding\Ride\" />
+    <Folder Include="Binding\Geohash\" />
   </ItemGroup>
 
 </Project>

@@ -148,6 +148,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Geohash> UserGeohashes { get; set; }
+
         public DbSet<Vendor> Vendors { get; set; }
 
         public DbSet<VendorPoi> VendorPois { get; set; }

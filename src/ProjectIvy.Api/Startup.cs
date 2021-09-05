@@ -20,6 +20,7 @@ using ProjectIvy.Business.Handlers.Device;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
+using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
@@ -82,6 +83,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IDialogflowHandler, DialogflowHandler>();
             services.AddHandler<IFileHandler, FileHandler>();
             services.AddHandler<IFlightHandler, FlightHandler>();
+            services.AddHandler<IGeohashHandler, GeohashHandler>();
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();

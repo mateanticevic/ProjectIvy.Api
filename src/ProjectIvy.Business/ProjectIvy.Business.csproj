@@ -14,6 +14,8 @@
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
     <None Remove="SixLabors.ImageSharp" />
+    <None Remove="Handlers\Geohash\" />
+    <None Remove="geohash-dotnet" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,6 +31,7 @@
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.3" />
+    <PackageReference Include="geohash-dotnet" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,6 +39,7 @@
     <Folder Include="Cache\" />
     <Folder Include="Handlers\Airline\" />
     <Folder Include="Handlers\Ride\" />
+    <Folder Include="Handlers\Geohash\" />
   </ItemGroup>
 
 </Project>
