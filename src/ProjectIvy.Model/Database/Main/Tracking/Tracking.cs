@@ -22,5 +22,7 @@ namespace ProjectIvy.Model.Database.Main.Tracking
         public double? Speed { get; set; }
 
         public DateTime Timestamp { get; set; }
+
+        public string Geohash { get; set; }
     }
 }

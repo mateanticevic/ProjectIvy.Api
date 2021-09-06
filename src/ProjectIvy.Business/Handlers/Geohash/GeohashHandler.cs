@@ -20,29 +20,21 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             using (var context = GetMainContext())
             {
-                if (binding.Geohash is null)
-                {
-                    return await context.UserGeohashes.WhereUser(User)
-                                                      .Select(x => x.Hash.Substring(0, binding.Precision))
-                                                      .Distinct()
-                                                      .ToListAsync();
-                }
+                var neighbours = binding.Geohash is null ? null : geohasher.GetNeighbors(binding.Geohash);
 
-                var neighbours = geohasher.GetNeighbors(binding.Geohash);
-
-                return await context.UserGeohashes.WhereUser(User)
-                                                  .Where(x => x.Hash.StartsWith(binding.Geohash)
-                                                         || x.Hash.StartsWith(neighbours[Direction.North])
-                                                         || x.Hash.StartsWith(neighbours[Direction.South])
-                                                         || x.Hash.StartsWith(neighbours[Direction.East])
-                                                         || x.Hash.StartsWith(neighbours[Direction.West])
-                                                         || x.Hash.StartsWith(neighbours[Direction.NorthEast])
-                                                         || x.Hash.StartsWith(neighbours[Direction.NorthWest])
-                                                         || x.Hash.StartsWith(neighbours[Direction.SouthEast])
-                                                         || x.Hash.StartsWith(neighbours[Direction.SouthWest]))
-                                                  .Select(x => x.Hash.Substring(0, binding.Precision))
-                                                  .Distinct()
-                                                  .ToListAsync();
+                return await context.Trackings.WhereUser(User)
+                                              .WhereIf(neighbours is not null, x => x.Geohash.StartsWith(binding.Geohash)
+                                                     || x.Geohash.StartsWith(neighbours[Direction.North])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.South])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.East])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.West])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.NorthEast])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.NorthWest])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.SouthEast])
+                                                     || x.Geohash.StartsWith(neighbours[Direction.SouthWest]))
+                                              .Select(x => x.Geohash.Substring(0, binding.Precision))
+                                              .Distinct()
+                                              .ToListAsync();
             }
         }
     }

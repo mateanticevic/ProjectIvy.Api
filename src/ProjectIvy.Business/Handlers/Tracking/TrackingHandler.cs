@@ -1,4 +1,5 @@
 ﻿using GeoCoordinatePortable;
+using Geohash;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
@@ -75,7 +76,10 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
+                var geohasher = new Geohasher();
+
                 var tracking = binding.ToEntity();
+                tracking.Geohash = geohasher.Encode((double)binding.Latitude, (double)binding.Longitude, 9);
                 tracking.User.Id = User.Id;
 
                 db.Trackings.Add(tracking);
@@ -87,14 +91,18 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public async Task Create(IEnumerable<TrackingBinding> binding)
         {
+            var geohasher = new Geohasher();
+
             using (var db = GetMainContext())
             {
                 await db.Trackings.AddRangeAsync(binding.Select(x =>
                 {
                     var entity = x.ToEntity();
+                    entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
                     entity.UserId = User.Id;
                     return entity;
                 }));
+
                 await db.SaveChangesAsync();
             }
         }
