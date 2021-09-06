@@ -23,6 +23,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 var neighbours = binding.Geohash is null ? null : geohasher.GetNeighbors(binding.Geohash);
 
                 return await context.Trackings.WhereUser(User)
+                                              .WhereTimestampInclusive(binding)
                                               .WhereIf(neighbours is not null, x => x.Geohash.StartsWith(binding.Geohash)
                                                      || x.Geohash.StartsWith(neighbours[Direction.North])
                                                      || x.Geohash.StartsWith(neighbours[Direction.South])
