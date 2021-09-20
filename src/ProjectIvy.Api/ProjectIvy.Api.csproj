@@ -19,6 +19,7 @@
     <None Remove="StyleCop.Cache" />
     <None Remove="logs\log20210320.txt" />
     <None Remove="Controllers\Geohash\" />
+    <None Remove="Controllers\IotDevice\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -49,5 +50,6 @@
   <ItemGroup>
     <Folder Include="Controllers\Ride\" />
     <Folder Include="Controllers\Geohash\" />
+    <Folder Include="Controllers\IotDevice\" />
   </ItemGroup>
 </Project>

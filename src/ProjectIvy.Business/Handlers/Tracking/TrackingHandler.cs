@@ -63,13 +63,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public int CountUnique(FilteredBinding binding)
         {
-            using (var db = GetMainContext())
-            {
-                var query = db.UniqueLocations.WhereUser(User.Id)
-                                              .WhereTimestampInclusive(binding);
-
-                return query.Count();
-            }
+            throw new NotImplementedException();
         }
 
         public bool Create(TrackingBinding binding)

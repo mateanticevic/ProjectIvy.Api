@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Inv
 {
-    [Table(nameof(Device), Schema = "Inv")]
+    [Table(nameof(Device), Schema = nameof(Inv))]
     public class Device : UserEntity, IHasValueId, IHasName
     {
         [Key]

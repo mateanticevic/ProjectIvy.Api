@@ -14,6 +14,8 @@
   <ItemGroup>
     <None Remove="StyleCop.Cache" />
     <None Remove="Binding\Geohash\" />
+    <None Remove="Database\Main\Iot\" />
+    <None Remove="Binding\IotData\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -33,6 +35,8 @@
     <Folder Include="View\Ride\" />
     <Folder Include="Binding\Ride\" />
     <Folder Include="Binding\Geohash\" />
+    <Folder Include="Database\Main\Iot\" />
+    <Folder Include="Binding\IotData\" />
   </ItemGroup>
 
 </Project>

@@ -106,6 +106,10 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<IncomeType> IncomeTypes { get; set; }
 
+        public DbSet<Model.Database.Main.Iot.Device> IotDevices { get; set; }
+
+        public DbSet<Model.Database.Main.Iot.DeviceData> IotDeviceData { get; set; }
+
         public DbSet<Location> Locations { get; set; }
 
         public DbSet<Manufacturer> Manufacturers { get; set; }
@@ -143,8 +147,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<TripExpenseInclude> TripExpensesIncluded { get; set; }
 
         public DbSet<TrackingDistance> TrackingDistances { get; set; }
-
-        public DbSet<UniqueLocation> UniqueLocations { get; set; }
 
         public DbSet<User> Users { get; set; }
 

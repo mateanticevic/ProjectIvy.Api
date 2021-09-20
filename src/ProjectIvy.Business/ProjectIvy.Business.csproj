@@ -16,6 +16,7 @@
     <None Remove="SixLabors.ImageSharp" />
     <None Remove="Handlers\Geohash\" />
     <None Remove="geohash-dotnet" />
+    <None Remove="Handlers\IotDevice\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +41,7 @@
     <Folder Include="Handlers\Airline\" />
     <Folder Include="Handlers\Ride\" />
     <Folder Include="Handlers\Geohash\" />
+    <Folder Include="Handlers\IotDevice\" />
   </ItemGroup>
 
 </Project>
