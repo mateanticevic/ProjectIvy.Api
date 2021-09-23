@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Iot
@@ -13,5 +14,7 @@ namespace ProjectIvy.Model.Database.Main.Iot
         public string Name { get; set; }
 
         public string MacAddress { get; set; }
+
+        public DateTime LastPing { get; set; }
     }
 }

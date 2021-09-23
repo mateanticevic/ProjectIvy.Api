@@ -15,6 +15,9 @@ namespace ProjectIvy.Api.Controllers.Device
 
         public IotDeviceController(ILogger<IotDeviceController> logger, IIotDeviceHandler iotDeviceHandler) : base(logger) => _iotDeviceHandler = iotDeviceHandler;
 
+        [HttpPost("{deviceId}/Ping")]
+        public async Task PutLastPing(string deviceId) => await _iotDeviceHandler.Ping(deviceId);
+
         [HttpPost("{deviceId}/Data/{fieldIdentifier}")]
         public async Task PostData([FromBody] IotDeviceDataBinding b, string deviceId, string fieldIdentifier)
         {
@@ -25,7 +28,7 @@ namespace ProjectIvy.Api.Controllers.Device
         }
 
         [HttpPost("{deviceId}/Data/{fieldIdentifier}/{value}")]
-        public async Task PostData(string deviceId, string fieldIdentifier, string value)
+        public async Task PostDataValue(string deviceId, string fieldIdentifier, string value)
         {
             var b = new IotDeviceDataBinding()
             {
