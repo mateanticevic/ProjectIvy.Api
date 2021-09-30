@@ -126,7 +126,22 @@ namespace ProjectIvy.Api
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
             });
 
-            app.UseSerilogRequestLogging();
+            app.UseSerilogRequestLogging(configure =>
+            {
+                configure.EnrichDiagnosticContext = (context, httpContext) =>
+                {
+                    string authorizationValue = httpContext.Request.Headers["Authorization"];
+                    string cookieTokenValue = httpContext.Request.Cookies["Token"];
+                    string token = authorizationValue ?? cookieTokenValue;
+
+                    if (token is not null)
+                    {
+                        string maskedToken = $"*****{token[^6..]}";
+                        context.Set("Token", maskedToken);
+                    }
+
+                };
+            });
             app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseExceptionHandlingMiddleware();
