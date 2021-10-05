@@ -2,10 +2,8 @@
 
 namespace ProjectIvy.Model.Database.Main
 {
-    public interface IHasCreatedModified
+    public interface IHasCreatedModified : IHasCreated
     {
-        DateTime Created { get; set; }
-
         DateTime Modified { get; set; }
     }
 }

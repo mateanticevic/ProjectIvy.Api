@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectIvy.Model.Database.Main.Iot
 {
     [Table(nameof(DeviceData), Schema = nameof(Iot))]
-    public class DeviceData
+    public class DeviceData : IHasCreated
     {
         [Key]
         public long Id { get; set; }

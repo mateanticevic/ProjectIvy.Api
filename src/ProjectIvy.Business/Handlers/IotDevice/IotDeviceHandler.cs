@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +13,20 @@ namespace ProjectIvy.Business.Handlers.IotDevice
     {
         public IotDeviceHandler(IHandlerContext<IotDeviceHandler> context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<KeyValuePair<DateTime, string>>> GetData(string deviceId, string fieldIdentifier, IotDeviceDataGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int id = context.IotDevices.WhereUser(User).GetId(deviceId).Value;
+
+                return await context.IotDeviceData.Where(x => x.DeviceId == id && x.FieldIdentifier == fieldIdentifier)
+                                                  .WhereCreatedInclusive(binding)
+                                                  .OrderByDescending(x => x.Created)
+                                                  .Select(x => new KeyValuePair<DateTime, string>(x.Created, x.Value))
+                                                  .ToListAsync();
+            }
         }
 
         public async Task Ping(string deviceId)

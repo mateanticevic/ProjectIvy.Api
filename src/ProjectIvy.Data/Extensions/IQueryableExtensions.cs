@@ -73,6 +73,19 @@ namespace ProjectIvy.Data.Extensions
             };
         }
 
+        public static IQueryable<T> WhereCreatedInclusive<T>(this IQueryable<T> query, IFilteredBinding binding) where T : IHasCreated
+        {
+            return query.WhereCreatedInclusive(binding.From, binding.To);
+        }
+
+        public static IQueryable<T> WhereCreatedInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasCreated
+        {
+            query = from == null ? query : query.Where(x => x.Created >= from);
+            query = to == null ? query : query.Where(x => x.Created <= to);
+
+            return query;
+        }
+
         public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, IFilteredBinding binding) where T : IHasTimestamp
         {
             return query.WhereTimestampInclusive(binding.From, binding.To);

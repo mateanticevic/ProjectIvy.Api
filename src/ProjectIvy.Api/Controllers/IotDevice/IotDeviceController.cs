@@ -39,5 +39,9 @@ namespace ProjectIvy.Api.Controllers.Device
 
             await _iotDeviceHandler.PushData(b);
         }
+
+        [HttpGet("{deviceId}/Data/{fieldIdentifier}")]
+        public async Task<IActionResult> GetDeviceData(string deviceId, string fieldIdentifier, [FromQuery] IotDeviceDataGetBinding binding)
+            => Ok(await _iotDeviceHandler.GetData(deviceId, fieldIdentifier, binding));
     }
 }
