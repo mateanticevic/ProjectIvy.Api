@@ -19,14 +19,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjectIvy.Common.Test", "t
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{DE435792-D5A8-4C32-967B-BE9B91D22518}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{D1BC4146-509D-4991-9D54-BF3D0EF96970}"
-	ProjectSection(SolutionItems) = preProject
-		deploy\Dockerfile = deploy\Dockerfile
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{08217A17-6EDF-416C-BFF7-5405767184E3}"
 	ProjectSection(SolutionItems) = preProject
 		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{FDAEC8B1-3272-40FC-BF68-F987BEB7C0D6}"
+	ProjectSection(SolutionItems) = preProject
+		Dockerfile = Dockerfile
 	EndProjectSection
 EndProject
 Global
