@@ -1,18 +1,17 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Services.AzureStorage;
 using ProjectIvy.Model.Binding.File;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.File;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
-using System.IO;
-using SixLabors.ImageSharp.Formats.Jpeg;
 
 namespace ProjectIvy.Business.Handlers.File
 {
@@ -65,7 +64,7 @@ namespace ProjectIvy.Business.Handlers.File
 
                 string fullPath = $"{GetFolder((StorageFileType)fileType.Id)}/{fileName}.{fileType.Extension}";
 
-                var data = await ProcessFile(file);
+                var data = fileType.IsImage ? await ProcessImageFile(file) : file.Data;
 
                 await _azureStorageHelper.UploadFile(fullPath, data);
 
@@ -105,7 +104,7 @@ namespace ProjectIvy.Business.Handlers.File
             return "other";
         }
 
-        private async Task<byte[]> ProcessFile(FileBinding file)
+        private async Task<byte[]> ProcessImageFile(FileBinding file)
         {
             if (file.ImageResize.HasValue)
             {

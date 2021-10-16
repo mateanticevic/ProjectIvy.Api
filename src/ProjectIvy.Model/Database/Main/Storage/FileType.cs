@@ -16,5 +16,7 @@ namespace ProjectIvy.Model.Database.Main.Storage
         public string Extension { get; set; }
 
         public string MimeType { get; set; }
+
+        public bool IsImage { get; set; }
     }
 }
