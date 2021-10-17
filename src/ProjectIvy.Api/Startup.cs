@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers;
@@ -38,6 +40,7 @@ using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
 using Serilog;
 using System;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
@@ -109,6 +112,22 @@ namespace ProjectIvy.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
             });
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap
+.Clear();
+
+            services.AddAuthentication("Bearer")
+                    .AddJwtBearer(o =>
+                    {
+                        o.Authority = "https://localhost:5001";
+                        o.RequireHttpsMetadata = false;
+                        o.Audience = "https://localhost:5001/resources";
+                        o.TokenValidationParameters =
+        new TokenValidationParameters
+        {
+            RoleClaimType = "role"
+        };
+                    });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -118,6 +137,9 @@ namespace ProjectIvy.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseAuthentication();
+            app.UseAuthorization();
+
             app.UseStaticFiles();
 
             app.UseSwagger();
@@ -125,6 +147,7 @@ namespace ProjectIvy.Api
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
             });
+
 
             app.UseSerilogRequestLogging(configure =>
             {
@@ -145,7 +168,8 @@ namespace ProjectIvy.Api
             app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseExceptionHandlingMiddleware();
-            app.UseAuthenticationMiddleware();
+            //app.UseAuthenticationMiddleware();
+
             app.UseMvc();
         }
     }

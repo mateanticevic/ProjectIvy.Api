@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -12,7 +11,7 @@ using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
 {
-    [Authorize(Roles = UserRole.User)]
+    [Authorize]
     public class ExpenseController : BaseController<ExpenseController>
     {
         private readonly IExpenseHandler _expenseHandler;
