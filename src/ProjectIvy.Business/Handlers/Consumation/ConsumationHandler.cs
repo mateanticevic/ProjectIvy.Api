@@ -30,7 +30,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                 foreach (var i in Enumerable.Range(0, binding.Units))
                 {
                     var consumation = binding.ToEntity(context);
-                    consumation.UserId = User.Id;
+                    consumation.UserId = UserId.Value;
 
                     context.Consumations.Add(consumation);
                 }
@@ -45,7 +45,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             {
                 //TODO: Take leap years into account
 
-                return await context.Consumations.WhereUser(User)
+                return await context.Consumations.WhereUser(UserId.Value)
                                                  .Where(binding, context)
                                                  .GroupBy(x => x.Date.Year)
                                                  .OrderBy(x => x.Key)
@@ -58,7 +58,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .Select(x => x.Date)
                                            .Distinct()
@@ -75,7 +75,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                               .Where(binding, context)
                               .Count();
             }
@@ -85,7 +85,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .Include(x => x.Beer)
                                            .GroupBy(x => new
@@ -109,7 +109,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Consumations.WhereUser(User.Id)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => x.Date.ToString("MMMM"))
                                            .Select(x => new KeyValuePair<string, int>(x.Key, x.Count()))
@@ -123,7 +123,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Consumations.WhereUser(User.Id)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                            .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
@@ -139,7 +139,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Consumations.WhereUser(User.Id)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => x.Date.Year)
                                            .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
@@ -152,7 +152,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                               .Where(binding, context)
                               .Select(x => x.BeerId)
                               .Distinct()
@@ -164,7 +164,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .Include(x => x.Beer)
                                            .Select(x => x.Beer.BeerBrandId)
@@ -177,7 +177,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .OrderByDescending(x => x.Date)
                                            .Select(x => new View.Consumation.Consumation(x))
@@ -190,7 +190,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 return await context.Consumations
-                                    .WhereUser(User)
+                                    .WhereUser(UserId.Value)
                                     .Where(binding, context)
                                     .Include(x => x.Beer)
                                     .ThenInclude(x => x.BeerBrand)
@@ -207,14 +207,14 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                var oldBeerIds = binding.From.HasValue ? context.Consumations.WhereUser(User)
+                var oldBeerIds = binding.From.HasValue ? context.Consumations.WhereUser(UserId.Value)
                                                .Where(new FilteredPagedBinding()
                                                {
                                                    To = binding.From.Value.AddDays(-1)
                                                })
                                                .Select(x => x.Beer.Id) : null;
 
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Include(x => x.Beer)
                                            .Where(binding)
                                            .GroupBy(x => new
@@ -239,7 +239,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding)
                                            .Select(x => x.Beer)
                                            .Distinct()
@@ -252,7 +252,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding)
                                            .Select(x => x.Beer.BeerBrand)
                                            .Distinct()
@@ -266,7 +266,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 var grouped = context.Consumations
-                                     .WhereUser(User)
+                                     .WhereUser(UserId.Value)
                                      .Where(binding, context)
                                      .Include(x => x.Beer)
                                      .GroupBy(x => new
@@ -290,7 +290,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 var grouped = context.Consumations
-                                     .WhereUser(User)
+                                     .WhereUser(UserId.Value)
                                      .Where(binding, context)
                                      .Include(x => x.Beer)
                                      .ThenInclude(x => x.BeerBrand)
@@ -320,7 +320,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                         new {
                                             binding.From,
                                             binding.To,
-                                            UserId = User.Id
+                                            UserId = UserId.Value
                                         })
                                     .Select(x => new KeyValuePair<int, int>(x.Key == 1 ? 6 : x.Key - 2, x.Value))
                                     .OrderBy(x => x.Key);
@@ -331,7 +331,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => x.Date.Month)
                                            .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
@@ -345,7 +345,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                            .Select(x => new GroupedByMonth<int>(x.Sum(y => y.Volume), x.Key.Year, x.Key.Month))
@@ -359,7 +359,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .GroupBy(x => x.Date.Year)
                                            .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
@@ -372,7 +372,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                var grouped = context.Consumations.WhereUser(User)
+                var grouped = context.Consumations.WhereUser(UserId.Value)
                                                   .Where(binding, context)
                                                   .Include(x => x.BeerServing)
                                                   .GroupBy(x => new
@@ -396,7 +396,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var context = GetMainContext())
             {
                 var grouped = context.Consumations
-                                     .WhereUser(User)
+                                     .WhereUser(UserId.Value)
                                      .Where(binding, context)
                                      .Include(x => x.Beer)
                                      .ThenInclude(x => x.BeerStyle)
@@ -421,7 +421,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var context = GetMainContext())
             {
-                return context.Consumations.WhereUser(User)
+                return context.Consumations.WhereUser(UserId.Value)
                                            .Where(binding, context)
                                            .Sum(x => x.Volume);
             }

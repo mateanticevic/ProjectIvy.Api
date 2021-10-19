@@ -27,7 +27,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                var userTrackings = db.Trackings.WhereUser(User.Id)
+                var userTrackings = db.Trackings.WhereUser(UserId.Value)
                                                 .WhereTimestampInclusive(binding);
 
                 return userTrackings.Count();
@@ -38,7 +38,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                return context.Trackings.WhereUser(User)
+                return context.Trackings.WhereUser(UserId.Value)
                               .WhereTimestampInclusive(binding.From, binding.To)
                               .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
                               .OrderByDescending(x => x.Key.Year)
@@ -52,7 +52,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                return context.Trackings.WhereUser(User)
+                return context.Trackings.WhereUser(UserId.Value)
                                         .WhereTimestampInclusive(binding.From, binding.To)
                                         .GroupBy(x => x.Timestamp.Year)
                                         .OrderByDescending(x => x.Key)
@@ -74,7 +74,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
                 var tracking = binding.ToEntity();
                 tracking.Geohash = geohasher.Encode((double)binding.Latitude, (double)binding.Longitude, 9);
-                tracking.User.Id = User.Id;
+                tracking.UserId = UserId.Value;
 
                 db.Trackings.Add(tracking);
                 db.SaveChanges();
@@ -93,7 +93,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 {
                     var entity = x.ToEntity();
                     entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
-                    entity.UserId = User.Id;
+                    entity.UserId = UserId.Value;
                     return entity;
                 }));
 
@@ -105,7 +105,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                return db.Trackings.WhereUser(User.Id)
+                return db.Trackings.WhereUser(UserId.Value)
                                    .WhereTimestampInclusive(binding)
                                    .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
                                    .OrderBy(x => x.Timestamp)
@@ -118,7 +118,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                return (await context.Trackings.WhereUser(User)
+                return (await context.Trackings.WhereUser(UserId.Value)
                                               .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
                                               .Select(x => x.Timestamp.Date)
                                               .Distinct()
@@ -141,12 +141,12 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
                     var to = binding.To.Value.Date;
 
-                    total = db.TrackingDistances.WhereUser(User.Id)
+                    total = db.TrackingDistances.WhereUser(UserId.Value)
                                                     .WhereTimestampFromInclusive(from, to)
                                                     .Sum(x => x.DistanceInMeters);
                 }
 
-                var lastDate = db.TrackingDistances.WhereUser(User.Id)
+                var lastDate = db.TrackingDistances.WhereUser(UserId.Value)
                                                    .OrderByDescending(x => x.Timestamp)
                                                    .FirstOrDefault()
                                                    .Timestamp;
@@ -155,13 +155,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 {
                     var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
 
-                    total += db.Trackings.WhereUser(User.Id)
+                    total += db.Trackings.WhereUser(UserId.Value)
                                          .Distance(binding.From.Value, to);
                 }
 
                 if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
                 {
-                    total += db.Trackings.WhereUser(User.Id)
+                    total += db.Trackings.WhereUser(UserId.Value)
                                          .Distance(binding.To.Value.Date, binding.To.Value);
                 }
 
@@ -172,7 +172,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
 
                     // TODO: Include last tracking from previous date
-                    total += db.Trackings.WhereUser(User.Id)
+                    total += db.Trackings.WhereUser(UserId.Value)
                                          .Distance(from.Value, binding.To.Value);
                 }
 
@@ -184,7 +184,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                var averageSpeed = context.Trackings.WhereUser(User)
+                var averageSpeed = context.Trackings.WhereUser(UserId.Value)
                                                     .WhereTimestampInclusive(binding)
                                                     .Average(x => x.Speed);
 
@@ -196,7 +196,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var db = GetMainContext())
             {
-                var tracking = db.Trackings.WhereUser(User.Id)
+                var tracking = db.Trackings.WhereUser(UserId.Value)
                                            .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
                                            .OrderByDescending(x => x.Timestamp)
                                            .FirstOrDefault();
@@ -212,7 +212,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
             using (var context = GetMainContext())
             {
-                var userLocations = await context.Locations.WhereUser(User)
+                var userLocations = await context.Locations.WhereUser(UserId.Value)
                                                            .ToListAsync();
                 var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
                 return new View.TrackingLocation()
@@ -227,7 +227,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             using (var context = GetMainContext())
             {
-                var maxSpeed = context.Trackings.WhereUser(User)
+                var maxSpeed = context.Trackings.WhereUser(UserId.Value)
                                                 .WhereTimestampInclusive(binding)
                                                 .Max(x => x.Speed);
 
@@ -244,7 +244,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             {
                 foreach (var t in trackings)
                 {
-                    t.User.Id = User.Id;
+                    t.UserId = UserId.Value;
                 }
 
                 db.Trackings.AddRange(trackings);

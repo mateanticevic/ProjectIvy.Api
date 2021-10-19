@@ -1,7 +1,7 @@
 ﻿--DECLARE @DeviceValueId nvarchar(max) = NULL
 --DECLARE @From DATETIME = '2017-01-16'
 --DECLARE @To DATETIME = '2017-01-17'
---DECLARE @UserId INT = 1
+--DECLARE @UserId.Value INT = 1
 --DECLARE @Page INT = 0
 --DECLARE @PageSize INT = 10
 
@@ -11,7 +11,7 @@ SELECT
 FROM Log.BrowserLog bl
 JOIN Net.Domain d ON d.Id = bl.DomainId
 JOIN Net.Web w ON w.Id = d.WebId
-JOIN Inv.Device device ON device.Id = bl.DeviceId AND device.UserId = @UserId
+JOIN Inv.Device device ON device.Id = bl.DeviceId AND device.UserId.Value = @UserId.Value
 WHERE 1=1
 	AND ISNULL(@DeviceValueId, bl.DeviceId) = bl.DeviceId
 	AND (@From IS NULL OR @From < bl.TimestampStart)

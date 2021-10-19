@@ -10,7 +10,7 @@ namespace ProjectIvy.Data.Extensions.Entities
         /// </summary>
         /// <param name="context"></param>
         /// <param name="code"></param>
-        /// <param name="userId"></param>
+        /// <param name="UserId.Value"></param>
         /// <returns></returns>
         public static int GetCurrencyId(this MainContext context, string code, int userId)
         {

@@ -35,7 +35,7 @@ namespace ProjectIvy.Business.Handlers.City
             using (var context = GetMainContext())
             {
                 var cities = context.Trips
-                                    .WhereUser(User)
+                                    .WhereUser(UserId.Value)
                                     .Where(x => x.TimestampEnd < DateTime.Now)
                                     .Include(x => x.Cities)
                                     .OrderBy(x => x.TimestampStart)

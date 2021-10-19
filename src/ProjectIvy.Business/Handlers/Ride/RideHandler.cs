@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Handlers.Ride
             using (var context = GetMainContext())
             {
                 var entity = binding.ToEntity(context);
-                entity.UserId = User.Id;
+                entity.UserId = UserId.Value;
 
                 await context.Rides.AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -33,7 +33,7 @@ namespace ProjectIvy.Business.Handlers.Ride
             using (var context = GetMainContext())
             {
                 return await context.Rides
-                                    .WhereUser(User)
+                                    .WhereUser(UserId.Value)
                                     .Where(binding)
                                     .Include(x => x.DestinationCity)
                                     .Include(x => x.OriginCity)

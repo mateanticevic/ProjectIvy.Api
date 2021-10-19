@@ -31,7 +31,7 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                return context.Trips.WhereUser(User)
+                return context.Trips.WhereUser(UserId.Value)
                                     .Where(x => x.TimestampEnd < DateTime.Now)
                                     .Include(x => x.Cities)
                                     .SelectMany(x => x.Cities)
@@ -80,7 +80,7 @@ namespace ProjectIvy.Business.Handlers.Country
             {
                 return await context.CountryLists.Include(x => x.Countries)
                                                  .ThenInclude(x => x.Country)
-                                                 .Where(x => !x.UserId.HasValue || x.UserId == User.Id)
+                                                 .Where(x => !x.UserId.HasValue || x.UserId.Value == UserId.Value)
                                                  .Select(x => new View.CountryList(x))
                                                  .ToListAsync();
             }
@@ -105,7 +105,7 @@ namespace ProjectIvy.Business.Handlers.Country
                 var countries = context.TripCities
                                        .Include(x => x.Trip)
                                        .Include(x => x.City)
-                                       .Where(x => x.Trip.UserId == User.Id)
+                                       .Where(x => x.Trip.UserId == UserId.Value)
                                        .Where(x => x.Trip.TimestampEnd < DateTime.Now)
                                        .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
                                        .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
@@ -115,18 +115,19 @@ namespace ProjectIvy.Business.Handlers.Country
                                        .Select(x => new View.Country(x.Country))
                                        .ToList();
 
-                var birthCountry = User.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
-                                                                             .SingleOrDefault(x => x.Id == User.BirthCityId.Value)
-                                                                             .Country : null;
+                //TODO: add user birth city
+                //var birthCountry = User.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
+                //                                                             .SingleOrDefault(x => x.Id == User.BirthCityId.Value)
+                //                                                             .Country : null;
 
-                if (birthCountry != null)
-                {
-                    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
-                    if (existingBirthCountry != null)
-                        countries.Remove(existingBirthCountry);
+                //if (birthCountry != null)
+                //{
+                //    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
+                //    if (existingBirthCountry != null)
+                //        countries.Remove(existingBirthCountry);
 
-                    countries.Insert(0, new View.Country(birthCountry));
-                }
+                //    countries.Insert(0, new View.Country(birthCountry));
+                //}
 
                 return countries.Distinct(new View.CountryComparer());
             }

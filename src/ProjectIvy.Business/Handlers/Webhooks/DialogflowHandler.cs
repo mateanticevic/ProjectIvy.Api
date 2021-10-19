@@ -91,10 +91,12 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             var unitCurrency = (JObject)request.QueryResult.Parameters["unit-currency"];
             string currencyId = (string)unitCurrency["currency"];
 
+            var user = _userHandler.Get(UserId.Value);
+
             var binding = new ExpenseBinding()
             {
                 Amount = Convert.ToDecimal(unitCurrency["amount"]),
-                CurrencyId = string.IsNullOrEmpty(currencyId) ? User.DefaultCurrency.Code : currencyId,
+                CurrencyId = string.IsNullOrEmpty(currencyId) ? user.DefaultCurrency.Code : currencyId,
                 Comment = (string)request.QueryResult.Parameters["description"],
                 Date = (DateTime)request.QueryResult.Parameters["date"],
                 ExpenseTypeId = ((string)request.QueryResult.Parameters["expense-type"]).Replace(" ", "-"),
@@ -159,9 +161,11 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 
+            var user = _userHandler.Get(UserId.Value);
+
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
-                FulfillmentText = $"You've spent {sum} {User.DefaultCurrency.Code}"
+                FulfillmentText = $"You've spent {sum} {user.DefaultCurrency.Code}"
             };
         }
 

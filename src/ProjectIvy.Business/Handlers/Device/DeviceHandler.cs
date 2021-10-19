@@ -76,7 +76,7 @@ namespace ProjectIvy.Business.Handlers.Device
             {
                 int? deviceId = context.Devices.GetId(binding.DomainId);
 
-                var deviceIds = context.Devices.WhereUser(User).Select(x => x.Id).ToList();
+                var deviceIds = context.Devices.WhereUser(UserId.Value).Select(x => x.Id).ToList();
 
                 int? domainId = context.Domains.GetId(binding.DomainId);
                 int? webId = context.Webs.GetId(binding.DomainId);

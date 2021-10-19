@@ -113,20 +113,20 @@ namespace ProjectIvy.Api
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
             });
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap
-.Clear();
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
             services.AddAuthentication("Bearer")
+                    .AddCookie()
                     .AddJwtBearer(o =>
                     {
                         o.Authority = "https://localhost:5001";
                         o.RequireHttpsMetadata = false;
                         o.Audience = "https://localhost:5001/resources";
                         o.TokenValidationParameters =
-        new TokenValidationParameters
-        {
-            RoleClaimType = "role"
-        };
+                        new TokenValidationParameters
+                        {
+                            RoleClaimType = "role"
+                        };
                     });
         }
 
@@ -167,6 +167,7 @@ namespace ProjectIvy.Api
             });
             app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
+            app.UseDeveloperExceptionPage();
             app.UseExceptionHandlingMiddleware();
             //app.UseAuthenticationMiddleware();
 

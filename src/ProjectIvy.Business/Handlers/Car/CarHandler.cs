@@ -22,7 +22,7 @@ namespace ProjectIvy.Business.Handlers.Car
             {
                 var entity = car.ToEntity(context);
                 entity.ValueId = valueId;
-                entity.UserId = User.Id;
+                entity.UserId = UserId.Value;
 
                 context.Cars.Add(entity);
                 context.SaveChanges();
@@ -34,7 +34,7 @@ namespace ProjectIvy.Business.Handlers.Car
             using (var context = GetMainContext())
             {
                 if (string.IsNullOrWhiteSpace(binding.CarValueId))
-                    binding.CarValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == User.Id).DefaultCar.ValueId;
+                    binding.CarValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId.Value).DefaultCar.ValueId;
 
                 var lastEntry = GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
 
@@ -83,7 +83,7 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var context = GetMainContext())
             {
-                return context.Cars.WhereUser(User)
+                return context.Cars.WhereUser(UserId.Value)
                                    .Include(x => x.CarModel)
                                    .ThenInclude(x => x.Manufacturer)
                                    .ToList()
@@ -96,7 +96,7 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var context = GetMainContext())
             {
-                var car = context.Cars.WhereUser(User)
+                var car = context.Cars.WhereUser(UserId.Value)
                                       .Include(x => x.CarServices)
                                       .Include($"{nameof(Model.Database.Main.Transport.Car.CarServices)}.{nameof(Model.Database.Main.Transport.CarServiceType)}")
                                       .Include(x => x.CarModel)
@@ -156,7 +156,7 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var context = GetMainContext())
             {
-                return context.Cars.WhereUser(User)
+                return context.Cars.WhereUser(UserId.Value)
                                    .Include(x => x.CarLogs)
                                    .SingleOrDefault(x => x.ValueId == carValueId)
                                    .CarLogs
@@ -184,7 +184,7 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var db = GetMainContext())
             {
-                return db.Cars.WhereUser(User.Id)
+                return db.Cars.WhereUser(UserId.Value)
                                     .Include(x => x.CarLogs)
                                     .SingleOrDefault(x => x.ValueId == carValueId)
                                     .CarLogs
@@ -211,7 +211,7 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var context = GetMainContext())
             {
-                string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == User.Id).DefaultCar.ValueId;
+                string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId.Value).DefaultCar.ValueId;
                 return GetLatestLog(carValueId, binding);
             }
         }

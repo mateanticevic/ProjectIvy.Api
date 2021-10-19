@@ -24,7 +24,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .OrderBy(binding)
                                 .Select(x => new View.Movie(x))
@@ -36,7 +36,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var context = GetMainContext())
             {
-                return context.Movies.WhereUser(User)
+                return context.Movies.WhereUser(UserId.Value)
                                      .SingleOrDefault(x => x.ImdbId == imdbId)
                                      .ConvertTo(x => new View.Movie(x));
             }
@@ -46,7 +46,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .Count();
             }
@@ -56,7 +56,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Timestamp.Date)
                                 .OrderBy(x => x.Key)
@@ -69,7 +69,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => ((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Timestamp) - 1) % 7)
                                 .OrderBy(x => x.Key)
@@ -82,7 +82,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Timestamp.Month)
                                 .OrderBy(x => x.Key)
@@ -96,7 +96,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
                                 .OrderBy(x => x.Key.Year)
@@ -110,7 +110,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Year - x.Year % 10)
                                 .OrderBy(x => x.Key)
@@ -123,7 +123,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Year)
                                 .OrderBy(x => x.Key)
@@ -136,7 +136,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.MyRating)
                                 .OrderBy(x => x.Key)
@@ -149,7 +149,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Runtime - (x.Runtime % 10) + 10)
                                 .OrderBy(x => x.Key)
@@ -162,7 +162,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .GroupBy(x => x.Timestamp.Year)
                                 .OrderBy(x => x.Key)
@@ -175,7 +175,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var userMovies = db.Movies.WhereUser(User.Id)
+                var userMovies = db.Movies.WhereUser(UserId.Value)
                                           .Where(binding);
 
                 double average = (double)userMovies.Sum(x => x.MyRating) / userMovies.Count();
@@ -188,7 +188,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return await db.Movies.WhereUser(User)
+                return await db.Movies.WhereUser(UserId.Value)
                                       .Where(binding)
                                       .GroupBy(x => x.Timestamp.Year)
                                       .OrderBy(x => x.Key)
@@ -201,7 +201,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                var userMovies = db.Movies.WhereUser(User.Id)
+                var userMovies = db.Movies.WhereUser(UserId.Value)
                                           .Where(binding);
 
                 return Math.Round((double)userMovies.Average(x => x.Rating), 1);
@@ -212,7 +212,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return await db.Movies.WhereUser(User)
+                return await db.Movies.WhereUser(UserId.Value)
                                       .Where(binding)
                                       .GroupBy(x => x.Timestamp.Year)
                                       .OrderBy(x => x.Key)
@@ -225,7 +225,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return (int) db.Movies.WhereUser(User.Id)
+                return (int) db.Movies.WhereUser(UserId.Value)
                                       .Where(binding)
                                       .Average(x => x.Runtime);
             }
@@ -235,7 +235,7 @@ namespace ProjectIvy.Business.Handlers.Movie
         {
             using (var db = GetMainContext())
             {
-                return db.Movies.WhereUser(User.Id)
+                return db.Movies.WhereUser(UserId.Value)
                                 .Where(binding)
                                 .Sum(selector);
             }

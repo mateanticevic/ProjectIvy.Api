@@ -23,7 +23,7 @@ namespace ProjectIvy.Business.Handlers.Call
             using (var context = GetMainContext())
             {
                 var calls = await context.Calls
-                                         .WhereUser(User)
+                                         .WhereUser(UserId.Value)
                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From.Value)
                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To.Value)
                                          .WhereIf(!string.IsNullOrEmpty(binding.Number), x => x.Number == binding.Number)
@@ -46,11 +46,11 @@ namespace ProjectIvy.Business.Handlers.Call
         {
             using (var context = GetMainContext())
             {
-                if (context.CallBlacklist.WhereUser(User).Any(x => x.Number == binding.Number))
+                if (context.CallBlacklist.WhereUser(UserId.Value).Any(x => x.Number == binding.Number))
                     throw new ResourceForbiddenException();
 
                 var entity = binding.ToEntity(context);
-                entity.UserId = User.Id;
+                entity.UserId = UserId.Value;
 
                 await context.Calls.AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -63,7 +63,7 @@ namespace ProjectIvy.Business.Handlers.Call
         {
             using (var context = GetMainContext())
             {
-                return await context.CallBlacklist.WhereUser(User).AnyAsync(x => x.Number == number);
+                return await context.CallBlacklist.WhereUser(UserId.Value).AnyAsync(x => x.Number == number);
             }
         }
     }

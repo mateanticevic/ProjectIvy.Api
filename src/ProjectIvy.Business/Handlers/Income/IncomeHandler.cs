@@ -29,7 +29,7 @@ namespace ProjectIvy.Business.Handlers.Income
             using (var context = GetMainContext())
             {
                 var entity = binding.ToEntity(context);
-                entity.UserId = User.Id;
+                entity.UserId = UserId.Value;
 
                 await context.Incomes.AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -40,7 +40,7 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                return context.Incomes.WhereUser(User.Id)
+                return context.Incomes.WhereUser(UserId.Value)
                                       .Include(x => x.Currency)
                                       .Include(x => x.IncomeSource)
                                       .Include(x => x.IncomeType)
@@ -55,7 +55,7 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var db = GetMainContext())
             {
-                var query = db.Incomes.WhereUser(User.Id)
+                var query = db.Incomes.WhereUser(UserId.Value)
                                       .Where(x => x.Date >= binding.From && x.Date <= binding.To);
 
                 return query.Count();
@@ -66,7 +66,7 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                return await context.IncomeSources.WhereUser(User)
+                return await context.IncomeSources.WhereUser(UserId.Value)
                                                   .OrderBy(x => x.Name)
                                                   .Select(x => new View.IncomeSource(x))
                                                   .ToListAsync();
@@ -77,9 +77,9 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, User.Id);
+                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId.Value);
 
-                var incomeIds = context.Incomes.WhereUser(User)
+                var incomeIds = context.Incomes.WhereUser(UserId.Value)
                                                .Where(binding, context)
                                                .Select(x => x.Id)
                                                .ToList();
@@ -93,7 +93,7 @@ namespace ProjectIvy.Business.Handlers.Income
                     {
                         IncomeIds = incomeIds,
                         TargetCurrencyId = targetCurrencyId,
-                        UserId = User.Id
+                        UserId = UserId.Value
                     };
 
                     return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetIncomeSum), parameters), 2);
@@ -105,7 +105,7 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                var from = binding.From ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date;
+                var from = binding.From ?? context.Incomes.WhereUser(UserId.Value).OrderBy(x => x.Date).FirstOrDefault().Date;
                 var to = binding.To ?? DateTime.Now;
 
                 var periods = from.RangeMonthsClosed(to)
@@ -122,7 +122,7 @@ namespace ProjectIvy.Business.Handlers.Income
         {
             using (var context = GetMainContext())
             {
-                int startYear = binding.From?.Year ?? context.Incomes.WhereUser(User.Id).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
+                int startYear = binding.From?.Year ?? context.Incomes.WhereUser(UserId.Value).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
                 int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
                 var years = Enumerable.Range(startYear, endYear - startYear + 1);

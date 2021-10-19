@@ -18,7 +18,7 @@ namespace ProjectIvy.Business.Handlers.Airport
         {
             using (var context = GetMainContext())
             {
-                return context.Airports.Where(binding, context, User.Id)
+                return context.Airports.Where(binding, context, UserId.Value)
                                        .LongCount();
             }
         }
@@ -27,7 +27,7 @@ namespace ProjectIvy.Business.Handlers.Airport
         {
             using (var context = GetMainContext())
             {
-                return context.Airports.Where(binding, context, User.Id)
+                return context.Airports.Where(binding, context, UserId.Value)
                                        .WhereIf(binding.Search, x => x.Iata == binding.Search.ToUpper() || x.Name.ToLower().Contains(binding.Search.ToLower()))
                                        .Include(x => x.Poi)
                                        .ThenInclude(x => x.PoiCategory)

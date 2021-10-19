@@ -16,7 +16,7 @@ namespace ProjectIvy.Business.Handlers.Card
         {
             using (var context = GetMainContext())
             {
-                return context.Cards.WhereUser(User)
+                return context.Cards.WhereUser(UserId.Value)
                                     .WhereIf(binding.IsActive.HasValue, x => x.IsActive == binding.IsActive.Value)
                                     .Select(x => new View.Card(x))
                                     .ToList();
