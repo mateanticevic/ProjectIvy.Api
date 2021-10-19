@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -29,7 +28,6 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
-using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
@@ -66,8 +64,6 @@ namespace ProjectIvy.Api
             services.AddLogging();
 
             services.AddHttpContextAccessor();
-            services.AddSingleton<ISecurityHandler, SecurityHandler>();
-            services.AddSingleton<IHandlerContext<ISecurityHandler>, HandlerContext<ISecurityHandler>>();
             services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));
             services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY")));
 
@@ -169,7 +165,6 @@ namespace ProjectIvy.Api
 
             app.UseDeveloperExceptionPage();
             app.UseExceptionHandlingMiddleware();
-            //app.UseAuthenticationMiddleware();
 
             app.UseMvc();
         }
