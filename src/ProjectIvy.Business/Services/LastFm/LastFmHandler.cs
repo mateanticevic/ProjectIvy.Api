@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId.Value)
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
                                           .LastFmUsername;
 
                 var info = await _userHelper.GetTotalCount(username);
@@ -33,7 +33,7 @@ namespace ProjectIvy.Business.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId.Value).LastFmUsername;
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId).LastFmUsername;
 
                 var info = await _userHelper.GetLovedTracks(username);
                 return info.Select(x => new Track(x));
@@ -44,7 +44,7 @@ namespace ProjectIvy.Business.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId.Value).LastFmUsername;
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId).LastFmUsername;
 
                 var artists = await _userHelper.GetTopArtists(username);
                 return artists.Select(x => new Artist(x));
@@ -55,7 +55,7 @@ namespace ProjectIvy.Business.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId.Value)
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
                     .LastFmUsername;
 
                 var info = await _userHelper.GetTopTracks(username);
@@ -67,7 +67,7 @@ namespace ProjectIvy.Business.Services.LastFm
         {
             using (var db = GetMainContext())
             {
-                string username = db.Users.SingleOrDefault(x => x.Id == UserId.Value)
+                string username = db.Users.SingleOrDefault(x => x.Id == UserId)
                                           .LastFmUsername;
 
                 var tracks = await _userHelper.GetTracks(username, binding);

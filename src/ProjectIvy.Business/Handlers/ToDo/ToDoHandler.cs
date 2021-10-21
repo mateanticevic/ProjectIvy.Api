@@ -21,9 +21,9 @@ namespace ProjectIvy.Business.Handlers.ToDo
             {
                 var toDoEntity = new Db.Org.ToDo()
                 {
-                    ValueId = context.ToDos.NextValueId(UserId.Value).ToString(),
+                    ValueId = context.ToDos.NextValueId(UserId).ToString(),
                     Name = name,
-                    UserId = UserId.Value,
+                    UserId = UserId,
                     Created = DateTime.Now
                 };
                 context.ToDos.Add(toDoEntity);
@@ -37,7 +37,7 @@ namespace ProjectIvy.Business.Handlers.ToDo
         {
             using (var context = GetMainContext())
             {
-                return context.ToDos.WhereUser(UserId.Value)
+                return context.ToDos.WhereUser(UserId)
                                     .WhereIf(binding.IsDone.HasValue, x => x.IsDone == binding.IsDone.Value)
                                     .OrderByDescending(x => x.Created)
                                     .Select(x => new View.ToDo(x))
@@ -49,7 +49,7 @@ namespace ProjectIvy.Business.Handlers.ToDo
         {
             using (var context = GetMainContext())
             {
-                int id = context.ToDos.WhereUser(UserId.Value).GetId(valueId).Value;
+                int id = context.ToDos.WhereUser(UserId).GetId(valueId).Value;
 
                 var todo = context.ToDos.Find(id);
                 todo.IsDone = true;

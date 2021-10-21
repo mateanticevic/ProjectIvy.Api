@@ -27,7 +27,7 @@ namespace ProjectIvy.Business.Handlers.User
                 var validFrom = id?.FromUnixTimestamp();
 
                 var token = await context.AccessTokens
-                                   .WhereUser(UserId.Value)
+                                   .WhereUser(UserId)
                                    .Where(x => x.ValidFrom == validFrom || x.Token == AccessToken)
                                    .Where(x => x.IsActive)
                                    .FirstOrDefaultAsync();
@@ -56,7 +56,7 @@ namespace ProjectIvy.Business.Handlers.User
 
         public View.User Get(int? id = null)
         {
-            id = id.HasValue ? id : UserId.Value;
+            id = id.HasValue ? id : UserId;
 
             using (var db = GetMainContext())
             {
@@ -76,7 +76,7 @@ namespace ProjectIvy.Business.Handlers.User
             using (var context = GetMainContext())
             {
                 var sessions = await context.AccessTokens
-                                          .WhereUser(UserId.Value)
+                                          .WhereUser(UserId)
                                           .Where(x => x.IsActive && x.ValidUntil > DateTime.Now)
                                           .OrderByDescending(x => x.ValidFrom)
                                           .Select(x => new UserSession(x, x.Token == AccessToken))
@@ -101,7 +101,7 @@ namespace ProjectIvy.Business.Handlers.User
         {
             using (var db = GetMainContext())
             {
-                var userEntity = db.Users.GetById(UserId.Value);
+                var userEntity = db.Users.GetById(UserId);
                 userEntity.PasswordHash = PasswordHelper.GetHash(binding.Password);
                 userEntity.PasswordModified = DateTime.Now;
 
@@ -115,7 +115,7 @@ namespace ProjectIvy.Business.Handlers.User
             {
                 var entity = new Weight()
                 {
-                    UserId = UserId.Value,
+                    UserId = UserId,
                     Date = DateTime.Now,
                     Value = weight
                 };

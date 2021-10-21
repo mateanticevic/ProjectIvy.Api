@@ -21,7 +21,7 @@ namespace ProjectIvy.Business.Handlers.Flight
         {
             using (var context = GetMainContext())
             {
-                return context.Flights.WhereUser(UserId.Value)
+                return context.Flights.WhereUser(UserId)
                                       .Where(binding)
                                       .Count();
             }
@@ -32,7 +32,7 @@ namespace ProjectIvy.Business.Handlers.Flight
             using (var context = GetMainContext())
             {
                 var entity = binding.ToEntity(context);
-                entity.UserId = UserId.Value;
+                entity.UserId = UserId;
 
                 await context.Flights.AddAsync(entity);
                 await context.SaveChangesAsync();
@@ -43,7 +43,7 @@ namespace ProjectIvy.Business.Handlers.Flight
         {
             using (var context = GetMainContext())
             {
-                var userAirports = context.Flights.WhereUser(UserId.Value)
+                var userAirports = context.Flights.WhereUser(UserId)
                                                   .Where(binding)
                                                   .Include(x => x.DestinationAirport)
                                                   .ThenInclude(x => x.Poi)
@@ -77,7 +77,7 @@ namespace ProjectIvy.Business.Handlers.Flight
         {
             using (var context = GetMainContext())
             {
-                return context.Flights.WhereUser(UserId.Value)
+                return context.Flights.WhereUser(UserId)
                                       .Where(binding)
                                       .GroupBy(x => x.DateOfDeparture.Year)
                                       .OrderByDescending(x => x.Key)
@@ -93,7 +93,7 @@ namespace ProjectIvy.Business.Handlers.Flight
                 int? destinationAirportId = binding.DestinationId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.DestinationId)?.Id;
                 int? originAirportId = binding.OriginId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.OriginId)?.Id;
 
-                return context.Flights.WhereUser(UserId.Value)
+                return context.Flights.WhereUser(UserId)
                                       .Where(binding)
                                       .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
                                       .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)

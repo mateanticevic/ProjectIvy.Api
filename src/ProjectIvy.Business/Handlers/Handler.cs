@@ -29,7 +29,7 @@ namespace ProjectIvy.Business.Handlers
 
         public ILogger Logger { get; set; }
 
-        protected int? UserId { get; private set; }
+        protected int UserId { get; private set; }
 
         protected string AccessToken { get; private set; }
 

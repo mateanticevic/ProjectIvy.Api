@@ -31,7 +31,7 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                return context.Trips.WhereUser(UserId.Value)
+                return context.Trips.WhereUser(UserId)
                                     .Where(x => x.TimestampEnd < DateTime.Now)
                                     .Include(x => x.Cities)
                                     .SelectMany(x => x.Cities)
@@ -80,7 +80,7 @@ namespace ProjectIvy.Business.Handlers.Country
             {
                 return await context.CountryLists.Include(x => x.Countries)
                                                  .ThenInclude(x => x.Country)
-                                                 .Where(x => !x.UserId.HasValue || x.UserId.Value == UserId.Value)
+                                                 .Where(x => !x.UserId.HasValue || x.UserId == UserId)
                                                  .Select(x => new View.CountryList(x))
                                                  .ToListAsync();
             }
@@ -105,7 +105,7 @@ namespace ProjectIvy.Business.Handlers.Country
                 var countries = context.TripCities
                                        .Include(x => x.Trip)
                                        .Include(x => x.City)
-                                       .Where(x => x.Trip.UserId == UserId.Value)
+                                       .Where(x => x.Trip.UserId == UserId)
                                        .Where(x => x.Trip.TimestampEnd < DateTime.Now)
                                        .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
                                        .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)

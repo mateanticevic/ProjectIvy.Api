@@ -31,7 +31,7 @@ namespace ProjectIvy.Business.Handlers.File
                 var file = context.Files.Include(x => x.FileType)
                                         .SingleOrDefault(x => x.ValueId == id);
 
-                if (file.UserId != UserId.Value)
+                if (file.UserId != UserId)
                     throw new UnauthorizedException();
 
                 await _azureStorageHelper.DeleteFile(file.Uri);
@@ -75,7 +75,7 @@ namespace ProjectIvy.Business.Handlers.File
                     ProviderId = (int)StorageProvider.AzureStorage,
                     SizeInBytes = data.Length,
                     Uri = fullPath,
-                    UserId = UserId.Value,
+                    UserId = UserId,
                     ValueId = fileName
                 };
                 context.Files.Add(fileEntity);

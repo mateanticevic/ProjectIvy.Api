@@ -34,7 +34,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var context = GetMainContext())
             {
                 int fileId = context.Files.GetId(fileValueId).Value;
-                int expenseId = context.Expenses.WhereUser(UserId.Value).GetId(expenseValueId).Value;
+                int expenseId = context.Expenses.WhereUser(UserId).GetId(expenseValueId).Value;
                 int expenseFileTypeId = context.ExpenseFileTypes.GetId(binding.TypeId).Value;
 
                 var entity = new Model.Database.Main.Finance.ExpenseFile()
@@ -54,7 +54,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                var result = context.Expenses.WhereUser(UserId.Value)
+                var result = context.Expenses.WhereUser(UserId)
                                     .Where(binding, context);
 
                 return result.Count();
@@ -67,7 +67,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date)
                                        .OrderByDescending(x => x.Key)
@@ -86,7 +86,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 var to = binding.To ?? DateTime.Now;
 
                 return context.Expenses
-                    .WhereUser(UserId.Value)
+                    .WhereUser(UserId)
                     .Where(binding, context)
                     .GroupBy(x => ((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date) - 1) % 7)
                     .OrderBy(x => x.Key)
@@ -101,7 +101,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Month)
                                        .OrderBy(x => x.Key)
@@ -116,7 +116,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                        .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
@@ -132,7 +132,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 var to = binding.To ?? DateTime.Now;
 
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .GroupBy(x => x.Date.Year)
                                        .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
@@ -145,7 +145,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .Include(x => x.ExpenseType)
                                        .GroupBy(x => new
@@ -167,7 +167,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Where(binding, context)
                                        .Include(x => x.Vendor)
                                        .GroupBy(x => new
@@ -185,7 +185,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Include(x => x.Vendor)
                                        .Where(binding, context)
                                        .GroupBy(x => x.ExpenseTypeId)
@@ -197,7 +197,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .Include(x => x.Vendor)
                                        .Where(binding, context)
                                        .Where(x => x.VendorId.HasValue)
@@ -214,8 +214,8 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var db = GetMainContext())
             {
                 var entity = binding.ToEntity(db);
-                entity.UserId = UserId.Value;
-                entity.ValueId = db.Expenses.NextValueId(UserId.Value).ToString();
+                entity.UserId = UserId;
+                entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
 
                 db.Expenses.Add(entity);
                 db.SaveChanges();
@@ -228,7 +228,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var db = GetMainContext())
             {
-                var entity = db.Expenses.WhereUser(UserId.Value)
+                var entity = db.Expenses.WhereUser(UserId)
                                         .SingleOrDefault(x => x.ValueId == valueId);
 
                 db.Expenses.Remove(entity);
@@ -246,7 +246,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                                               .Include(x => x.Currency)
                                               .Include(x => x.Poi)
                                               .Include(x => x.Vendor)
-                                              .WhereUser(UserId.Value)
+                                              .WhereUser(UserId)
                                               .SingleOrDefault(x => x.ValueId == expenseId);
 
                 if (expense == null)
@@ -260,7 +260,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return context.Expenses.WhereUser(UserId.Value)
+                return context.Expenses.WhereUser(UserId)
                                        .IncludeAll()
                                        .Where(binding, context)
                                        .OrderBy(binding)
@@ -275,7 +275,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var context = GetMainContext())
             {
                 return context.Expenses.IncludeAll()
-                                       .WhereUser(UserId.Value)
+                                       .WhereUser(UserId)
                                        .SingleOrDefault(x => x.ValueId == expenseId)
                                        .ExpenseFiles
                                        .Select(x => new View.ExpenseFile(x))
@@ -288,7 +288,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var context = GetMainContext())
             {
                 return await context.Expenses
-                                    .WhereUser(UserId.Value)
+                                    .WhereUser(UserId)
                                     .Where(binding, context)
                                     .Where(x => !string.IsNullOrEmpty(x.Comment))
                                     .GroupBy(x => x.Comment)
@@ -304,7 +304,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                string token = context.PaymentProviderAccounts.WhereUser(UserId.Value).FirstOrDefault().Token;
+                string token = context.PaymentProviderAccounts.WhereUser(UserId).FirstOrDefault().Token;
 
                 using (var httpClient = new HttpClient())
                 {
@@ -317,19 +317,19 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                     var expense = new Model.Database.Main.Finance.Expense()
                     {
-                        ValueId = context.Expenses.NextValueId(UserId.Value).ToString(),
+                        ValueId = context.Expenses.NextValueId(UserId).ToString(),
                         Date = DateTime.Now,
                         ExpenseTypeId = 1,
                         Amount = transfer.TargetValue,
                         Comment = transfer.Status,
-                        CurrencyId = context.GetCurrencyId(transfer.TargetCurrency, UserId.Value),
+                        CurrencyId = context.GetCurrencyId(transfer.TargetCurrency, UserId),
                         NeedsReview = true,
                         UserId = 1002
                     };
 
                     if (transfer.TargetCurrency != transfer.SourceCurrency)
                     {
-                        expense.ParentCurrencyId = context.GetCurrencyId(transfer.SourceCurrency, UserId.Value);
+                        expense.ParentCurrencyId = context.GetCurrencyId(transfer.SourceCurrency, UserId);
                         expense.ParentCurrencyExchangeRate = 1 / transfer.Rate;
                     }
 
@@ -377,7 +377,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                var from = binding.From ?? context.Expenses.WhereUser(UserId.Value).OrderBy(x => x.Date).FirstOrDefault().Date;
+                var from = binding.From ?? context.Expenses.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefault().Date;
                 var to = binding.To ?? DateTime.Now;
 
                 var periods = from.RangeMonthsClosed(to)
@@ -394,7 +394,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                int startYear = context.Expenses.WhereUser(UserId.Value)
+                int startYear = context.Expenses.WhereUser(UserId)
                                                 .Where(binding, context)
                                                 .OrderBy(x => x.Date)
                                                 .FirstOrDefault().Date.Year;
@@ -414,7 +414,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                return await context.Expenses.WhereUser(UserId.Value)
+                return await context.Expenses.WhereUser(UserId)
                                              .Where(binding, context)
                                              .Include(x => x.Currency)
                                              .GroupBy(x => new { x.Currency.ValueId, x.Currency.Name })
@@ -434,7 +434,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var context = GetMainContext())
             {
                 var result = context.Expenses.Include(x => x.ExpenseType)
-                                             .WhereUser(UserId.Value);
+                                             .WhereUser(UserId);
 
                 result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
                 result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
@@ -454,9 +454,9 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var context = GetMainContext())
             {
-                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId.Value);
+                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
 
-                var expenseIds = context.Expenses.WhereUser(UserId.Value)
+                var expenseIds = context.Expenses.WhereUser(UserId)
                                                  .Where(binding, context)
                                                  .Select(x => x.Id)
                                                  .ToList();
@@ -468,7 +468,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 {
                     ExpenseIds = expenseIds,
                     TargetCurrencyId = targetCurrencyId,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
 
                 return await SumAmount(query);
@@ -482,7 +482,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
             using (var context = GetMainContext())
             {
-                var entity = context.Expenses.WhereUser(UserId.Value).SingleOrDefault(x => x.ValueId == binding.Id);
+                var entity = context.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.Id);
 
                 entity = binding.ToEntity(context, entity);
 

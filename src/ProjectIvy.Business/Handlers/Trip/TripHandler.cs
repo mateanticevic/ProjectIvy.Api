@@ -42,8 +42,8 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                int expenseId = context.Expenses.WhereUser(UserId.Value).GetId(expenseValueId).Value;
-                int tripId = context.Trips.WhereUser(UserId.Value).GetId(tripValueId).Value;
+                int expenseId = context.Expenses.WhereUser(UserId).GetId(expenseValueId).Value;
+                int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
 
                 var excludedExpense = context.TripExpensesExcluded.SingleOrDefault(x => x.TripId == tripId && x.ExpenseId == expenseId);
                 if (excludedExpense != null)
@@ -69,7 +69,7 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                int tripId = context.Trips.WhereUser(UserId.Value).GetId(tripValueId).Value;
+                int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
                 int poiId = context.Pois.GetId(poiValueId).Value;
 
                 var tripPoi = new TripPoi()
@@ -88,7 +88,7 @@ namespace ProjectIvy.Business.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var trip = binding.ToEntity();
-                trip.UserId = UserId.Value;
+                trip.UserId = UserId;
                 context.Trips.Add(trip);
 
                 foreach (string cityValueId in binding.CityIds.EmptyIfNull())
@@ -107,7 +107,7 @@ namespace ProjectIvy.Business.Handlers.Trip
             {
                 using (var context = GetMainContext())
                 {
-                    var trip = context.Trips.WhereUser(UserId.Value)
+                    var trip = context.Trips.WhereUser(UserId)
                                             .SingleOrDefault(x => x.ValueId == valueId);
 
                     context.Trips.Remove(trip);
@@ -125,7 +125,7 @@ namespace ProjectIvy.Business.Handlers.Trip
             using (var context = GetMainContext())
             {
                 var query = context.Trips
-                                   .WhereUser(UserId.Value)
+                                   .WhereUser(UserId)
                                    .Include(x => x.Cities)
                                    .ThenInclude(x => x.Country)
                                    .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
@@ -144,7 +144,7 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                var trip = context.Trips.WhereUser(UserId.Value)
+                var trip = context.Trips.WhereUser(UserId)
                                         .Include(x => x.Cities)
                                         .ThenInclude(x => x.Country)
                                         .Include(x => x.Files)
@@ -159,7 +159,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                                                                      .Select(x => x.ExpenseId)
                                                                      .ToList();
 
-                var userExpenses = context.Expenses.WhereUser(UserId.Value);
+                var userExpenses = context.Expenses.WhereUser(UserId);
 
                 var expensesWithExcluded = userExpenses.Where(x => trip.TimestampStart.Date <= x.Date && trip.TimestampEnd.Date >= x.Date)
                                                        .Where(x => !excludedExpenseIds.Contains(x.Id));
@@ -182,14 +182,14 @@ namespace ProjectIvy.Business.Handlers.Trip
                 {
                     using (var db = GetSqlConnection())
                     {
-                        int targetCurrencyId = context.GetCurrencyId(null, UserId.Value);
+                        int targetCurrencyId = context.GetCurrencyId(null, UserId);
                         string sql = SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency);
 
                         var query = new GetExpenseSumQuery()
                         {
                             ExpenseIds = expenseIds,
                             TargetCurrencyId = targetCurrencyId,
-                            UserId = UserId.Value
+                            UserId = UserId
                         };
 
                         totalSpent = db.ExecuteScalar<decimal>(sql, query);
@@ -211,7 +211,7 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                var trip = context.Trips.WhereUser(UserId.Value).Include(x => x.Cities).SingleOrDefault(tripValueId);
+                var trip = context.Trips.WhereUser(UserId).Include(x => x.Cities).SingleOrDefault(tripValueId);
                 var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
                 trip.Cities.Remove(city);
                 context.SaveChanges();
@@ -222,8 +222,8 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                int expenseId = context.Expenses.WhereUser(UserId.Value).GetId(expenseValueId).Value;
-                int tripId = context.Trips.WhereUser(UserId.Value).GetId(tripValueId).Value;
+                int expenseId = context.Expenses.WhereUser(UserId).GetId(expenseValueId).Value;
+                int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
 
                 var includedExpense = context.TripExpensesIncluded.SingleOrDefault(x => x.TripId == tripId && x.ExpenseId == expenseId);
                 if (includedExpense != null)
@@ -250,7 +250,7 @@ namespace ProjectIvy.Business.Handlers.Trip
             using (var context = GetMainContext())
             {
                 int poiId = context.Pois.GetId(poiValueId).Value;
-                int tripId = context.Trips.WhereUser(UserId.Value).GetId(tripValueId).Value;
+                int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
 
                 var tripPoi = context.TripPois.SingleOrDefault(x => x.PoiId == poiId && x.TripId == tripId);
 

@@ -27,7 +27,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     Page = binding.Page,
                     PageSize = binding.PageSize,
                     To = binding.To,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
 
                 var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeSum), parameters);
@@ -48,7 +48,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
                 return db.ExecuteScalar<int>(SqlLoader.Load(Constants.GetWebTimeTotal), parameters);
             }
@@ -66,7 +66,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
 
                 var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByDay), parameters);
@@ -87,7 +87,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
 
                 var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByMonth), parameters);
@@ -109,7 +109,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     IsSecured = binding.IsSecured,
                     From = binding.From,
                     To = binding.To,
-                    UserId = UserId.Value
+                    UserId = UserId
                 };
 
                 var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByYear), parameters);

@@ -91,7 +91,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             var unitCurrency = (JObject)request.QueryResult.Parameters["unit-currency"];
             string currencyId = (string)unitCurrency["currency"];
 
-            var user = _userHandler.Get(UserId.Value);
+            var user = _userHandler.Get(UserId);
 
             var binding = new ExpenseBinding()
             {
@@ -161,7 +161,7 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
             decimal sum = await _expenseHandler.SumAmount(binding);
 
-            var user = _userHandler.Get(UserId.Value);
+            var user = _userHandler.Get(UserId);
 
             return new GoogleCloudDialogflowV2WebhookResponse()
             {

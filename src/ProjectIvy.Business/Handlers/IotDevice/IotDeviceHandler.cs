@@ -19,7 +19,7 @@ namespace ProjectIvy.Business.Handlers.IotDevice
         {
             using (var context = GetMainContext())
             {
-                int id = context.IotDevices.WhereUser(UserId.Value).GetId(deviceId).Value;
+                int id = context.IotDevices.WhereUser(UserId).GetId(deviceId).Value;
 
                 return await context.IotDeviceData.Where(x => x.DeviceId == id && x.FieldIdentifier == fieldIdentifier)
                                                   .WhereCreatedInclusive(binding)
@@ -33,7 +33,7 @@ namespace ProjectIvy.Business.Handlers.IotDevice
         {
             using (var context = GetMainContext())
             {
-                var entity = await context.IotDevices.WhereUser(UserId.Value)
+                var entity = await context.IotDevices.WhereUser(UserId)
                                                      .SingleAsync(x => x.ValueId == deviceId);
                 entity.LastPing = DateTime.Now;
                 await context.SaveChangesAsync();
