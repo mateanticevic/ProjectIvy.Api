@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Model.Binding.Car;
-using ProjectIvy.Model.Constants.Database;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -11,7 +10,6 @@ using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Api.Controllers.Car
 {
-    [Authorize(Roles = UserRole.User)]
     public class CarController : BaseController<CarController>
     {
         private readonly ICarHandler _carHandler;

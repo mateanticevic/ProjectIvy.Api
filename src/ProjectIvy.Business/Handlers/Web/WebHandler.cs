@@ -56,6 +56,8 @@ namespace ProjectIvy.Business.Handlers.Web
 
         public IEnumerable<TimeByDay> GetTimeTotalByDay(WebTimeGetBinding binding)
         {
+            //TODO: fix
+            return new List<TimeByDay>();
             using (var db = GetSqlConnection())
             {
                 var parameters = new

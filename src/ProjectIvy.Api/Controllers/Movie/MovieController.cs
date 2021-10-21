@@ -1,15 +1,12 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Movie;
 
 namespace ProjectIvy.Api.Controllers.Movie
 {
-    [Authorize(Roles = UserRole.User)]
     public class MovieController : BaseController<MovieController>
     {
         private readonly IMovieHandler _movieHandler;

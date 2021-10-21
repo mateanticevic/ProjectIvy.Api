@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,6 +41,7 @@ using Serilog;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
+using System.Threading.Tasks;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
 
@@ -111,8 +113,11 @@ namespace ProjectIvy.Api
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication("Bearer")
-                    .AddCookie()
+            services.AddAuthorization(options =>
+                    {
+                        options.AddPolicy("TrackingSource", policy => policy.RequireClaim("TrackingCreate"));
+                    })
+                    .AddAuthentication("Bearer")
                     .AddJwtBearer(o =>
                     {
                         o.Authority = "https://localhost:5001";
@@ -122,6 +127,14 @@ namespace ProjectIvy.Api
                         new TokenValidationParameters
                         {
                             RoleClaimType = "role"
+                        };
+                        o.Events = new JwtBearerEvents
+                        {
+                            OnMessageReceived = context =>
+                            {
+                                context.Token = context.Request.Cookies["AccessToken"];
+                                return Task.CompletedTask;
+                            }
                         };
                     });
         }

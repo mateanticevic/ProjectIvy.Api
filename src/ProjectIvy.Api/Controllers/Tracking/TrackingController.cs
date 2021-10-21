@@ -6,7 +6,6 @@ using ProjectIvy.Common.Interfaces;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using System;
 using System.Collections.Generic;
@@ -17,7 +16,6 @@ using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
 {
-    [Authorize(Roles = UserRole.User)]
     public class TrackingController : BaseController<TrackingController>
     {
         private readonly ITrackingHandler _trackingHandler;
@@ -73,6 +71,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
 
         [HttpPost]
+        [Authorize("TrackingSource")]
         public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
 
         [HttpPut("Kml")]
