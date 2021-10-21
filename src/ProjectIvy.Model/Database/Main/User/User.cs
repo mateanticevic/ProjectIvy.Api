@@ -33,6 +33,8 @@ namespace ProjectIvy.Model.Database.Main.User
 
         public string LastFmUsername { get; set; }
 
+        public string AuthIdentifier { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Modified { get; set; }

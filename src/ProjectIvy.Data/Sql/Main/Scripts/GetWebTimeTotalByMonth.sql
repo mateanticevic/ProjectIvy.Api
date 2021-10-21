@@ -4,7 +4,7 @@
 --DECLARE @IsSecured BIT = NULL
 --DECLARE @From DATETIME = NULL
 --DECLARE @To DATETIME = NULL
---DECLARE @UserId.Value INT = 1
+--DECLARE @UserId INT = 1
 
 SELECT
 	YEAR(TimestampEnd) AS [Year],
@@ -14,7 +14,7 @@ SELECT
 FROM Log.BrowserLog bl
 JOIN Net.Domain d ON d.Id = bl.DomainId
 JOIN Net.Web w ON w.Id = d.WebId
-JOIN Inv.Device device ON device.Id = bl.DeviceId AND device.UserId.Value = @UserId.Value
+JOIN Inv.Device device ON device.Id = bl.DeviceId AND device.UserId = @UserId
 WHERE 1=1
 	AND ISNULL(@DeviceValueId, device.ValueId) = device.ValueId
 	AND ISNULL(@DomainValueId, d.ValueId) = d.ValueId

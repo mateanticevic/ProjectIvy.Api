@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Call;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Call;
 using System.Threading.Tasks;
 

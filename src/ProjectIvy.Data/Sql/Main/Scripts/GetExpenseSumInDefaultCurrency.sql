@@ -1,7 +1,7 @@
 ﻿--DECLARE @From DATE = NULl
 --DECLARE @To DATE = NULL
 --DECLARE @Month INT = NULL
---DECLARE @UserId.Value INT = 1
+--DECLARE @UserId INT = 1
 --DECLARE @TargetCurrencyId INT = 45
 --DECLARE @ExpenseTypeValueId NVARCHAR(MAX) = NULL
 --DECLARE @VendorValueId NVARCHAR(MAX) = NULL
@@ -76,4 +76,4 @@ WHERE 1=1
 	AND (@To IS NULL OR e.[Date] <= @To)
     AND (@Month IS NULL OR MONTH(e.[Date]) = @Month)
 	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExpenseIds) OR EXISTS(SELECT TOP 1 * FROM @ExpenseIds WHERE [Value] = e.Id))
-	AND ISNULL(@UserId.Value, e.UserId.Value) = e.UserId.Value
+	AND ISNULL(@UserId, e.UserId) = e.UserId

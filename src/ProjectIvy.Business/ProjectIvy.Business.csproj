@@ -17,6 +17,7 @@
     <None Remove="Handlers\Geohash\" />
     <None Remove="geohash-dotnet" />
     <None Remove="Handlers\IotDevice\" />
+    <None Remove="Microsoft.Data.SqlClient" />
   </ItemGroup>
 
   <ItemGroup>
@@ -29,10 +30,10 @@
     <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
     <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.55.0.2452" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="3.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.4" />
     <PackageReference Include="SixLabors.ImageSharp" Version="1.0.4" />
     <PackageReference Include="geohash-dotnet" Version="1.0.4" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="2.1.4" />
   </ItemGroup>
 
   <ItemGroup>
