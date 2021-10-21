@@ -15,14 +15,10 @@ namespace ProjectIvy.Business.Handlers
         public Handler(IHandlerContext<THandler> context)
         {
             HttpContext = context.Context.HttpContext;
-            if (HttpContext is not null)
-            {
-                string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "sub").Value;
-                UserId = ResolveUserId(authIdentifier);
-            }
-
             Logger = context.Logger;
-            AccessToken = HttpContext != null ? (string)HttpContext.Items["Token"] : null;
+
+            string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "sub").Value;
+            UserId = ResolveUserId(authIdentifier);
         }
 
         public HttpContext HttpContext { get; set; }
@@ -30,8 +26,6 @@ namespace ProjectIvy.Business.Handlers
         public ILogger Logger { get; set; }
 
         protected int UserId { get; private set; }
-
-        protected string AccessToken { get; private set; }
 
         protected MainContext GetMainContext() => new MainContext(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
 

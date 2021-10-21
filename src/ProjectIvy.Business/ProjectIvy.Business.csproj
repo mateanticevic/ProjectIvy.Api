@@ -38,7 +38,6 @@
 
   <ItemGroup>
     <Folder Include="Properties\" />
-    <Folder Include="Cache\" />
     <Folder Include="Handlers\Airline\" />
     <Folder Include="Handlers\Ride\" />
     <Folder Include="Handlers\Geohash\" />
