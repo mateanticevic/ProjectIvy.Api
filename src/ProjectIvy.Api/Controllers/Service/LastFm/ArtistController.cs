@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Service.LastFm
 {
-    [Authorize(Roles = UserRole.User)]
     [Route("Service/LastFm/[controller]")]
     public class ArtistController : BaseController<ArtistController>
     {

@@ -1,16 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Model.Binding.Trip;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Trip;
 
 namespace ProjectIvy.Api.Controllers.Trip
 {
-    [Authorize(Roles = UserRole.User)]
     public class TripController : BaseController<TripController>
     {
         private readonly ITripHandler _tripHandler;

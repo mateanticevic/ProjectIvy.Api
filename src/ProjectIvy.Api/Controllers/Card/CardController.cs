@@ -7,7 +7,6 @@ using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Card
 {
-    [Authorize(Roles = UserRole.User)]
     public class CardController : BaseController<CardController>
     {
         private readonly ICardHandler _cardHandler;

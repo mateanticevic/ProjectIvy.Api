@@ -18,9 +18,7 @@ namespace ProjectIvy.Business.Handlers.User
         {
             using (var db = GetMainContext())
             {
-                var userEntity = db.Users.Include(x => x.UserRoles)
-                                         .ThenInclude(x => x.Role)
-                                         .SingleOrDefault(x => x.Username == username);
+                var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
 
                 return new View.User(userEntity);
             }
@@ -32,9 +30,7 @@ namespace ProjectIvy.Business.Handlers.User
 
             using (var db = GetMainContext())
             {
-                var userEntity = db.Users.Include(x => x.UserRoles)
-                                         .ThenInclude(x => x.Role)
-                                         .Include(x => x.DefaultCurrency)
+                var userEntity = db.Users.Include(x => x.DefaultCurrency)
                                          .Include(x => x.Modules)
                                          .Include("Modules.Module")
                                          .SingleOrDefault(x => x.Id == id);

@@ -309,19 +309,8 @@ namespace ProjectIvy.Data.DbContexts
                         .WithOne(x => x.User)
                         .HasForeignKey<User>(x => x.DefaultCarId);
 
-            modelBuilder.Entity<UserRole>()
-                        .HasKey(x => new { x.UserId, x.RoleId });
-
             modelBuilder.Entity<UserModule>()
                         .HasKey(x => new { x.UserId, x.ModuleId });
-
-            modelBuilder.Entity<UserRole>()
-                        .HasOne(x => x.User)
-                        .WithMany(x => x.UserRoles);
-
-            modelBuilder.Entity<UserRole>()
-                        .HasOne(x => x.Role)
-                        .WithMany(x => x.UserRoles);
 
             modelBuilder.Entity<Device>()
                         .HasOne(x => x.DeviceType)

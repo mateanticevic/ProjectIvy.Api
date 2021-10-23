@@ -23,7 +23,6 @@ namespace ProjectIvy.Api.Controllers.City
         public async Task<IActionResult> Get([FromQuery] CityGetBinding binding) => Ok(await _cityHandler.Get(binding));
 
         [HttpGet("Visited")]
-        [Authorize(Roles = UserRole.User)]
         public IEnumerable<View.City> GetVisited() => _cityHandler.GetVisited();
     }
 }

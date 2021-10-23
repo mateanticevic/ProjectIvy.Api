@@ -29,7 +29,6 @@ namespace ProjectIvy.Api.Controllers.Country
         public View.Country Get(string id) => _countryHandler.Get(id);
 
         [HttpGet("Visited")]
-        [Authorize(Roles = UserRole.User)]
         public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
 
         [HttpGet("Visited/Count")]

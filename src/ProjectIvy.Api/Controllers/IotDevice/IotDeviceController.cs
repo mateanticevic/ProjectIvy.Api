@@ -1,14 +1,11 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.IotDevice;
 using ProjectIvy.Model.Binding.IotData;
-using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Device
 {
-    [Authorize(Roles = UserRole.User)]
     public class IotDeviceController : BaseController<IotDeviceController>
     {
         private readonly IIotDeviceHandler _iotDeviceHandler;

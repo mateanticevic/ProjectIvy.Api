@@ -9,7 +9,6 @@ using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Device
 {
-    [Authorize(Roles = UserRole.User)]
     public class GeohashController : BaseController<GeohashController>
     {
         private readonly IGeohashHandler _geohashHandler;

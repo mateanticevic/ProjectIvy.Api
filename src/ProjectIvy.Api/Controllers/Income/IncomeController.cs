@@ -12,7 +12,6 @@ using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.Api.Controllers.Income
 {
-    [Authorize(Roles = UserRole.User)]
     public class IncomeController : BaseController<IncomeController>
     {
         private readonly IIncomeHandler _incomeHandler;

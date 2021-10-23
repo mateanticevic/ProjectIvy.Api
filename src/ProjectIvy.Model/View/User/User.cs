@@ -13,7 +13,6 @@ namespace ProjectIvy.Model.View.User
             LastName = x.LastName;
             Email = x.Email;
             Username = x.Username;
-            Roles = x.UserRoles.Select(y => new Role.Role(y.Role));
             Modules = x.Modules.Where(y => y.IsActive).Select(y => y.Module.ValueId);
         }
 
@@ -26,8 +25,6 @@ namespace ProjectIvy.Model.View.User
         public string Email { get; set; }
 
         public string Username { get; set; }
-
-        public IEnumerable<Role.Role> Roles { get; set; }
 
         public IEnumerable<string> Modules { get; set; }
     }

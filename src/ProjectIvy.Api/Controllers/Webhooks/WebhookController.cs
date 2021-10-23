@@ -1,14 +1,11 @@
 ﻿using Google.Apis.Dialogflow.v2.Data;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Webhooks;
-using ProjectIvy.Model.Constants.Database;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Webhooks
 {
-    [Authorize(Roles = UserRole.User)]
     [Route("[controller]")]
     public class WebhookController : BaseController<WebhookController>
     {

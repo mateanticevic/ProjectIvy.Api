@@ -45,8 +45,6 @@ namespace ProjectIvy.Model.Database.Main.User
 
         public Transport.Car DefaultCar { get; set; }
 
-        public ICollection<UserRole> UserRoles { get; set; }
-
         public ICollection<Tracking.Tracking> Trackings { get; set; }
 
         public ICollection<UserModule> Modules { get; set; } 

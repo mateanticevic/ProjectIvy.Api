@@ -1,13 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
-using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Api.Controllers.Movie
 {
-    [Authorize(Roles = UserRole.User)]
     [Route("Movie/Runtime")]
     public class MovieRuntimeController : BaseController<MovieController>
     {
