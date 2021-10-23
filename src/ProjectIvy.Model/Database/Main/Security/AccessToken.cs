@@ -24,6 +24,8 @@ namespace ProjectIvy.Model.Database.Main.Security
 
         public string IpAddress { get; set; }
 
+        public string Bearer { get; set; }
+
         public long? IpAddressValue { get; set; }
     }
 }

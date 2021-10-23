@@ -18,6 +18,7 @@
     <None Remove="geohash-dotnet" />
     <None Remove="Handlers\IotDevice\" />
     <None Remove="Microsoft.Data.SqlClient" />
+    <None Remove="Handlers\Security\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,6 +43,7 @@
     <Folder Include="Handlers\Ride\" />
     <Folder Include="Handlers\Geohash\" />
     <Folder Include="Handlers\IotDevice\" />
+    <Folder Include="Handlers\Security\" />
   </ItemGroup>
 
 </Project>

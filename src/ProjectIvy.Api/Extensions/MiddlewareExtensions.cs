@@ -5,9 +5,14 @@ namespace ProjectIvy.Api.Extensions
 {
     public static class MiddlewareExtensions
     {
-        public static IApplicationBuilder UseExceptionHandlingMiddleware(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder builder)
         {
             return builder.UseMiddleware<ExceptionHandlingMiddleware>();
+        }
+
+        public static IApplicationBuilder UseLegacyAuth(this IApplicationBuilder builder)
+        {
+            return builder.UseMiddleware<LegacyAuthMiddleware>();
         }
     }
 }

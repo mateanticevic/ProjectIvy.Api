@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,6 +30,7 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
+using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
@@ -68,6 +70,7 @@ namespace ProjectIvy.Api
             services.AddHttpContextAccessor();
             services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));
             services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY")));
+            services.AddSingleton<IAccessTokenHandler, AccessTokenHandler>();
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
@@ -153,6 +156,7 @@ namespace ProjectIvy.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseLegacyAuth();
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -184,7 +188,7 @@ namespace ProjectIvy.Api
             app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseDeveloperExceptionPage();
-            app.UseExceptionHandlingMiddleware();
+            app.UseExceptionHandling();
 
             app.UseMvc();
         }
