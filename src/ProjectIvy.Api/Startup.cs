@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
-using ProjectIvy.Business.Handlers;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Application;
 using ProjectIvy.Business.Handlers.Beer;
@@ -117,7 +115,7 @@ namespace ProjectIvy.Api
 
             services.AddAuthorization(options =>
                     {
-                        options.AddPolicy("TrackingSource", policy => policy.RequireClaim("TrackingCreate"));
+                        options.AddPolicy("TrackingSource", policy => policy.RequireClaim("tracking_create"));
                     })
                     .AddAuthentication(options =>
                     {
@@ -126,14 +124,9 @@ namespace ProjectIvy.Api
                     })
                     .AddJwtBearer(o =>
                     {
-                        o.Authority = "https://localhost:5001";
+                        o.Authority = "https://auth.anticevic.net";
                         o.RequireHttpsMetadata = false;
-                        o.Audience = "https://localhost:5001/resources";
-                        o.TokenValidationParameters =
-                        new TokenValidationParameters
-                        {
-                            RoleClaimType = "role"
-                        };
+                        o.Audience = "https://auth.anticevic.net/resources";
                         o.Events = new JwtBearerEvents
                         {
                             OnMessageReceived = context =>

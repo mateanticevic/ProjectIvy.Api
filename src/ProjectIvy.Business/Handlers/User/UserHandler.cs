@@ -1,7 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Binding.User;
 using ProjectIvy.Model.Database.Main.User;
 using System;
 using System.Linq;
