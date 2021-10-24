@@ -270,6 +270,10 @@ namespace ProjectIvy.Data.DbContexts
                         .Property(x => x.Longitude)
                         .HasColumnType("numeric(9, 6)");
 
+            modelBuilder.Entity<Expense>()
+                        .Property(x => x.ParentCurrencyExchangeRate)
+                        .HasPrecision(22, 10);
+
             modelBuilder.Entity<ExpenseType>()
                         .HasOne(x => x.ParentType)
                         .WithMany(x => x.Children);

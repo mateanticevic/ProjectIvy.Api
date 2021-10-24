@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Authorization;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -127,9 +126,9 @@ namespace ProjectIvy.Api
                     })
                     .AddJwtBearer(o =>
                     {
-                        o.Authority = "https://auth.anticevic.net";
+                        o.Authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
                         o.RequireHttpsMetadata = false;
-                        o.Audience = "https://auth.anticevic.net/resources";
+                        o.Audience = Environment.GetEnvironmentVariable("OAUTH_AUDIENCE");
                         o.Events = new JwtBearerEvents
                         {
                             OnMessageReceived = context =>
