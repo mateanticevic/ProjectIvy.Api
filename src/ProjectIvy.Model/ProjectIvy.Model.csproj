@@ -16,6 +16,7 @@
     <None Remove="Binding\Geohash\" />
     <None Remove="Database\Main\Iot\" />
     <None Remove="Binding\IotData\" />
+    <None Remove="View\Geohash\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -37,6 +38,7 @@
     <Folder Include="Binding\Geohash\" />
     <Folder Include="Database\Main\Iot\" />
     <Folder Include="Binding\IotData\" />
+    <Folder Include="View\Geohash\" />
   </ItemGroup>
 
 </Project>

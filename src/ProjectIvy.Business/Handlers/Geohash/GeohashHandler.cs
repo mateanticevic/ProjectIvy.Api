@@ -14,6 +14,38 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
         }
 
+        public async Task<Model.View.Geohash.Geohash> GetGeohash(string geohashId)
+        {
+            using (var context = GetMainContext())
+            {
+                var query = context.Trackings.WhereUser(UserId)
+                                                      .Where(x => x.Geohash.StartsWith(geohashId));
+
+                var firstIn = (await query.OrderBy(x => x.Timestamp)
+                                          .FirstOrDefaultAsync())?.Timestamp;
+
+                if (firstIn is null)
+                    return null;
+
+                int totalCount = await query.CountAsync();
+
+                var lastIn = totalCount == 1 ? null : (await query.OrderBy(x => x.Timestamp)
+                      .OrderByDescending(x => x.Timestamp)
+                      .FirstOrDefaultAsync())?.Timestamp;
+
+                int dayCount = await query.GroupBy(x => x.Timestamp.Date)
+                                           .CountAsync();
+
+                return new Model.View.Geohash.Geohash()
+                {
+                    DayCount = dayCount,
+                    FirstIn = firstIn.Value,
+                    LastIn = lastIn.HasValue ? lastIn.Value : firstIn.Value,
+                    TotalCount = totalCount
+                };
+            }
+        }
+
         public async Task<IEnumerable<string>> GetGeohashes(GeohashGetBinding binding)
         {
             var geohasher = new Geohasher();
