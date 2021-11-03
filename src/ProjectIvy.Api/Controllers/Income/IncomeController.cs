@@ -30,8 +30,8 @@ namespace ProjectIvy.Api.Controllers.Income
         [HttpGet("Sum")]
         public async Task<decimal> GetSum([FromQuery] IncomeGetSumBinding binding) => await _incomeHandler.GetSum(binding);
 
-        [HttpGet("Sum/ByMonth")]
-        public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => _incomeHandler.GetSumByMonth(binding);
+        [HttpGet("Sum/ByMonthOfYear")]
+        public IActionResult GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByMonthOfYear(binding));
 
         [HttpGet("Sum/ByYear")]
         public IActionResult GetSumByYear([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByYear(binding));

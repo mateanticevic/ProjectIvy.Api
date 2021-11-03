@@ -101,7 +101,7 @@ namespace ProjectIvy.Business.Handlers.Income
             }
         }
 
-        public IEnumerable<GroupedByMonth<decimal>> GetSumByMonth(IncomeGetSumBinding binding)
+        public IEnumerable<KeyValuePair<string, decimal>> GetSumByMonthOfYear(IncomeGetSumBinding binding)
         {
             using (var context = GetMainContext())
             {
@@ -114,7 +114,7 @@ namespace ProjectIvy.Business.Handlers.Income
 
                 var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
 
-                return tasks.Select(x => new GroupedByMonth<decimal>(x.Value.Result, x.Key.From.Value.Year, x.Key.From.Value.Month));
+                return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}", x.Value.Result));
             }
         }
 
