@@ -20,6 +20,7 @@
     <None Remove="Microsoft.Data.SqlClient" />
     <None Remove="Handlers\Security\" />
     <None Remove="Handlers\Account\" />
+    <None Remove="Constants\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,6 +47,7 @@
     <Folder Include="Handlers\IotDevice\" />
     <Folder Include="Handlers\Security\" />
     <Folder Include="Handlers\Account\" />
+    <Folder Include="Constants\" />
   </ItemGroup>
 
 </Project>

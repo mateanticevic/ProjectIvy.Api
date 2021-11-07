@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Account;
 
 namespace ProjectIvy.Api.Controllers.Airport
@@ -17,7 +18,7 @@ namespace ProjectIvy.Api.Controllers.Airport
         }
 
         [HttpPost("{accountId}/transaction")]
-        public async Task<IActionResult> PostTransactions(string accountId)
+        public async Task<IActionResult> PostTransactions(string accountId, [FromQuery] TransactionSource transactionSource)
         {
             var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
@@ -28,7 +29,21 @@ namespace ProjectIvy.Api.Controllers.Airport
 
                 using (var sr = new StreamReader(ms))
                 {
-                    await _accountHandler.ProcessHacTransactions(accountId, await sr.ReadToEndAsync());
+                    switch (transactionSource)
+                    {
+                        case TransactionSource.Hac:
+                            await _accountHandler.ProcessHacTransactions(accountId, await sr.ReadToEndAsync());
+                            break;
+                        case TransactionSource.OtpBank:
+                            await _accountHandler.ProcessOtpBankTransactions(accountId, await sr.ReadToEndAsync());
+                            break;
+                        case TransactionSource.Revolut:
+                            await _accountHandler.ProcessRevolutTransactions(accountId, await sr.ReadToEndAsync());
+                            break;
+                        default:
+                            throw new System.Exception();
+                    }
+                    
                 }
             }
 
