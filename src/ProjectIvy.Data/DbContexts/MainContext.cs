@@ -24,6 +24,8 @@ namespace ProjectIvy.Data.DbContexts
             ConnectionString = connectionString;
         }
 
+        public DbSet<Account> Accounts { get; set; }
+
         public DbSet<AccessToken> AccessTokens { get; set; }
 
         public DbSet<Airline> Airlines { get; set; }
@@ -135,6 +137,8 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<ToDo> ToDos { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }
+
+        public DbSet<Transaction> Transactions { get; set; }
 
         public DbSet<Trip> Trips { get; set; }
 

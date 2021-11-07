@@ -19,6 +19,7 @@
     <None Remove="Handlers\IotDevice\" />
     <None Remove="Microsoft.Data.SqlClient" />
     <None Remove="Handlers\Security\" />
+    <None Remove="Handlers\Account\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -44,6 +45,7 @@
     <Folder Include="Handlers\Geohash\" />
     <Folder Include="Handlers\IotDevice\" />
     <Folder Include="Handlers\Security\" />
+    <Folder Include="Handlers\Account\" />
   </ItemGroup>
 
 </Project>

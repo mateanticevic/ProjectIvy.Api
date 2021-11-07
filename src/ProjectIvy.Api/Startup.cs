@@ -8,6 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Application;
 using ProjectIvy.Business.Handlers.Beer;
@@ -72,6 +73,7 @@ namespace ProjectIvy.Api
             services.AddSingleton<IAccessTokenHandler, AccessTokenHandler>();
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
+            services.AddHandler<IAccountHandler, AccountHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IAirlineHandler, AirlineHandler>();
             services.AddHandler<IApplicationHandler, ApplicationHandler>();

@@ -22,6 +22,7 @@
     <None Remove="Controllers\IotDevice\" />
     <None Remove="IdentityServer4" />
     <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <None Remove="Controllers\Account\" />
   </ItemGroup>
 
   <ItemGroup>
@@ -55,5 +56,6 @@
     <Folder Include="Controllers\Ride\" />
     <Folder Include="Controllers\Geohash\" />
     <Folder Include="Controllers\IotDevice\" />
+    <Folder Include="Controllers\Account\" />
   </ItemGroup>
 </Project>
