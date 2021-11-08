@@ -183,7 +183,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                     using (var db = GetSqlConnection())
                     {
                         int targetCurrencyId = context.GetCurrencyId(null, UserId);
-                        string sql = SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency);
+                        string sql = SqlLoader.Load(SqlScripts.GetExpenseSumInDefaultCurrency);
 
                         var query = new GetExpenseSumQuery()
                         {

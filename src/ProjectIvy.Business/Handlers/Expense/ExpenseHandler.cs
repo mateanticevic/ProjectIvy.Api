@@ -512,7 +512,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         {
             using (var sql = GetSqlConnection())
             {
-                return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetExpenseSumInDefaultCurrency), query), 2);
+                return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(SqlScripts.GetExpenseSumInDefaultCurrency), query), 2);
             }
         }
     }

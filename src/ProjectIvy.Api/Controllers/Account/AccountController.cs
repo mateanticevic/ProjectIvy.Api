@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Account;
+using ProjectIvy.Model.Binding.Account;
 
 namespace ProjectIvy.Api.Controllers.Airport
 {
@@ -16,6 +17,9 @@ namespace ProjectIvy.Api.Controllers.Airport
         {
             _accountHandler = accountHandler;
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Get([FromQuery] AccountGetBinding binding) => Ok(await _accountHandler.Get(binding));
 
         [HttpPost("{accountId}/transaction")]
         public async Task<IActionResult> PostTransactions(string accountId, [FromQuery] TransactionSource transactionSource)

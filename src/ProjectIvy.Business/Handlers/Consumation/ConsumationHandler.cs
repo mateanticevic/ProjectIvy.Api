@@ -318,7 +318,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         {
             using (var sqlConnection = GetSqlConnection())
             {
-                return sqlConnection.Query<KeyValuePair<int, int>>(SqlLoader.Load(Constants.GetConsumationSumByDayOfWeek),
+                return sqlConnection.Query<KeyValuePair<int, int>>(SqlLoader.Load(SqlScripts.GetConsumationSumByDayOfWeek),
                                         new {
                                             binding.From,
                                             binding.To,

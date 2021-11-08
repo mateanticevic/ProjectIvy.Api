@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Finance
@@ -12,5 +13,17 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public string ValueId { get; set; }
 
         public string Name { get; set; }
+
+        public bool Active { get; set; }
+
+        public int? BankId { get; set; }
+
+        public int CurrencyId { get; set; }
+
+        public Bank Bank { get; set; }
+
+        public Common.Currency Currency { get; set; }
+
+        public ICollection<Transaction> Transactions { get; set; }
     }
 }

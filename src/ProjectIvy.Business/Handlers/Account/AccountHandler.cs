@@ -5,8 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Database.Main.Finance;
+using View = ProjectIvy.Model.View.Account;
 
 namespace ProjectIvy.Business.Handlers.Account
 {
@@ -14,6 +17,22 @@ namespace ProjectIvy.Business.Handlers.Account
     {
         public AccountHandler(IHandlerContext<AccountHandler> context) : base(context)
         {
+        }
+
+        public async Task<IEnumerable<View.Account>> Get(AccountGetBinding b)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Accounts.Include(x => x.Bank)
+                                             .Include(x => x.Currency)
+                                             .WhereIf(b.IsActive, x => x.Active == b.IsActive)
+                                             .Select(x =>
+                                                new View.Account(x)
+                                                {
+                                                    Balance = x.Transactions.Sum(x => x.Amount)
+                                                })
+                                             .ToListAsync();
+            }
         }
 
         public async Task ProcessHacTransactions(string accountKey, string csv)

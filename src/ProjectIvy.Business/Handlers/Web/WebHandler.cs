@@ -30,7 +30,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     UserId = UserId
                 };
 
-                var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeSum), parameters);
+                var command = new CommandDefinition(SqlLoader.Load(SqlScripts.GetWebTimeSum), parameters);
 
                 return db.Query<WebTime>(command);
             }
@@ -50,7 +50,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     To = binding.To,
                     UserId = UserId
                 };
-                return db.ExecuteScalar<int>(SqlLoader.Load(Constants.GetWebTimeTotal), parameters);
+                return db.ExecuteScalar<int>(SqlLoader.Load(SqlScripts.GetWebTimeTotal), parameters);
             }
         }
 
@@ -69,7 +69,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     UserId = UserId
                 };
 
-                var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByDay), parameters);
+                var command = new CommandDefinition(SqlLoader.Load(SqlScripts.GetWebTimeTotalByDay), parameters);
 
                 return db.Query<TimeByDay>(command);
             }
@@ -90,7 +90,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     UserId = UserId
                 };
 
-                var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByMonth), parameters);
+                var command = new CommandDefinition(SqlLoader.Load(SqlScripts.GetWebTimeTotalByMonth), parameters);
 
                 return db.Query<GetWebTimeTotalByMonth>(command)
                          .Select(x => new GroupedByMonth<int>(x.Seconds, x.Year, x.Month));
@@ -112,7 +112,7 @@ namespace ProjectIvy.Business.Handlers.Web
                     UserId = UserId
                 };
 
-                var command = new CommandDefinition(SqlLoader.Load(Constants.GetWebTimeTotalByYear), parameters);
+                var command = new CommandDefinition(SqlLoader.Load(SqlScripts.GetWebTimeTotalByYear), parameters);
 
                 return db.Query<GetWebTimeTotalByYear>(command)
                          .OrderByDescending(x => x.Year)

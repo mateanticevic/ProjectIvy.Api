@@ -1,6 +1,6 @@
 ﻿namespace ProjectIvy.Data.Sql.Main.Scripts
 {
-    public static class Constants
+    public static class SqlScripts
     {
         private const string Prefix = "ProjectIvy.Data.Sql.Main.Scripts.";
         private const string Sufix = ".sql";

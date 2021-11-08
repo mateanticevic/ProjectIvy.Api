@@ -96,7 +96,7 @@ namespace ProjectIvy.Business.Handlers.Income
                         UserId = UserId
                     };
 
-                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(Constants.GetIncomeSum), parameters), 2);
+                    return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(SqlScripts.GetIncomeSum), parameters), 2);
                 }
             }
         }
