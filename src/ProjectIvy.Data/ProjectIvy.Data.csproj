@@ -2,27 +2,8 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>Latest</LangVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Sql\Main\GetExpenseSumInDefaultCurrency.sql" />
-    <None Remove="Sql\Main\GetIncomeSum.sql" />
-    <None Remove="Sql\Main\GetWebTimeSum.sql" />
-    <None Remove="Sql\Main\GetWebTimeTotal.sql" />
-    <None Remove="Sql\Main\GetWebTimeTotalByDay.sql" />
-    <None Remove="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
-    <None Remove="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
-    <None Remove="StyleCop.Cache" />
-    <None Remove="Sql\Main\Scripts\GetConsumationSumByDayOfWeek.sql" />
-    <None Remove="Microsoft.Data.SqlClient" />
-  </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumInDefaultCurrency.sql" />
@@ -51,7 +32,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
 </Project>

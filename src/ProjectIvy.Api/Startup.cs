@@ -59,6 +59,7 @@ namespace ProjectIvy.Api
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            Console.WriteLine(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
         }
 
         public IConfigurationRoot Configuration { get; }

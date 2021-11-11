@@ -4,32 +4,8 @@
     <TargetFramework>net6.0</TargetFramework>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerfileContext>.</DockerfileContext>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Custom' " />
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'ProjectIvy' " />
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="StyleCop.Cache" />
-    <None Remove="logs\log20210320.txt" />
-    <None Remove="Controllers\Geohash\" />
-    <None Remove="Controllers\IotDevice\" />
-    <None Remove="IdentityServer4" />
-    <None Remove="Microsoft.AspNetCore.Authentication.JwtBearer" />
-    <None Remove="Controllers\Account\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="wwwroot\**\*;nlog.config">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </None>
-  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ProjectIvy.Business\ProjectIvy.Business.csproj" />
@@ -52,10 +28,4 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Ride\" />
-    <Folder Include="Controllers\Geohash\" />
-    <Folder Include="Controllers\IotDevice\" />
-    <Folder Include="Controllers\Account\" />
-  </ItemGroup>
 </Project>

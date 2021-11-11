@@ -4,25 +4,6 @@
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <LangVersion>latest</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="StyleCop.Cache" />
-    <None Remove="SixLabors.ImageSharp" />
-    <None Remove="Handlers\Geohash\" />
-    <None Remove="geohash-dotnet" />
-    <None Remove="Handlers\IotDevice\" />
-    <None Remove="Microsoft.Data.SqlClient" />
-    <None Remove="Handlers\Security\" />
-    <None Remove="Handlers\Account\" />
-    <None Remove="Constants\" />
-  </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\ProjectIvy.Common\ProjectIvy.Common.csproj" />
     <ProjectReference Include="..\ProjectIvy.Data\ProjectIvy.Data.csproj" />
@@ -40,14 +21,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Properties\" />
-    <Folder Include="Handlers\Airline\" />
-    <Folder Include="Handlers\Ride\" />
-    <Folder Include="Handlers\Geohash\" />
-    <Folder Include="Handlers\IotDevice\" />
-    <Folder Include="Handlers\Security\" />
-    <Folder Include="Handlers\Account\" />
-    <Folder Include="Constants\" />
+    <Using Include="System" />
+    <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
 </Project>

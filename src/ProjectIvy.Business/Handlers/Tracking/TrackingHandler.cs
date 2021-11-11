@@ -8,8 +8,6 @@ using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;

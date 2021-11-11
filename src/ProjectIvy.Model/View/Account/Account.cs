@@ -8,11 +8,14 @@
             Name = a.Name;
             Bank = a.BankId.HasValue ? new Bank.Bank(a.Bank) : null;
             Currency = new Currency.Currency(a.Currency);
+            Iban = a.Iban;
         }
 
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public string Iban { get; set; }
 
         public Bank.Bank Bank { get; set; }
 

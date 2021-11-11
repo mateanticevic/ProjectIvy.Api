@@ -4,11 +4,10 @@ using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Movie;
+using static System.Math;
 
 namespace ProjectIvy.Business.Handlers.Movie
 {
@@ -179,8 +178,8 @@ namespace ProjectIvy.Business.Handlers.Movie
                                           .Where(binding);
 
                 double average = (double)userMovies.Sum(x => x.MyRating) / userMovies.Count();
-
-                return Math.Round(average, 1);
+                
+                return Round(average, 1);
             }
         }
 
@@ -192,7 +191,7 @@ namespace ProjectIvy.Business.Handlers.Movie
                                       .Where(binding)
                                       .GroupBy(x => x.Timestamp.Year)
                                       .OrderBy(x => x.Key)
-                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, (decimal)Math.Round(x.Average(y => y.MyRating), 1)))
+                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, (decimal)Round(x.Average(y => y.MyRating), 1)))
                                       .ToListAsync();
             }
         }
@@ -204,7 +203,7 @@ namespace ProjectIvy.Business.Handlers.Movie
                 var userMovies = db.Movies.WhereUser(UserId)
                                           .Where(binding);
 
-                return Math.Round((double)userMovies.Average(x => x.Rating), 1);
+                return Round((double)userMovies.Average(x => x.Rating), 1);
             }
         }
 
@@ -216,7 +215,7 @@ namespace ProjectIvy.Business.Handlers.Movie
                                       .Where(binding)
                                       .GroupBy(x => x.Timestamp.Year)
                                       .OrderBy(x => x.Key)
-                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, Math.Round(x.Average(y => y.Rating), 1)))
+                                      .Select(x => new KeyValuePair<int, decimal>(x.Key, Round(x.Average(y => y.Rating), 1)))
                                       .ToListAsync();
             }
         }

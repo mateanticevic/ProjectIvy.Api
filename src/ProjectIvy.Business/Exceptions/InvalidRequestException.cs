@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Business.Exceptions
+﻿namespace ProjectIvy.Business.Exceptions
 {
     public class InvalidRequestException : Exception
     {

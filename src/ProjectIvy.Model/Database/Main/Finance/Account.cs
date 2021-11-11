@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Finance
@@ -11,6 +10,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public int Id { get; set; }
 
         public string ValueId { get; set; }
+
+        public string Iban { get; set; }
 
         public string Name { get; set; }
 
