@@ -37,7 +37,8 @@ namespace ProjectIvy.Business.Handlers
             {
                 using (var db = GetMainContext())
                 {
-                    _identifierUserMapping = db.Users.Where(x => x.AuthIdentifier != null).ToDictionary(x => x.AuthIdentifier, x => x.Id);
+                    _identifierUserMapping = db.Users.Where(x => x.AuthIdentifier != null)
+                                                     .ToDictionary(x => x.AuthIdentifier, x => x.Id);
                 }
             }
 

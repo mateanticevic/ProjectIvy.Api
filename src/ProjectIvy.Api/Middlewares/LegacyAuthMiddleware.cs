@@ -38,13 +38,14 @@ namespace ProjectIvy.Api.Middlewares
                             httpContext.Request.Headers["Authorization"] = $"Bearer {_bearerMapping[token]}";
                     }
                 }
-
-                await _next(httpContext);
             }
             catch (Exception e)
             {
                 logger.LogError(e, "Legacy auth middleware failed");
             }
+
+
+            await _next(httpContext);
         }
     }
 }
