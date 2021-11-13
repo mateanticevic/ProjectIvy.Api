@@ -151,7 +151,15 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 transactions.Add(transaction);
             }
 
-            await context.Transactions.AddRangeAsync(transactions);
+            foreach (var transaction in transactions)
+            {
+                if (context.Transactions.Any(x => x.Created == transaction.Created
+                                                && x.Description == transaction.Description
+                                                && x.AccountId == accountId))
+                    continue;
+                await context.Transactions.AddAsync(transaction);
+            }
+
             await context.SaveChangesAsync();
         }
     }
