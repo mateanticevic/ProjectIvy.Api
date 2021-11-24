@@ -70,8 +70,16 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
                 transactions.Add(transaction);
             }
+            
+            foreach (var transaction in transactions)
+            {
+                if (context.Transactions.Any(x => x.Created == transaction.Created
+                                                && x.Amount == transaction.Amount
+                                                && x.AccountId == accountId))
+                    continue;
+                await context.Transactions.AddAsync(transaction);
+            }
 
-            await context.Transactions.AddRangeAsync(transactions);
             await context.SaveChangesAsync();
         }
     }
