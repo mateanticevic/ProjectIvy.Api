@@ -6,7 +6,6 @@ pipeline {
     stages {
         stage('Version') {
             agent {
-                label 'worker'
                 docker { image 'node:14-alpine' }
             }
             steps {
