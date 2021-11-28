@@ -1,13 +1,18 @@
 pipeline {
-    agent {
-        docker { image 'node:14-alpine' }
-    }
+    agent any
 
     stages {
-        stage('Build') {
+        stage('Version') {
+            agent {
+                docker { image 'node:14-alpine' }
+            }
             steps {
                 sh 'node --version'
             }
+        }
+
+        stage('Build') {
+            def image = docker.build("project-ivy-api", "./src/ProjectIvy.Api/Dockerfile")
         }
     }
 }
