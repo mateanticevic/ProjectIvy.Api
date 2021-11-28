@@ -18,7 +18,7 @@ pipeline {
             
             steps {
                 script {
-                    sh 'dotnet tool install --global GitVersion.Tool --version 5.1.1'
+                    sh 'dotnet gitversion'
                     def version = sh(script:'dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
                     currentBuild.displayName = version
 
