@@ -13,7 +13,9 @@ pipeline {
 
         stage('Build') {
             steps {
-                def image = docker.build("project-ivy-api", "./src/ProjectIvy.Api/Dockerfile")
+                script {
+                    def image = docker.build("project-ivy-api", "./src/ProjectIvy.Api/Dockerfile")
+                }
             }
         }
     }
