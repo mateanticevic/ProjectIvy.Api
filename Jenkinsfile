@@ -15,10 +15,12 @@ pipeline {
         // }
 
         stage('Build') {
-            
+            environment {
+                PATH = "$HOME/.dotnet/tools/"
+            }
             steps {
                 script {
-                    sh 'export PATH="$PATH:$HOME/.dotnet/tools/"'
+                    //sh 'export PATH="$PATH:$HOME/.dotnet/tools/"'
                     sh 'echo $PATH'
                     sh 'dotnet gitversion'
                     def version = sh(script:'dotnet gitversion /showvariable FullSemVer', returnStdout:true).trim()
