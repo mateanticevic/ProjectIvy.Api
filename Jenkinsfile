@@ -5,10 +5,8 @@ pipeline {
 
     stages {
         stage('Build') {
-            node {
-                steps {
-                    sh 'node --version'
-                }
+            steps {
+                sh 'node --version'
             }
         }
     }
