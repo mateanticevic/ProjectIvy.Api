@@ -16,7 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                   def semver = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                   def semver = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable SemVer', returnStdout:true).trim()
                    def commits = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable CommitsSinceVersionSource', returnStdout:true).trim()
                    def version = "${semver}.${commits}"
 
