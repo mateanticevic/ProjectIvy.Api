@@ -1,9 +1,12 @@
 pipeline {
-    agent any
+    agent {
+        label 'worker'
+    }
 
     stages {
         stage('Version') {
             agent {
+                label 'worker'
                 docker { image 'node:14-alpine' }
             }
             steps {
@@ -13,7 +16,7 @@ pipeline {
         }
 
         stage('Build') {
-            agent any
+            
             steps {
                 script {
                     checkout scm
