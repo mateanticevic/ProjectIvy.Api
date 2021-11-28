@@ -2,9 +2,6 @@ pipeline {
     agent {
         label 'worker'
     }
-    environment {
-        PATH = "$HOME/.dotnet/tools/"
-    }
     stages {
         // stage('Version') {
         //     agent {
@@ -19,10 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    //sh 'export PATH="$PATH:$HOME/.dotnet/tools/"'
-                    sh 'echo $PATH'
-                    sh 'dotnet gitversion'
-                    def version = sh(script:'dotnet gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                    def version = sh(script:'/home/mate/.dotnet/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
                     currentBuild.displayName = version
 
                     def image = docker.build("project-ivy-api")
