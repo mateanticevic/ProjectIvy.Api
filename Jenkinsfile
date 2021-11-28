@@ -18,8 +18,12 @@ pipeline {
             
             steps {
                 script {
-                    //checkout scm
+                    def version = sh(script:'dotnet gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                    currentBuild.displayName = version
+
                     def image = docker.build("project-ivy-api")
+                    image.push(version)
+                    image.push()
                 }
             }
         }
