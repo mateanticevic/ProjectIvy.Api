@@ -16,12 +16,15 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def version = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
-                    currentBuild.displayName = version
+                   def semver = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                   def commits = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable CommitsSinceVersionSource', returnStdout:true).trim()
+                   def version = "${semver}.${commits}"
 
-                    def image = docker.build("project-ivy-api")
-                    image.push(version)
-                    image.push()
+                   currentBuild.displayName = version
+
+                   def image = docker.build("mateanticevic/project-ivy-api")
+                   image.push(version)
+                   image.push()
                 }
             }
         }
