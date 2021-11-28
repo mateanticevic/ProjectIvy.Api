@@ -18,8 +18,9 @@ pipeline {
             
             steps {
                 script {
+                    sh 'echo $PATH'
                     sh 'dotnet tool list -g'
-                    def version = sh(script:'dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                    def version = sh(script:'dotnet gitversion /showvariable FullSemVer', returnStdout:true).trim()
                     currentBuild.displayName = version
 
                     def image = docker.build("project-ivy-api")
