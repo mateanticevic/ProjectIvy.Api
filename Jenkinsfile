@@ -2,7 +2,9 @@ pipeline {
     agent {
         label 'worker'
     }
-
+    environment {
+        PATH = "$HOME/.dotnet/tools/"
+    }
     stages {
         // stage('Version') {
         //     agent {
@@ -15,9 +17,6 @@ pipeline {
         // }
 
         stage('Build') {
-            environment {
-                PATH = "$HOME/.dotnet/tools/"
-            }
             steps {
                 script {
                     //sh 'export PATH="$PATH:$HOME/.dotnet/tools/"'
