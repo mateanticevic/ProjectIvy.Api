@@ -7,6 +7,7 @@ pipeline {
                 docker { image 'node:14-alpine' }
             }
             steps {
+                sh 'ls'
                 sh 'node --version'
             }
         }
@@ -14,7 +15,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def image = docker.build("project-ivy-api", "./src/ProjectIvy.Api/Dockerfile")
+                    def image = docker.build("project-ivy-api", "src/ProjectIvy.Api/Dockerfile")
                 }
             }
         }
