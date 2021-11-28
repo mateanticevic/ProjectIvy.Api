@@ -15,6 +15,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
+                    checkout scm
                     def image = docker.build("project-ivy-api", "src/ProjectIvy.Api/Dockerfile")
                 }
             }
