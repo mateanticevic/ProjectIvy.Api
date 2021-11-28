@@ -18,7 +18,7 @@ pipeline {
             
             steps {
                 script {
-                    sh 'dotnet gitversion'
+                    sh 'dotnet tool list -g'
                     def version = sh(script:'dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
                     currentBuild.displayName = version
 
