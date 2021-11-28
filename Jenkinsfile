@@ -13,6 +13,7 @@ pipeline {
         }
 
         stage('Build') {
+            agent any
             steps {
                 script {
                     checkout scm
