@@ -16,7 +16,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    def version = sh(script:'/home/mate/.dotnet/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
+                    def version = sh(script:'/home/mate/.dotnet/tools/dotnet-gitversion /showvariable FullSemVer', returnStdout:true).trim()
                     currentBuild.displayName = version
 
                     def image = docker.build("project-ivy-api")
