@@ -48,6 +48,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public int? CardId { get; set; }
 
+        public int? TransactionId { get; set; }
+
         public bool NeedsReview { get; set; }
 
         public Currency Currency { get; set; }
@@ -61,6 +63,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public PaymentType PaymentType { get; set; }
 
         public Travel.Poi Poi { get; set; }
+
+        public Transaction Transaction { get; set; }
 
         public Vendor Vendor { get; set; }
 

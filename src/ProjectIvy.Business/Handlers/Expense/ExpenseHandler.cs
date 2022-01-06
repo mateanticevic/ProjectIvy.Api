@@ -11,6 +11,7 @@ using ProjectIvy.Data.Sql;
 using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.ExpenseType;
 using System;
@@ -506,6 +507,12 @@ namespace ProjectIvy.Business.Handlers.Expense
                 context.SaveChanges();
                 return entity.ValueId;
             }
+        }
+
+        private void ResolveTransaction(Model.Database.Main.Finance.Expense expense)
+        {
+            //if (expense.PaymentTypeId != PaymentType.Cash)
+            //    return;
         }
 
         private async Task<decimal> SumAmount(GetExpenseSumQuery query)
