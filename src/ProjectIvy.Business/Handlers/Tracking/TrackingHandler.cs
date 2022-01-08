@@ -101,12 +101,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public async Task Delete(long timestamp)
         {
-            var dateTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
+            var dt = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
+            var dateTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, DateTimeKind.Utc);
             using (var context = GetMainContext())
             {
-                var trackings = await context.Trackings.WhereUser(UserId)
-                                                       .Where(x => x.Timestamp == dateTime)
-                                                       .ToListAsync();
+                var trackings = context.Trackings.WhereUser(UserId)
+                                                       .Where(x => x.Timestamp == EF.Functions.DateTimeFromParts(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond));
+
                 context.Trackings.RemoveRange(trackings);
                 await context.SaveChangesAsync();
             }
