@@ -99,6 +99,19 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
+        public async Task Delete(long timestamp)
+        {
+            var dateTime = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
+            using (var context = GetMainContext())
+            {
+                var trackings = await context.Trackings.WhereUser(UserId)
+                                                       .Where(x => x.Timestamp == dateTime)
+                                                       .ToListAsync();
+                context.Trackings.RemoveRange(trackings);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public IEnumerable<View.Tracking> Get(TrackingGetBinding binding)
         {
             using (var db = GetMainContext())

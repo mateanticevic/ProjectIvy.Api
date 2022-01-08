@@ -25,6 +25,13 @@ namespace ProjectIvy.Api.Controllers.Tracking
             _trackingHandler = trackingHandler;
         }
 
+        [HttpDelete("{timestamp}")]
+        public async Task<IActionResult> Delete(long timestamp)
+        {
+            await _trackingHandler.Delete(timestamp);
+            return Ok();
+        }
+
         [HttpGet]
         public IEnumerable<View.Tracking> Get([FromQuery] TrackingGetBinding binding) => _trackingHandler.Get(binding);
 

@@ -15,6 +15,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         Task Create(IEnumerable<TrackingBinding> binding);
 
+        Task Delete(long timestamp);
+
         IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
 
         int Count(FilteredBinding binding);
