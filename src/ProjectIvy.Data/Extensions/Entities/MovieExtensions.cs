@@ -23,6 +23,7 @@ namespace ProjectIvy.Data.Extensions.Entities
                          .WhereIf(!string.IsNullOrEmpty(binding.Title), x => x.Title.Contains(binding.Title))
                          .WhereIf(!binding.MyRating.IsNullOrEmpty(), x => binding.MyRating.Contains(x.MyRating))
                          .WhereIf(!binding.Year.IsNullOrEmpty(), x => binding.Year.Contains(x.Year))
+                         .WhereIf(!binding.YearWatched.IsNullOrEmpty(), x => binding.YearWatched.Contains(x.Timestamp.Year))
                          .WhereIf(days, x => days.Contains(((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Timestamp)) % 7));
         }
 

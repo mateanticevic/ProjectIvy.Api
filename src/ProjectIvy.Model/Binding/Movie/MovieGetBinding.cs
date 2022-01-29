@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProjectIvy.Model.Binding.Movie
+﻿namespace ProjectIvy.Model.Binding.Movie
 {
     public class MovieGetBinding : FilteredPagedBinding
     {
@@ -22,5 +19,7 @@ namespace ProjectIvy.Model.Binding.Movie
         public IEnumerable<short> MyRating { get; set; }
 
         public IEnumerable<short> Year { get; set; }
+
+        public IEnumerable<int> YearWatched { get; set; }
     }
 }
