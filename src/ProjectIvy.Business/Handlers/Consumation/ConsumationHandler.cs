@@ -47,7 +47,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                                  .Where(binding, context)
                                                  .GroupBy(x => x.Date.Year)
                                                  .OrderBy(x => x.Key)
-                                                 .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.Volume * y.Beer.Abv / 100) / 365))
+                                                 .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.Volume * y.Beer.Abv / 100)))
                                                  .ToListAsync();
             }
         } 
