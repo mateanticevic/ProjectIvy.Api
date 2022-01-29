@@ -39,6 +39,19 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> AlcoholByYear(ConsumationGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.Consumations.WhereUser(UserId)
+                                                 .Where(binding, context)
+                                                 .GroupBy(x => x.Date.Year)
+                                                 .OrderBy(x => x.Key)
+                                                 .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.Volume * y.Beer.Abv / 100) / 365))
+                                                 .ToListAsync();
+            }
+        } 
+
         public async Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())

@@ -11,6 +11,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
     public interface IConsumationHandler : IHandler
     {
         void Add(ConsumationBinding binding);
+        Task<IEnumerable<KeyValuePair<int, decimal>>> AlcoholByYear(ConsumationGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding);
 
