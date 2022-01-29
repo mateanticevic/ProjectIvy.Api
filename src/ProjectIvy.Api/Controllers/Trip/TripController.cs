@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Trip;
@@ -51,6 +52,9 @@ namespace ProjectIvy.Api.Controllers.Trip
 
         [HttpGet("{tripId}")]
         public View.Trip Get(string tripId) => _tripHandler.GetSingle(tripId);
+
+        [HttpGet("Days/ByYear")]
+        public async Task<IActionResult> GetDaysByYear([FromQuery] TripGetBinding binding) => Ok(await _tripHandler.DaysByYear(binding));
 
         [HttpPost("{tripId}/Poi/{poiId}")]
         public StatusCodeResult PostPoi(string tripId, string poiId)

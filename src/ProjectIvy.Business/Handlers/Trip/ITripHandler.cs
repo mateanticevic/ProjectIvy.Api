@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Model.Binding.Trip;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Trip;
 
@@ -13,6 +14,8 @@ namespace ProjectIvy.Business.Handlers.Trip
         void AddPoi(string tripValueId, string poiValueId);
 
         void Create(TripBinding binding);
+
+        Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding);
 
         void Delete(string valueId);
 
