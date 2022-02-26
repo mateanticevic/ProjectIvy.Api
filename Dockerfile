@@ -1,4 +1,5 @@
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
+ARG version=1.0.0
 WORKDIR /app
 EXPOSE 80
 
@@ -10,7 +11,7 @@ WORKDIR "/src/src/ProjectIvy.Api"
 RUN dotnet build "ProjectIvy.Api.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "ProjectIvy.Api.csproj" -c Release -o /app
+RUN dotnet publish "ProjectIvy.Api.csproj" -c Release -o /app /p:Version=$version
 
 FROM base AS final
 WORKDIR /app

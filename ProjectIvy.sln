@@ -20,9 +20,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{08217A17-6
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "deploy", "deploy", "{FDAEC8B1-3272-40FC-BF68-F987BEB7C0D6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FDAEC8B1-3272-40FC-BF68-F987BEB7C0D6}"
 	ProjectSection(SolutionItems) = preProject
 		Dockerfile = Dockerfile
+		Jenkinsfile = Jenkinsfile
 	EndProjectSection
 EndProject
 Global
