@@ -200,6 +200,7 @@ namespace ProjectIvy.Api
                         string maskedToken = $"*****{token[^6..]}";
                         context.Set("Token", maskedToken);
                     }
+                    context.Set("Version", GetType().Assembly.GetName().Version.ToString());
 
                 };
             });
