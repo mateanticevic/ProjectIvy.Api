@@ -16,7 +16,7 @@ pipeline {
 
                    currentBuild.displayName = version
 
-                   def image = docker.build("mateanticevic/project-ivy-api", "--build-arg version=${version}")
+                   def image = docker.build("mateanticevic/project-ivy-api", "--build-arg version=${version} .")
 
                    if (version == semver) {
                        image.push(version)
