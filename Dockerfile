@@ -1,5 +1,5 @@
-FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
 ARG version=1.0.0
+FROM mcr.microsoft.com/dotnet/aspnet:6.0-bullseye-slim AS base
 WORKDIR /app
 EXPOSE 80
 
