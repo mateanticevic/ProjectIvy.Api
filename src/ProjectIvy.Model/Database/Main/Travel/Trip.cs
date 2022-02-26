@@ -28,6 +28,8 @@ namespace ProjectIvy.Model.Database.Main.Travel
 
         public DateTime Modified { get; set; }
 
+        public bool IsDomestic { get; set; }
+
         public ICollection<Common.City> Cities { get; set; }
 
         public ICollection<Storage.File> Files { get; set; }

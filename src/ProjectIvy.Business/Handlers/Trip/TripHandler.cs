@@ -101,12 +101,12 @@ namespace ProjectIvy.Business.Handlers.Trip
             }
         }
 
-
         public async Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding)
         {
             using(var context = GetMainContext())
             {
                 var query = context.Trips.WhereUser(UserId)
+                                         .Where(binding)
                                          .Where(x => x.TimestampEnd < DateTime.Now);
 
                 var left = await query.Where(x => x.TimestampEnd.Year != x.TimestampStart.Year)
@@ -156,11 +156,7 @@ namespace ProjectIvy.Business.Handlers.Trip
                                    .WhereUser(UserId)
                                    .Include(x => x.Cities)
                                    .ThenInclude(x => x.Country)
-                                   .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
-                                   .WhereIf(binding.From.HasValue, x => x.TimestampEnd > binding.From.Value)
-                                   .WhereIf(binding.To.HasValue, x => x.TimestampStart < binding.To.Value)
-                                   .WhereIf(binding.CityId, x => x.Cities.Select(y => y.ValueId).Any(y => binding.CityId.Contains(y)))
-                                   .WhereIf(binding.CountryId, x => x.Cities.Select(y => y.Country.ValueId).Any(y => binding.CountryId.Contains(y)));
+                                   .Where(binding);
 
                 return query.OrderBy(binding)
                             .Select(x => new View.Trip.Trip(x))

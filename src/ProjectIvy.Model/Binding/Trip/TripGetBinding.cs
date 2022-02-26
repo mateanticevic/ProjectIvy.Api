@@ -11,5 +11,7 @@ namespace ProjectIvy.Model.Binding.Trip
         public TripSort OrderBy { get; set; }
 
         public string Search { get; set; }
+
+        public bool? IsDomestic { get; set; }
     }
 }
