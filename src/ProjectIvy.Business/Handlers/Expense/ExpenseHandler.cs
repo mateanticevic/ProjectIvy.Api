@@ -5,6 +5,7 @@ using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Sql;
@@ -219,6 +220,8 @@ namespace ProjectIvy.Business.Handlers.Expense
                 entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
 
                 db.Expenses.Add(entity);
+                ResolveTransaction(db, entity);
+
                 db.SaveChanges();
 
                 return entity.ValueId;
@@ -483,11 +486,15 @@ namespace ProjectIvy.Business.Handlers.Expense
 
             using (var context = GetMainContext())
             {
-                var entity = context.Expenses.WhereUser(UserId).SingleOrDefault(x => x.ValueId == binding.Id);
+                var entity = context.Expenses.WhereUser(UserId)
+                                             .Include(x => x.Transaction)
+                                             .SingleOrDefault(x => x.ValueId == binding.Id);
 
                 entity = binding.ToEntity(context, entity);
 
                 context.Expenses.Update(entity);
+                ResolveTransaction(context, entity);
+
                 context.SaveChanges();
 
                 return true;
@@ -509,10 +516,27 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        private void ResolveTransaction(Model.Database.Main.Finance.Expense expense)
+        private void ResolveTransaction(MainContext context, Model.Database.Main.Finance.Expense expense)
         {
-            //if (expense.PaymentTypeId != PaymentType.Cash)
-            //    return;
+            if (expense.Transaction is not null)
+                context.Transactions.Remove(expense.Transaction);
+
+            if (expense.PaymentTypeId == (int)Model.Constants.Database.PaymentType.Cash)
+            {
+                int? accountId = context.Accounts.SingleOrDefault(x => !x.BankId.HasValue && x.CurrencyId == expense.CurrencyId)?.Id;
+
+                if (accountId.HasValue)
+                {
+                    var transaction = new Model.Database.Main.Finance.Transaction()
+                    {
+                        AccountId = accountId.Value,
+                        Amount = expense.Amount,
+                        Created = expense.Date
+                    };
+                    expense.Transaction = transaction;
+                    context.Transactions.Add(transaction);
+                }
+            }
         }
 
         private async Task<decimal> SumAmount(GetExpenseSumQuery query)
