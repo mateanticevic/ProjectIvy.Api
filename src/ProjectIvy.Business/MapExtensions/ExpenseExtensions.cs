@@ -3,7 +3,6 @@ using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
-using System;
 using System.Linq;
 
 namespace ProjectIvy.Business.MapExtensions
@@ -23,9 +22,10 @@ namespace ProjectIvy.Business.MapExtensions
             entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
             entity.Modified = DateTime.Now;
             entity.NeedsReview = binding.NeedsReview;
+            entity.ParentAmount = binding.ParentAmount;
+            entity.ParentCurrencyExchangeRate = binding.ParentAmount.HasValue ? binding.ParentAmount.Value / binding.Amount : null;
             entity.ParentCurrencyId = string.IsNullOrEmpty(binding.ParentCurrencyId) ? null : context.Currencies.SingleOrDefault(x => x.Code == binding.ParentCurrencyId)?.Id;
             entity.PaymentTypeId = context.PaymentTypes.GetId(binding.PaymentTypeId);
-            entity.ParentCurrencyExchangeRate = binding.ParentCurrencyExchangeRate;
             entity.PoiId = context.Pois.GetId(binding.PoiId);
             entity.ValueId = binding.Id;
             entity.VendorId = context.Vendors.GetId(binding.VendorId);

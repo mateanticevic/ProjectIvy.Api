@@ -1,6 +1,4 @@
 ﻿using ProjectIvy.Common.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using DatabaseModel = ProjectIvy.Model.Database.Main;
 
@@ -22,6 +20,7 @@ namespace ProjectIvy.Model.View.Expense
             PaymentType = x.PaymentType.ConvertTo(y => new PaymentType.PaymentType(y));
             Poi = x.Poi.ConvertTo(y => new Poi.Poi(y));
             Vendor = x.Vendor.ConvertTo(y => new Vendor.Vendor(y));
+            ParentAmount = x.ParentAmount;
             ParentCurrencyExchangeRate = x.ParentCurrencyExchangeRate;
             Modified = x.Modified;
             Timestamp = x.Created;
@@ -40,6 +39,8 @@ namespace ProjectIvy.Model.View.Expense
         public Currency.Currency Currency { get; set; }
 
         public IEnumerable<ExpenseFile> Files { get; set; }
+
+        public decimal? ParentAmount { get; set; }
 
         public Currency.Currency ParentCurrency { get; set; }
 

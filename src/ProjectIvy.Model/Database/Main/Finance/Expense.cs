@@ -54,6 +54,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
 
         public Currency Currency { get; set; }
 
+        public decimal? ParentAmount { get; set; }
+
         public Currency ParentCurrency { get; set; }
 
         public Card Card { get; set; }

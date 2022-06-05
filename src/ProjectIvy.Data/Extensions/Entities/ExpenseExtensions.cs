@@ -2,8 +2,6 @@
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectIvy.Data.Extensions.Entities

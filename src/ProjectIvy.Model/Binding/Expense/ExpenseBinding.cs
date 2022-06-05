@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Model.Binding.Expense
+﻿namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseBinding
     {
@@ -19,6 +17,8 @@ namespace ProjectIvy.Model.Binding.Expense
         public bool NeedsReview { get; set; }
 
         public string PaymentTypeId { get; set; }
+
+        public decimal? ParentAmount { get; set; }
 
         public string ParentCurrencyId { get; set; }
 
