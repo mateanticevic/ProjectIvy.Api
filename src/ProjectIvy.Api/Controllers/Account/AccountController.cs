@@ -21,6 +21,9 @@ namespace ProjectIvy.Api.Controllers.Airport
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] AccountGetBinding binding) => Ok(await _accountHandler.Get(binding));
 
+        [HttpGet("{accountId}/overview")]
+        public async Task<IActionResult> GetOverview(string accountId) => Ok(await _accountHandler.GetOverview(accountId));
+
         [HttpPost("{accountId}/transaction")]
         public async Task<IActionResult> PostTransactions(string accountId, [FromQuery] TransactionSource transactionSource)
         {

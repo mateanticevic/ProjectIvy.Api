@@ -32,6 +32,25 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         }
     }
 
+    public async Task<View.AccountOverview> GetOverview(string accountValueId)
+    {
+        using (var context = GetMainContext())
+        {
+            int accountId = context.Accounts.GetId(accountValueId).Value;
+            decimal sumIn = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount > 0)
+                                                      .SumAsync(x => x.Amount);
+
+            decimal sumOut = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount < 0)
+                                                       .SumAsync(x => x.Amount);
+
+            return new View.AccountOverview()
+            {
+                SumIn = sumIn,
+                SumOut = sumOut
+            };
+        }
+    }
+
     public async Task ProcessHacTransactions(string accountKey, string csv)
     {
         using (var context = GetMainContext())
@@ -172,7 +191,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         }
     }
 
-    public IEnumerable<string> ParseCsvLine(string line, char separator = ',')
+    private IEnumerable<string> ParseCsvLine(string line, char separator = ',')
     {
         var sb = new StringBuilder();
         bool insideQuotes = false;

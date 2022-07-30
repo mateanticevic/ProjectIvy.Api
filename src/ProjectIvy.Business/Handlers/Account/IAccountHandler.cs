@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.Account;
 using View = ProjectIvy.Model.View.Account;
 
@@ -8,6 +7,8 @@ namespace ProjectIvy.Business.Handlers.Account
     public interface IAccountHandler
     {
         Task<IEnumerable<View.Account>> Get(AccountGetBinding b);
+
+        Task<View.AccountOverview> GetOverview(string accountValueId);
 
         Task ProcessHacTransactions(string accountKey, string csv);
 
