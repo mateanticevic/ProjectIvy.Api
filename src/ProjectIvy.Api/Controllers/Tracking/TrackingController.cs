@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Common.Interfaces;
@@ -7,9 +6,8 @@ using ProjectIvy.Common.Parsers;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
@@ -79,6 +77,21 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpPost]
         public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
+
+        [HttpPost("Gpx")]
+        [Consumes("text/xml")]
+        public async Task<IActionResult> PostGpx()
+        {
+            string xmlRaw;
+            using (System.IO.StreamReader reader = new System.IO.StreamReader(Request.Body, Encoding.UTF8))
+            {
+                xmlRaw = await reader.ReadToEndAsync();
+            }
+            var xml = XDocument.Parse(xmlRaw);
+
+            await _trackingHandler.ImportFromGpx(xml);
+            return Ok();
+        }
 
         [HttpPut("Kml")]
         public bool PutKml([FromBody] string kmlRaw)

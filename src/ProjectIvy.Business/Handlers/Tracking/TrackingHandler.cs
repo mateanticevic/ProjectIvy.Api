@@ -247,6 +247,27 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
+        public async Task ImportFromGpx(XDocument xml)
+        {
+            var trackings = GpxHandler.FromGpx(xml);
+            var geohasher = new Geohasher();
+
+            using (var db = GetMainContext())
+            {
+                var entities = trackings.Select(x => new Model.Database.Main.Tracking.Tracking()
+                {
+                    Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9),
+                    Longitude = x.Longitude,
+                    Latitude = x.Latitude,
+                    Timestamp = x.Timestamp,
+                    UserId = UserId
+                }).ToList();
+
+                await db.Trackings.AddRangeAsync(entities);
+                await db.SaveChangesAsync();
+            }
+        }
+
         public bool ImportFromKml(XDocument kml)
         {
             var trackings = KmlHandler.ParseKml(kml)

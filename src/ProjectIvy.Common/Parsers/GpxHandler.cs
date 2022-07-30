@@ -1,12 +1,30 @@
 ﻿using ProjectIvy.Common.Interfaces;
-using System.Collections.Generic;
 using System.Linq;
 using System.Xml.Linq;
+using ProjectIvy.Common.Interfaces.Internal;
+using System.Globalization;
 
 namespace ProjectIvy.Common.Parsers
 {
     public static class GpxHandler
     {
+        public static IEnumerable<ITracking> FromGpx(XDocument xml)
+        {
+            var elements = xml.Root.Document.Descendants().Single(x => x.Name.LocalName == "trk")
+                                     .Descendants().Single(x => x.Name.LocalName == "trkseg")
+                                     .Descendants().Where(x => x.Name.LocalName == "trkpt");
+
+            foreach(var trk in elements)
+            {
+                yield return new Tracking()
+                {
+                    Latitude = decimal.Parse(trk.Attribute("lat").Value, CultureInfo.InvariantCulture),
+                    Longitude = decimal.Parse(trk.Attribute("lon").Value, CultureInfo.InvariantCulture),
+                    Timestamp = DateTime.Parse(trk.Descendants().Single(x => x.Name.LocalName == "time").Value)
+                };
+            }
+        }
+
         public static XDocument ToGpx(this IEnumerable<ITracking> trackings)
         {
             var xdoc = new XDocument();

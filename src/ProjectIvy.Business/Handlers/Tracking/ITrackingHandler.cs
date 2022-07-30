@@ -1,8 +1,6 @@
 ﻿using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
@@ -25,6 +23,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
 
+        int CountUnique(FilteredBinding binding);
+
         double GetAverageSpeed(FilteredBinding binding);
 
         Task<IEnumerable<string>> GetDays(TrackingGetBinding binding);
@@ -37,7 +37,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         Task<View.TrackingLocation> GetLastLocation();
 
-        int CountUnique(FilteredBinding binding);
+        Task ImportFromGpx(XDocument xml);
 
         bool ImportFromKml(XDocument kml);
     }
