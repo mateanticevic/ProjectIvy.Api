@@ -1,6 +1,4 @@
 ﻿using ProjectIvy.Model.Database.Main.Common;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -33,6 +31,8 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public decimal? ParentCurrencyExchangeRate { get; set; }
 
         public DateTime Date { get; set; }
+
+        public DateTime DatePaid { get; set; }
 
         public int ExpenseTypeId { get; set; }
 

@@ -15,6 +15,7 @@ namespace ProjectIvy.Model.View.Expense
             Files = x.ExpenseFiles?.Select(y => y.ConvertTo(p => new ExpenseFile(p)));
             ParentCurrency = x.ParentCurrency?.ConvertTo(y => new Currency.Currency(y));
             Date = x.Date;
+            DatePaid = x.DatePaid;
             ExpenseType = x.ExpenseType.ConvertTo(y => new ExpenseType.ExpenseType(y));
             Id = x.ValueId;
             PaymentType = x.PaymentType.ConvertTo(y => new PaymentType.PaymentType(y));
@@ -45,6 +46,8 @@ namespace ProjectIvy.Model.View.Expense
         public Currency.Currency ParentCurrency { get; set; }
 
         public DateTime Date { get; set; }
+
+        public DateTime DatePaid { get; set; }
 
         public DateTime? Modified { get; set; }
 

@@ -19,6 +19,7 @@ namespace ProjectIvy.Business.MapExtensions
             entity.Comment = binding.Comment;
             entity.CurrencyId = context.Currencies.SingleOrDefault(x => x.Code == binding.CurrencyId).Id;
             entity.Date = binding.Date;
+            entity.DatePaid = binding.DatePaid;
             entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
             entity.Modified = DateTime.Now;
             entity.NeedsReview = binding.NeedsReview;
