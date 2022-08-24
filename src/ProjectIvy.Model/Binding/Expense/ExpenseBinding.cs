@@ -12,7 +12,7 @@
 
         public DateTime Date { get; set; }
 
-        public DateTime DatePaid { get; set; }
+        public DateTime? DatePaid { get; set; }
 
         public string ExpenseTypeId { get; set; }
 
