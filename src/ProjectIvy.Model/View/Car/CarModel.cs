@@ -11,7 +11,7 @@ namespace ProjectIvy.Model.View.Car
             Id = c.ValueId;
             Name = c.Name;
             Power = c.Power;
-            Manufacturer = c.ConvertTo(x => new Manufacturer(x.Manufacturer));
+            Manufacturer = c.Manufacturer == null ? null : c.ConvertTo(x => new Manufacturer(x.Manufacturer));
         }
 
         public short EngineDisplacement { get; set; }
