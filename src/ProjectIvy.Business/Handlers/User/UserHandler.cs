@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Database.Main.User;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.User;
@@ -30,7 +29,8 @@ namespace ProjectIvy.Business.Handlers.User
 
             using (var db = GetMainContext())
             {
-                var userEntity = db.Users.Include(x => x.DefaultCurrency)
+                var userEntity = db.Users.Include(x => x.DefaultCar)
+                                         .Include(x => x.DefaultCurrency)
                                          .Include(x => x.Modules)
                                          .Include("Modules.Module")
                                          .SingleOrDefault(x => x.Id == id);
