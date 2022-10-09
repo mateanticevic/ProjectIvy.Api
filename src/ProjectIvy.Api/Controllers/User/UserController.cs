@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.User;
+using ProjectIvy.Model.Binding.User;
 using View = ProjectIvy.Model.View.User;
 
 namespace ProjectIvy.Api.Controllers.User
@@ -13,5 +15,12 @@ namespace ProjectIvy.Api.Controllers.User
 
         [HttpGet]
         public View.User Get() => _userHandler.Get();
+
+        [HttpPut]
+        public async Task<IActionResult> Put([FromBody] UserUpdateBinding binding)
+        {
+            await _userHandler.Update(binding);
+            return Ok();
+        }
     }
 }

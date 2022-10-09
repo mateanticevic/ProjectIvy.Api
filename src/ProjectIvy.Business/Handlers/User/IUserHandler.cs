@@ -11,5 +11,7 @@ namespace ProjectIvy.Business.Handlers.User
         View.User Get(int? id = null);
 
         Task SetWeight(decimal weight);
+
+        Task Update(UserUpdateBinding binding);
     }
 }

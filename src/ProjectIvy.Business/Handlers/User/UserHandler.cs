@@ -1,8 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Database.Main.User;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
+using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding.User;
+using ProjectIvy.Model.Database.Main.User;
 using View = ProjectIvy.Model.View.User;
 
 namespace ProjectIvy.Business.Handlers.User
@@ -37,6 +39,17 @@ namespace ProjectIvy.Business.Handlers.User
                                          .SingleOrDefault(x => x.Id == id);
 
                 return new View.User(userEntity);
+            }
+        }
+
+        public async Task Update(UserUpdateBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
+                context.Update(binding.ToEntity(context, user));
+
+                await context.SaveChangesAsync();
             }
         }
 
