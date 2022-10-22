@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.Model.Database.Main.Finance;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -15,7 +14,15 @@ namespace ProjectIvy.Model.Database.Main.Common
 
         public string Name { get; set; }
 
+        public string Administration { get; set; }
+
         public int CountryId { get; set; }
+
+        public decimal? Lat { get; set; }
+
+        public decimal? Lng { get; set; }
+
+        public long? Population { get; set; }
 
         public Country Country { get; set; }
 
