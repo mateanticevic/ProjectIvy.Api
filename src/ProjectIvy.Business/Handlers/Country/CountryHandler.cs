@@ -113,14 +113,14 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                var countries = context.TripCities
+                var countries = context.CitiesVisited
                                        .Include(x => x.Trip)
                                        .Include(x => x.City)
                                        .Where(x => x.Trip.UserId == UserId)
                                        .Where(x => x.Trip.TimestampEnd < DateTime.Now)
                                        .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
                                        .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
-                                       .Select(x => new { EnteredOn = x.EnteredOn, x.City.Country, TimestampStart = x.Trip.TimestampStart })
+                                       .Select(x => new { EnteredOn = x.Timestamp, x.City.Country, TimestampStart = x.Trip.TimestampStart })
                                        .OrderBy(x => x.TimestampStart)
                                        .ThenBy(x => x.EnteredOn)
                                        .Select(x => new View.Country(x.Country))

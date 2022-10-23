@@ -66,6 +66,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<CityVisited> CitiesVisited { get; set; }
+
         public DbSet<Consumation> Consumations { get; set; }
 
         public DbSet<Contact> Contacts { get; set; }
@@ -142,8 +144,6 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Trip> Trips { get; set; }
 
-        public DbSet<TripCity> TripCities { get; set; }
-
         public DbSet<TripPoi> TripPois { get; set; }
 
         public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }
@@ -174,19 +174,19 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<Trip>()
                         .HasMany(p => p.Cities)
                         .WithMany(p => p.Trips)
-                        .UsingEntity<TripCity>(
+                        .UsingEntity<CityVisited>(
                             j => j
-                                .HasOne(tc => tc.City)
+                                .HasOne(cv => cv.City)
                                 .WithMany()
-                                .HasForeignKey(tc => tc.CityId),
+                                .HasForeignKey(cv => cv.CityId),
                             j => j
-                                .HasOne(tc => tc.Trip)
+                                .HasOne(cv => cv.Trip)
                                 .WithMany()
-                                .HasForeignKey(tc => tc.TripId),
+                                .HasForeignKey(cv => cv.TripId),
                             j =>
                             {
-                                j.Property(tc => tc.EnteredOn);
-                                j.HasKey(tc => new { tc.TripId, tc.CityId });
+                                j.Property(cv => cv.Timestamp);
+                                j.HasKey(cv => cv.Id);
                             });
 
             modelBuilder.Entity<Trip>()

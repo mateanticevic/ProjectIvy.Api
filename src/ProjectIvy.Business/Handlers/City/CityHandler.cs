@@ -2,8 +2,6 @@
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.City;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
@@ -34,13 +32,11 @@ namespace ProjectIvy.Business.Handlers.City
         {
             using (var context = GetMainContext())
             {
-                var cities = context.Trips
+                var cities = context.CitiesVisited
+                                    .Include(x => x.City)
                                     .WhereUser(UserId)
-                                    .Where(x => x.TimestampEnd < DateTime.Now)
-                                    .Include(x => x.Cities)
-                                    .OrderBy(x => x.TimestampStart)
-                                    .SelectMany(x => x.Cities)
-                                    .Select(x => new View.City(x))
+                                    .Where(x => !x.TripId.HasValue || x.Trip.TimestampEnd < DateTime.Now)
+                                    .Select(x => new View.City(x.City))
                                     .ToList();
 
                 return cities.Distinct(new View.CityComparer());

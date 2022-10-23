@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
-    [Table(nameof(Country), Schema = "Common")]
+    [Table(nameof(Country), Schema = nameof(Common))]
     public class Country : IHasValueId, IHasName
     {
         [Key]
