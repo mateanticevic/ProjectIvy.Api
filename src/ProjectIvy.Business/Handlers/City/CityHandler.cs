@@ -14,6 +14,22 @@ namespace ProjectIvy.Business.Handlers.City
         {
         }
 
+        public async Task AddVisitedCity(string cityValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int cityId = context.Cities.GetId(cityValueId).Value;
+                var entity = new Model.Database.Main.Travel.CityVisited()
+                {
+                    CityId = cityId,
+                    UserId = UserId
+                };
+
+                await context.CitiesVisited.AddAsync(entity);
+                await context.SaveChangesAsync();
+            }
+        }
+
         public async Task<PagedView<View.City>> Get(CityGetBinding binding)
         {
             using (var context = GetMainContext())

@@ -1,10 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.City;
 using ProjectIvy.Model.Binding.City;
-using ProjectIvy.Model.Constants.Database;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
 
@@ -24,5 +21,12 @@ namespace ProjectIvy.Api.Controllers.City
 
         [HttpGet("Visited")]
         public IEnumerable<View.City> GetVisited() => _cityHandler.GetVisited();
+
+        [HttpPost("Visited/{cityId}")]
+        public async Task<IActionResult> PostVisited(string cityId)
+        {
+            await _cityHandler.AddVisitedCity(cityId);
+            return Ok();
+        }
     }
 }
