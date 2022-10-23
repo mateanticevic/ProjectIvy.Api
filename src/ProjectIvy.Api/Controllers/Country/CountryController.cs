@@ -1,13 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Binding.Trip;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Country;
 

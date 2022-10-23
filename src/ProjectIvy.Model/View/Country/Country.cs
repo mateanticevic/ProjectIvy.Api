@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Country
 {
@@ -11,11 +10,14 @@ namespace ProjectIvy.Model.View.Country
         {
             Name = x.Name;
             Id = x.ValueId;
+            Population = x.Population;
         }
 
         public string Id { get; set; }
 
         public string Name { get; set; }
+
+        public long? Population { get; set; }
     }
 
     public class CountryComparer : IEqualityComparer<Country>

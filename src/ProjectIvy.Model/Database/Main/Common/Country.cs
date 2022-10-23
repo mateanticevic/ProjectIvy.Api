@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Common
@@ -13,6 +12,8 @@ namespace ProjectIvy.Model.Database.Main.Common
         public string ValueId { get; set; }
 
         public string Name { get; set; }
+
+        public long? Population { get; set; }
 
         public ICollection<City> Cities { get; set; }
     }
