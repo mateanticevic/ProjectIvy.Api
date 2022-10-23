@@ -35,9 +35,10 @@ namespace ProjectIvy.Business.Handlers.City
             using (var context = GetMainContext())
             {
                 var query = context.Cities.Include(x => x.Country)
-                                          .WhereIf(!string.IsNullOrEmpty(binding.Search), city => city.Name.ToLower().Contains(binding.Search.ToLower()))
+                                          .WhereIf(!string.IsNullOrEmpty(binding.Search), city => city.Name.ToLower().Contains(binding.Search.ToLower()) || city.ValueId.ToLower().Contains(binding.Search.ToLower()))
                                           .WhereIf(!string.IsNullOrEmpty(binding.CountryId), city => city.Country.ValueId == binding.CountryId)
-                                          .OrderBy(x => x.Name)
+                                          .OrderByDescending(x => x.ValueId == binding.Search)
+                                          .ThenBy(x => x.Name)
                                           .Select(x => new View.City(x));
 
                 return await query.ToPagedViewAsync(binding);
