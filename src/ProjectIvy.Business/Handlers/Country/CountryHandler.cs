@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
@@ -72,6 +73,18 @@ namespace ProjectIvy.Business.Handlers.Country
             }
         }
 
+        public async Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int countryId = context.Countries.GetId(countryValueId).Value;
+                return context.Cities.Where(x => x.CountryId == countryId)
+                                           .OrderByDescending(x => x.Population)
+                                           .Select(x => new Model.View.City.City(x))
+                                           .ToPagedView(binding);
+            }
+        }
+
         public async Task<IEnumerable<View.CountryList>> GetLists()
         {
             using (var context = GetMainContext())
@@ -135,7 +148,7 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
-                var countryValueIds = countries.Select(x => x.Id);
+                var countryValueIds = countries.Select(x => x.Id);
                 var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
                                                       .Include(x => x.Country)
                                                       .ToList();

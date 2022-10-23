@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProjectIvy.Model.Binding.Expense
+﻿namespace ProjectIvy.Model.Binding.Expense
 {
     public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>
     {

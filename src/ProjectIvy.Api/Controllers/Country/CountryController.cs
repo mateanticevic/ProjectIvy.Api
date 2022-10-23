@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Country;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
@@ -17,6 +18,9 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet]
         public PagedView<View.Country> Get(CountryGetBinding binding) => _countryHandler.Get(binding);
+
+        [HttpGet("{countryId}/City")]
+        public async Task<PagedView<Model.View.City.City>> GetCities(string countryId, [FromQuery] FilteredPagedBinding binding) => await _countryHandler.GetCities(countryId, binding);
 
         [HttpGet("Count")]
         public long GetCount(CountryGetBinding binding) => _countryHandler.Count(binding);
