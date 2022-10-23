@@ -7,8 +7,10 @@ pipeline {
     }
     stages {
         stage('SCM') {
-            cleanWs()
-            checkout scm
+            steps {
+                cleanWs()
+                checkout scm
+            }
         }
         stage('Build') {
             steps {
