@@ -2,7 +2,14 @@ pipeline {
     agent {
         label 'worker'
     }
+    options {
+        skipDefaultCheckout true
+    }
     stages {
+        stage('SCM') {
+            cleanWs()
+            checkout scm
+        }
         stage('Build') {
             steps {
                 script {
