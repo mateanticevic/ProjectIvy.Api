@@ -6,6 +6,16 @@ namespace ProjectIvy.Data.Extensions.Entities
 {
     public static class ExpenseTypesExtensions
     {
+        public static ExpenseType ToParentType(this ExpenseType type)
+        {
+            while(type.ParentTypeId.HasValue)
+            {
+                type = type.ParentType;
+            }
+
+            return type;
+        }
+
         public static IEnumerable<int> ToChildTypeIds(this IEnumerable<ExpenseType> types, IEnumerable<int> parentTypeIds)
         {
             var firstLevelIds = types.Where(x => x.ParentTypeId.HasValue && parentTypeIds.Contains(x.ParentTypeId.Value))

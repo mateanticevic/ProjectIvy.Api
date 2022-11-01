@@ -460,7 +460,21 @@ namespace ProjectIvy.Business.Handlers.Expense
             using var sql = GetSqlConnection();
             var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), query);
 
-            return results.Select(x => new KeyValuePair<string, decimal>(x.TypeValueId, Math.Round(x.Amount, 2))).ToList();
+            if (binding.ByBaseType)
+            {
+                var typeIds = results.Select(x => x.TypeId).ToList();
+                var types = context.ExpenseTypes.GetAll()
+                                                .Where(x => typeIds.Contains(x.Id))
+                                                .Select(x => (x.Id, x.ToParentType().ValueId))
+                                                .Distinct()
+                                                .ToList();
+
+                return results.Join(types, x => x.TypeId, x => x.Id, (a, b) => (b.ValueId, a.Amount))
+                              .GroupBy(x => x.ValueId)
+                              .Select(x => new KeyValuePair<string, decimal>(x.Key, Math.Round(x.Sum(y => y.Amount), 2)));
+            }
+            else
+                return results.Select(x => new KeyValuePair<string, decimal>(x.TypeValueId, Math.Round(x.Amount, 2))).ToList();
         }
 
         public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)

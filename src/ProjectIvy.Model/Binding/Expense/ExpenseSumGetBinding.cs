@@ -8,6 +8,8 @@ namespace ProjectIvy.Model.Binding.Expense
 
         public ExpenseSumGetBinding(FilteredBinding binding) : base(binding) { }
 
+        public bool ByBaseType { get; set; }
+
         public string TargetCurrencyId { get; set; }
 
         public ExpenseSumGetBinding Override(string typeId)
