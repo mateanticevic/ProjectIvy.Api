@@ -53,6 +53,8 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         IEnumerable<KeyValuePair<int, decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
 
+        Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType(ExpenseSumGetBinding binding);
+
         Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding);
 
         Task<decimal> SumAmount(ExpenseSumGetBinding binding);

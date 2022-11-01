@@ -411,11 +411,24 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        //public Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType()
-        //{
-        //    using var context = GetMainContext();
+        public async Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType(ExpenseSumGetBinding binding)
+        {
+            using var context = GetMainContext();
+            int startYear = context.Expenses.WhereUser(UserId)
+                                .Where(binding, context)
+                                .OrderBy(x => x.Date)
+                                .FirstOrDefault().Date.Year;
+            int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
-        //}
+            var years = Enumerable.Range(startYear, endYear - startYear + 1);
+
+            var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
+
+            var tasks = periods.Select(x => new KeyValuePair<short, Task<IEnumerable<KeyValuePair<string, decimal>>>>((short)x.From.Value.Year, SumByType(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
+            await Task.WhenAll(tasks.Select(x => x.Value));
+
+            return tasks.Select(x => new KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>(x.Key, x.Value.Result));
+        }
 
         public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding)
         {
