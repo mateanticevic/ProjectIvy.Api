@@ -32,8 +32,15 @@ namespace ProjectIvy.Business.Handlers.Trip
         {
             using (var context = GetMainContext())
             {
-                var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
-                context.Trips.Include(x => x.Cities).SingleOrDefault(x => x.ValueId == tripValueId).Cities.Add(city);
+                int cityId = context.Cities.GetId(cityValueId).Value;
+                int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
+                var cityVisited = new CityVisited()
+                {
+                    CityId = cityId,
+                    TripId = tripId,
+                    UserId = UserId
+                };
+                context.CitiesVisited.Add(cityVisited);
                 context.SaveChanges();
             }
         }
