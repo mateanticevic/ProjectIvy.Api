@@ -411,6 +411,12 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        //public Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType()
+        //{
+        //    using var context = GetMainContext();
+
+        //}
+
         public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
@@ -432,23 +438,29 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding)
         {
-            using (var context = GetMainContext())
+            using var context = GetMainContext();
+
+            int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
+
+            var expenseIds = context.Expenses.WhereUser(UserId)
+                                             .Where(binding, context)
+                                             .Select(x => x.Id)
+                                             .ToList();
+
+            if (!expenseIds.Any())
+                return default;
+
+            var query = new GetExpenseSumQuery()
             {
-                var result = context.Expenses.Include(x => x.ExpenseType)
-                                             .WhereUser(UserId);
+                ExpenseIds = expenseIds,
+                TargetCurrencyId = targetCurrencyId,
+                UserId = UserId
+            };
 
-                result = binding.From.HasValue ? result.Where(x => x.Date >= binding.From) : result;
-                result = binding.To.HasValue ? result.Where(x => x.Date <= binding.To) : result;
+            using var sql = GetSqlConnection();
+            var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), query);
 
-                var types = result.Select(x => x.ExpenseType.ValueId).Distinct().ToList();
-
-                var tasks = types.Select(x => new KeyValuePair<string, Task<decimal>>(x, SumAmount(binding.Override(x))));
-
-                await Task.WhenAll(tasks.Select(x => x.Value));
-
-                return tasks.Select(x => new KeyValuePair<string, decimal>(x.Key, x.Value.Result))
-                            .OrderByDescending(x => x.Value);
-            }
+            return results.Select(x => new KeyValuePair<string, decimal>(x.TypeValueId, Math.Round(x.Amount, 2))).ToList();
         }
 
         public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)

@@ -76,6 +76,9 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Sum/ByYear")]
         public IActionResult GetSumByYear([FromQuery] ExpenseSumGetBinding binding) => Ok(_expenseHandler.SumAmountByYear(binding));
 
+        //[HttpGet("Sum/ByYear/ByType")]
+        //public Task<IActionResult> GetSumByYearByType() => Ok();
+
         [HttpGet("Sum/ByMonth")]
         public async Task<IActionResult> GetSumByMonth([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumAmountByMonth(binding));
 

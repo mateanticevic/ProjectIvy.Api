@@ -7,6 +7,8 @@
 
         public static string GetConsumationSumByDayOfWeek { get; } = Build(nameof(GetConsumationSumByDayOfWeek));
 
+        public static string GetExpenseSumByType { get; } = Build(nameof(GetExpenseSumByType));
+
         public static string GetExpenseSumInDefaultCurrency { get; } = Build(nameof(GetExpenseSumInDefaultCurrency));
 
         public static string GetIncomeSum { get; } = Build(nameof(GetIncomeSum));

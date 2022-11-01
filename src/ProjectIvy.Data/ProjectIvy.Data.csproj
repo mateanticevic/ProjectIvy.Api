@@ -14,6 +14,7 @@
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByMonth.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetConsumationSumByDayOfWeek.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumByType.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,4 +37,7 @@
     <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Sql\Main\Scripts\GetExpenseSumByType.sql" />
+  </ItemGroup>
 </Project>
