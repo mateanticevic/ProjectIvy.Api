@@ -26,6 +26,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FDAEC8B1
 		Jenkinsfile = Jenkinsfile
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6CEFA7A4-61BF-4730-8E74-4F6407051F82}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Data.Test", "ProjectIvy.Data.Test\ProjectIvy.Data.Test.csproj", "{A82C5647-2D25-4E15-B79A-D13E2D654322}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -52,6 +56,10 @@ Global
 		{A363F585-049A-42D2-9FC1-1001222E45F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A363F585-049A-42D2-9FC1-1001222E45F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A363F585-049A-42D2-9FC1-1001222E45F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +70,7 @@ Global
 		{17E941D2-B071-4E44-99F8-78C33534EC3A} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{9CFFFF3A-17B2-4B71-B115-57AF585FEAE3} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{A363F585-049A-42D2-9FC1-1001222E45F6} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
+		{A82C5647-2D25-4E15-B79A-D13E2D654322} = {6CEFA7A4-61BF-4730-8E74-4F6407051F82}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {094A78B9-5ADC-417E-BC22-075E7229DC0C}
