@@ -100,8 +100,14 @@ namespace ProjectIvy.Business.Handlers.Trip
 
                 foreach (string cityValueId in binding.CityIds.EmptyIfNull())
                 {
-                    var city = context.Cities.SingleOrDefault(x => x.ValueId == cityValueId);
-                    trip.Cities.Add(city);
+                    var cityId = context.Cities.GetId(cityValueId).Value;
+                    var cityVisited = new CityVisited()
+                    {
+                        CityId = cityId,
+                        Trip = trip,
+                        UserId = UserId
+                    };
+                    context.CitiesVisited.Add(cityVisited);
                 }
 
                 context.SaveChanges();
