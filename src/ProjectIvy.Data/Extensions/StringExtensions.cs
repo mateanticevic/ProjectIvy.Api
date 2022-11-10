@@ -7,7 +7,7 @@ namespace ProjectIvy.Data.Extensions
         private static IEnumerable<(string, string)> _replacements =
             new List<(string, string)>()
             {
-                ("#|\'|'°|(|)|:|.|,|-", string.Empty),
+                (@"#|\'|'°|\(|\)|:|\.|,|-", string.Empty),
                 (" ", "-"),
                 ("õ|ö|ó|ø", "o"),
                 ("á", "a"),
