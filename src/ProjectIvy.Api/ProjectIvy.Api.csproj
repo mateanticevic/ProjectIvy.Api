@@ -35,4 +35,37 @@
     <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="logs\log20211103.txt" />
+    <None Remove="logs\log20220730.txt" />
+    <None Remove="logs\log20220108.txt" />
+    <None Remove="logs\log20211101.txt" />
+    <None Remove="logs\log20211111.txt" />
+    <None Remove="logs\log20211110.txt" />
+    <None Remove="logs\log20220324.txt" />
+    <None Remove="logs\log20211106.txt" />
+    <None Remove="logs\log20211113.txt" />
+    <None Remove="logs\log20211107.txt" />
+    <None Remove="logs\log20220430.txt" />
+    <None Remove="logs\log20220222.txt" />
+    <None Remove="logs\log20221101.txt" />
+    <None Remove="logs\log20220226.txt" />
+    <None Remove="logs\log20221110.txt" />
+    <None Remove="logs\log20211021.txt" />
+    <None Remove="logs\log20211022.txt" />
+    <None Remove="logs\log20211023.txt" />
+    <None Remove="logs\log20211024.txt" />
+    <None Remove="logs\log20211019.txt" />
+    <None Remove="logs\log20220824.txt" />
+    <None Remove="logs\log20221022.txt" />
+    <None Remove="logs\log20221023.txt" />
+    <None Remove="logs\log20220129.txt" />
+    <None Remove="logs\log20221009.txt" />
+    <None Remove="logs\log20211108.txt" />
+    <None Remove="logs\log20221008.txt" />
+    <None Remove="logs\log20211124.txt" />
+    <None Remove="logs\log20220305.txt" />
+    <None Remove="logs\log20220729.txt" />
+    <None Remove="logs\log20220106.txt" />
+  </ItemGroup>
 </Project>

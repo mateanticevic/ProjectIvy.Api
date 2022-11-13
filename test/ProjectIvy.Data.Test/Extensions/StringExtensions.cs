@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Data.Extensions;
+﻿
+using ProjectIvy.Data.Extensions;
 
 namespace ProjectIvy.Data.Test.Extensions;
 

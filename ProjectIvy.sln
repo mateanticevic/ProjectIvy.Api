@@ -28,7 +28,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{FDAEC8B1
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6CEFA7A4-61BF-4730-8E74-4F6407051F82}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Data.Test", "ProjectIvy.Data.Test\ProjectIvy.Data.Test.csproj", "{A82C5647-2D25-4E15-B79A-D13E2D654322}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Data.Test", "test\ProjectIvy.Data.Test\ProjectIvy.Data.Test.csproj", "{A82C5647-2D25-4E15-B79A-D13E2D654322}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

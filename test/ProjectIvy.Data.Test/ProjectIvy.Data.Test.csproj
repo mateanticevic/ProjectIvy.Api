@@ -28,6 +28,6 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\src\ProjectIvy.Data\ProjectIvy.Data.csproj" />
+    <ProjectReference Include="..\..\src\ProjectIvy.Data\ProjectIvy.Data.csproj" />
   </ItemGroup>
 </Project>
