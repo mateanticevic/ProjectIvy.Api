@@ -87,7 +87,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
             using (var db = GetMainContext())
             {
-                await db.Trackings.AddRangeAsync(binding.Select(x =>
+                var timestamps = binding.Select(x => x.Timestamp).ToList();
+                var existingTimestamps = await db.Trackings.WhereUser(UserId)
+                                                           .Where(x => timestamps.Contains(x.Timestamp))
+                                                           .Select(x => x.Timestamp)
+                                                           .ToListAsync();
+
+                await db.Trackings.AddRangeAsync(binding.Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
                 {
                     var entity = x.ToEntity();
                     entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
