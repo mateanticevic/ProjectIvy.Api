@@ -1,6 +1,7 @@
 ﻿using GeoCoordinatePortable;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Data.Extensions;
@@ -83,25 +84,36 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public async Task Create(IEnumerable<TrackingBinding> binding)
         {
-            var geohasher = new Geohasher();
-
-            using (var db = GetMainContext())
+            try
             {
-                var timestamps = binding.Select(x => x.Timestamp).ToList();
-                var existingTimestamps = await db.Trackings.WhereUser(UserId)
-                                                           .Where(x => timestamps.Contains(x.Timestamp))
-                                                           .Select(x => x.Timestamp)
-                                                           .ToListAsync();
+                var geohasher = new Geohasher();
 
-                await db.Trackings.AddRangeAsync(binding.Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
+                using (var db = GetMainContext())
                 {
-                    var entity = x.ToEntity();
-                    entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
-                    entity.UserId = UserId;
-                    return entity;
-                }));
+                    var timestamps = binding.Select(x => x.Timestamp).ToList();
+                    Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
-                await db.SaveChangesAsync();
+                    var existingTimestamps = await db.Trackings.WhereUser(UserId)
+                                                               .Where(x => timestamps.Contains(x.Timestamp))
+                                                               .Select(x => x.Timestamp)
+                                                               .ToListAsync();
+                    Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
+
+                    await db.Trackings.AddRangeAsync(binding.Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
+                    {
+                        var entity = x.ToEntity();
+                        entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
+                        entity.UserId = UserId;
+                        return entity;
+                    }));
+
+                    int affeted = await db.SaveChangesAsync();
+                    Logger.LogInformation("Inserted {TrackingCount} trackins", affeted);
+                }
+            }
+            catch (Exception e)
+            {
+                Logger.LogError(e, "Failed to save trackings");
             }
         }
 
