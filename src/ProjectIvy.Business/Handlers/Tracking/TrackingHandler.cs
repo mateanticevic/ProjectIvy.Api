@@ -94,8 +94,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
                     var existingTimestamps = await db.Trackings.WhereUser(UserId)
-                                                               .Where(x => timestamps.Contains(x.Timestamp))
-                                                               .Select(x => x.Timestamp)
+                                                               .Join(timestamps, x => x.Timestamp, x => x, (a, b) => a.Timestamp)
                                                                .ToListAsync();
                     Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
 

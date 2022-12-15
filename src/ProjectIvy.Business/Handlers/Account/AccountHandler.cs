@@ -115,17 +115,17 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 if (string.IsNullOrWhiteSpace(item))
                     continue;
 
-                string[] parts = ParseCsvLine(item).ToArray();
+                string[] parts = ParseCsvLine(item, ';').ToArray();
                 var transaction = new Transaction()
                 {
                     AccountId = accountId,
-                    Amount = Convert.ToDecimal(parts[5]),
+                    Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
                     Description = parts[4],
                     Created = DateTime.Parse(parts[2]),
                     Type = parts[0]
                 };
 
-                if (decimal.TryParse(parts[9], out decimal balance))
+                if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
                     transaction.Balance = balance;
 
                 if (DateTime.TryParse(parts[3], out DateTime completed))
