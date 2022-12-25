@@ -17,6 +17,10 @@ namespace ProjectIvy.Model.Database.Main.Tracking
 
         public decimal Longitude { get; set; }
 
+        public int LocationTypeId { get; set; }
+
         public int Radius { get; set; }
+
+        public LocationType LocationType { get; set; }
     }
 }

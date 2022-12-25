@@ -242,6 +242,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             using (var context = GetMainContext())
             {
                 var userLocations = await context.Locations.WhereUser(UserId)
+                                                           .Include(x => x.LocationType)
                                                            .ToListAsync();
                 var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
                 return new View.TrackingLocation()
