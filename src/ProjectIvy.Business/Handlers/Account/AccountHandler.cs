@@ -110,6 +110,10 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             int accountId = context.Accounts.GetId(accountKey).Value;
 
             var transactions = new List<Transaction>();
+            var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
+                                                               .Select(x => x.Created)
+                                                               .ToListAsync();
+
             foreach (string item in csv.Split("\n").Skip(1))
             {
                 if (string.IsNullOrWhiteSpace(item))
@@ -124,6 +128,9 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                     Created = DateTime.Parse(parts[2]),
                     Type = parts[0]
                 };
+
+                if (existingTimestamps.Contains(transaction.Created))
+                    continue;
 
                 if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
                     transaction.Balance = balance;
