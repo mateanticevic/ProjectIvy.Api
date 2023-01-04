@@ -582,7 +582,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                     var transaction = new Model.Database.Main.Finance.Transaction()
                     {
                         AccountId = accountId.Value,
-                        Amount = expense.Amount,
+                        Amount = -expense.Amount,
                         Created = expense.Date
                     };
                     expense.Transaction = transaction;
