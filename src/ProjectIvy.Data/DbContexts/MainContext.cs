@@ -274,6 +274,10 @@ namespace ProjectIvy.Data.DbContexts
                         .Property(x => x.Longitude)
                         .HasColumnType("numeric(9, 6)");
 
+            modelBuilder.Entity<Tracking>()
+                        .Property(x => x.Timestamp)
+                        .HasColumnType("datetime");
+
             modelBuilder.Entity<Expense>()
                         .Property(x => x.ParentCurrencyExchangeRate)
                         .HasPrecision(22, 10);

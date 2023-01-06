@@ -94,8 +94,10 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
                     var existingTimestamps = await db.Trackings.WhereUser(UserId)
-                                                               .Join(timestamps, x => x.Timestamp, x => x, (a, b) => a.Timestamp)
+                                                               .Where(x => timestamps.Contains(x.Timestamp))
+                                                               .Select(x => x.Timestamp)
                                                                .ToListAsync();
+
                     Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
 
                     await db.Trackings.AddRangeAsync(binding.Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
@@ -123,7 +125,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             using (var context = GetMainContext())
             {
                 var trackings = context.Trackings.WhereUser(UserId)
-                                                       .Where(x => x.Timestamp == EF.Functions.DateTimeFromParts(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond));
+                                                 .Where(x => x.Timestamp == EF.Functions.DateTimeFromParts(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond));
 
                 context.Trackings.RemoveRange(trackings);
                 await context.SaveChangesAsync();
