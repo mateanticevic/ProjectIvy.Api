@@ -91,6 +91,11 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
                 using (var db = GetMainContext())
                 {
+                    foreach (var b in binding)
+                    {
+                        b.Timestamp = new DateTime(b.Timestamp.Year, b.Timestamp.Month, b.Timestamp.Day, b.Timestamp.Hour, b.Timestamp.Minute, b.Timestamp.Second, b.Timestamp.Millisecond);
+                    }
+
                     var timestamps = binding.Select(x => x.Timestamp).ToList();
                     Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
