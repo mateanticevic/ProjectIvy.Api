@@ -2,6 +2,7 @@
 using Geohash;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Data.Extensions;
@@ -93,6 +94,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     var timestamps = binding.Select(x => x.Timestamp).ToList();
                     Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
+                    Logger.LogInformation(JsonConvert.SerializeObject(timestamps));
+
                     var existingTimestamps = await db.Trackings.WhereUser(UserId)
                                                                .Where(x => timestamps.Contains(x.Timestamp))
                                                                .Select(x => x.Timestamp)
@@ -102,7 +105,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
                     var trackings = binding.GroupBy(x => x.Timestamp)
                                            .Select(x => x.First())
-                                           .Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
+                                           .Where(x => !existingTimestamps.Contains(x.Timestamp))
+                                           .Select(x =>
                     {
                         var entity = x.ToEntity();
                         entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
