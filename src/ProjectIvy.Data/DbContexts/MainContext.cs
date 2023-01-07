@@ -276,7 +276,7 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<Tracking>()
                         .Property(x => x.Timestamp)
-                        .HasColumnType("datetime");
+                        .HasColumnType("datetime2(3)");
 
             modelBuilder.Entity<Expense>()
                         .Property(x => x.ParentCurrencyExchangeRate)

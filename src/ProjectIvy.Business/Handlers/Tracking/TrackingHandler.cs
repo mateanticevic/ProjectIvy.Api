@@ -99,8 +99,6 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     var timestamps = binding.Select(x => x.Timestamp).ToList();
                     Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
 
-                    Logger.LogInformation(JsonConvert.SerializeObject(timestamps));
-
                     var existingTimestamps = await db.Trackings.WhereUser(UserId)
                                                                .Where(x => timestamps.Contains(x.Timestamp))
                                                                .Select(x => x.Timestamp)
