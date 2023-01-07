@@ -13,7 +13,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         Task Create(IEnumerable<TrackingBinding> binding);
 
-        Task Delete(long timestamp);
+        Task Delete(IEnumerable<long> timestamps);
 
         IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
 

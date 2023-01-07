@@ -9,6 +9,7 @@ using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
+using ProjectIvy.Model.Services.LastFm;
 using ProjectIvy.Model.View;
 using System.Linq;
 using System.Threading.Tasks;
@@ -128,16 +129,18 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
-        public async Task Delete(long timestamp)
+        public async Task Delete(IEnumerable<long> timestamps)
         {
-            var dt = DateTimeOffset.FromUnixTimeMilliseconds(timestamp).LocalDateTime;
-            var dateTime = new DateTime(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond, DateTimeKind.Utc);
+            var dateTimes = timestamps.Select(x => DateTimeOffset.FromUnixTimeMilliseconds(x).UtcDateTime);
             using (var context = GetMainContext())
             {
-                var trackings = context.Trackings.WhereUser(UserId)
-                                                 .Where(x => x.Timestamp == EF.Functions.DateTimeFromParts(dt.Year, dt.Month, dt.Day, dt.Hour, dt.Minute, dt.Second, dt.Millisecond));
+                var trackings = await context.Trackings.WhereUser(UserId)
+                                                       .Where(x => dateTimes.Contains(x.Timestamp))
+                                                       .ToListAsync();
 
                 context.Trackings.RemoveRange(trackings);
+                Logger.LogInformation("Removed {TrackingCount} trackings", trackings.Count);
+
                 await context.SaveChangesAsync();
             }
         }

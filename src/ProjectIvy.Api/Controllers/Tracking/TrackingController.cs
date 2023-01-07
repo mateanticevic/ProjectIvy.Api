@@ -26,7 +26,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpDelete("{timestamp}")]
         public async Task<IActionResult> Delete(long timestamp)
         {
-            await _trackingHandler.Delete(timestamp);
+            await _trackingHandler.Delete(new long[] { timestamp });
             return Ok();
         }
 
@@ -77,6 +77,13 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpPost]
         public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
+
+        [HttpPost("Delete")]
+        public async Task<IActionResult> PostDelete([FromBody] IEnumerable<long> timestamps)
+        {
+            await _trackingHandler.Delete(timestamps);
+            return Ok();
+        }
 
         [HttpPost("Gpx")]
         [Consumes("text/xml")]
