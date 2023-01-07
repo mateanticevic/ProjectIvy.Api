@@ -100,13 +100,16 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
                     Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
 
-                    await db.Trackings.AddRangeAsync(binding.Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
+                    var trackings = binding.GroupBy(x => x.Timestamp)
+                                           .Select(x => x.First())
+                                           .Where(x => !existingTimestamps.Contains(x.Timestamp)).Select(x =>
                     {
                         var entity = x.ToEntity();
                         entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
                         entity.UserId = UserId;
                         return entity;
-                    }));
+                    }).ToList();
+                    await db.Trackings.AddRangeAsync(trackings);
 
                     int affeted = await db.SaveChangesAsync();
                     Logger.LogInformation("Inserted {TrackingCount} trackins", affeted);
@@ -114,7 +117,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
             catch (Exception e)
             {
-                Logger.LogError(e, "Failed to save trackings");
+                Logger.LogError(e?.InnerException, "Failed to save trackings");
             }
         }
 
