@@ -74,7 +74,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
             using (var context = GetMainContext())
             {
-                var geohashes = Enumerable.Range(0, geohash.Length - 2)
+                var geohashes = Enumerable.Range(0, geohash.Length)
                                           .Select(x => geohash.Substring(0, geohash.Length - x))
                                           .ToList();
 
