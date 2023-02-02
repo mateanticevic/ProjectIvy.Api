@@ -236,22 +236,11 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
-        public View.Tracking GetLast(DateTime? at = null)
-        {
-            using (var db = GetMainContext())
-            {
-                var tracking = db.Trackings.WhereUser(UserId)
-                                           .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
-                                           .OrderByDescending(x => x.Timestamp)
-                                           .FirstOrDefault();
-
-                return new View.Tracking(tracking);
-            }
-        }
+        public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
 
         public async Task<View.TrackingLocation> GetLastLocation()
         {
-            var tracking = GetLast();
+            var tracking = await GetLastTracking();
             var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
 
             using (var context = GetMainContext())
@@ -262,8 +251,9 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
                 return new View.TrackingLocation()
                 {
-                    Tracking = tracking,
-                    Location = location != null ? new View.Location(location) : null
+                    Country = await GeohashToCountry(tracking.Geohash),
+                    Location = location != null ? new View.Location(location) : null,
+                    Tracking = new View.Tracking(tracking)
                 };
             }
         }
@@ -317,6 +307,33 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 db.SaveChanges();
 
                 return true;
+            }
+        }
+
+        private async Task<Model.View.Country.Country> GeohashToCountry(string geohash)
+        {
+            using (var context = GetMainContext())
+            {
+                var geohashes = Enumerable.Range(0, geohash.Length - 2)
+                                          .Select(x => geohash.Substring(0, geohash.Length - x))
+                                          .ToList();
+
+                return await context.GeohashCountries.Include(x => x.Country)
+                                                     .Where(x => geohashes.Contains(x.Geohash))
+                                                     .OrderByDescending(x => x.Geohash.Length)
+                                                     .Select(x => new Model.View.Country.Country(x.Country))
+                                                     .FirstOrDefaultAsync();
+            }
+        }
+
+        public async Task<Model.Database.Main.Tracking.Tracking> GetLastTracking(DateTime? at = null)
+        {
+            using (var db = GetMainContext())
+            {
+                return await db.Trackings.WhereUser(UserId)
+                                         .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                         .OrderByDescending(x => x.Timestamp)
+                                         .FirstOrDefaultAsync();
             }
         }
     }

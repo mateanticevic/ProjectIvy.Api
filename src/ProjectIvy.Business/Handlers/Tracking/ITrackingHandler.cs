@@ -9,6 +9,12 @@ namespace ProjectIvy.Business.Handlers.Tracking
 {
     public interface ITrackingHandler : IHandler
     {
+        int Count(FilteredBinding binding);
+
+        IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding);
+
+        IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
+
         bool Create(TrackingBinding binding);
 
         Task Create(IEnumerable<TrackingBinding> binding);
@@ -17,11 +23,9 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
 
-        int Count(FilteredBinding binding);
+        Task<View.Tracking> GetLast(DateTime? at = null);
 
-        IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding);
-
-        IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
+        Task<View.TrackingLocation> GetLastLocation();
 
         int CountUnique(FilteredBinding binding);
 
@@ -32,10 +36,6 @@ namespace ProjectIvy.Business.Handlers.Tracking
         int GetDistance(FilteredBinding binding);
 
         double GetMaxSpeed(FilteredBinding binding);
-
-        View.Tracking GetLast(DateTime? at = null);
-
-        Task<View.TrackingLocation> GetLastLocation();
 
         Task ImportFromGpx(XDocument xml);
 

@@ -61,7 +61,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
 
         [HttpGet("Last")]
-        public View.Tracking GetLast([FromQuery] DateTime? at = null) => _trackingHandler.GetLast(at);
+        public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
 
         [HttpGet("LastLocation")]
         public async Task<IActionResult> GetLastLocation() => Ok(await _trackingHandler.GetLastLocation());
