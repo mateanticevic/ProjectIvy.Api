@@ -1,27 +1,29 @@
-﻿using GeoCoordinatePortable;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using GeoCoordinatePortable;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
-using ProjectIvy.Model.Services.LastFm;
 using ProjectIvy.Model.View;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Business.Handlers.Tracking
 {
     public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
     {
-        public TrackingHandler(IHandlerContext<TrackingHandler> context) : base(context)
+        private readonly IGeohashHandler _geohashHandler;
+
+        public TrackingHandler(IHandlerContext<TrackingHandler> context, IGeohashHandler geohashHandler) : base(context)
         {
+            _geohashHandler = geohashHandler;
         }
 
         public int Count(FilteredBinding binding)
@@ -251,7 +253,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
                 return new View.TrackingLocation()
                 {
-                    Country = await GeohashToCountry(tracking.Geohash),
+                    Country = await _geohashHandler.GetCountry(tracking.Geohash),
                     Location = location != null ? new View.Location(location) : null,
                     Tracking = new View.Tracking(tracking)
                 };
@@ -307,22 +309,6 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 db.SaveChanges();
 
                 return true;
-            }
-        }
-
-        private async Task<Model.View.Country.Country> GeohashToCountry(string geohash)
-        {
-            using (var context = GetMainContext())
-            {
-                var geohashes = Enumerable.Range(0, geohash.Length - 2)
-                                          .Select(x => geohash.Substring(0, geohash.Length - x))
-                                          .ToList();
-
-                return await context.GeohashCountries.Include(x => x.Country)
-                                                     .Where(x => geohashes.Contains(x.Geohash))
-                                                     .OrderByDescending(x => x.Geohash.Length)
-                                                     .Select(x => new Model.View.Country.Country(x.Country))
-                                                     .FirstOrDefaultAsync();
             }
         }
 

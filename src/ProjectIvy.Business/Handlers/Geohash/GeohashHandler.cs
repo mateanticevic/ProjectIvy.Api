@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +67,22 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                               .Select(x => x.Geohash.Substring(0, binding.Precision))
                                               .Distinct()
                                               .ToListAsync();
+            }
+        }
+
+        public async Task<Model.View.Country.Country> GetCountry(string geohash)
+        {
+            using (var context = GetMainContext())
+            {
+                var geohashes = Enumerable.Range(0, geohash.Length - 2)
+                                          .Select(x => geohash.Substring(0, geohash.Length - x))
+                                          .ToList();
+
+                return await context.GeohashCountries.Include(x => x.Country)
+                                                     .Where(x => geohashes.Contains(x.Geohash))
+                                                     .OrderByDescending(x => x.Geohash.Length)
+                                                     .Select(x => new Model.View.Country.Country(x.Country))
+                                                     .FirstOrDefaultAsync();
             }
         }
     }
