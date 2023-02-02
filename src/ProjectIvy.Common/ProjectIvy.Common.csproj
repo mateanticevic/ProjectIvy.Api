@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Core" Version="1.6.0" />
+    <PackageReference Include="geohash-dotnet" Version="1.0.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -14,4 +15,7 @@
     <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="geohash-dotnet" />
+  </ItemGroup>
 </Project>

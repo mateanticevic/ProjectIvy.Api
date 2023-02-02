@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Country;
+using ProjectIvy.Business.Handlers.Geohash;
+using ProjectIvy.Common.Helpers;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Binding.Trip;
@@ -13,8 +15,13 @@ namespace ProjectIvy.Api.Controllers.Country
     public class CountryController : BaseController<CountryController>
     {
         private readonly ICountryHandler _countryHandler;
+        private readonly IGeohashHandler _geohashHandler;
 
-        public CountryController(ILogger<CountryController> logger, ICountryHandler countryHandler) : base(logger) => _countryHandler = countryHandler;
+        public CountryController(ILogger<CountryController> logger, ICountryHandler countryHandler, IGeohashHandler geohashHandler) : base(logger)
+        {
+            _countryHandler = countryHandler;
+            _geohashHandler = geohashHandler;
+        }
 
         [HttpGet]
         public PagedView<View.Country> Get(CountryGetBinding binding) => _countryHandler.Get(binding);
@@ -27,6 +34,9 @@ namespace ProjectIvy.Api.Controllers.Country
 
         [HttpGet("{id}")]
         public View.Country Get(string id) => _countryHandler.Get(id);
+
+        [HttpGet("Single")]
+        public async Task<IActionResult> GetSingle(double latitude, double longitude) => Ok(await _geohashHandler.GetCountry(GeohashHelper.LocationToGeohash(latitude, longitude)));
 
         [HttpGet("Visited")]
         public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
