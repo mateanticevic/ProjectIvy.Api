@@ -70,6 +70,22 @@ namespace ProjectIvy.Business.Handlers.Geohash
             }
         }
 
+        public async Task<Model.View.City.City> GetCity(string geohash)
+        {
+            using (var context = GetMainContext())
+            {
+                var geohashes = Enumerable.Range(0, geohash.Length)
+                                          .Select(x => geohash.Substring(0, geohash.Length - x))
+                                          .ToList();
+
+                return await context.GeohashCities.Include(x => x.City)
+                                                     .Where(x => geohashes.Contains(x.Geohash))
+                                                     .OrderByDescending(x => x.Geohash.Length)
+                                                     .Select(x => new Model.View.City.City(x.City))
+                                                     .FirstOrDefaultAsync();
+            }
+        }
+
         public async Task<Model.View.Country.Country> GetCountry(string geohash)
         {
             using (var context = GetMainContext())

@@ -104,6 +104,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Flight> Flights { get; set; }
 
+        public DbSet<GeohashCity> GeohashCities { get; set; }
+
         public DbSet<GeohashCountry> GeohashCountries { get; set; }
 
         public DbSet<Income> Incomes { get; set; }
@@ -365,6 +367,9 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<CallBlacklist>()
                         .HasKey(x => new { x.UserId, x.Number });
+
+            modelBuilder.Entity<GeohashCity>()
+                        .HasKey(x => new { x.CityId, x.Geohash });
 
             modelBuilder.Entity<GeohashCountry>()
                         .HasKey(x => new { x.CountryId, x.Geohash });

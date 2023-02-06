@@ -23,6 +23,9 @@ namespace ProjectIvy.Api.Controllers.Device
             return geohash is null ? NotFound() : Ok(geohash);
         }
 
+        [HttpGet("{geohash}/City")]
+        public async Task<IActionResult> GetCity(string geohash) => Ok(await _geohashHandler.GetCity(geohash));
+
         [HttpGet("{geohash}/Country")]
         public async Task<IActionResult> GetCountry(string geohash) => Ok(await _geohashHandler.GetCountry(geohash));
     }
