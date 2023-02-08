@@ -6,6 +6,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 {
     public interface IGeohashHandler
     {
+        Task<IEnumerable<string>> GetChildren(string geohash);
+
         Task<Model.View.City.City> GetCity(string geohash);
 
         Task<Model.View.Country.Country> GetCountry(string geohash);

@@ -15,13 +15,19 @@ namespace ProjectIvy.Api.Controllers.Device
         [HttpGet]
         public async Task<IActionResult> Get(GeohashGetBinding binding) => Ok(await _geohashHandler.GetGeohashes(binding));
 
-        [HttpGet("{geohashId}")]
-        public async Task<IActionResult> GetGeohash(string geohashId)
+        [HttpGet("{geohash}")]
+        public async Task<IActionResult> GetGeohash(string geohash)
         {
-            var geohash = await _geohashHandler.GetGeohash(geohashId);
+            var view = await _geohashHandler.GetGeohash(geohash);
 
-            return geohash is null ? NotFound() : Ok(geohash);
+            return view is null ? NotFound() : Ok(view);
         }
+
+        [HttpGet("Root/Children")]
+        public async Task<IActionResult> GetRootChildren(string geohash) => Ok(await _geohashHandler.GetChildren(null));
+
+        [HttpGet("{geohash}/Children")]
+        public async Task<IActionResult> GetChildren(string geohash) => Ok(await _geohashHandler.GetChildren(geohash));
 
         [HttpGet("{geohash}/City")]
         public async Task<IActionResult> GetCity(string geohash) => Ok(await _geohashHandler.GetCity(geohash));
