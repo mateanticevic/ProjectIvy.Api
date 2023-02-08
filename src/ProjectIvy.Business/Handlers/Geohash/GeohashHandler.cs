@@ -79,10 +79,11 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                           .ToList();
 
                 return await context.GeohashCities.Include(x => x.City)
-                                                     .Where(x => geohashes.Contains(x.Geohash))
-                                                     .OrderByDescending(x => x.Geohash.Length)
-                                                     .Select(x => new Model.View.City.City(x.City))
-                                                     .FirstOrDefaultAsync();
+                                                  .ThenInclude(x => x.Country)
+                                                  .Where(x => geohashes.Contains(x.Geohash))
+                                                  .OrderByDescending(x => x.Geohash.Length)
+                                                  .Select(x => new Model.View.City.City(x.City))
+                                                  .FirstOrDefaultAsync();
             }
         }
 

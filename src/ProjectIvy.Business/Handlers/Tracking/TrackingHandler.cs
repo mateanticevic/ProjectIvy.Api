@@ -251,12 +251,18 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                                            .Include(x => x.LocationType)
                                                            .ToListAsync();
                 var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
-                return new View.TrackingLocation()
+                var trackingLocation = new View.TrackingLocation()
                 {
                     Country = await _geohashHandler.GetCountry(tracking.Geohash),
                     Location = location != null ? new View.Location(location) : null,
                     Tracking = new View.Tracking(tracking)
                 };
+
+                trackingLocation.City = await _geohashHandler.GetCity(tracking.Geohash);
+                trackingLocation.Country = trackingLocation?.City?.Country ?? await _geohashHandler.GetCountry(tracking.Geohash);
+
+
+                return trackingLocation;
             }
         }
 
