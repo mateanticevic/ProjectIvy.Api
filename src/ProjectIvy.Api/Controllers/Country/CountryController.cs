@@ -32,8 +32,11 @@ namespace ProjectIvy.Api.Controllers.Country
         [HttpGet("Count")]
         public long GetCount(CountryGetBinding binding) => _countryHandler.Count(binding);
 
-        [HttpGet("{id}")]
-        public View.Country Get(string id) => _countryHandler.Get(id);
+        [HttpGet("{countryId}")]
+        public View.Country Get(string countryId) => _countryHandler.Get(countryId);
+
+        [HttpGet("{countryId}/Geohash")]
+        public async Task<IActionResult> GetGeohashes(string countryId) => Ok(await _geohashHandler.GetCountryGeohashes(countryId));
 
         [HttpGet("Single")]
         public async Task<IActionResult> GetSingle(double latitude, double longitude) => Ok(await _geohashHandler.GetCountry(GeohashHelper.LocationToGeohash(latitude, longitude)));
