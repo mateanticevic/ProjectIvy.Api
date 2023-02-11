@@ -116,6 +116,17 @@ namespace ProjectIvy.Business.Handlers.Geohash
             }
         }
 
+        public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                int cityId = context.Cities.GetId(cityValueId).Value;
+                return await context.GeohashCities.Where(x => x.CityId == cityId)
+                                                  .Select(x => x.Geohash)
+                                                  .ToListAsync();
+            }
+        }
+
         public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
         {
             using (var context = GetMainContext())

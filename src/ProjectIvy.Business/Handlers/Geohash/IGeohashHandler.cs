@@ -16,6 +16,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task<IEnumerable<string>> GetGeohashes(GeohashGetBinding binding);
 
+        Task<IEnumerable<string>> GetCityGeohashes(string cityValueId);
+
         Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId);
     }
 }
