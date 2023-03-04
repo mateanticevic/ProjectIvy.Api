@@ -13,7 +13,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
         }
 
-        public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(string fromGeohash, string toGeohash)
+        public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(string fromGeohash, string toGeohash, RouteTimeSort sort)
         {
             using var context = GetMainContext();
 
@@ -29,10 +29,13 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                                       .Select(x => new { Day = x.Key, Time = x.Min(y => y.Timestamp) })
                                                       .ToListAsync();
 
-            return fromTimestamps.Join(toTimestamps, x => x.Day, x => x.Day, (from, to) => (from.Time, to.Time))
+            var routes = fromTimestamps.Join(toTimestamps, x => x.Day, x => x.Day, (from, to) => (from.Time, to.Time))
                                  .Where(x => x.Item1 < x.Item2)
-                                 .OrderByDescending(x => x.Item1)
                                  .Select(x => new Model.View.Geohash.RouteTime() { From = x.Item1, To = x.Item2, Duration = x.Item2.Subtract(x.Item1) });
+
+            return sort == RouteTimeSort.Date
+                           ? routes.OrderByDescending(x => x.From)
+                           : routes.OrderBy(x => x.Duration);
         }
 
         public async Task<IEnumerable<DateOnly>> GetDays(string geohash)

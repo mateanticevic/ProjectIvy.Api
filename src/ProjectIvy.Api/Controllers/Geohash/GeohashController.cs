@@ -27,10 +27,10 @@ namespace ProjectIvy.Api.Controllers.Device
         public async Task<IActionResult> GetDays(string geohash) => Ok(await _geohashHandler.GetDays(geohash));
 
         [HttpGet("{fromGeohash}/To/{toGeohash}")]
-        public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash) => Ok(await _geohashHandler.FromGeohashToGeohash(fromGeohash, toGeohash));
+        public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date) => Ok(await _geohashHandler.FromGeohashToGeohash(fromGeohash, toGeohash, orderBy));
 
         [HttpGet("Root/Children")]
-        public async Task<IActionResult> GetRootChildren(string geohash) => Ok(await _geohashHandler.GetChildren(null));
+        public async Task<IActionResult> GetRootChildren() => Ok(await _geohashHandler.GetChildren(null));
 
         [HttpGet("{geohash}/Children")]
         public async Task<IActionResult> GetChildren(string geohash) => Ok(await _geohashHandler.GetChildren(geohash));
