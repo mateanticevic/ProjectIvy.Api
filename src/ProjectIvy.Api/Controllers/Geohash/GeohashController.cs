@@ -23,6 +23,9 @@ namespace ProjectIvy.Api.Controllers.Device
             return view is null ? NotFound() : Ok(view);
         }
 
+        [HttpGet("{fromGeohash}/To/{toGeohash}")]
+        public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash) => Ok(await _geohashHandler.FromGeohashToGeohash(fromGeohash, toGeohash));
+
         [HttpGet("Root/Children")]
         public async Task<IActionResult> GetRootChildren(string geohash) => Ok(await _geohashHandler.GetChildren(null));
 

@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.Geohash;
 
 namespace ProjectIvy.Business.Handlers.Geohash
 {
     public interface IGeohashHandler
     {
+        Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(string fromGeohash, string toGeohash);
+
         Task<IEnumerable<string>> GetChildren(string geohash);
 
         Task<Model.View.City.City> GetCity(string geohash);

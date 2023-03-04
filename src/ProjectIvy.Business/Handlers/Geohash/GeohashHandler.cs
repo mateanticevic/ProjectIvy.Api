@@ -13,6 +13,28 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
         }
 
+        public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(string fromGeohash, string toGeohash)
+        {
+            using var context = GetMainContext();
+
+            var fromTimestamps = await context.Trackings.WhereUser(UserId)
+                                                        .Where(x => x.Geohash.StartsWith(fromGeohash))
+                                                        .GroupBy(x => x.Timestamp.Date)
+                                                        .Select(x => new { Day = x.Key, Time = x.Max(y => y.Timestamp) })
+                                                        .ToListAsync();
+
+            var toTimestamps = await context.Trackings.WhereUser(UserId)
+                                                      .Where(x => x.Geohash.StartsWith(toGeohash))
+                                                      .GroupBy(x => x.Timestamp.Date)
+                                                      .Select(x => new { Day = x.Key, Time = x.Min(y => y.Timestamp) })
+                                                      .ToListAsync();
+
+            return fromTimestamps.Join(toTimestamps, x => x.Day, x => x.Day, (from, to) => (from.Time, to.Time))
+                                 .Where(x => x.Item1 < x.Item2)
+                                 .OrderByDescending(x => x.Item1)
+                                 .Select(x => new Model.View.Geohash.RouteTime() { From = x.Item1, To = x.Item2, Duration = x.Item2.Subtract(x.Item1) });
+        }
+
         public async Task<Model.View.Geohash.Geohash> GetGeohash(string geohashId)
         {
             using (var context = GetMainContext())
