@@ -7,6 +7,8 @@
 
         public static string GetConsumationSumByDayOfWeek { get; } = Build(nameof(GetConsumationSumByDayOfWeek));
 
+        public static string GetExpenseSumByDay { get; } = Build(nameof(GetExpenseSumByDay));
+
         public static string GetExpenseSumByType { get; } = Build(nameof(GetExpenseSumByType));
 
         public static string GetExpenseSumInDefaultCurrency { get; } = Build(nameof(GetExpenseSumInDefaultCurrency));
@@ -23,9 +25,6 @@
 
         public static string GetWebTimeTotalByYear { get; } = Build(nameof(GetWebTimeTotalByYear));
 
-        private static string Build(string name)
-        {
-            return Prefix + name + Sufix;
-        }
+        private static string Build(string name) => $"{Prefix}{name}{Sufix}";
     }
 }

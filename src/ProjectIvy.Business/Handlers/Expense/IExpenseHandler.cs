@@ -1,7 +1,6 @@
 ﻿using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.ExpenseType;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Expense;
 
@@ -45,6 +44,10 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding);
 
+        Task<decimal> SumAmount(ExpenseSumGetBinding binding);
+
+        Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding);
+
         Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByDayOfWeek(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding);
@@ -58,8 +61,6 @@ namespace ProjectIvy.Business.Handlers.Expense
         Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType(ExpenseSumGetBinding binding);
 
         Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding);
-
-        Task<decimal> SumAmount(ExpenseSumGetBinding binding);
 
         Task NotifyTransferWiseEvent(string authorizationCode, int resourceId);
 

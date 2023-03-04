@@ -12,6 +12,7 @@
 DECLARE @EURId INT = (SELECT Id FROM Common.Currency WHERE Code = 'EUR')
 
 SELECT
+    CONVERT(DATE, e.[Date]),
 	--  Original--Parent--Target
 	--01   X       NULL     X   
 	--02   X       NULL     Y
@@ -27,8 +28,6 @@ SELECT
 	--12  EUR       X      EUR
 	--13  EUR       X       Y
 	--14  EUR       X       X
-    ExpenseTypeId AS 'TypeId',
-    et.ValueId AS 'TypeValueId',
 	SUM(
 		CASE WHEN e.ParentCurrencyId IS NULL THEN
 			CASE WHEN e.CurrencyId = @EURId THEN
@@ -79,4 +78,4 @@ WHERE 1=1
     AND (@Month IS NULL OR MONTH(e.[Date]) = @Month)
 	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExpenseIds) OR EXISTS(SELECT TOP 1 * FROM @ExpenseIds WHERE [Value] = e.Id))
 	AND ISNULL(@UserId, e.UserId) = e.UserId
-GROUP BY ExpenseTypeId, et.ValueId
+GROUP BY CONVERT(DATE, e.[Date])

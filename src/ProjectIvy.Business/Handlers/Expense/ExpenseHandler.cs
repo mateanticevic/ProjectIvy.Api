@@ -340,6 +340,12 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
+            => await SumAmount(await SumBindingToQuery(binding));
+
+        public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding)
+            => await SumAmountByDay(await SumBindingToQuery(binding));
+
         public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByDayOfWeek(ExpenseSumGetBinding binding)
         {
             using (var context = GetMainContext())
@@ -467,27 +473,10 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding)
         {
-            using var context = GetMainContext();
-
-            int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
-
-            var expenseIds = context.Expenses.WhereUser(UserId)
-                                             .Where(binding, context)
-                                             .Select(x => x.Id)
-                                             .ToList();
-
-            if (!expenseIds.Any())
-                return default;
-
-            var query = new GetExpenseSumQuery()
-            {
-                ExpenseIds = expenseIds,
-                TargetCurrencyId = targetCurrencyId,
-                UserId = UserId
-            };
-
             using var sql = GetSqlConnection();
-            var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), query);
+            var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), await SumBindingToQuery(binding));
+
+            using var context = GetMainContext();
 
             if (binding.ByBaseType)
             {
@@ -504,31 +493,6 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
             else
                 return results.Select(x => new KeyValuePair<string, decimal>(x.TypeValueId, Math.Round(x.Amount, 2))).ToList();
-        }
-
-        public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
-        {
-            using (var context = GetMainContext())
-            {
-                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
-
-                var expenseIds = context.Expenses.WhereUser(UserId)
-                                                 .Where(binding, context)
-                                                 .Select(x => x.Id)
-                                                 .ToList();
-
-                if (!expenseIds.Any())
-                    return 0;
-
-                var query = new GetExpenseSumQuery()
-                {
-                    ExpenseIds = expenseIds,
-                    TargetCurrencyId = targetCurrencyId,
-                    UserId = UserId
-                };
-
-                return await SumAmount(query);
-            }
         }
 
         public bool Update(ExpenseBinding binding)
@@ -596,6 +560,39 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var sql = GetSqlConnection())
             {
                 return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(SqlScripts.GetExpenseSumInDefaultCurrency), query), 2);
+            }
+        }
+
+        private async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(GetExpenseSumQuery query)
+        {
+            using (var sql = GetSqlConnection())
+            {
+                return (await sql.QueryAsync<(DateTime, decimal)>(SqlLoader.Load(SqlScripts.GetExpenseSumByDay), query))
+                    .Select(x => new KeyValuePair<DateTime, decimal>(x.Item1, Math.Round(x.Item2, 2)))
+                    .ToList();
+            }
+        }
+
+        private async Task<GetExpenseSumQuery> SumBindingToQuery(ExpenseSumGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
+
+                var expenseIds = await context.Expenses.WhereUser(UserId)
+                                                       .Where(binding, context)
+                                                       .Select(x => x.Id)
+                                                       .ToListAsync();
+
+                if (!expenseIds.Any())
+                    return null;
+
+                return new GetExpenseSumQuery()
+                {
+                    ExpenseIds = expenseIds,
+                    TargetCurrencyId = targetCurrencyId,
+                    UserId = UserId
+                };
             }
         }
     }

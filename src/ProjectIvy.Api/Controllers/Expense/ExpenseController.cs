@@ -67,6 +67,9 @@ namespace ProjectIvy.Api.Controllers.Expense
         [HttpGet("Sum/ByCurrency")]
         public async Task<IActionResult> GetSumByCurrency([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumByCurrency(binding));
 
+        [HttpGet("Sum/ByDay")]
+        public async Task<IActionResult> GetSumByDay([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumAmountByDay(binding));
+
         [HttpGet("Sum/ByDayOfWeek")]
         public async Task<IActionResult> GetSumByDayOfWeek([FromQuery] ExpenseSumGetBinding binding) => Ok(await _expenseHandler.SumAmountByDayOfWeek(binding));
 
