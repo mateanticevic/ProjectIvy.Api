@@ -31,7 +31,8 @@ namespace ProjectIvy.Business.Handlers.Vendor
                 return context.Vendors.WhereIf(binding?.Search != null,
                         x => EF.Functions.Like(x.ValueId, searchPattern) ||
                              EF.Functions.Like(x.Name, searchPattern))
-                              .OrderBy(x => x.Name)
+                              .OrderByDescending(x => x.ValueId == binding.Search)
+                              .ThenBy(x => x.Name)
                               .Select(x => new View.Vendor(x))
                               .ToPagedView(binding);
             }
