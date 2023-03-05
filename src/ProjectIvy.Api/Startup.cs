@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text.Json.Serialization;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +28,6 @@ using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.Handlers.Income;
-using ProjectIvy.Business.Handlers.IotDevice;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
@@ -40,10 +42,6 @@ using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
 using Serilog;
-using System;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
 
@@ -94,7 +92,6 @@ namespace ProjectIvy.Api
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
-            services.AddHandler<IIotDeviceHandler, IotDeviceHandler>();
             services.AddHandler<IMovieHandler, MovieHandler>();
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();

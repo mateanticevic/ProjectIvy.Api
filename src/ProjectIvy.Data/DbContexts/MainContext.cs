@@ -114,10 +114,6 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<IncomeType> IncomeTypes { get; set; }
 
-        public DbSet<Model.Database.Main.Iot.Device> IotDevices { get; set; }
-
-        public DbSet<Model.Database.Main.Iot.DeviceData> IotDeviceData { get; set; }
-
         public DbSet<Location> Locations { get; set; }
 
         public DbSet<Manufacturer> Manufacturers { get; set; }
