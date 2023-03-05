@@ -13,7 +13,6 @@ using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
-using ProjectIvy.Business.Handlers.Application;
 using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Business.Handlers.Car;
@@ -74,7 +73,6 @@ namespace ProjectIvy.Api
             services.AddHandler<IAccountHandler, AccountHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IAirlineHandler, AirlineHandler>();
-            services.AddHandler<IApplicationHandler, ApplicationHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
             services.AddHandler<ICallHandler, CallHandler>();
             services.AddHandler<ICarHandler, CarHandler>();

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.User
 {
@@ -13,7 +12,6 @@ namespace ProjectIvy.Model.View.User
             LastName = x.LastName;
             Email = x.Email;
             Username = x.Username;
-            Modules = x.Modules.Where(y => y.IsActive).Select(y => y.Module.ValueId);
         }
 
         public Car.Car DefaultCar { get; set; }
@@ -27,7 +25,5 @@ namespace ProjectIvy.Model.View.User
         public string Email { get; set; }
 
         public string Username { get; set; }
-
-        public IEnumerable<string> Modules { get; set; }
     }
 }

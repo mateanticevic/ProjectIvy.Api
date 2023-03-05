@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using ProjectIvy.Model.Database.Main.App;
 using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.Database.Main.Common;
 using ProjectIvy.Model.Database.Main.Contacts;
@@ -30,10 +29,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<Airline> Airlines { get; set; }
 
         public DbSet<Airport> Airports { get; set; }
-
-        public DbSet<Application> Applications { get; set; }
-
-        public DbSet<ApplicationSetting> ApplicationSettings { get; set; }
 
         public DbSet<Beer> Beers { get; set; }
 
@@ -204,10 +199,6 @@ namespace ProjectIvy.Data.DbContexts
                                 j.HasKey(tf => new { tf.TripId, tf.FileId });
                             });
 
-            modelBuilder.Entity<ApplicationSetting>()
-                        .HasOne(x => x.Application)
-                        .WithMany(x => x.Settings);
-
             modelBuilder.Entity<Airport>()
                         .HasOne(x => x.City)
                         .WithMany(x => x.Airports);
@@ -317,9 +308,6 @@ namespace ProjectIvy.Data.DbContexts
                         .HasOne(x => x.DefaultCar)
                         .WithOne(x => x.User)
                         .HasForeignKey<User>(x => x.DefaultCarId);
-
-            modelBuilder.Entity<UserModule>()
-                        .HasKey(x => new { x.UserId, x.ModuleId });
 
             modelBuilder.Entity<Device>()
                         .HasOne(x => x.DeviceType)

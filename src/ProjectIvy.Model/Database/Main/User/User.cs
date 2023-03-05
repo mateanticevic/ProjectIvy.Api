@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.User
@@ -46,7 +44,5 @@ namespace ProjectIvy.Model.Database.Main.User
         public Transport.Car DefaultCar { get; set; }
 
         public ICollection<Tracking.Tracking> Trackings { get; set; }
-
-        public ICollection<UserModule> Modules { get; set; } 
     }
 }

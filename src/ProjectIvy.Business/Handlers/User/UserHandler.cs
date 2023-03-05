@@ -34,7 +34,6 @@ namespace ProjectIvy.Business.Handlers.User
                 var userEntity = db.Users.Include(x => x.DefaultCar)
                                          .Include(x => x.DefaultCurrency)
                                          .Include(x => x.DefaultCar.CarModel)
-                                         .Include(x => x.Modules)
                                          .Include("Modules.Module")
                                          .SingleOrDefault(x => x.Id == id);
 
