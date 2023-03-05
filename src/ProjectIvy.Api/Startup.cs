@@ -33,7 +33,6 @@ using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
 using ProjectIvy.Business.Handlers.Security;
-using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
@@ -96,7 +95,6 @@ namespace ProjectIvy.Api
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
             services.AddHandler<IRideHandler, RideHandler>();
-            services.AddHandler<IToDoHandler, ToDoHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();

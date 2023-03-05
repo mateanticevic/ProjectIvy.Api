@@ -7,7 +7,6 @@ using ProjectIvy.Model.Database.Main.Finance;
 using ProjectIvy.Model.Database.Main.Inv;
 using ProjectIvy.Model.Database.Main.Log;
 using ProjectIvy.Model.Database.Main.Net;
-using ProjectIvy.Model.Database.Main.Org;
 using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.Database.Main.Storage;
 using ProjectIvy.Model.Database.Main.Tracking;
@@ -135,8 +134,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<Ride> Rides { get; set; }
 
         public DbSet<RideType> RideTypes { get; set; }
-
-        public DbSet<ToDo> ToDos { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }
 
