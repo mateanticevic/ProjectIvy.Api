@@ -301,45 +301,6 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public async Task NotifyTransferWiseEvent(string authorizationCode, int resourceId)
-        {
-            using (var context = GetMainContext())
-            {
-                string token = context.PaymentProviderAccounts.WhereUser(UserId).FirstOrDefault().Token;
-
-                using (var httpClient = new HttpClient())
-                {
-                    var request = new HttpRequestMessage(HttpMethod.Get, $"https://api.transferwise.com/v1/transfers/{resourceId}");
-                    request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-                    var response = await httpClient.SendAsync(request);
-
-                    var responseText = await response.Content.ReadAsStringAsync();
-                    var transfer = JsonConvert.DeserializeObject<Model.Services.TrasnferWise.Transfer>(responseText);
-
-                    var expense = new Model.Database.Main.Finance.Expense()
-                    {
-                        ValueId = context.Expenses.NextValueId(UserId).ToString(),
-                        Date = DateTime.Now,
-                        ExpenseTypeId = 1,
-                        Amount = transfer.TargetValue,
-                        Comment = transfer.Status,
-                        CurrencyId = context.GetCurrencyId(transfer.TargetCurrency, UserId),
-                        NeedsReview = true,
-                        UserId = 1002
-                    };
-
-                    if (transfer.TargetCurrency != transfer.SourceCurrency)
-                    {
-                        expense.ParentCurrencyId = context.GetCurrencyId(transfer.SourceCurrency, UserId);
-                        expense.ParentCurrencyExchangeRate = 1 / transfer.Rate;
-                    }
-
-                    context.Expenses.Add(expense);
-                    await context.SaveChangesAsync();
-                }
-            }
-        }
-
         public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
             => await SumAmount(await SumBindingToQuery(binding));
 

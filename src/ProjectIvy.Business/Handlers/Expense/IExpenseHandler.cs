@@ -62,8 +62,6 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding);
 
-        Task NotifyTransferWiseEvent(string authorizationCode, int resourceId);
-
         bool Update(ExpenseBinding binding);
     }
 }
