@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Flight
 {
@@ -27,7 +28,7 @@ namespace ProjectIvy.Api.Controllers.Flight
         public IActionResult GetCountByYear(FlightGetBinding binding) => Ok(_flightHandler.CountByYear(binding));
 
         [HttpGet]
-        public IActionResult Get([FromQuery] FlightGetBinding binding) => Ok(_flightHandler.Get(binding));
+        public PagedView<Model.View.Flight.Flight> Get([FromQuery] FlightGetBinding binding) => _flightHandler.Get(binding);
 
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] FlightBinding binding)

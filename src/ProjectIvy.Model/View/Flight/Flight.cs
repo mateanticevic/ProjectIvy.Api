@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.Common.Extensions;
-using System;
 using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Flight
@@ -8,6 +7,7 @@ namespace ProjectIvy.Model.View.Flight
     {
         public Flight(DatabaseModel.Transport.Flight f)
         {
+            Airline = f.ConvertTo(x => new View.Airline.Airline(x.Airline));
             Arrival = f.DateOfArrival;
             Departure = f.DateOfDeparture;
             Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
@@ -17,14 +17,16 @@ namespace ProjectIvy.Model.View.Flight
                                                     .GetDistanceTo(Destination.Poi.Location.ToGeoCoordinate()) / 1000);
         }
 
-        public Airport.Airport Destination { get; set; }
-
-        public Airport.Airport Origin { get; set; }
+        public Airline.Airline Airline { get; set; }
 
         public DateTime Arrival { get; set; }
 
         public DateTime Departure { get; set; }
 
+        public Airport.Airport Destination { get; set; }   
+
         public int DistanceInKm { get; set; }
+
+        public Airport.Airport Origin { get; set; }
     }
 }

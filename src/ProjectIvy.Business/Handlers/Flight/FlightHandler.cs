@@ -97,6 +97,7 @@ namespace ProjectIvy.Business.Handlers.Flight
                                       .Where(binding)
                                       .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
                                       .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)
+                                      .Include(x => x.Airline)
                                       .Include(x => x.DestinationAirport)
                                       .ThenInclude(x => x.Poi)
                                       .Include(x => x.OriginAirport)
