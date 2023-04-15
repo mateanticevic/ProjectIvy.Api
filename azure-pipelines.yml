@@ -29,6 +29,7 @@ stages:
           $(tag)
     - task: Docker@2
       inputs:
+        containerRegistry: 'docker.io'
         repository: 'mateanticevic/project-ivy-api'
         command: 'buildAndPush'
         Dockerfile: '**/Dockerfile'
