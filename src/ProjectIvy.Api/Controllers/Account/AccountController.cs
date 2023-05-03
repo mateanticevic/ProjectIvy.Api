@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Model.Binding.Account;
+using ProjectIvy.Model.Binding.Transaction;
 
 namespace ProjectIvy.Api.Controllers.Airport
 {
@@ -23,6 +24,13 @@ namespace ProjectIvy.Api.Controllers.Airport
 
         [HttpGet("{accountId}/overview")]
         public async Task<IActionResult> GetOverview(string accountId) => Ok(await _accountHandler.GetOverview(accountId));
+
+        [HttpPost("{accountId}/transaction")]
+        public async Task<IActionResult> PostTransaction(string accountId, [FromBody] TransactionBinding binding)
+        {
+            await _accountHandler.CreateTransaction(accountId, binding);
+            return Ok();
+        }
 
         [HttpPost("{accountId}/transaction")]
         public async Task<IActionResult> PostTransactions(string accountId, [FromQuery] TransactionSource transactionSource)

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Account;
+using ProjectIvy.Model.Binding.Transaction;
 using ProjectIvy.Model.Database.Main.Finance;
 using View = ProjectIvy.Model.View.Account;
 
@@ -14,6 +15,27 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 {
     public AccountHandler(IHandlerContext<AccountHandler> context) : base(context)
     {
+    }
+
+    public async Task CreateTransaction(string accountValueId, TransactionBinding binding)
+    {
+        using var context = GetMainContext();
+
+        int accountId = context.Accounts.GetId(accountValueId).Value;
+        var lastTransaction = await context.Transactions.Where(x => x.AccountId == accountId)
+                                                        .OrderByDescending(x => x.Created)
+                                                        .FirstOrDefaultAsync();
+
+        var entity = new Transaction()
+        {
+            AccountId = accountId,
+            Amount = binding.Amount,
+            Balance = lastTransaction is null ? 0 : lastTransaction.Balance + binding.Amount,
+            Created  = binding.Created
+        };
+
+        await context.Transactions.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<View.Account>> Get(AccountGetBinding b)
