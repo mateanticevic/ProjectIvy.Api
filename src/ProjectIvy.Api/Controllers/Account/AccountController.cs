@@ -32,8 +32,8 @@ namespace ProjectIvy.Api.Controllers.Airport
             return Ok();
         }
 
-        [HttpPost("{accountId}/transaction")]
-        public async Task<IActionResult> PostTransactions(string accountId, [FromQuery] TransactionSource transactionSource)
+        [HttpPost("{accountId}/transaction/import")]
+        public async Task<IActionResult> PostTransactionImport(string accountId, [FromQuery] TransactionSource transactionSource)
         {
             var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
