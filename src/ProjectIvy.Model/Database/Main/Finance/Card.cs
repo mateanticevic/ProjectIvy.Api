@@ -21,5 +21,13 @@ namespace ProjectIvy.Model.Database.Main.Finance
         public string LastFourDigits { get; set; }
 
         public bool IsActive { get; set; }
+
+        public int BankId { get; set; }
+
+        public int CardTypeId { get; set; }
+
+        public Bank Bank { get; set; }
+
+        public CardType CardType { get; set; }
     }
 }

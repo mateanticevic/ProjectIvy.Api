@@ -8,6 +8,8 @@ namespace ProjectIvy.Model.View.Card
         public Card(DatabaseModel.Card x)
         {
             Id = x.ValueId;
+            Bank = new Bank.Bank(x.Bank);
+            Type = new CardType(x.CardType);
             Name = x.Name;
             Expires = x.Expires;
             Issued = x.Issued;
@@ -15,6 +17,10 @@ namespace ProjectIvy.Model.View.Card
         }
 
         public string Id { get; set; }
+
+        public View.Bank.Bank Bank { get; set; }
+
+        public CardType Type { get; set; }
 
         public string Name { get; set; }
 
