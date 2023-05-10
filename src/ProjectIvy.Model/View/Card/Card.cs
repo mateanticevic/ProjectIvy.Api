@@ -8,8 +8,8 @@ namespace ProjectIvy.Model.View.Card
         public Card(DatabaseModel.Card x)
         {
             Id = x.ValueId;
-            Bank = new Bank.Bank(x.Bank);
-            Type = new CardType(x.CardType);
+            Bank = x.Bank is null ? null : new Bank.Bank(x.Bank);
+            Type = x.CardType is null ? null : new CardType(x.CardType);
             Name = x.Name;
             Expires = x.Expires;
             Issued = x.Issued;
