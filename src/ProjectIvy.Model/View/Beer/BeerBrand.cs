@@ -4,6 +4,10 @@ namespace ProjectIvy.Model.View.Beer
 {
     public class BeerBrand
     {
+        public BeerBrand()
+        {
+        }
+
         public BeerBrand(Database.Main.Beer.BeerBrand b)
         {
             Id = b.ValueId;

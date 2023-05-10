@@ -302,6 +302,31 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
+        public PagedView<KeyValuePair<View.Beer.BeerBrand, int>> SumVolumeByBrand(ConsumationGetBinding binding)
+        {
+            using var context = GetMainContext();
+
+            var grouped = context.Consumations
+                          .WhereUser(UserId)
+                          .Where(binding, context)
+                          .Include(x => x.Beer)
+                          .ThenInclude(x => x.BeerBrand)
+                          .GroupBy(x => new
+                          {
+                              x.Beer.BeerBrand.Name,
+                              x.Beer.BeerBrand.ValueId
+                          });
+
+            return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+                          .Select(x => new KeyValuePair<View.Beer.BeerBrand, int>(new()
+                          {
+                              Id = x.Key.ValueId,
+                              Name = x.Key.Name
+                          }, x.Sum(y => y.Volume)))
+                          .ToPagedView(binding, grouped.Count());
+                          
+        }
+
         public PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())

@@ -43,6 +43,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding);
 
+        PagedView<KeyValuePair<View.Beer.BeerBrand, int>> SumVolumeByBrand(ConsumationGetBinding binding);
+
         PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding);

@@ -84,6 +84,9 @@ namespace ProjectIvy.Api.Controllers.Consumation
         [HttpGet("Sum/ByBeer")]
         public IActionResult GetSumVolumeByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBeer(binding));
 
+        [HttpGet("Sum/ByBrand")]
+        public IActionResult GetSumVolumeByBrand(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBrand(binding));
+
         [HttpGet("Sum/ByCountry")]
         public IActionResult GetSumVolumeByCountry(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByCountry(binding));
 
