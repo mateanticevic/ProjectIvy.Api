@@ -518,6 +518,9 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         private async Task<decimal> SumAmount(GetExpenseSumQuery query)
         {
+            if (query is null)
+                return 0;
+
             using (var sql = GetSqlConnection())
             {
                 return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(SqlScripts.GetExpenseSumInDefaultCurrency), query), 2);
