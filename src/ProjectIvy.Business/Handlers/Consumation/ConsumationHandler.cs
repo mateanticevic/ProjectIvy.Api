@@ -52,18 +52,20 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         } 
 
-        public async Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding)
+        public async Task<IEnumerable<KeyValuePair<int, int>>> AverageByYear(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 //TODO: Take leap years into account
 
-                return await context.Consumations.WhereUser(UserId)
+                var sumByYear = await context.Consumations.WhereUser(UserId)
                                                  .Where(binding, context)
                                                  .GroupBy(x => x.Date.Year)
                                                  .OrderBy(x => x.Key)
-                                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume) / 365))
+                                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
                                                  .ToListAsync();
+
+                return sumByYear.Select(x => new KeyValuePair<int, int>(x.Key, x.Key == DateTime.Now.Year ? (int)(x.Value / DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalDays) : x.Value / 365));
             }
         }
 

@@ -28,7 +28,7 @@ namespace ProjectIvy.Api.Controllers.Consumation
         public async Task<IActionResult> GetAlcoholByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AlcoholByYear(binding));
 
         [HttpGet("Average/ByYear")]
-        public async Task<IActionResult> GetAverageByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AverageByMonth(binding));
+        public async Task<IActionResult> GetAverageByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AverageByYear(binding));
 
         [HttpGet]
         public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);

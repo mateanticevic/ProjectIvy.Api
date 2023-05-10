@@ -13,7 +13,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         void Add(ConsumationBinding binding);
         Task<IEnumerable<KeyValuePair<int, decimal>>> AlcoholByYear(ConsumationGetBinding binding);
 
-        Task<IEnumerable<KeyValuePair<int, int>>> AverageByMonth(ConsumationGetBinding binding);
+        Task<IEnumerable<KeyValuePair<int, int>>> AverageByYear(ConsumationGetBinding binding);
 
         IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding);
 
