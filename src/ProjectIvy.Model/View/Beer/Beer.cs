@@ -12,6 +12,7 @@ namespace ProjectIvy.Model.View.Beer
             Id = b.ValueId;
             Name = b.Name;
             Abv = b.Abv;
+            Brand = b.BeerBrand.ConvertTo(x => new BeerBrand(x));
             Style = b.BeerStyle.ConvertTo(x => new BeerStyle(x));
         }
 
@@ -20,6 +21,8 @@ namespace ProjectIvy.Model.View.Beer
         public string Name { get; set; }
 
         public decimal Abv { get; set; }
+
+        public BeerBrand Brand { get; set; }
 
         public BeerStyle Style { get; set; }
     }

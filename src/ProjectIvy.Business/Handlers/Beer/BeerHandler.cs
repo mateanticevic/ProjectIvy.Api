@@ -62,6 +62,7 @@ namespace ProjectIvy.Business.Handlers.Beer
                 int? brandId = context.BeerBrands.GetId(binding.BrandId);
 
                 return await context.Beers.Include(x => x.BeerStyle)
+                                          .Include(x => x.BeerBrand)
                                           .WhereIf(brandId.HasValue, x => x.BeerBrandId == brandId).OrderBy(binding)
                                           .WhereIf(!string.IsNullOrWhiteSpace(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
                                           .Select(x => new View.Beer(x))

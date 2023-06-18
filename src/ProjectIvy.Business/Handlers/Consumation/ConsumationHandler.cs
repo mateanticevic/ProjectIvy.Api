@@ -196,6 +196,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .Where(binding, context)
                                            .Include(x => x.Beer)
                                            .ThenInclude(x => x.BeerStyle)
+                                           .Include(x => x.Beer)
+                                           .ThenInclude(x => x.BeerBrand)
                                            .OrderByDescending(x => x.Date)
                                            .Select(x => new View.Consumation.Consumation(x))
                                            .ToPagedView(binding);
