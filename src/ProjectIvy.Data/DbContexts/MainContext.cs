@@ -110,6 +110,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Location> Locations { get; set; }
 
+        public DbSet<LocationGeohash> LocationGeohashes { get; set; }
+
         public DbSet<Manufacturer> Manufacturers { get; set; }
 
         public DbSet<Movie> Movies { get; set; }

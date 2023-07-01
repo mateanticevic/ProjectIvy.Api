@@ -25,4 +25,10 @@
     <Using Include="System.Collections.Generic" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Handlers\Location\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Handlers\Location\" />
+  </ItemGroup>
 </Project>

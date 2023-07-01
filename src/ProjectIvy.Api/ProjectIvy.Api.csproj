@@ -67,5 +67,9 @@
     <None Remove="logs\log20220305.txt" />
     <None Remove="logs\log20220729.txt" />
     <None Remove="logs\log20220106.txt" />
+    <None Remove="Controllers\Location\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Controllers\Location\" />
   </ItemGroup>
 </Project>

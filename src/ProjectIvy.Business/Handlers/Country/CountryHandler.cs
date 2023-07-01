@@ -155,12 +155,12 @@ namespace ProjectIvy.Business.Handlers.Country
 
                 foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
                 {
-                    var paths = new List<IEnumerable<Location>>();
+                    var paths = new List<IEnumerable<Model.View.Location>>();
 
                     foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
                     {
                         var path = countryPolygon.OrderBy(x => x.Index)
-                                                 .Select(x => new Location(x.Latitude, x.Longitude))
+                                                 .Select(x => new Model.View.Location(x.Latitude, x.Longitude))
                                                  .ToList();
                         paths.Add(path);
                     }

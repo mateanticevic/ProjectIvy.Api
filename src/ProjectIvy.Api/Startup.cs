@@ -27,6 +27,7 @@ using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.Handlers.Income;
+using ProjectIvy.Business.Handlers.Location;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
@@ -89,6 +90,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IExpenseHandler, ExpenseHandler>();
             services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
+            services.AddHandler<ILocationHandler, LocationHandler>();
             services.AddHandler<IMovieHandler, MovieHandler>();
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
