@@ -23,9 +23,11 @@
   <ItemGroup>
     <None Remove="View\Transaction\" />
     <None Remove="Binding\Transaction\" />
+    <None Remove="View\Location\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="View\Transaction\" />
     <Folder Include="Binding\Transaction\" />
+    <Folder Include="View\Location\" />
   </ItemGroup>
 </Project>

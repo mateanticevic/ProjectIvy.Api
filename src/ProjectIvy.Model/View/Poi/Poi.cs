@@ -13,7 +13,7 @@ namespace ProjectIvy.Model.View.Poi
             Name = x.Name;
             Address = x.Address;
             Id = x.ValueId;
-            Location = new Location(x.Latitude, x.Longitude);
+            Location = new LatLng(x.Latitude, x.Longitude);
         }
 
         public string Id { get; set; }
@@ -24,6 +24,6 @@ namespace ProjectIvy.Model.View.Poi
 
         public PoiCategory Category { get; set; }
 
-        public Location Location { get; set; }
+        public LatLng Location { get; set; }
     }
 }

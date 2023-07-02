@@ -66,7 +66,7 @@ namespace ProjectIvy.Business.Handlers.Flight
                                        Name = x.Key.Name,
                                        Poi = new Views.Poi.Poi()
                                        {
-                                           Location = new Model.View.Location(x.Key.Latitude, x.Key.Longitude)
+                                           Location = new Model.View.LatLng(x.Key.Latitude, x.Key.Longitude)
                                        }
                                    }, x.Count()))
                                    .ToList();

@@ -2,9 +2,9 @@
 
 namespace ProjectIvy.Model.View
 {
-    public class Location
+    public class LatLng
     {
-        public Location(decimal latitude, decimal longitude)
+        public LatLng(decimal latitude, decimal longitude)
         {
             Latitude = latitude;
             Longitude = longitude;
@@ -17,6 +17,6 @@ namespace ProjectIvy.Model.View
 
     public static class LocationExtensions
     {
-        public static GeoCoordinate ToGeoCoordinate(this Location location) => new GeoCoordinate((double)location.Latitude, (double)location.Longitude);
+        public static GeoCoordinate ToGeoCoordinate(this LatLng location) => new GeoCoordinate((double)location.Latitude, (double)location.Longitude);
     }
 }

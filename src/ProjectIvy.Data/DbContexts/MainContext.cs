@@ -356,6 +356,10 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<GeohashCountry>()
                         .HasKey(x => new { x.CountryId, x.Geohash });
+
+            modelBuilder.Entity<Location>()
+                        .HasMany(x => x.Geohashes)
+                        .WithOne(x => x.Location);
         }
     }
 }

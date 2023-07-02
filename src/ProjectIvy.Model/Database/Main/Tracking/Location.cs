@@ -22,5 +22,7 @@ namespace ProjectIvy.Model.Database.Main.Tracking
         public int Radius { get; set; }
 
         public LocationType LocationType { get; set; }
+
+        public ICollection<LocationGeohash> Geohashes { get; set; }
     }
 }

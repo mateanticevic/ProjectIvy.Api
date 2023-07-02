@@ -6,6 +6,6 @@ namespace ProjectIvy.Model.View.Country
     {
         public Country Country { get; set; }
 
-        public IEnumerable<IEnumerable<Location>> Polygons { get; set; }
+        public IEnumerable<IEnumerable<LatLng>> Polygons { get; set; }
     }
 }

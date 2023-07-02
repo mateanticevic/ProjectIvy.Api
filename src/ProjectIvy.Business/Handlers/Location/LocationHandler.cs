@@ -12,6 +12,18 @@ namespace ProjectIvy.Business.Handlers.Location
         {
         }
 
+        public async Task<IEnumerable<Model.View.Location.Location>> Get()
+        {
+            using var context = GetMainContext();
+
+            var locations = await context.Locations.WhereUser(UserId)
+                                                   .Include(x => x.Geohashes)
+                                                   .ToListAsync();
+
+            return locations.Select(x => new Model.View.Location.Location(x))
+                            .OrderBy(x => x.Name);
+        }
+
         public async Task<IEnumerable<DateTime>> GetDays(string locationId)
         {
             using var context = GetMainContext();
@@ -30,6 +42,23 @@ namespace ProjectIvy.Business.Handlers.Location
                                               .ToListAsync();
 
             return days;
+        }
+
+        public async Task SetGeohashes(string locationValueId, IEnumerable<string> geohashes)
+        {
+            using var context = GetMainContext();
+
+            var location = await context.Locations.WhereUser(UserId)
+                                                  .SingleOrDefaultAsync(x => x.ValueId == locationValueId);
+
+            await context.LocationGeohashes.Where(x => x.LocationId == location.Id)
+                                           .ExecuteDeleteAsync();
+
+
+            foreach (string geohash in geohashes)
+                await context.LocationGeohashes.AddAsync(new Model.Database.Main.Tracking.LocationGeohash() { Location = location, Geohash = geohash });
+
+            await context.SaveChangesAsync();
         }
     }
 }
