@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -40,7 +41,12 @@ namespace ProjectIvy.Api
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                              .UseKestrel(options =>
+                              {
+                                  if (Environment.GetEnvironmentVariable("USE_HTTP2") is not null)
+                                    options.ConfigureEndpointDefaults(x => x.Protocols = HttpProtocols.Http2);
+                              });
                 })
             .UseSerilog();
     }
