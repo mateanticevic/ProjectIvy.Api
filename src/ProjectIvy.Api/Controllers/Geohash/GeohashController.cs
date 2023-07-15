@@ -27,7 +27,8 @@ namespace ProjectIvy.Api.Controllers.Device
         public async Task<IActionResult> GetDays(string geohash) => Ok(await _geohashHandler.GetDays(geohash));
 
         [HttpGet("{fromGeohash}/To/{toGeohash}")]
-        public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date) => Ok(await _geohashHandler.FromGeohashToGeohash(fromGeohash, toGeohash, orderBy));
+        public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date)
+            => Ok(await _geohashHandler.FromGeohashToGeohash(new [] { fromGeohash }, new[] { toGeohash }, orderBy));
 
         [HttpGet("Root/Children")]
         public async Task<IActionResult> GetRootChildren() => Ok(await _geohashHandler.GetChildren(null));
@@ -40,5 +41,9 @@ namespace ProjectIvy.Api.Controllers.Device
 
         [HttpGet("{geohash}/Country")]
         public async Task<IActionResult> GetCountry(string geohash) => Ok(await _geohashHandler.GetCountry(geohash));
+
+        [HttpGet("Route")]
+        public async Task<IActionResult> GetRoutes([FromQuery] RouteGetBinding b)
+            => Ok(await _geohashHandler.FromGeohashToGeohash(b.From, b.To, b.OrderBy));
     }
 }

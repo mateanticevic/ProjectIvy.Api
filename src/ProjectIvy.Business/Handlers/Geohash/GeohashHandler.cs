@@ -1,7 +1,9 @@
-﻿using System.Linq;
+﻿using System.Collections;
+using System.Linq;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Geohash;
 
@@ -13,25 +15,28 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
         }
 
-        public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(string fromGeohash, string toGeohash, RouteTimeSort sort)
+        public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort)
         {
             using var context = GetMainContext();
 
-            var fromTimestamps = await context.Trackings.WhereUser(UserId)
-                                                        .Where(x => x.Geohash.StartsWith(fromGeohash))
-                                                        .GroupBy(x => x.Timestamp.Date)
-                                                        .Select(x => new { Day = x.Key, Time = x.Max(y => y.Timestamp) })
-                                                        .ToListAsync();
 
-            var toTimestamps = await context.Trackings.WhereUser(UserId)
-                                                      .Where(x => x.Geohash.StartsWith(toGeohash))
-                                                      .GroupBy(x => x.Timestamp.Date)
-                                                      .Select(x => new { Day = x.Key, Time = x.Min(y => y.Timestamp) })
-                                                      .ToListAsync();
+            var fromTms = TimestampsByDay(context, fromGeohashes.FirstOrDefault(), true);
 
-            var routes = fromTimestamps.Join(toTimestamps, x => x.Day, x => x.Day, (from, to) => (from.Time, to.Time))
-                                 .Where(x => x.Item1 < x.Item2)
-                                 .Select(x => new Model.View.Geohash.RouteTime() { From = x.Item1, To = x.Item2, Duration = x.Item2.Subtract(x.Item1) });
+            var fromTimestamps = fromGeohashes.Select(x => TimestampsByDay(context, x, true))
+                                              .SelectMany(x => x)
+                                              .GroupBy(x => x.Date)
+                                              .Select(x => x.Max())
+                                              .ToList();
+
+            var toTimestamps = toGeohashes.Select(x => TimestampsByDay(context, x, false))
+                                        .SelectMany(x => x)
+                                        .GroupBy(x => x.Date)
+                                        .Select(x => x.Min())
+                                        .ToList();
+
+            var routes = fromTimestamps.Join(toTimestamps, x => x.Date, x => x.Date, (from, to) => (from, to))
+                                       .Where(x => x.Item1 < x.Item2)
+                                       .Select(x => new Model.View.Geohash.RouteTime() { From = x.Item1, To = x.Item2, Duration = x.Item2.Subtract(x.Item1) });
 
             return sort == RouteTimeSort.Date
                            ? routes.OrderByDescending(x => x.From)
@@ -175,6 +180,14 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                                      .Select(x => x.Geohash)
                                                      .ToListAsync();
             }
+        }
+
+        private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
+        {
+            return context.Trackings.WhereUser(UserId)
+                                    .Where(x => x.Geohash.StartsWith(geohash))
+                                    .GroupBy(x => x.Timestamp.Date)
+                                    .Select(x => last ? x.Max(y => y.Timestamp) : x.Min(y => y.Timestamp));
         }
     }
 }
