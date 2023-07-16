@@ -2,14 +2,20 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding.Geohash;
+using ProjectIvy.Model.View.Geohash;
 
 namespace ProjectIvy.Business.Handlers.Location
 {
     public class LocationHandler : Handler<LocationHandler>, ILocationHandler
     {
-        public LocationHandler(IHandlerContext<LocationHandler> context) : base(context)
+        private IGeohashHandler _geohashHandler;
+
+        public LocationHandler(IHandlerContext<LocationHandler> context, IGeohashHandler geohashHandler) : base(context)
         {
+            _geohashHandler = geohashHandler;
         }
 
         public async Task<IEnumerable<Model.View.Location.Location>> Get()
@@ -42,6 +48,27 @@ namespace ProjectIvy.Business.Handlers.Location
                                               .ToListAsync();
 
             return days;
+        }
+
+        public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort)
+        {
+            using var context = GetMainContext();
+            var fromGeohashes = await context.Locations.WhereUser(UserId)
+                                                  .Where(x => x.ValueId == fromLocationValueId)
+                                                  .Include(x => x.Geohashes)
+                                                  .Select(x => x.Geohashes)
+                                                  .SelectMany(x => x)
+                                                  .Select(x => x.Geohash)
+                                                  .ToListAsync();
+            var toGeohashes = await context.Locations.WhereUser(UserId)
+                                                  .Where(x => x.ValueId == toLocationValueId)
+                                                  .Include(x => x.Geohashes)
+                                                  .Select(x => x.Geohashes)
+                                                  .SelectMany(x => x)
+                                                  .Select(x => x.Geohash)
+                                                  .ToListAsync();
+
+            return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
         }
 
         public async Task SetGeohashes(string locationValueId, IEnumerable<string> geohashes)

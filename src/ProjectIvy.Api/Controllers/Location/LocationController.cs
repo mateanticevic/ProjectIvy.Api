@@ -5,6 +5,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Controllers.Flight;
 using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Business.Handlers.Location;
+using ProjectIvy.Model.Binding.Geohash;
 
 namespace ProjectIvy.Api.Controllers.Location
 {
@@ -25,6 +26,10 @@ namespace ProjectIvy.Api.Controllers.Location
 
         [HttpPost("{locationId}/Geohashes")]
         public async Task PostGeohashes(string locationId, [FromBody] IEnumerable<string> geohashes) => await _locationHandler.SetGeohashes(locationId, geohashes);
+
+        [HttpGet("{fromLocationId}/To/{toLocationId}")]
+        public async Task GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy)
+            => Ok(await _locationHandler.FromLocationToLocation(fromLocationId, toLocationId, orderBy));
     }
 }
 
