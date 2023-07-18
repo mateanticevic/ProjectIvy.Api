@@ -60,6 +60,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<City> Cities { get; set; }
 
+        public DbSet<CityAccessGeohash> CityAccessGeohashes { get; set; }
+
         public DbSet<CityVisited> CitiesVisited { get; set; }
 
         public DbSet<Consumation> Consumations { get; set; }
@@ -360,6 +362,9 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<Location>()
                         .HasMany(x => x.Geohashes)
                         .WithOne(x => x.Location);
+
+            modelBuilder.Entity<CityAccessGeohash>()
+                        .HasKey(x => new { x.CityId, x.Geohash });
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.City;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Model.Binding.City;
+using ProjectIvy.Model.Binding.Geohash;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
 
@@ -24,6 +25,10 @@ namespace ProjectIvy.Api.Controllers.City
 
         [HttpGet("{cityId}/Geohash")]
         public async Task<IActionResult> GetGeohashes(string cityId) => Ok(await _geohashHandler.GetCityGeohashes(cityId));
+
+        [HttpGet("{fromCityId}/To/{toCityId}/Route")]
+        public async Task<IActionResult> GetRoutes(string fromCityId, string toCityId, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date)
+            => Ok(await _cityHandler.GetRoutes(fromCityId, toCityId, orderBy));
 
         [HttpGet("Visited")]
         public IEnumerable<View.City> GetVisited() => _cityHandler.GetVisited();

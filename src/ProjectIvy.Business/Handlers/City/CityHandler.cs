@@ -1,7 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.City;
+using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Geohash;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
@@ -10,8 +13,11 @@ namespace ProjectIvy.Business.Handlers.City
 {
     public class CityHandler : Handler<CityHandler>, ICityHandler
     {
-        public CityHandler(IHandlerContext<CityHandler> context) : base(context)
+        private readonly IGeohashHandler _geohashHandler;
+
+        public CityHandler(IHandlerContext<CityHandler> context, IGeohashHandler geohashHandler) : base(context)
         {
+            _geohashHandler = geohashHandler;
         }
 
         public async Task AddVisitedCity(string cityValueId)
@@ -43,6 +49,23 @@ namespace ProjectIvy.Business.Handlers.City
 
                 return await query.ToPagedViewAsync(binding);
             }
+        }
+
+        public async Task<IEnumerable<RouteTime>> GetRoutes(string fromCityValueId, string toCityValueId, RouteTimeSort sort)
+        {
+            using var context = GetMainContext();
+
+            var fromGeohashes = await context.CityAccessGeohashes.Include(x => x.City)
+                                                                 .Where(x => x.City.ValueId == fromCityValueId)
+                                                                 .Select(x => x.Geohash)
+                                                                 .ToListAsync();
+
+            var toGeohashes = await context.CityAccessGeohashes.Include(x => x.City)
+                                                                 .Where(x => x.City.ValueId == toCityValueId)
+                                                                 .Select(x => x.Geohash)
+                                                                 .ToListAsync();
+
+            return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
         }
 
         public IEnumerable<View.City> GetVisited()
