@@ -63,6 +63,11 @@ namespace ProjectIvy.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCaching(options =>
+            {
+                options.MaximumBodySize = 1024;
+                options.UseCaseSensitivePaths = true;
+            });
             services.AddLogging();
 
             services.AddHttpContextAccessor();

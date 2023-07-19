@@ -14,6 +14,7 @@ namespace ProjectIvy.Api.Controllers.User
         public UserController(ILogger<UserController> logger, IUserHandler userHandler) : base(logger) => _userHandler = userHandler;
 
         [HttpGet]
+        [ResponseCache(Duration = 10)]
         public View.User Get() => _userHandler.Get();
 
         [HttpPut]
