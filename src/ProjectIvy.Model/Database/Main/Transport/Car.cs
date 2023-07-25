@@ -21,6 +21,8 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public CarModel CarModel { get; set; }
 
+        public ICollection<CarFuel> CarFuelings { get; set; }
+
         public ICollection<CarLog> CarLogs { get; set; }
 
         public ICollection<CarService> CarServices { get; set; }

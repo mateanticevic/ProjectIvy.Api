@@ -4,6 +4,7 @@ using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Car;
+using ProjectIvy.Model.View.Car;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Car;
@@ -148,6 +149,19 @@ namespace ProjectIvy.Business.Handlers.Car
 
                 return new View.Car(car) { ServiceDue = serviceDue };
             }
+        }
+
+        public async Task<IEnumerable<CarFueling>> GetFuelings(string carValueId)
+        {
+            using var context = GetMainContext();
+
+            return context.Cars.WhereUser(UserId)
+                               .Include(x => x.CarFuelings)
+                               .Single(x => x.ValueId == carValueId)
+                               .CarFuelings
+                               .OrderByDescending(x => x.Timestamp)
+                               .Select(x => new CarFueling(x))
+                               .ToList();
         }
 
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)

@@ -1,7 +1,6 @@
-﻿using ProjectIvy.Model.Binding.Car;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Car;
+using ProjectIvy.Model.View.Car;
 using View = ProjectIvy.Model.View.Car;
 
 namespace ProjectIvy.Business.Handlers.Car
@@ -19,6 +18,8 @@ namespace ProjectIvy.Business.Handlers.Car
         IEnumerable<View.Car> Get();
 
         View.Car Get(string carId);
+
+        Task<IEnumerable<CarFueling>> GetFuelings(string carValueId);
 
         IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding);
 

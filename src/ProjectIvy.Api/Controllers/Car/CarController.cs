@@ -25,6 +25,10 @@ namespace ProjectIvy.Api.Controllers.Car
         [HttpGet("{carId}")]
         public View.Car Get(string carId) => _carHandler.Get(carId);
 
+
+        [HttpGet("{carId}/Fuel")]
+        public async Task<IActionResult> GetFuel(string carId) => Ok(await _carHandler.GetFuelings(carId));
+
         [HttpGet("{carId}/Log/BySession")]
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
 

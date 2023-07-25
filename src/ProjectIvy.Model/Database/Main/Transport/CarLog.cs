@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Transport
 {
-    [Table("CarLog", Schema = "Transport")]
+    [Table(nameof(CarLog), Schema = nameof(Transport))]
     public class CarLog : IHasTimestamp
     {
         [Key]
