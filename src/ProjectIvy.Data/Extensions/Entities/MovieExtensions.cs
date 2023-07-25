@@ -35,7 +35,7 @@ namespace ProjectIvy.Data.Extensions.Entities
             }
             else if (binding.OrderBy == MovieSort.MyRatingDifference)
             {
-                return movies.OrderBy(binding.OrderAscending, x => x.MyRating - x.Rating);
+                return movies.OrderBy(binding.OrderAscending, x => Math.Abs(x.MyRating - x.Rating));
             }
             else if (binding.OrderBy == MovieSort.Year)
             {
