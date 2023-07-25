@@ -29,6 +29,9 @@ namespace ProjectIvy.Api.Controllers.Car
         [HttpGet("{carId}/Fuel")]
         public async Task<IActionResult> GetFuel(string carId) => Ok(await _carHandler.GetFuelings(carId));
 
+        [HttpGet("{carId}/Fuel/Sum/ByYear")]
+        public IActionResult GetFuelSumByYear(string carId) => Ok(_carHandler.GetFuelByYear(carId));
+
         [HttpPost("{carId}/Fuel")]
         public async Task<IActionResult> PostFuel(string carId, [FromBody] CarFuelingBinding b)
         {

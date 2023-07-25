@@ -3,7 +3,10 @@ using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Car;
+using ProjectIvy.Model.Binding.Consumation;
+using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Car;
 using System.Linq;
 using System.Threading.Tasks;
@@ -162,6 +165,21 @@ namespace ProjectIvy.Business.Handlers.Car
                                .OrderByDescending(x => x.Timestamp)
                                .Select(x => new CarFueling(x))
                                .ToList();
+        }
+
+        public IEnumerable<KeyValuePair<int, decimal>> GetFuelByYear(string carValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Cars.WhereUser(UserId)
+                                   .Include(x => x.CarFuelings)
+                                   .Single(x => x.ValueId == carValueId)
+                                   .CarFuelings
+                                   .GroupBy(x => x.Timestamp.Year)
+                                   .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.AmountInLiters)))
+                                   .OrderByDescending(x => x.Key)
+                                   .ToList();
+            }
         }
 
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)

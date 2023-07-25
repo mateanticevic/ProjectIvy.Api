@@ -19,6 +19,8 @@ namespace ProjectIvy.Business.Handlers.Car
 
         View.Car Get(string carId);
 
+        IEnumerable<KeyValuePair<int, decimal>> GetFuelByYear(string carValueId);
+
         Task<IEnumerable<CarFueling>> GetFuelings(string carValueId);
 
         IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding);
