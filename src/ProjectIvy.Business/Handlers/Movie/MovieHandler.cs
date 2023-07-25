@@ -31,16 +31,6 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
-        public View.Movie Get(string imdbId)
-        {
-            using (var context = GetMainContext())
-            {
-                return context.Movies.WhereUser(UserId)
-                                     .SingleOrDefault(x => x.ImdbId == imdbId)
-                                     .ConvertTo(x => new View.Movie(x));
-            }
-        }
-
         public int Count(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
@@ -167,6 +157,16 @@ namespace ProjectIvy.Business.Handlers.Movie
                                 .OrderBy(x => x.Key)
                                 .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                 .ToList();
+            }
+        }
+
+        public View.Movie Get(string imdbId)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Movies.WhereUser(UserId)
+                                     .SingleOrDefault(x => x.ImdbId == imdbId)
+                                     .ConvertTo(x => new View.Movie(x));
             }
         }
 
