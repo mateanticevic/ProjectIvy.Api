@@ -272,5 +272,24 @@ namespace ProjectIvy.Business.Handlers.Car
                                                         .ToListAsync();
             }
         }
+
+        public async Task NewFueling(string carValueId, CarFuelingBinding b)
+        {
+            using var context = GetMainContext();
+
+            int carId = context.Cars.WhereUser(UserId).GetId(carValueId).Value;
+            var expense = await context.Expenses.WhereUser(UserId)
+                                                .SingleOrDefaultAsync(x => x.Date == b.Date && x.Comment != null && x.Comment.Contains(b.AmountInLiters.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)));
+
+            var entity = new Model.Database.Main.Transport.CarFuel()
+            {
+                AmountInLiters = b.AmountInLiters,
+                CarId = carId,
+                Expense = expense,
+                Timestamp = b.Date
+            };
+            await context.CarFuelings.AddAsync(entity);
+            await context.SaveChangesAsync();
+        }
     }
 }

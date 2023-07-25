@@ -34,5 +34,7 @@ namespace ProjectIvy.Business.Handlers.Car
         Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
 
         Task<IEnumerable<View.CarServiceType>> GetServiceTypes(string carModelValueId);
+
+        Task NewFueling(string carValueId, CarFuelingBinding b);
     }
 }

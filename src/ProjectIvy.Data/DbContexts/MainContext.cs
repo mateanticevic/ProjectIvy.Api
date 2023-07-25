@@ -56,6 +56,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Card> Cards { get; set; }
 
+        public DbSet<CarFuel> CarFuelings { get; set; }
+
         public DbSet<CarLog> CarLogs { get; set; }
 
         public DbSet<City> Cities { get; set; }
@@ -365,6 +367,10 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<CityAccessGeohash>()
                         .HasKey(x => new { x.CityId, x.Geohash });
+
+            modelBuilder.Entity<CarFuel>()
+                        .HasOne(x => x.Car)
+                        .WithMany(x => x.CarFuelings);
         }
     }
 }

@@ -29,6 +29,13 @@ namespace ProjectIvy.Api.Controllers.Car
         [HttpGet("{carId}/Fuel")]
         public async Task<IActionResult> GetFuel(string carId) => Ok(await _carHandler.GetFuelings(carId));
 
+        [HttpPost("{carId}/Fuel")]
+        public async Task<IActionResult> PostFuel(string carId, [FromBody] CarFuelingBinding b)
+        {
+            await _carHandler.NewFueling(carId, b);
+            return Ok();
+        }
+
         [HttpGet("{carId}/Log/BySession")]
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
 
