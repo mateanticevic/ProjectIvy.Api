@@ -167,6 +167,21 @@ namespace ProjectIvy.Business.Handlers.Car
                                .ToList();
         }
 
+        public IEnumerable<KeyValuePair<int, decimal>> GetFuelByMonth(string carValueId)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Cars.WhereUser(UserId)
+                                   .Include(x => x.CarFuelings)
+                                   .Single(x => x.ValueId == carValueId)
+                                   .CarFuelings
+                                   .GroupBy(x => x.Timestamp.Month)
+                                   .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.AmountInLiters)))
+                                   .OrderByDescending(x => x.Key)
+                                   .ToList();
+            }
+        }
+
         public IEnumerable<KeyValuePair<int, decimal>> GetFuelByYear(string carValueId)
         {
             using (var context = GetMainContext())
