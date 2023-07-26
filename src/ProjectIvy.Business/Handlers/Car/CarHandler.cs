@@ -154,6 +154,20 @@ namespace ProjectIvy.Business.Handlers.Car
             }
         }
 
+        public async Task<decimal> GetAverageConsumption(string carValueId)
+        {
+            using var context = GetMainContext();
+
+            var car = await context.Cars.WhereUser(UserId).SingleOrDefaultAsync(x => x.ValueId == carValueId);
+            decimal totalFuel = await context.CarFuelings.Where(x => x.CarId == car.Id).SumAsync(x => x.AmountInLiters);
+
+            var odometerQuery = context.CarLogs.Where(x => x.CarId == car.Id && x.Odometer.HasValue);
+            int firstOdometerValue = (await odometerQuery.Where(x => x.Timestamp >= car.OwnerSince.Value).OrderBy(x => x.Timestamp).FirstOrDefaultAsync()).Odometer.Value;
+            int lastOdometerValue = (await odometerQuery.OrderByDescending(x => x.Timestamp).FirstOrDefaultAsync()).Odometer.Value;
+
+            return Math.Round((totalFuel * 100) / (lastOdometerValue - firstOdometerValue), 2);
+        }
+
         public async Task<IEnumerable<CarFueling>> GetFuelings(string carValueId)
         {
             using var context = GetMainContext();
@@ -265,15 +279,13 @@ namespace ProjectIvy.Business.Handlers.Car
         {
             using (var db = GetMainContext())
             {
-                int? carId = db.Cars.GetId(carValueId);
-
-                //TODO: check if car belongs to user
+                int? carId = db.Cars.WhereUser(UserId).GetId(carValueId);
 
                 var carLog = db.CarLogs
-                                    .Where(x => x.CarId == carId)
-                                    .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
-                                    .OrderByDescending(x => x.Timestamp)
-                                    .FirstOrDefault();
+                               .Where(x => x.CarId == carId)
+                               .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
+                               .OrderByDescending(x => x.Timestamp)
+                               .FirstOrDefault();
 
                 return carLog == null ? null : new View.CarLog(carLog);
             }

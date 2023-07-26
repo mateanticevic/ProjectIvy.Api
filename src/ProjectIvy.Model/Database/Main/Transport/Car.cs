@@ -19,6 +19,8 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public DateTime? FirstRegistered { get; set; }
 
+        public DateTime? OwnerSince { get; set; }
+
         public CarModel CarModel { get; set; }
 
         public ICollection<CarFuel> CarFuelings { get; set; }
