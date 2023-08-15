@@ -40,6 +40,7 @@ using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
+using Prometheus;
 using Serilog;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
@@ -177,7 +178,8 @@ namespace ProjectIvy.Api
             app.UseLegacyAuth();
             app.UseAuthentication();
             app.UseAuthorization();
-
+            app.UseHttpMetrics();
+            app.UseMetricServer();
             app.UseStaticFiles();
 
             app.UseSwagger();
