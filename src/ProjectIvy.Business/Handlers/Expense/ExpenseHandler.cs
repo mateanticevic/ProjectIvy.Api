@@ -1,6 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
@@ -15,8 +16,6 @@ using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.ExpenseType;
 using System.Linq;
-using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Expense;
 
@@ -24,8 +23,12 @@ namespace ProjectIvy.Business.Handlers.Expense
 {
     public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     {
-        public ExpenseHandler(IHandlerContext<ExpenseHandler> context) : base(context)
+        private readonly IMemoryCache _memoryCache;
+
+        public ExpenseHandler(IHandlerContext<ExpenseHandler> context,
+                              IMemoryCache memoryCache) : base(context)
         {
+            _memoryCache = memoryCache;
         }
 
         public void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
@@ -220,6 +223,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 ResolveTransaction(db, entity);
 
                 db.SaveChanges();
+                ClearCache();
 
                 return entity.ValueId;
             }
@@ -234,6 +238,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 db.Expenses.Remove(entity);
                 db.SaveChanges();
+                ClearCache();
 
                 return true;
             }
@@ -302,7 +307,16 @@ namespace ProjectIvy.Business.Handlers.Expense
         }
 
         public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
-            => await SumAmount(await SumBindingToQuery(binding));
+        {
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesSumAmount(binding));
+            return await _memoryCache.GetOrCreateAsync(cacheKey,
+                async cacheEntry =>
+                {
+                    AddCacheKey(cacheKey);
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+                    return await SumAmountNonCached(binding);
+                });
+        }
 
         public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding)
             => await SumAmountByDay(await SumBindingToQuery(binding));
@@ -369,7 +383,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                               .ToList();
 
             var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<IEnumerable<KeyValuePair<string, decimal>>>>(x, SumByType(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
-            await Task.WhenAll(tasks.Select(x => x.Value));
+            await Task.WhenAll(tasks.Select(x => x.Value));
 
             return tasks.Select(x => new KeyValuePair<string, IEnumerable<KeyValuePair<string, decimal>>>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
         }
@@ -408,7 +422,7 @@ namespace ProjectIvy.Business.Handlers.Expense
             var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
             var tasks = periods.Select(x => new KeyValuePair<short, Task<IEnumerable<KeyValuePair<string, decimal>>>>((short)x.From.Value.Year, SumByType(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
-            await Task.WhenAll(tasks.Select(x => x.Value));
+            await Task.WhenAll(tasks.Select(x => x.Value));
 
             return tasks.Select(x => new KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>(x.Key, x.Value.Result));
         }
@@ -473,6 +487,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 ResolveTransaction(context, entity);
 
                 context.SaveChanges();
+                ClearCache();
 
                 return true;
             }
@@ -527,6 +542,9 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
+        private async Task<decimal> SumAmountNonCached(ExpenseSumGetBinding binding)
+            => await SumAmount(await SumBindingToQuery(binding));
+
         private async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(GetExpenseSumQuery query)
         {
             using (var sql = GetSqlConnection())
@@ -557,6 +575,31 @@ namespace ProjectIvy.Business.Handlers.Expense
                     TargetCurrencyId = targetCurrencyId,
                     UserId = UserId
                 };
+            }
+        }
+
+        private async Task AddCacheKey(string newCacheKey)
+        {
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesKeys());
+            var cacheKeys = _memoryCache.Get<IEnumerable<string>>(cacheKey);
+            var updatedCacheKeys = cacheKeys?.ToList() ?? new List<string>();
+            updatedCacheKeys.Add(newCacheKey);
+
+            _memoryCache.Set(cacheKey, updatedCacheKeys.Distinct().AsEnumerable());
+        }
+
+        private async Task ClearCache()
+        {
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesKeys());
+            var keys = _memoryCache.Get<IEnumerable<string>>(cacheKey);
+
+            if (keys is not null)
+            {
+                foreach (var key in keys)
+                {
+                    _memoryCache.Remove(key);
+                }
+                _memoryCache.Remove(cacheKey);
             }
         }
     }

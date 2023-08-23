@@ -182,7 +182,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public int GetDistance(FilteredBinding binding)
         {
-            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingGetDistance(binding.From, binding.To));
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingsGetDistance(binding.From, binding.To));
 
             return _memoryCache.GetOrCreate(cacheKey, cacheEntry =>
             {
