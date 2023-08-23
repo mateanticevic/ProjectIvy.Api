@@ -4,7 +4,9 @@ using System.Xml.Linq;
 using GeoCoordinatePortable;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Parsers;
@@ -20,10 +22,15 @@ namespace ProjectIvy.Business.Handlers.Tracking
     public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
     {
         private readonly IGeohashHandler _geohashHandler;
+        private readonly IMemoryCache _memoryCache;
 
-        public TrackingHandler(IHandlerContext<TrackingHandler> context, IGeohashHandler geohashHandler) : base(context)
+        public TrackingHandler(IHandlerContext<TrackingHandler> context,
+                               IGeohashHandler geohashHandler,
+                               IMemoryCache memoryCache) : base(context)
         {
+
             _geohashHandler = geohashHandler;
+            _memoryCache = memoryCache;
         }
 
         public int Count(FilteredBinding binding)
@@ -175,55 +182,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public int GetDistance(FilteredBinding binding)
         {
-            binding.From = binding.From ?? DateTime.MinValue;
-            binding.To = binding.To ?? DateTime.MaxValue;
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingGetDistance(binding.From, binding.To));
 
-            using (var db = GetMainContext())
+            return _memoryCache.GetOrCreate(cacheKey, cacheEntry =>
             {
-                var total = 0;
-
-                // Already calculated distance. By day.
-                {
-                    var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
-                    var to = binding.To.Value.Date;
-
-                    total = db.TrackingDistances.WhereUser(UserId)
-                                                    .WhereTimestampFromInclusive(from, to)
-                                                    .Sum(x => x.DistanceInMeters);
-                }
-
-                var lastDate = db.TrackingDistances.WhereUser(UserId)
-                                                   .OrderByDescending(x => x.Timestamp)
-                                                   .FirstOrDefault()
-                                                   .Timestamp;
-
-                if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
-                {
-                    var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
-
-                    total += db.Trackings.WhereUser(UserId)
-                                         .Distance(binding.From.Value, to);
-                }
-
-                if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
-                {
-                    total += db.Trackings.WhereUser(UserId)
-                                         .Distance(binding.To.Value.Date, binding.To.Value);
-                }
-
-                binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
-
-                if (lastDate < binding.To.Value.Date)
-                {
-                    var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
-
-                    // TODO: Include last tracking from previous date
-                    total += db.Trackings.WhereUser(UserId)
-                                         .Distance(from.Value, binding.To.Value);
-                }
-
-                return total;
-            }
+                cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+                return GetDistanceNonCached(binding);
+            });
         }
 
         public double GetAverageSpeed(FilteredBinding binding)
@@ -326,6 +291,60 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                          .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
                                          .OrderByDescending(x => x.Timestamp)
                                          .FirstOrDefaultAsync();
+            }
+        }
+
+        private int GetDistanceNonCached(FilteredBinding binding)
+        {
+
+            binding.From = binding.From ?? DateTime.MinValue;
+            binding.To = binding.To ?? DateTime.MaxValue;
+
+            using (var db = GetMainContext())
+            {
+                var total = 0;
+
+                // Already calculated distance. By day.
+                {
+                    var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
+                    var to = binding.To.Value.Date;
+
+                    total = db.TrackingDistances.WhereUser(UserId)
+                                                    .WhereTimestampFromInclusive(from, to)
+                                                    .Sum(x => x.DistanceInMeters);
+                }
+
+                var lastDate = db.TrackingDistances.WhereUser(UserId)
+                                                   .OrderByDescending(x => x.Timestamp)
+                                                   .FirstOrDefault()
+                                                   .Timestamp;
+
+                if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
+                {
+                    var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
+
+                    total += db.Trackings.WhereUser(UserId)
+                                         .Distance(binding.From.Value, to);
+                }
+
+                if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
+                {
+                    total += db.Trackings.WhereUser(UserId)
+                                         .Distance(binding.To.Value.Date, binding.To.Value);
+                }
+
+                binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
+
+                if (lastDate < binding.To.Value.Date)
+                {
+                    var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
+
+                    // TODO: Include last tracking from previous date
+                    total += db.Trackings.WhereUser(UserId)
+                                         .Distance(from.Value, binding.To.Value);
+                }
+
+                return total;
             }
         }
     }

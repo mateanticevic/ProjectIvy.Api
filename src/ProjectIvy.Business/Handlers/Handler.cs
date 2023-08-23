@@ -31,6 +31,8 @@ namespace ProjectIvy.Business.Handlers
 
         protected SqlConnection GetSqlConnection() => new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
 
+        protected string BuildUserCacheKey(string resourceKey) => $"{UserId}_{resourceKey}";
+
         private int ResolveUserId(string authIdentifier)
         {
             if (_identifierUserMapping is null || !_identifierUserMapping.ContainsKey(authIdentifier))
