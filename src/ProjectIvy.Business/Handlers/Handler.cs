@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Data.DbContexts;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ProjectIvy.Business.Handlers
@@ -21,9 +20,17 @@ namespace ProjectIvy.Business.Handlers
             UserId = ResolveUserId(authIdentifier);
         }
 
+        public Handler(IHandlerContext<THandler> context,
+                       IMemoryCache memoryCache) : this(context)
+        {
+            MemoryCache = memoryCache;
+        }
+
         public HttpContext HttpContext { get; set; }
 
         public ILogger Logger { get; set; }
+
+        protected IMemoryCache MemoryCache { get; private set; }
 
         protected int UserId { get; private set; }
 

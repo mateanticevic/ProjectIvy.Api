@@ -1,6 +1,8 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.User;
@@ -11,7 +13,10 @@ namespace ProjectIvy.Business.Handlers.User
 {
     public class UserHandler : Handler<UserHandler>, IUserHandler
     {
-        public UserHandler(IHandlerContext<UserHandler> context) : base(context)
+
+
+        public UserHandler(IHandlerContext<UserHandler> context,
+                           IMemoryCache memoryCache) : base(context, memoryCache)
         {
         }
 
@@ -26,19 +31,12 @@ namespace ProjectIvy.Business.Handlers.User
         }
 
         public View.User Get(int? id = null)
-        {
-            id = id.HasValue ? id : UserId;
-
-            using (var db = GetMainContext())
-            {
-                var userEntity = db.Users.Include(x => x.DefaultCar)
-                                         .Include(x => x.DefaultCurrency)
-                                         .Include(x => x.DefaultCar.CarModel)
-                                         .SingleOrDefault(x => x.Id == id);
-
-                return new View.User(userEntity);
-            }
-        }
+            => MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.UserGet()),
+                cacheEntry =>
+                {
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                    return GetNonCached(id);
+                });
 
         public async Task Update(UserUpdateBinding binding)
         {
@@ -64,6 +62,21 @@ namespace ProjectIvy.Business.Handlers.User
 
                 await context.Weights.AddAsync(entity);
                 await context.SaveChangesAsync();
+            }
+        }
+
+        private View.User GetNonCached(int? id = null)
+        {
+            id = id.HasValue ? id : UserId;
+
+            using (var db = GetMainContext())
+            {
+                var userEntity = db.Users.Include(x => x.DefaultCar)
+                                         .Include(x => x.DefaultCurrency)
+                                         .Include(x => x.DefaultCar.CarModel)
+                                         .SingleOrDefault(x => x.Id == id);
+
+                return new View.User(userEntity);
             }
         }
     }
