@@ -264,16 +264,13 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            using (var context = GetMainContext())
-            {
-                return context.Expenses.WhereUser(UserId)
-                                       .IncludeAll()
-                                       .Where(binding, context)
-                                       .OrderBy(binding)
-                                       .ThenByDescending(x => x.Created)
-                                       .Select(x => new View.Expense(x))
-                                       .ToPagedView(binding);
-            }
+            return _memoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.ExpensesGet(binding)),
+                cacheEntry =>
+                {
+                    AddCacheKey(cacheEntry.Key.ToString());
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+                    return GetNonCached(binding);
+                });
         }
 
         public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
@@ -505,6 +502,20 @@ namespace ProjectIvy.Business.Handlers.Expense
                 context.Vendors.Add(entity);
                 context.SaveChanges();
                 return entity.ValueId;
+            }
+        }
+
+        public PagedView<View.Expense> GetNonCached(ExpenseGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return context.Expenses.WhereUser(UserId)
+                                       .IncludeAll()
+                                       .Where(binding, context)
+                                       .OrderBy(binding)
+                                       .ThenByDescending(x => x.Created)
+                                       .Select(x => new View.Expense(x))
+                                       .ToPagedView(binding);
             }
         }
 
