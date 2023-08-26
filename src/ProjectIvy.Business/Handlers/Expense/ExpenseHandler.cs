@@ -26,7 +26,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         private readonly IMemoryCache _memoryCache;
 
         public ExpenseHandler(IHandlerContext<ExpenseHandler> context,
-                              IMemoryCache memoryCache) : base(context)
+                              IMemoryCache memoryCache) : base(context, memoryCache, nameof(ExpenseHandler))
         {
             _memoryCache = memoryCache;
         }
@@ -586,31 +586,6 @@ namespace ProjectIvy.Business.Handlers.Expense
                     TargetCurrencyId = targetCurrencyId,
                     UserId = UserId
                 };
-            }
-        }
-
-        private async Task AddCacheKey(string newCacheKey)
-        {
-            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesKeys());
-            var cacheKeys = _memoryCache.Get<IEnumerable<string>>(cacheKey);
-            var updatedCacheKeys = cacheKeys?.ToList() ?? new List<string>();
-            updatedCacheKeys.Add(newCacheKey);
-
-            _memoryCache.Set(cacheKey, updatedCacheKeys.Distinct().AsEnumerable());
-        }
-
-        private async Task ClearCache()
-        {
-            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesKeys());
-            var keys = _memoryCache.Get<IEnumerable<string>>(cacheKey);
-
-            if (keys is not null)
-            {
-                foreach (var key in keys)
-                {
-                    _memoryCache.Remove(key);
-                }
-                _memoryCache.Remove(cacheKey);
             }
         }
     }

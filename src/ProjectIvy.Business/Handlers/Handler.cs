@@ -11,6 +11,8 @@ namespace ProjectIvy.Business.Handlers
     {
         private static IDictionary<string, int> _identifierUserMapping;
 
+        private readonly string _resourceCacheKey;
+
         public Handler(IHandlerContext<THandler> context)
         {
             HttpContext = context.Context.HttpContext;
@@ -21,9 +23,11 @@ namespace ProjectIvy.Business.Handlers
         }
 
         public Handler(IHandlerContext<THandler> context,
-                       IMemoryCache memoryCache) : this(context)
+                       IMemoryCache memoryCache,
+                       string resourceCacheKey) : this(context)
         {
             MemoryCache = memoryCache;
+            _resourceCacheKey = resourceCacheKey;
         }
 
         public HttpContext HttpContext { get; set; }
@@ -39,6 +43,31 @@ namespace ProjectIvy.Business.Handlers
         protected SqlConnection GetSqlConnection() => new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
 
         protected string BuildUserCacheKey(string resourceKey) => $"{UserId}_{resourceKey}";
+
+        protected void AddCacheKey(string newCacheKey)
+        {
+            string cacheKey = BuildUserCacheKey(_resourceCacheKey);
+            var cacheKeys = MemoryCache.Get<IEnumerable<string>>(cacheKey);
+            var updatedCacheKeys = cacheKeys?.ToList() ?? new List<string>();
+            updatedCacheKeys.Add(newCacheKey);
+
+            MemoryCache.Set(cacheKey, updatedCacheKeys.Distinct().AsEnumerable());
+        }
+
+        protected void ClearCache()
+        {
+            string cacheKey = BuildUserCacheKey(_resourceCacheKey);
+            var keys = MemoryCache.Get<IEnumerable<string>>(cacheKey);
+
+            if (keys is not null)
+            {
+                foreach (var key in keys)
+                {
+                    MemoryCache.Remove(key);
+                }
+                MemoryCache.Remove(cacheKey);
+            }
+        }
 
         private int ResolveUserId(string authIdentifier)
         {

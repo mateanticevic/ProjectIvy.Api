@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Beer;
@@ -14,7 +15,8 @@ namespace ProjectIvy.Business.Handlers.Beer
 {
     public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     {
-        public BeerHandler(IHandlerContext<BeerHandler> context) : base(context)
+        public BeerHandler(IHandlerContext<BeerHandler> context,
+                           IMemoryCache memoryCache) : base(context, memoryCache, nameof(BeerHandler))
         {
         }
 
@@ -39,6 +41,7 @@ namespace ProjectIvy.Business.Handlers.Beer
 
                 await context.BeerBrands.AddAsync(entity);
                 await context.SaveChangesAsync();
+                ClearCache();
 
                 return entity.ValueId;
             }
@@ -72,15 +75,15 @@ namespace ProjectIvy.Business.Handlers.Beer
 
         public async Task<IEnumerable<View.BeerBrand>> GetBrands(BrandGetBinding binding)
         {
-            using (var context = GetMainContext())
-            {
-                return await context.BeerBrands.Include(x => x.Country)
-                                               .WhereIf(binding.HasCountry.HasValue, x => !(binding.HasCountry.Value ^ x.CountryId.HasValue))
-                                               .WhereIf(!string.IsNullOrWhiteSpace(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
-                                               .OrderBy(x => x.Name)
-                                               .Select(x => new View.BeerBrand(x))
-                                               .ToListAsync();
-            }
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.BeerBrandsGet(binding));
+            return await MemoryCache.GetOrCreateAsync(cacheKey,
+                async cacheEntry =>
+                {
+                    AddCacheKey(cacheKey);
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+
+                    return await GetBrandsNonCached(binding);
+                });
         }
 
         public async Task<IEnumerable<View.BeerServing>> GetServings()
@@ -118,6 +121,20 @@ namespace ProjectIvy.Business.Handlers.Beer
                 var entity = binding.ToEntity(context, brand);
 
                 await context.SaveChangesAsync();
+                ClearCache();
+            }
+        }
+
+        public async Task<IEnumerable<View.BeerBrand>> GetBrandsNonCached(BrandGetBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                return await context.BeerBrands.Include(x => x.Country)
+                                               .WhereIf(binding.HasCountry.HasValue, x => !(binding.HasCountry.Value ^ x.CountryId.HasValue))
+                                               .WhereIf(!string.IsNullOrWhiteSpace(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
+                                               .OrderBy(x => x.Name)
+                                               .Select(x => new View.BeerBrand(x))
+                                               .ToListAsync();
             }
         }
     }

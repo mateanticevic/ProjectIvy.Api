@@ -16,7 +16,7 @@ namespace ProjectIvy.Business.Handlers.User
 
 
         public UserHandler(IHandlerContext<UserHandler> context,
-                           IMemoryCache memoryCache) : base(context, memoryCache)
+                           IMemoryCache memoryCache) : base(context, memoryCache, nameof(UserHandler))
         {
         }
 
