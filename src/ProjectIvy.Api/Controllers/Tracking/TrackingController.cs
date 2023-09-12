@@ -64,7 +64,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
         public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
 
         [HttpGet("LastLocation")]
-        public async Task<IActionResult> GetLastLocation() => Ok(await _trackingHandler.GetLastLocation());
+        public async Task<View.TrackingLocation> GetLastLocation() => await _trackingHandler.GetLastLocation();
 
         [HttpGet("Speed/Average")]
         public double GetAverageSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetAverageSpeed(binding);
