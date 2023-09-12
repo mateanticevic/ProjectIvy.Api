@@ -4,7 +4,6 @@ using ProjectIvy.Model.Binding.ExpenseType;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Expense;
 using ProjectIvy.Model.View.ExpenseType;
-using System.Collections.Generic;
 using System.Linq;
 using Database = ProjectIvy.Model.Database.Main.Finance;
 
@@ -22,13 +21,31 @@ namespace ProjectIvy.Business.Handlers.Expense
             {
                 int? parentId = context.ExpenseTypes.GetId(binding.ParentId);
 
-                return context.ExpenseTypes.Include(x => x.Children)
-                                      .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
-                                      .WhereIf(binding.HasParent.HasValue, x => binding.HasParent.Value ? x.ParentTypeId != null : x.ParentTypeId == null)
-                                      .WhereIf(parentId.HasValue, x => x.ParentTypeId == parentId.Value)
-                                      .OrderBy(x => x.Name)
-                                      .ToList()
-                                      .Select(x => new ExpenseType(x));
+                var query = context.ExpenseTypes.Include(x => x.Children)
+                                                .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
+                                                .WhereIf(binding.HasParent.HasValue, x => binding.HasParent.Value ? x.ParentTypeId != null : x.ParentTypeId == null)
+                                                .WhereIf(parentId.HasValue, x => x.ParentTypeId == parentId.Value);
+
+                switch (binding.OrderBy)
+                {
+                    case ExpenseTypeSort.Top10:
+                        var top10Types = context.Expenses.OrderByDescending(x => x.Created)
+                                                         .Take(1000)
+                                                         .GroupBy(x => x.ExpenseTypeId)
+                                                         .Select(x => new { x.Key, Count = x.Count() })
+                                                         .OrderByDescending(x => x.Count)
+                                                         .Take(10);
+
+                        query = query.OrderBy(x => !top10Types.Any(y => y.Key == x.Id))
+                                     .ThenBy(x => x.Name);
+                                                         
+                        break;
+                    default:
+                        query = query.OrderBy(x => x.Name);
+                        break;
+                }
+
+                return query.Select(x => new ExpenseType(x)).ToList();
             }
         }
 

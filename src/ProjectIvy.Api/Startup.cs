@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Serialization;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
@@ -107,11 +108,13 @@ namespace ProjectIvy.Api
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
 
-            services.AddControllers(options => options.EnableEndpointRouting = false).AddNewtonsoftJson().AddJsonOptions(options =>
+            services.AddControllers(options => options.EnableEndpointRouting = false)
+                    .AddJsonOptions(options =>
             {
                 options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.IgnoreNullValues = true;
-            });
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            })
+            .AddNewtonsoftJson();
             services.AddSwaggerGen(options =>
             {
                 options.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
@@ -206,7 +209,7 @@ namespace ProjectIvy.Api
 
                 };
             });
-            app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
+            app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
             app.UseDeveloperExceptionPage();
             app.UseExceptionHandling();
