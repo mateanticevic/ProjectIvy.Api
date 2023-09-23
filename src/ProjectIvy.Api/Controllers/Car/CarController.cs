@@ -3,8 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Model.Binding.Car;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Car;
 
@@ -36,6 +34,9 @@ namespace ProjectIvy.Api.Controllers.Car
 
         [HttpGet("{carId}/Fuel/Sum/ByYear")]
         public IActionResult GetFuelSumByYear(string carId) => Ok(_carHandler.GetFuelByYear(carId));
+
+        [HttpGet("{carId}/Kilometers/ByYear")]
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carId) => await _carHandler.GetKilometersByYear(carId);
 
         [HttpPost("{carId}/Fuel")]
         public async Task<IActionResult> PostFuel(string carId, [FromBody] CarFuelingBinding b)

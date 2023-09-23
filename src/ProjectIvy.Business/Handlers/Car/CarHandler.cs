@@ -3,10 +3,7 @@ using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Car;
-using ProjectIvy.Model.Binding.Consumation;
-using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Car;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,7 +13,7 @@ namespace ProjectIvy.Business.Handlers.Car
 {
     public class CarHandler : Handler<CarHandler>, ICarHandler
     {
-        public CarHandler(IHandlerContext<CarHandler> context) : base(context) {}
+        public CarHandler(IHandlerContext<CarHandler> context) : base(context) { }
 
         public void Create(string valueId, CarBinding car)
         {
@@ -114,7 +111,7 @@ namespace ProjectIvy.Business.Handlers.Car
                 var serviceDue = new List<View.CarServiceDue>();
                 foreach (var serviceInterval in context.CarServiceIntervals
                                                        .Include(x => x.CarServiceType)
-                                                       .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
+                                                       .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
                                                        .ToList())
                 {
                     var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
@@ -176,7 +173,7 @@ namespace ProjectIvy.Business.Handlers.Car
                                .Include(x => x.CarFuelings)
                                .Single(x => x.ValueId == carValueId)
                                .CarFuelings
-                               .OrderByDescending(x => x.Timestamp)
+                               .OrderByDescending(x => x.Timestamp)
                                .Select(x => new CarFueling(x))
                                .ToList();
         }
@@ -209,6 +206,26 @@ namespace ProjectIvy.Business.Handlers.Car
                                    .OrderByDescending(x => x.Key)
                                    .ToList();
             }
+        }
+
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carValueId)
+        {
+            using var context = GetMainContext();
+            var car = context.Cars.WhereUser(UserId).Single(x => x.ValueId == carValueId);
+
+            var years = Enumerable.Range(car.FirstRegistered.Value.Year, DateTime.Now.Year - car.FirstRegistered.Value.Year + 1);
+
+            var kilometersByYear = new List<KeyValuePair<int, int>>();
+
+            foreach (int year in years)
+            {
+                int fromOdometer = context.CarLogs.GetAproximateOdometer(car.Id, new DateTime(year, 1, 1)) ?? 0;
+                int toOdometer = context.CarLogs.GetAproximateOdometer(car.Id, new DateTime(year + 1, 1, 1)) ?? 0;
+
+                kilometersByYear.Add(new KeyValuePair<int, int>(year, toOdometer - fromOdometer));
+            }
+
+            return kilometersByYear;
         }
 
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
