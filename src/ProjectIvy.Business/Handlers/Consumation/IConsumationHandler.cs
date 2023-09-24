@@ -47,6 +47,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding);
 
+        IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByDay(ConsumationGetBinding binding);
+
         IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByMonth(ConsumationGetBinding binding);

@@ -9,8 +9,6 @@ using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
@@ -22,7 +20,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
         public ConsumationHandler(IHandlerContext<ConsumationHandler> context) : base(context)
         {
         }
-        
+
         public void Add(ConsumationBinding binding)
         {
             using (var context = GetMainContext())
@@ -50,7 +48,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                                  .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.Volume * y.Beer.Abv / 100)))
                                                  .ToListAsync();
             }
-        } 
+        }
 
         public async Task<IEnumerable<KeyValuePair<int, int>>> AverageByYear(ConsumationGetBinding binding)
         {
@@ -296,10 +294,10 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
                 return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                               .Select(x => new KeyValuePair<View.Beer.Beer, int>(new()
-                                        {
-                                            Id = x.Key.ValueId,
-                                            Name = x.Key.Name
-                                        }, x.Sum(y => y.Volume)))                              
+                              {
+                                  Id = x.Key.ValueId,
+                                  Name = x.Key.Name
+                              }, x.Sum(y => y.Volume)))
                               .ToPagedView(binding, grouped.Count());
             }
         }
@@ -326,7 +324,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                               Name = x.Key.Name
                           }, x.Sum(y => y.Volume)))
                           .ToPagedView(binding, grouped.Count());
-                          
+
         }
 
         public PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding)
@@ -348,12 +346,24 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
                 return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                               .Select(x => new KeyValuePair<View.Country.Country, int>(new()
-                {
-                    Id = x.Key.ValueId,
-                    Name = x.Key.Name
-                }, x.Sum(y => y.Volume)))
+                              {
+                                  Id = x.Key.ValueId,
+                                  Name = x.Key.Name
+                              }, x.Sum(y => y.Volume)))
                               .ToPagedView(binding, grouped.Count());
             }
+        }
+
+        public IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByDay(ConsumationGetBinding binding)
+        {
+            using var context = GetMainContext();
+
+            return context.Consumations.WhereUser(UserId)
+                           .Where(binding, context)
+                           .GroupBy(x => x.Date)
+                           .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Sum(y => y.Volume)))
+                           .ToList()
+                           .OrderBy(x => x.Key);
         }
 
         public IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding)
@@ -361,7 +371,8 @@ namespace ProjectIvy.Business.Handlers.Consumation
             using (var sqlConnection = GetSqlConnection())
             {
                 return sqlConnection.Query<KeyValuePair<int, int>>(SqlLoader.Load(SqlScripts.GetConsumationSumByDayOfWeek),
-                                        new {
+                                        new
+                                        {
                                             binding.From,
                                             binding.To,
                                             UserId = UserId
@@ -427,10 +438,10 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
                 return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                               .Select(x => new KeyValuePair<View.Beer.BeerServing, int>(new()
-                                {
-                                    Id = x.Key.ValueId,
-                                    Name = x.Key.Name
-                                }, x.Sum(y => y.Volume)))
+                              {
+                                  Id = x.Key.ValueId,
+                                  Name = x.Key.Name
+                              }, x.Sum(y => y.Volume)))
                                               .ToList();
             }
         }
@@ -452,7 +463,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
                 return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                               .Select(x => new KeyValuePair<View.Beer.BeerStyle, int>(
-                                  new ()
+                                  new()
                                   {
                                       Id = x.Key.ValueId,
                                       Name = x.Key.Name
