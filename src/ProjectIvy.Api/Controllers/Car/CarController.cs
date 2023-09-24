@@ -26,6 +26,9 @@ namespace ProjectIvy.Api.Controllers.Car
         [HttpGet("{carId}/Consumption/Avg")]
         public async Task<IActionResult> GetAverageConsumption(string carId) => Ok(await _carHandler.GetAverageConsumption(carId));
 
+        [HttpGet("{carId}/Consumption/ByYear")]
+        public async Task<IActionResult> GetAverageConsumptionByYear(string carId) => Ok(await _carHandler.GetAverageConsumptionByYear(carId));
+
         [HttpGet("{carId}/Fuel")]
         public async Task<IActionResult> GetFuel(string carId) => Ok(await _carHandler.GetFuelings(carId));
 

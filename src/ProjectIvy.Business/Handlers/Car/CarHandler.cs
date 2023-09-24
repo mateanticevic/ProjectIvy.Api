@@ -165,6 +165,14 @@ namespace ProjectIvy.Business.Handlers.Car
             return Math.Round((totalFuel * 100) / (lastOdometerValue - firstOdometerValue), 2);
         }
 
+        public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetAverageConsumptionByYear(string carValueId)
+        {
+            var kilometersByYear = await GetKilometersByYear(carValueId);
+            var fuelByYear = GetFuelByYear(carValueId);
+
+            return fuelByYear.Join(kilometersByYear, x => x.Key, x => x.Key, (x, y) => new KeyValuePair<int, decimal>(x.Key, Math.Round(x.Value / (y.Value / 100), 2)));
+        }
+
         public async Task<IEnumerable<CarFueling>> GetFuelings(string carValueId)
         {
             using var context = GetMainContext();
@@ -225,7 +233,7 @@ namespace ProjectIvy.Business.Handlers.Car
                 kilometersByYear.Add(new KeyValuePair<int, int>(year, toOdometer - fromOdometer));
             }
 
-            return kilometersByYear;
+            return kilometersByYear.OrderByDescending(x => x.Key);
         }
 
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
