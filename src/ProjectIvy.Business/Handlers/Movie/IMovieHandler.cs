@@ -1,7 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Movie;
 
@@ -21,7 +19,7 @@ namespace ProjectIvy.Business.Handlers.Movie
 
         IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);
 
-        IEnumerable<GroupedByMonth<int>> CountByMonthOfYear(MovieGetBinding binding);
+        IEnumerable<KeyValuePair<DateTime, int>> CountByMonthOfYear(MovieGetBinding binding);
 
         IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding);
 

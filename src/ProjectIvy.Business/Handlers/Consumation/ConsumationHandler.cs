@@ -405,7 +405,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                            .Select(x => new KeyValuePair<DateTime, int>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Sum(y => y.Volume)))
                                            .ToList()
-                                           .OrderByDescending(x => x.Key);
+                                           .OrderBy(x => x.Key);
             }
         }
 

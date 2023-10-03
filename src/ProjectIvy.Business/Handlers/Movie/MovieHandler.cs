@@ -81,7 +81,7 @@ namespace ProjectIvy.Business.Handlers.Movie
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> CountByMonthOfYear(MovieGetBinding binding)
+        public IEnumerable<KeyValuePair<DateTime, int>> CountByMonthOfYear(MovieGetBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -90,7 +90,7 @@ namespace ProjectIvy.Business.Handlers.Movie
                                 .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
                                 .OrderBy(x => x.Key.Year)
                                 .ThenBy(x => x.Key.Month)
-                                .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                                .Select(x => new KeyValuePair<DateTime, int>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Count()))
                                 .ToList();
             }
         }

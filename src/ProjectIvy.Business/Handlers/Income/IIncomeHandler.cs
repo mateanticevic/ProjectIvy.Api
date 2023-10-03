@@ -1,7 +1,6 @@
 ﻿using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Income;
 
@@ -19,7 +18,7 @@ namespace ProjectIvy.Business.Handlers.Income
 
         Task<decimal> GetSum(IncomeGetSumBinding binding);
 
-        IEnumerable<KeyValuePair<string, decimal>> GetSumByMonthOfYear(IncomeGetSumBinding binding);
+        IEnumerable<KeyValuePair<DateTime, decimal>> GetSumByMonthOfYear(IncomeGetSumBinding binding);
 
         IEnumerable<KeyValuePair<int, decimal>> GetSumByYear(IncomeGetSumBinding binding);
 
