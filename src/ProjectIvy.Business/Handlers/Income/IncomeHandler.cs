@@ -10,8 +10,6 @@ using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Income;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Income;
@@ -114,7 +112,7 @@ namespace ProjectIvy.Business.Handlers.Income
 
                 var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
 
-                return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}", x.Value.Result));
+                return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
             }
         }
 

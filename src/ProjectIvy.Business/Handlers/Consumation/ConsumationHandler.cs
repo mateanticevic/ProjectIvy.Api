@@ -396,17 +396,16 @@ namespace ProjectIvy.Business.Handlers.Consumation
             }
         }
 
-        public IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
+        public IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
         {
             using (var context = GetMainContext())
             {
                 return context.Consumations.WhereUser(UserId)
                                            .Where(binding, context)
                                            .GroupBy(x => new { x.Date.Year, x.Date.Month })
-                                           .Select(x => new GroupedByMonth<int>(x.Sum(y => y.Volume), x.Key.Year, x.Key.Month))
+                                           .Select(x => new KeyValuePair<DateTime, int>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Sum(y => y.Volume)))
                                            .ToList()
-                                           .OrderBy(x => x.Year)
-                                           .ThenBy(x => x.Month);
+                                           .OrderByDescending(x => x.Key);
             }
         }
 

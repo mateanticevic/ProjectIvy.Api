@@ -1,8 +1,6 @@
 ﻿using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using View = ProjectIvy.Model.View;
 
@@ -53,7 +51,7 @@ namespace ProjectIvy.Business.Handlers.Consumation
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByMonth(ConsumationGetBinding binding);
 
-        IEnumerable<GroupedByMonth<int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding);
+        IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding);
 
         IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
 
