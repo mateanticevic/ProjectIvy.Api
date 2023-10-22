@@ -18,7 +18,7 @@ namespace ProjectIvy.Business.Handlers
             HttpContext = context.Context.HttpContext;
             Logger = context.Logger;
 
-            string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "sub").Value;
+            string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "email").Value;
             UserId = ResolveUserId(authIdentifier);
         }
 
@@ -69,18 +69,18 @@ namespace ProjectIvy.Business.Handlers
             }
         }
 
-        private int ResolveUserId(string authIdentifier)
+        private int ResolveUserId(string email)
         {
-            if (_identifierUserMapping is null || !_identifierUserMapping.ContainsKey(authIdentifier))
+            if (_identifierUserMapping is null || !_identifierUserMapping.ContainsKey(email))
             {
                 using (var db = GetMainContext())
                 {
-                    _identifierUserMapping = db.Users.Where(x => x.AuthIdentifier != null)
-                                                     .ToDictionary(x => x.AuthIdentifier, x => x.Id);
+                    _identifierUserMapping = db.Users.Where(x => x.Email != null)
+                                                     .ToDictionary(x => x.Email, x => x.Id);
                 }
             }
 
-            return _identifierUserMapping[authIdentifier];
+            return _identifierUserMapping[email];
         }
     }
 }

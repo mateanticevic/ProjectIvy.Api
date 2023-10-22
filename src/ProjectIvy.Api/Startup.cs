@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Serialization;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
@@ -50,8 +49,11 @@ namespace ProjectIvy.Api
 {
     public class Startup
     {
+        private readonly string _authority;
+
         public Startup(IWebHostEnvironment env)
         {
+            _authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
             var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
                                                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                                                     .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
@@ -125,8 +127,8 @@ namespace ProjectIvy.Api
                     {
                         AuthorizationCode = new OpenApiOAuthFlow
                         {
-                            AuthorizationUrl = new Uri("https://auth.anticevic.net/connect/authorize"),
-                            TokenUrl = new Uri("https://auth.anticevic.net/connect/token"),
+                            AuthorizationUrl = new Uri($"{_authority}/connect/authorize"),
+                            TokenUrl = new Uri($"{_authority}/connect/token"),
                             Scopes = new Dictionary<string, string>
                             {
                                 {"api1", "Demo API - full access"}
@@ -138,29 +140,46 @@ namespace ProjectIvy.Api
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthorization(options =>
-                    {
-                        options.AddPolicy("TrackingSource", policy => policy.RequireClaim("tracking_create"));
-                    })
-                    .AddAuthentication(options =>
-                    {
-                        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    })
-                    .AddJwtBearer(o =>
-                    {
-                        o.Authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
-                        o.RequireHttpsMetadata = false;
-                        o.Audience = Environment.GetEnvironmentVariable("OAUTH_AUDIENCE");
-                        o.Events = new JwtBearerEvents
+            //services.AddAuthorization(options =>
+            //        {
+            //            options.AddPolicy("TrackingSource", policy => policy.RequireClaim("tracking_create"));
+            //        })
+            //        .AddAuthentication(options =>
+            //        {
+            //            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //        })
+            //        .AddJwtBearer(o =>
+            //        {
+            //            o.Authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
+            //            o.RequireHttpsMetadata = false;
+            //            o.Audience = Environment.GetEnvironmentVariable("OAUTH_AUDIENCE");
+            //            o.Events = new JwtBearerEvents
+            //            {
+            //                OnMessageReceived = context =>
+            //                {
+            //                    context.Token = context.Request.Cookies["AccessToken"];
+            //                    return Task.CompletedTask;
+            //                }
+            //            };
+            //        });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
                         {
-                            OnMessageReceived = context =>
+                            o.RequireHttpsMetadata = false;
+                            o.MetadataAddress = $"{_authority}/realms/ivy/.well-known/openid-configuration";
+                            o.Authority = $"{_authority}/realms/ivy";
+                            o.Audience = "account";
+                            o.Events = new JwtBearerEvents
                             {
-                                context.Token = context.Request.Cookies["AccessToken"];
-                                return Task.CompletedTask;
-                            }
-                        };
-                    });
+                                OnMessageReceived = context =>
+                                {
+                                    context.Token = context.Request.Cookies["AccessToken"];
+                                    return Task.CompletedTask;
+                                }
+                            };
+                        });
 
             services.AddMvc(setup =>
             {
