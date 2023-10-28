@@ -16,6 +16,8 @@ namespace ProjectIvy.Business.Caching
 
 		public static string ExpensesSumAmount(ExpenseSumGetBinding b) => $"{nameof(ExpensesSumAmount)}_{JsonConvert.SerializeObject(b)}";
 
+		public static string LocationDays(string locationId) => $"{nameof(LocationDays)}_{locationId}";
+
 		public static string TrackingsGetDistance(DateTime? from, DateTime? to) => $"{nameof(TrackingsGetDistance)}_{from}_{to}";
 
 		public static string UserGet() => nameof(UserGet);

@@ -23,12 +23,9 @@ namespace ProjectIvy.Business.Handlers.Expense
 {
     public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     {
-        private readonly IMemoryCache _memoryCache;
-
         public ExpenseHandler(IHandlerContext<ExpenseHandler> context,
                               IMemoryCache memoryCache) : base(context, memoryCache, nameof(ExpenseHandler))
         {
-            _memoryCache = memoryCache;
         }
 
         public void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
@@ -264,7 +261,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         public PagedView<View.Expense> Get(ExpenseGetBinding binding)
         {
-            return _memoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.ExpensesGet(binding)),
+            return MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.ExpensesGet(binding)),
                 cacheEntry =>
                 {
                     AddCacheKey(cacheEntry.Key.ToString());
@@ -306,7 +303,7 @@ namespace ProjectIvy.Business.Handlers.Expense
         public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
         {
             string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesSumAmount(binding));
-            return await _memoryCache.GetOrCreateAsync(cacheKey,
+            return await MemoryCache.GetOrCreateAsync(cacheKey,
                 async cacheEntry =>
                 {
                     AddCacheKey(cacheKey);

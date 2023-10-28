@@ -1,7 +1,9 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
+using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Geohash;
@@ -13,7 +15,8 @@ namespace ProjectIvy.Business.Handlers.Location
     {
         private IGeohashHandler _geohashHandler;
 
-        public LocationHandler(IHandlerContext<LocationHandler> context, IGeohashHandler geohashHandler) : base(context)
+        public LocationHandler(IHandlerContext<LocationHandler> context, IGeohashHandler geohashHandler, IMemoryCache memoryCache)
+            : base(context, memoryCache, nameof(ExpenseHandler))
         {
             _geohashHandler = geohashHandler;
         }
@@ -32,22 +35,29 @@ namespace ProjectIvy.Business.Handlers.Location
 
         public async Task<IEnumerable<DateTime>> GetDays(string locationId)
         {
-            using var context = GetMainContext();
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.LocationDays(locationId));
+            return await MemoryCache.GetOrCreateAsync(cacheKey,
+                async cacheEntry =>
+                {
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                    using var context = GetMainContext();
 
-            var location = await context.Locations.WhereUser(UserId)
-                                                  .SingleOrDefaultAsync(x => x.ValueId == locationId);
+                    var location = await context.Locations.WhereUser(UserId)
+                                                          .SingleOrDefaultAsync(x => x.ValueId == locationId);
 
-            var geohashes = context.LocationGeohashes.Where(x => x.LocationId == location.Id)
-                                                      .Select(x => x.Geohash);
+                    var geohashes = context.LocationGeohashes.Where(x => x.LocationId == location.Id)
+                                                              .Select(x => x.Geohash);
 
-            var days = await context.Trackings.WhereUser(UserId)
-                                              .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                              .Select(x => x.Timestamp.Date)
-                                              .Distinct()
-                                              .OrderByDescending(x => x)
-                                              .ToListAsync();
+                    var days = await context.Trackings.WhereUser(UserId)
+                                                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                                      .Select(x => x.Timestamp.Date)
+                                                      .Distinct()
+                                                      .OrderByDescending(x => x)
+                                                      .ToListAsync();
 
-            return days;
+                    return days;
+                }
+            );
         }
 
         public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort)
