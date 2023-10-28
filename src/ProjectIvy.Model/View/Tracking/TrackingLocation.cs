@@ -8,7 +8,7 @@ namespace ProjectIvy.Model.View.Tracking
 
         public Country.Country Country { get; set; }
 
-        public Location Location { get; set; }
+        public KnownLocation Location { get; set; }
 
         public Tracking Tracking { get; set; }
     }

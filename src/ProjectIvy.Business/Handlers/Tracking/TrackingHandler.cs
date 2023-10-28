@@ -219,7 +219,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 var trackingLocation = new View.TrackingLocation()
                 {
                     Country = await _geohashHandler.GetCountry(tracking.Geohash),
-                    Location = location != null ? new View.Location(location) : null,
+                    Location = location != null ? new View.KnownLocation(location) : null,
                     Tracking = new View.Tracking(tracking)
                 };
 
