@@ -6,6 +6,7 @@ using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.View.Geohash;
 
@@ -63,20 +64,8 @@ namespace ProjectIvy.Business.Handlers.Location
         public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort)
         {
             using var context = GetMainContext();
-            var fromGeohashes = await context.Locations.WhereUser(UserId)
-                                                  .Where(x => x.ValueId == fromLocationValueId)
-                                                  .Include(x => x.Geohashes)
-                                                  .Select(x => x.Geohashes)
-                                                  .SelectMany(x => x)
-                                                  .Select(x => x.Geohash)
-                                                  .ToListAsync();
-            var toGeohashes = await context.Locations.WhereUser(UserId)
-                                                  .Where(x => x.ValueId == toLocationValueId)
-                                                  .Include(x => x.Geohashes)
-                                                  .Select(x => x.Geohashes)
-                                                  .SelectMany(x => x)
-                                                  .Select(x => x.Geohash)
-                                                  .ToListAsync();
+            var fromGeohashes = await context.Locations.ToGeohashes(UserId, fromLocationValueId);
+            var toGeohashes = await context.Locations.ToGeohashes(UserId, toLocationValueId);
 
             return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
         }

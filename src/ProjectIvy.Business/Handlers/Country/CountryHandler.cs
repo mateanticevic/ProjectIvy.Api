@@ -126,19 +126,20 @@ namespace ProjectIvy.Business.Handlers.Country
                                        .Select(x => new View.Country(x.Country))
                                        .ToList();
 
-                //TODO: add user birth city
-                //var birthCountry = User.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
-                //                                                             .SingleOrDefault(x => x.Id == User.BirthCityId.Value)
-                //                                                             .Country : null;
+                var user = context.Users.GetById(UserId);
 
-                //if (birthCountry != null)
-                //{
-                //    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
-                //    if (existingBirthCountry != null)
-                //        countries.Remove(existingBirthCountry);
+                var birthCountry = user.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
+                                                                             .SingleOrDefault(x => x.Id == user.BirthCityId.Value)
+                                                                             .Country : null;
 
-                //    countries.Insert(0, new View.Country(birthCountry));
-                //}
+                if (birthCountry != null)
+                {
+                    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
+                    if (existingBirthCountry != null)
+                        countries.Remove(existingBirthCountry);
+
+                    countries.Insert(0, new View.Country(birthCountry));
+                }
 
                 return countries.Distinct(new View.CountryComparer());
             }
