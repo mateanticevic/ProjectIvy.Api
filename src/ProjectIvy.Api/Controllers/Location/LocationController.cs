@@ -1,15 +1,12 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.Api.Controllers.Flight;
-using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Business.Handlers.Location;
 using ProjectIvy.Model.Binding.Geohash;
 
 namespace ProjectIvy.Api.Controllers.Location
 {
-	public class LocationController : BaseController<LocationController>
+    public class LocationController : BaseController<LocationController>
     {
         private readonly ILocationHandler _locationHandler;
 
@@ -19,7 +16,7 @@ namespace ProjectIvy.Api.Controllers.Location
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get() => Ok(await _locationHandler.Get());
+        public async Task<IEnumerable<Model.View.Location.Location>> Get() => await _locationHandler.Get();
 
         [HttpGet("{locationId}/Days")]
         public async Task<IActionResult> GetDays(string locationId) => Ok(await _locationHandler.GetDays(locationId));
