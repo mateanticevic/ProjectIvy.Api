@@ -5,6 +5,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 {
     public interface IGeohashHandler
     {
+        Task AddGeohashToCountry(string countryValueId, string geohash);
+
         Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
 
         Task<IEnumerable<DateOnly>> GetDays(string geohash);

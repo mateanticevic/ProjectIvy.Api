@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +12,23 @@ namespace ProjectIvy.Business.Handlers.Geohash
     {
         public GeohashHandler(IHandlerContext<GeohashHandler> context) : base(context)
         {
+        }
+
+        public async Task AddGeohashToCountry(string countryValueId, string geohash)
+        {
+            using var context = GetMainContext();
+
+            int countryId = context.Countries.GetId(countryValueId).Value;
+            var childGeohashes = context.GeohashCountries.Where(x => x.CountryId == countryId && x.Geohash.StartsWith(geohash));
+            int c = childGeohashes.Count();
+            context.GeohashCountries.RemoveRange(childGeohashes);
+            var entity = new Model.Database.Main.Common.GeohashCountry()
+            {
+                CountryId = countryId,
+                Geohash = geohash
+            };
+            await context.GeohashCountries.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
 
         public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort)
