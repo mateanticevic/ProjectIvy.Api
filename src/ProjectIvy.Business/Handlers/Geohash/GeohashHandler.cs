@@ -10,6 +10,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 {
     public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
+        private const string GeohashChars = "0123456789bcdefghjkmnpqrstuvwxyz";
+        
         public GeohashHandler(IHandlerContext<GeohashHandler> context) : base(context)
         {
         }
@@ -20,7 +22,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             var childGeohashes = context.GeohashCountries.Where(x => x.CountryId == countryId && x.Geohash.StartsWith(geohash));
-            int c = childGeohashes.Count();
+
             context.GeohashCountries.RemoveRange(childGeohashes);
             var entity = new Model.Database.Main.Common.GeohashCountry()
             {
@@ -196,6 +198,42 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                                      .Select(x => x.Geohash)
                                                      .ToListAsync();
             }
+        }
+
+        public async Task RemoveGeohashFromCountry(string countryValueId, string geohash)
+        {
+            using var context = GetMainContext();
+
+            int countryId = context.Countries.GetId(countryValueId).Value;
+            var parentGeohashes = Enumerable.Range(0, geohash.Length - 1).Select(x => geohash.Substring(0, geohash.Length - x));
+
+            var countryGeohash = await context.GeohashCountries.Where(x => x.CountryId == countryId && parentGeohashes.Contains(x.Geohash))
+                                                               .SingleOrDefaultAsync();
+
+            if (countryGeohash.Geohash == geohash)
+            {
+                context.GeohashCountries.Remove(countryGeohash);
+                await context.SaveChangesAsync();
+                return;
+            }
+
+            for (int i = geohash.Length; i > countryGeohash.Geohash.Length; i--)
+            {
+                char geoChar = geohash[i - 1];
+                string parentGeohash = geohash.Substring(0, i - 1);
+
+                var neighbours = GeohashChars.Where(x => x != geoChar)
+                                             .Select(x => new Model.Database.Main.Common.GeohashCountry()
+                                             {
+                                                 CountryId = countryId,
+                                                 Geohash = $"{parentGeohash}{x}"
+                                             }); ;
+                await context.GeohashCountries.AddRangeAsync(neighbours);
+            }
+
+            context.GeohashCountries.Remove(countryGeohash);
+            await context.SaveChangesAsync();
+            return;
         }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)

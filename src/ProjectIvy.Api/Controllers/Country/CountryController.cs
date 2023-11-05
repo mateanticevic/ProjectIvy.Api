@@ -56,6 +56,9 @@ namespace ProjectIvy.Api.Controllers.Country
         [HttpGet("List/Visited")]
         public async Task<IActionResult> GetCountryListsVisited() => Ok(await _countryHandler.GetListsVisited());
 
+        [HttpDelete("{countryId}/Geohash/{geohash}")]
+        public async Task DeleteCountryGeohash(string countryId, string geohash) => await _geohashHandler.RemoveGeohashFromCountry(countryId, geohash);
+
         [HttpPost("{countryId}/Geohash/{geohash}")]
         public async Task PostCountryGeohash(string countryId, string geohash) => await _geohashHandler.AddGeohashToCountry(countryId, geohash);
     }
