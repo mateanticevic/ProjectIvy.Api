@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.Common.Interfaces;
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -24,5 +23,9 @@ namespace ProjectIvy.Model.Database.Main.Tracking
         public DateTime Timestamp { get; set; }
 
         public string Geohash { get; set; }
+
+        public int? CountryId { get; set; }
+
+        public Common.Country Country { get; set; }
     }
 }

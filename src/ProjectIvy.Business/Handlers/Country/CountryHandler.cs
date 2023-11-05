@@ -113,6 +113,16 @@ namespace ProjectIvy.Business.Handlers.Country
         {
             using (var context = GetMainContext())
             {
+                return context.Trackings
+                              .WhereUser(UserId)
+                              .Where(x => x.CountryId.HasValue)
+                              .Include(x => x.Country)
+                              .GroupBy(x => x.Country)
+                              .OrderBy(x => x.Min(y => y.Timestamp))
+                              .Select(x => new View.Country(x.Key))
+                              .ToList();
+
+
                 var countries = context.CitiesVisited
                                        .Include(x => x.Trip)
                                        .Include(x => x.City)
