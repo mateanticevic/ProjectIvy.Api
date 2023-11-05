@@ -21,6 +21,8 @@ namespace ProjectIvy.Business.Handlers.Country
 
         Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding);
 
+        Task<IEnumerable<KeyValuePair<View.Country, int>>> GetDaysInCountry();
+
         Task<IEnumerable<View.CountryList>> GetLists();
 
         Task<IEnumerable<View.CountryListVisited>> GetListsVisited();

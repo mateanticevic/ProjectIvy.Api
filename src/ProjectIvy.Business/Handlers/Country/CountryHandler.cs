@@ -186,5 +186,22 @@ namespace ProjectIvy.Business.Handlers.Country
                 }
             }
         }
+
+        public async Task<IEnumerable<KeyValuePair<View.Country, int>>> GetDaysInCountry()
+        {
+            using var context = GetMainContext();
+
+            var countries = await context.Trackings.WhereUser(UserId)
+                                          .Include(x => x.Country)
+                                          .Where(x => x.CountryId.HasValue)
+                                          .GroupBy(x => x.Country)
+                                          .Select(x => new KeyValuePair<View.Country, int>(
+                                              new View.Country(x.Key),
+                                              x.Select(x => x.Timestamp.Date).Distinct().Count()
+                                           ))
+                                          .ToListAsync();
+
+            return countries.OrderByDescending(x => x.Value);
+        }
     }
 }
