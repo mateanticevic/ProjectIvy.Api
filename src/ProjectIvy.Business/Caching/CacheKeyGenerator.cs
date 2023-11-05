@@ -18,6 +18,8 @@ namespace ProjectIvy.Business.Caching
 
 		public static string LocationDays(string locationId) => $"{nameof(LocationDays)}_{locationId}";
 
+		public static string LocationGeohashes() => nameof(LocationGeohashes);
+
 		public static string TrackingsGetDistance(DateTime? from, DateTime? to) => $"{nameof(TrackingsGetDistance)}_{from}_{to}";
 
 		public static string UserGet() => nameof(UserGet);

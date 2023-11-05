@@ -22,15 +22,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
     public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
     {
         private readonly IGeohashHandler _geohashHandler;
-        private readonly IMemoryCache _memoryCache;
 
         public TrackingHandler(IHandlerContext<TrackingHandler> context,
                                IGeohashHandler geohashHandler,
-                               IMemoryCache memoryCache) : base(context)
+                               IMemoryCache memoryCache) : base(context, memoryCache, nameof(TrackingHandler))
         {
 
             _geohashHandler = geohashHandler;
-            _memoryCache = memoryCache;
         }
 
         public int Count(FilteredBinding binding)
@@ -184,7 +182,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
         {
             string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingsGetDistance(binding.From, binding.To));
 
-            return _memoryCache.GetOrCreate(cacheKey, cacheEntry =>
+            return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>
             {
                 cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
                 return GetDistanceNonCached(binding);
@@ -210,25 +208,30 @@ namespace ProjectIvy.Business.Handlers.Tracking
             var tracking = await GetLastTracking();
             var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
 
-            using (var context = GetMainContext())
+            var locationGeohashes = await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.LocationGeohashes()), async cacheKey =>
             {
-                var userLocations = await context.Locations.WhereUser(UserId)
-                                                           .Include(x => x.LocationType)
-                                                           .ToListAsync();
-                var location = userLocations.FirstOrDefault(x => trackingCoordiante.GetDistanceTo(x.ToGeoCoordinate()) < x.Radius);
-                var trackingLocation = new View.TrackingLocation()
-                {
-                    Country = await _geohashHandler.GetCountry(tracking.Geohash),
-                    Location = location != null ? new View.KnownLocation(location) : null,
-                    Tracking = new View.Tracking(tracking)
-                };
+                cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                using var db = GetMainContext();
 
-                trackingLocation.City = await _geohashHandler.GetCity(tracking.Geohash);
-                trackingLocation.Country = trackingLocation?.City?.Country ?? await _geohashHandler.GetCountry(tracking.Geohash);
+                return await db.Locations.WhereUser(UserId)
+                                         .Include(x => x.Geohashes)
+                                         .Include(x => x.LocationType)
+                                         .ToListAsync();
+            });
 
+            var location = locationGeohashes.SingleOrDefault(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)));
 
-                return trackingLocation;
-            }
+            var trackingLocation = new View.TrackingLocation()
+            {
+                Country = await _geohashHandler.GetCountry(tracking.Geohash),
+                Location = location != null ? new View.KnownLocation(location) : null,
+                Tracking = new View.Tracking(tracking)
+            };
+
+            trackingLocation.City = await _geohashHandler.GetCity(tracking.Geohash);
+            trackingLocation.Country = trackingLocation?.City?.Country ?? await _geohashHandler.GetCountry(tracking.Geohash);
+
+            return trackingLocation;
         }
 
         public double GetMaxSpeed(FilteredBinding binding)
