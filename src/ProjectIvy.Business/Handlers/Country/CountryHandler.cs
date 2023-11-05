@@ -155,6 +155,19 @@ namespace ProjectIvy.Business.Handlers.Country
             }
         }
 
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedByYear()
+        {
+            using var context = GetMainContext();
+
+            var list = await context.Trackings.WhereUser(UserId)
+                                          .Where(x => x.CountryId.HasValue)
+                                          .GroupBy(x => x.Timestamp.Date.Year)
+                                          .Select(x => new KeyValuePair<int, int>(x.Key, x.Select(y => y.CountryId.Value).Distinct().Count()))
+                                          .ToListAsync();
+
+            return list.OrderBy(x => x.Key);
+        }
+
         public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
         {
             using (var context = GetMainContext())

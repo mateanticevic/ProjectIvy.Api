@@ -44,6 +44,9 @@ namespace ProjectIvy.Api.Controllers.Country
         [HttpGet("Visited")]
         public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
 
+        [HttpGet("Visited/ByYear")]
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedByYear() => await _countryHandler.GetVisitedByYear();
+
         [HttpGet("Visited/Days")]
         public async Task<IEnumerable<KeyValuePair<View.Country, int>>> GetVisitedDays() => await _countryHandler.GetDaysInCountry();
 
