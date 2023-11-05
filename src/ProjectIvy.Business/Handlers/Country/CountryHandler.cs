@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
@@ -12,7 +14,7 @@ namespace ProjectIvy.Business.Handlers.Country
 {
     public class CountryHandler : Handler<CountryHandler>, ICountryHandler
     {
-        public CountryHandler(IHandlerContext<CountryHandler> context) : base(context)
+        public CountryHandler(IHandlerContext<CountryHandler> context, IMemoryCache memoryCache) : base(context, memoryCache, nameof(CountryHandler))
         {
         }
 
@@ -100,7 +102,7 @@ namespace ProjectIvy.Business.Handlers.Country
         public async Task<IEnumerable<View.CountryListVisited>> GetListsVisited()
         {
             var lists = await GetLists();
-            var visitedCountries = GetVisited(new TripGetBinding()).Select(x => x.Id).ToList();
+            var visitedCountries = (await GetVisited(new TripGetBinding())).Select(x => x.Id).ToList();
 
             return lists.Select(x => new View.CountryListVisited(x)
             {
@@ -109,50 +111,55 @@ namespace ProjectIvy.Business.Handlers.Country
             });
         }
 
-        public IEnumerable<View.Country> GetVisited(TripGetBinding binding)
+        public async Task<IEnumerable<View.Country>> GetVisited(TripGetBinding binding)
         {
-            using (var context = GetMainContext())
+            return await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.CountriesVisited()), async cacheKey =>
             {
-                return context.Trackings
-                              .WhereUser(UserId)
-                              .Where(x => x.CountryId.HasValue)
-                              .Include(x => x.Country)
-                              .GroupBy(x => x.Country)
-                              .OrderBy(x => x.Min(y => y.Timestamp))
-                              .Select(x => new View.Country(x.Key))
-                              .ToList();
+                using var context = GetMainContext();
 
+                return await context.Trackings
+                                    .WhereUser(UserId)
+                                    .Where(x => x.CountryId.HasValue)
+                                    .Include(x => x.Country)
+                                    .GroupBy(x => x.Country)
+                                    .OrderBy(x => x.Min(y => y.Timestamp))
+                                    .Select(x => new View.Country(x.Key))
+                                    .ToListAsync();
+            });
 
-                var countries = context.CitiesVisited
-                                       .Include(x => x.Trip)
-                                       .Include(x => x.City)
-                                       .Where(x => x.Trip.UserId == UserId)
-                                       .Where(x => x.Trip.TimestampEnd < DateTime.Now)
-                                       .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
-                                       .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
-                                       .Select(x => new { EnteredOn = x.Timestamp, x.City.Country, TimestampStart = x.Trip.TimestampStart })
-                                       .OrderBy(x => x.TimestampStart)
-                                       .ThenBy(x => x.EnteredOn)
-                                       .Select(x => new View.Country(x.Country))
-                                       .ToList();
+            //using (var context = GetMainContext())
+            //{
 
-                var user = context.Users.GetById(UserId);
+            //    var countries = context.CitiesVisited
+            //                           .Include(x => x.Trip)
+            //                           .Include(x => x.City)
+            //                           .Where(x => x.Trip.UserId == UserId)
+            //                           .Where(x => x.Trip.TimestampEnd < DateTime.Now)
+            //                           .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
+            //                           .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
+            //                           .Select(x => new { EnteredOn = x.Timestamp, x.City.Country, TimestampStart = x.Trip.TimestampStart })
+            //                           .OrderBy(x => x.TimestampStart)
+            //                           .ThenBy(x => x.EnteredOn)
+            //                           .Select(x => new View.Country(x.Country))
+            //                           .ToList();
 
-                var birthCountry = user.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
-                                                                             .SingleOrDefault(x => x.Id == user.BirthCityId.Value)
-                                                                             .Country : null;
+            //    var user = context.Users.GetById(UserId);
 
-                if (birthCountry != null)
-                {
-                    var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
-                    if (existingBirthCountry != null)
-                        countries.Remove(existingBirthCountry);
+            //    var birthCountry = user.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
+            //                                                                 .SingleOrDefault(x => x.Id == user.BirthCityId.Value)
+            //                                                                 .Country : null;
 
-                    countries.Insert(0, new View.Country(birthCountry));
-                }
+            //    if (birthCountry != null)
+            //    {
+            //        var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
+            //        if (existingBirthCountry != null)
+            //            countries.Remove(existingBirthCountry);
 
-                return countries.Distinct(new View.CountryComparer());
-            }
+            //        countries.Insert(0, new View.Country(birthCountry));
+            //    }
+
+            //    return countries.Distinct(new View.CountryComparer());
+            //}
         }
 
         public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear()

@@ -42,7 +42,7 @@ namespace ProjectIvy.Api.Controllers.Country
         public async Task<IActionResult> GetSingle(double latitude, double longitude) => Ok(await _geohashHandler.GetCountry(GeohashHelper.LocationToGeohash(latitude, longitude)));
 
         [HttpGet("Visited")]
-        public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
+        public async Task<IEnumerable<View.Country>> GetVisited(TripGetBinding binding) => await _countryHandler.GetVisited(binding);
 
         [HttpGet("Visited/ByYear")]
         public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear() => await _countryHandler.GetVisitedByYear();
@@ -57,7 +57,7 @@ namespace ProjectIvy.Api.Controllers.Country
         public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedCountByYear() => await _countryHandler.GetVisitedCountByYear();
 
         [HttpGet("Visited/Boundaries")]
-        public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(_countryHandler.GetVisited(binding));
+        public async Task<IEnumerable<View.CountryBoundaries>> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(await _countryHandler.GetVisited(binding));
 
         [HttpGet("List")]
         public async Task<IActionResult> GetCountryLists() => Ok(await _countryHandler.GetLists());
