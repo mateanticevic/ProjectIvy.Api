@@ -45,13 +45,16 @@ namespace ProjectIvy.Api.Controllers.Country
         public IEnumerable<View.Country> GetVisited(TripGetBinding binding) => _countryHandler.GetVisited(binding);
 
         [HttpGet("Visited/ByYear")]
-        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedByYear() => await _countryHandler.GetVisitedByYear();
+        public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear() => await _countryHandler.GetVisitedByYear();
 
         [HttpGet("Visited/Days")]
         public async Task<IEnumerable<KeyValuePair<View.Country, int>>> GetVisitedDays() => await _countryHandler.GetDaysInCountry();
 
         [HttpGet("Visited/Count")]
         public long GetVisitedCount() => _countryHandler.CountVisited();
+
+        [HttpGet("Visited/Count/ByYear")]
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedCountByYear() => await _countryHandler.GetVisitedCountByYear();
 
         [HttpGet("Visited/Boundaries")]
         public IEnumerable<View.CountryBoundaries> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(_countryHandler.GetVisited(binding));

@@ -79,7 +79,7 @@ namespace ProjectIvy.Business.Handlers.Country
             {
                 int countryId = context.Countries.GetId(countryValueId).Value;
                 return context.Cities.Where(x => x.CountryId == countryId)
-                                           .OrderByDescending(x => x.Population)
+                                           .OrderByDescending(x => x.Population)
                                            .Select(x => new Model.View.City.City(x))
                                            .ToPagedView(binding);
             }
@@ -115,7 +115,7 @@ namespace ProjectIvy.Business.Handlers.Country
             {
                 return context.Trackings
                               .WhereUser(UserId)
-                              .Where(x => x.CountryId.HasValue)
+                              .Where(x => x.CountryId.HasValue)
                               .Include(x => x.Country)
                               .GroupBy(x => x.Country)
                               .OrderBy(x => x.Min(y => y.Timestamp))
@@ -155,7 +155,24 @@ namespace ProjectIvy.Business.Handlers.Country
             }
         }
 
-        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedByYear()
+        public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear()
+        {
+            using var context = GetMainContext();
+
+            var countriesByYear = await context.Trackings
+                              .WhereUser(UserId)
+                              .Where(x => x.CountryId.HasValue)
+                              .Include(x => x.Country)
+                              .GroupBy(x => x.Country)
+                              .Select(x => new { Year = x.Min(y => y.Timestamp.Year), Country = x.Key })
+                              .GroupBy(x => x.Year)
+                              .Select(x => new KeyValuePair<int, IEnumerable<View.Country>>(x.Key, x.Select(y => new View.Country(y.Country))))
+                              .ToListAsync();
+
+            return countriesByYear.OrderBy(x => x.Key);
+        }
+
+        public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedCountByYear()
         {
             using var context = GetMainContext();
 

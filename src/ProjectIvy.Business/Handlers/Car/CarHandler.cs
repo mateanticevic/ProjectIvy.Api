@@ -211,7 +211,7 @@ namespace ProjectIvy.Business.Handlers.Car
                                    .CarFuelings
                                    .GroupBy(x => x.Timestamp.Year)
                                    .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.AmountInLiters)))
-                                   .OrderByDescending(x => x.Key)
+                                   .OrderBy(x => x.Key)
                                    .ToList();
             }
         }
@@ -233,7 +233,7 @@ namespace ProjectIvy.Business.Handlers.Car
                 kilometersByYear.Add(new KeyValuePair<int, int>(year, toOdometer - fromOdometer));
             }
 
-            return kilometersByYear.OrderByDescending(x => x.Key);
+            return kilometersByYear.OrderBy(x => x.Key);
         }
 
         public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
