@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics.Metrics;
+using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
@@ -110,6 +112,12 @@ namespace ProjectIvy.Api
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
 
+            services.AddMemoryCache(setup =>
+            {
+                setup.TrackStatistics = true;
+            });
+            services.AddHostedService<MetricsBackgroundService>();
+
             services.AddControllers(options => options.EnableEndpointRouting = false)
                     .AddJsonOptions(options =>
             {
@@ -139,30 +147,6 @@ namespace ProjectIvy.Api
             });
 
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            //services.AddAuthorization(options =>
-            //        {
-            //            options.AddPolicy("TrackingSource", policy => policy.RequireClaim("tracking_create"));
-            //        })
-            //        .AddAuthentication(options =>
-            //        {
-            //            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //        })
-            //        .AddJwtBearer(o =>
-            //        {
-            //            o.Authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
-            //            o.RequireHttpsMetadata = false;
-            //            o.Audience = Environment.GetEnvironmentVariable("OAUTH_AUDIENCE");
-            //            o.Events = new JwtBearerEvents
-            //            {
-            //                OnMessageReceived = context =>
-            //                {
-            //                    context.Token = context.Request.Cookies["AccessToken"];
-            //                    return Task.CompletedTask;
-            //                }
-            //            };
-            //        });
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                         .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>

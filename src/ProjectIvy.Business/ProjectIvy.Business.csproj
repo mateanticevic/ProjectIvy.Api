@@ -28,9 +28,11 @@
   <ItemGroup>
     <None Remove="Handlers\Location\" />
     <None Remove="Caching\" />
+    <None Remove="Metrics\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Handlers\Location\" />
     <Folder Include="Caching\" />
+    <Folder Include="Metrics\" />
   </ItemGroup>
 </Project>
