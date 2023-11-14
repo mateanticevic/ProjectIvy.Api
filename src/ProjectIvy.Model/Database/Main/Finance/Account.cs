@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectIvy.Model.Database.Main.Finance
 {
     [Table(nameof(Account), Schema = nameof(Finance))]
-    public class Account : IHasValueId, IHasName
+    public class Account : UserEntity, IHasValueId, IHasName
     {
         [Key]
         public int Id { get; set; }

@@ -21,7 +21,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using var context = GetMainContext();
 
-        int accountId = context.Accounts.GetId(accountValueId).Value;
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountValueId).Value;
         var lastTransaction = await context.Transactions.Where(x => x.AccountId == accountId)
                                                         .OrderByDescending(x => x.Created)
                                                         .FirstOrDefaultAsync();
@@ -42,7 +43,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using (var context = GetMainContext())
         {
-            return await context.Accounts.Include(x => x.Bank)
+            return await context.Accounts.WhereUser(UserId)
+                                         .Include(x => x.Bank)
                                          .Include(x => x.Currency)
                                          .WhereIf(b.IsActive, x => x.Active == b.IsActive)
                                          .Select(x =>
@@ -58,7 +60,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using (var context = GetMainContext())
         {
-            int accountId = context.Accounts.GetId(accountValueId).Value;
+            int accountId = context.Accounts.WhereUser(UserId)
+                                            .GetId(accountValueId).Value;
             decimal sumIn = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount > 0)
                                                       .SumAsync(x => x.Amount);
 
@@ -77,7 +80,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using (var context = GetMainContext())
         {
-            int accountId = context.Accounts.GetId(accountKey).Value;
+            int accountId = context.Accounts.WhereUser(UserId)
+                                            .GetId(accountKey).Value;
 
             var transactions = new List<Transaction>();
             foreach (string item in csv.Split("\r\n").Skip(1).Reverse().Skip(1))
@@ -129,7 +133,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using (var context = GetMainContext())
         {
-            int accountId = context.Accounts.GetId(accountKey).Value;
+            int accountId = context.Accounts.WhereUser(UserId)
+                                            .GetId(accountKey).Value;
 
             var transactions = new List<Transaction>();
             var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
@@ -172,7 +177,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using (var context = GetMainContext())
         {
-            int accountId = context.Accounts.GetId(accountKey).Value;
+            int accountId = context.Accounts.WhereUser(UserId)
+                                            .GetId(accountKey).Value;
 
             var transactions = new List<Transaction>();
             foreach (string item in csv.Split("\r\n").Skip(1))
