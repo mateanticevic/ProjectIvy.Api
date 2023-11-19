@@ -89,4 +89,3 @@ namespace ProjectIvy.Business.Handlers.Location
         }
     }
 }
-

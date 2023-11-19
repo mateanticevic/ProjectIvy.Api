@@ -33,6 +33,23 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
+        public async Task AddGeohashToLocation(string locationValueId, string geohash)
+        {
+            using var context = GetMainContext();
+
+            int locationId = context.Locations.GetId(locationValueId).Value;
+            var childGeohashes = context.LocationGeohashes.Where(x => x.LocationId == locationId && x.Geohash.StartsWith(geohash));
+
+            context.LocationGeohashes.RemoveRange(childGeohashes);
+            var entity = new Model.Database.Main.Tracking.LocationGeohash()
+            {
+                LocationId = locationId,
+                Geohash = geohash
+            };
+            await context.LocationGeohashes.AddAsync(entity);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort)
         {
             using var context = GetMainContext();

@@ -29,6 +29,10 @@ namespace ProjectIvy.Api.Controllers.Location
         [HttpPost("{locationId}/Geohashes")]
         public async Task PostGeohashes(string locationId, [FromBody] IEnumerable<string> geohashes) => await _locationHandler.SetGeohashes(locationId, geohashes);
 
+        [HttpPost("{locationId}/Geohashes/{geohash}")]
+        public async Task PostLocationGeohash(string locationId, string geohash)
+            => await _geohashHandler.AddGeohashToLocation(locationId, geohash);
+
         [HttpDelete("{locationId}/Geohashes/{geohash}")]
         public async Task DeleteLocationGeohash(string locationId, string geohash)
             => await _geohashHandler.RemoveGeohashFromLocation(locationId, geohash);
