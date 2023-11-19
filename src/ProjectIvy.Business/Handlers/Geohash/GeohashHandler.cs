@@ -235,6 +235,19 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
             return;
         }
+        
+        public async Task RemoveGeohashFromLocation(string locationValueId, string geohash)
+        {
+            using var context = GetMainContext();
+
+            int locationId = context.Locations.WhereUser(UserId)
+                                              .GetId(locationValueId).Value;
+
+            var locationGeohash = await context.LocationGeohashes.SingleOrDefaultAsync(x => x.LocationId == locationId && x.Geohash == geohash);
+
+            context.LocationGeohashes.Remove(locationGeohash);
+            await context.SaveChangesAsync();
+        }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
         {
