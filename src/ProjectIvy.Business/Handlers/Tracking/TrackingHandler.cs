@@ -221,15 +221,25 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
             var location = locationGeohashes.SingleOrDefault(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)));
 
-            var trackingLocation = new View.TrackingLocation()
-            {
-                Country = await _geohashHandler.GetCountry(tracking.Geohash),
-                Location = location != null ? new View.KnownLocation(location) : null,
-                Tracking = new View.Tracking(tracking)
-            };
+            using var context = GetMainContext();
+            var flight = await context.Flights.WhereUser(UserId)
+                                              .Include(x => x.Airline)
+                                              .Include(x => x.DestinationAirport)
+                                              .ThenInclude(x => x.Poi)
+                                              .Include(x => x.OriginAirport)
+                                              .ThenInclude(x => x.Poi)
+                                              .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
+                                              .Take(1)
+                                              .SingleOrDefaultAsync();
 
-            trackingLocation.City = await _geohashHandler.GetCity(tracking.Geohash);
-            trackingLocation.Country = trackingLocation?.City?.Country ?? await _geohashHandler.GetCountry(tracking.Geohash);
+            var trackingLocation = new View.TrackingLocation
+            {
+                Country = await _geohashHandler.GetCountry(tracking.Geohash) ?? await _geohashHandler.GetCountry(tracking.Geohash),
+                Flight = flight is not null ? new Model.View.Flight.Flight(flight) : null,
+                Location = location is not null ? new View.KnownLocation(location) : null,
+                Tracking = new View.Tracking(tracking),
+                City = await _geohashHandler.GetCity(tracking.Geohash)
+            };
 
             return trackingLocation;
         }

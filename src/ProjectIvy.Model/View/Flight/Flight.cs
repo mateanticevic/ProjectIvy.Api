@@ -7,7 +7,7 @@ namespace ProjectIvy.Model.View.Flight
     {
         public Flight(DatabaseModel.Transport.Flight f)
         {
-            Airline = f.ConvertTo(x => new View.Airline.Airline(x.Airline));
+            Airline = f.ConvertTo(x => new Airline.Airline(x.Airline));
             Arrival = f.DateOfArrival;
             Departure = f.DateOfDeparture;
             Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
@@ -25,7 +25,7 @@ namespace ProjectIvy.Model.View.Flight
 
         public Airport.Airport Destination { get; set; }   
 
-        public int DistanceInKm { get; set; }
+        public int? DistanceInKm { get; set; }
 
         public Airport.Airport Origin { get; set; }
     }
