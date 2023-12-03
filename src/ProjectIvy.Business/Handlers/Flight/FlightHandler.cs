@@ -120,5 +120,16 @@ namespace ProjectIvy.Business.Handlers.Flight
                                       .ToPagedView(binding);
             }
         }
+
+        public async Task Update(string valueId, FlightBinding flight)
+        {
+            using var context = GetMainContext();
+
+            var entity = await context.Flights.WhereUser(UserId).SingleOrDefaultAsync(x => x.ValueId == valueId);
+            entity = flight.ToEntity(context, entity);
+
+            context.Flights.Update(entity);
+            await context.SaveChangesAsync();
+        }
     }
 }

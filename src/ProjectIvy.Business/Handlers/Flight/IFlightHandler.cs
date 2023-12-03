@@ -18,5 +18,7 @@ namespace ProjectIvy.Business.Handlers.Flight
         IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
 
         PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
+
+        Task Update(string valueId, FlightBinding flight);
     }
 }

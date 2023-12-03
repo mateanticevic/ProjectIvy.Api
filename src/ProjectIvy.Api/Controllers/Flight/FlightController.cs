@@ -1,10 +1,8 @@
 ﻿using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Model.Binding.Flight;
-using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Flight
@@ -40,5 +38,8 @@ namespace ProjectIvy.Api.Controllers.Flight
             await _flightHandler.Create(binding);
             return Ok();
         }
+
+        [HttpPut("{id}")]
+        public async Task Put(string id, [FromBody] FlightBinding binding) => await _flightHandler.Update(id, binding);
     }
 }

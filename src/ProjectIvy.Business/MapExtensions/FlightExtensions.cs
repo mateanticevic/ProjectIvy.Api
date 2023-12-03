@@ -13,11 +13,14 @@ namespace ProjectIvy.Business.MapExtensions
             if (entity is null)
                 entity = new Flight();
 
+            entity.ValueId = $"{b.OriginId}{b.DestinationId}{b.DepartureLocal:yyyyMMdd}";
             entity.AirlineId = context.Airlines.GetId(b.AirlineId).Value;
-            entity.DateOfArrivalLocal = b.Arrival;
-            entity.DateOfDepartureLocal = b.Departure;
+            entity.DateOfArrival = b.Arrival;
+            entity.DateOfArrivalLocal = b.ArrivalLocal;
+            entity.DateOfDeparture = b.Departure;
+            entity.DateOfDepartureLocal = b.DepartureLocal;
             entity.DestinationAirportId = context.Airports.Single(x => x.Iata == b.DestinationId).Id;
-            entity.FlightNumber = b.FlightNumber;
+            entity.FlightNumber = b.Number;
             entity.OriginAirportId = context.Airports.Single(x => x.Iata == b.OriginId).Id;
 
             return entity;
