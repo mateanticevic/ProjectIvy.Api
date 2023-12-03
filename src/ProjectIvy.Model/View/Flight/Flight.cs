@@ -8,9 +8,9 @@ namespace ProjectIvy.Model.View.Flight
         public Flight(DatabaseModel.Transport.Flight f)
         {
             Airline = f.ConvertTo(x => new Airline.Airline(x.Airline));
-            Arrival = f.DateOfArrivalLocal;
+            Arrival = f.DateOfArrival;
             ArrivalLocal = f.DateOfArrivalLocal;
-            Departure = f.DateOfDepartureLocal;
+            Departure = f.DateOfDeparture;
             DepartureLocal = f.DateOfDepartureLocal;
             Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
             Id = f.ValueId;
@@ -25,11 +25,11 @@ namespace ProjectIvy.Model.View.Flight
 
         public Airline.Airline Airline { get; set; }
 
-        public DateTime Arrival { get; set; }
+        public DateTime? Arrival { get; set; }
 
         public DateTime ArrivalLocal { get; set; }
 
-        public DateTime Departure { get; set; }
+        public DateTime? Departure { get; set; }
 
         public DateTime DepartureLocal { get; set; }
 
