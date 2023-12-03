@@ -79,7 +79,7 @@ namespace ProjectIvy.Business.Handlers.Flight
             {
                 return context.Flights.WhereUser(UserId)
                                       .Where(binding)
-                                      .GroupBy(x => x.DateOfDeparture.Year)
+                                      .GroupBy(x => x.DateOfDepartureLocal.Year)
                                       .OrderByDescending(x => x.Key)
                                       .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                       .ToList();
@@ -102,7 +102,7 @@ namespace ProjectIvy.Business.Handlers.Flight
                                       .ThenInclude(x => x.Poi)
                                       .Include(x => x.OriginAirport)
                                       .ThenInclude(x => x.Poi)
-                                      .OrderByDescending(x => x.DateOfArrival)
+                                      .OrderByDescending(x => x.DateOfArrivalLocal)
                                       .Select(x => new Views.Flight.Flight(x))
                                       .ToPagedView(binding);
             }

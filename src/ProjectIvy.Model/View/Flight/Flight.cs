@@ -8,8 +8,8 @@ namespace ProjectIvy.Model.View.Flight
         public Flight(DatabaseModel.Transport.Flight f)
         {
             Airline = f.ConvertTo(x => new Airline.Airline(x.Airline));
-            Arrival = f.DateOfArrival;
-            Departure = f.DateOfDeparture;
+            Arrival = f.DateOfArrivalLocal;
+            Departure = f.DateOfDepartureLocal;
             Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
             Origin = f.ConvertTo(x => new Airport.Airport(x.OriginAirport));
 

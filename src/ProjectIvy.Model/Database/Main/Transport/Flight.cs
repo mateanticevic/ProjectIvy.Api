@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Transport
@@ -22,9 +21,9 @@ namespace ProjectIvy.Model.Database.Main.Transport
 
         public Airport OriginAirport { get; set; }
 
-        public DateTime DateOfDeparture { get; set; }
+        public DateTime DateOfDepartureLocal { get; set; }
 
-        public DateTime DateOfArrival { get; set; }
+        public DateTime DateOfArrivalLocal { get; set; }
 
         public string FlightNumber { get; set; }
     }
