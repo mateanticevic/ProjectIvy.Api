@@ -21,6 +21,10 @@ namespace ProjectIvy.Api.Controllers.Flight
         [HttpGet("Count")]
         public IActionResult GetCount(FlightGetBinding binding) => Ok(_flightHandler.Count(binding));
 
+        [HttpGet("Count/ByAirline")]
+        public async Task<IEnumerable<KeyValuePair<Model.View.Airline.Airline, int>>> GetCountByAirline(FlightGetBinding binding)
+            => await _flightHandler.CountByAirline(binding);
+
         [HttpGet("Count/ByAirport")]
         public IActionResult GetCountByAirport(FlightGetBinding binding) => Ok(_flightHandler.CountByAirport(binding));
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Views = ProjectIvy.Model.View;
@@ -27,16 +27,17 @@ namespace ProjectIvy.Business.Handlers.Flight
             }
         }
 
-        public async Task Create(FlightBinding binding)
+        public async Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding)
         {
-            using (var context = GetMainContext())
-            {
-                var entity = binding.ToEntity(context);
-                entity.UserId = UserId;
+            using var context = GetMainContext();
 
-                await context.Flights.AddAsync(entity);
-                await context.SaveChangesAsync();
-            }
+            return await context.Flights.WhereUser(UserId)
+                                        .Include(x => x.Airline)
+                                        .Select(x => x.Airline)
+                                        .GroupBy(x => x)
+                                        .OrderByDescending(x => x.Count())
+                                        .Select(x => new KeyValuePair<Views.Airline.Airline, int>(new Views.Airline.Airline(x.Key), x.Count()))
+                                        .ToListAsync();
         }
 
         public IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding)
@@ -70,6 +71,18 @@ namespace ProjectIvy.Business.Handlers.Flight
                                        }
                                    }, x.Count()))
                                    .ToList();
+            }
+        }
+
+        public async Task Create(FlightBinding binding)
+        {
+            using (var context = GetMainContext())
+            {
+                var entity = binding.ToEntity(context);
+                entity.UserId = UserId;
+
+                await context.Flights.AddAsync(entity);
+                await context.SaveChangesAsync();
             }
         }
 
