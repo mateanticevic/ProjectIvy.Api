@@ -13,12 +13,15 @@ namespace ProjectIvy.Model.View.Flight
             Departure = f.DateOfDepartureLocal;
             DepartureLocal = f.DateOfDepartureLocal;
             Destination = f.ConvertTo(x => new Airport.Airport(x.DestinationAirport));
+            Id = f.ValueId;
             Number = f.FlightNumber;
             Origin = f.ConvertTo(x => new Airport.Airport(x.OriginAirport));
 
             DistanceInKm = (int)(Origin.Poi.Location.ToGeoCoordinate()
                                                     .GetDistanceTo(Destination.Poi.Location.ToGeoCoordinate()) / 1000);
         }
+
+        public string Id { get; set; }
 
         public Airline.Airline Airline { get; set; }
 
