@@ -228,7 +228,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                               .ThenInclude(x => x.Poi)
                                               .Include(x => x.OriginAirport)
                                               .ThenInclude(x => x.Poi)
-                                              .Where(x => x.DateOfDepartureLocal.AddHours(-2) < DateTime.UtcNow && x.DateOfArrivalLocal.AddHours(6) > DateTime.UtcNow)
+                                              .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
                                               .Take(1)
                                               .SingleOrDefaultAsync();
 
