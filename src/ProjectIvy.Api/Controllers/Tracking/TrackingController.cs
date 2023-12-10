@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Common.Interfaces;
 using ProjectIvy.Common.Parsers;
@@ -14,6 +16,7 @@ using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
 {
+    [Authorize(Policies.TrackingUser)]
     public class TrackingController : BaseController<TrackingController>
     {
         private readonly ITrackingHandler _trackingHandler;
@@ -60,9 +63,6 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
 
-        [HttpGet("Last")]
-        public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
-
         [HttpGet("LastLocation")]
         public async Task<View.TrackingLocation> GetLastLocation() => await _trackingHandler.GetLastLocation();
 
@@ -71,12 +71,6 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet("Speed/Max")]
         public double GetMaxSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetMaxSpeed(binding);
-
-        [HttpPut]
-        public bool Put([FromBody] TrackingBinding binding) => _trackingHandler.Create(binding);
-
-        [HttpPost]
-        public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
 
         [HttpPost("Delete")]
         public async Task<IActionResult> PostDelete([FromBody] IEnumerable<long> timestamps)

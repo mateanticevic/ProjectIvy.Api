@@ -18,7 +18,7 @@ namespace ProjectIvy.Business.Handlers
             HttpContext = context.Context.HttpContext;
             Logger = context.Logger;
 
-            string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "email").Value;
+            string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
             UserId = ResolveUserId(authIdentifier);
         }
 

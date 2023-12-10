@@ -2,6 +2,8 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Keycloak.AuthServices.Authentication;
+using Keycloak.AuthServices.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -10,7 +12,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
@@ -69,6 +73,7 @@ namespace ProjectIvy.Api
 
         public void ConfigureServices(IServiceCollection services)
         {
+            IdentityModelEventSource.ShowPII = true;
             services.AddResponseCaching(options =>
             {
                 options.MaximumBodySize = 1024;
@@ -146,24 +151,60 @@ namespace ProjectIvy.Api
                 });
             });
 
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                        .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
-                        {
-                            o.RequireHttpsMetadata = false;
-                            o.MetadataAddress = $"{_authority}/realms/ivy/.well-known/openid-configuration";
-                            o.Authority = $"{_authority}/realms/ivy";
-                            o.Audience = "account";
-                            o.Events = new JwtBearerEvents
-                            {
-                                OnMessageReceived = context =>
-                                {
-                                    context.Token = context.Request.Cookies["AccessToken"];
-                                    return Task.CompletedTask;
-                                }
-                            };
-                        });
+            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            //             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
+            //             {
+            //                 o.RequireHttpsMetadata = false;
+            //                 o.MetadataAddress = $"{_authority}/realms/ivy/.well-known/openid-configuration";
+            //                 o.Authority = $"{_authority}/realms/ivy";
+            //                 o.Audience = "account";
+            //                 o.Events = new JwtBearerEvents
+            //                 {
+            //                     OnMessageReceived = context =>
+            //                     {
+            //                         context.Token = context.Request.Cookies["AccessToken"];
+            //                         return Task.CompletedTask;
+            //                     }
+            //                 };
+            //             });
+
+            var conf = new KeycloakAuthenticationOptions()
+            {
+                AuthServerUrl = "https://auth.anticevic.net",
+                Realm = "ivy",
+                Resource = "api",
+                VerifyTokenAudience = false,
+            };
+            services.AddKeycloakAuthentication(conf, o => {
+                o.RequireHttpsMetadata = false;
+            });
+
+            var prot = new KeycloakProtectionClientOptions()
+            {
+                AuthServerUrl = "https://auth.anticevic.net",
+                Realm = "ivy",
+                Resource = "api",
+                VerifyTokenAudience = false,
+            };
+
+            services.AddAuthorization(options =>
+                {
+                    options.AddPolicy(Policies.TrackingLastViewer, builder =>
+                    {
+                        builder.RequireProtectedResource(IvyClient.Resources.Tracking.Name, IvyClient.Resources.Tracking.Scopes.TrackingViewLast);
+                    });
+                    options.AddPolicy(Policies.TrackingCreator, builder =>
+                    {
+                        builder.RequireProtectedResource(IvyClient.Resources.Tracking.Name, IvyClient.Resources.Tracking.Scopes.TrackingCreate);
+                    });
+                    options.AddPolicy(Policies.TrackingUser, builder =>
+                    {
+                        builder.RequireResourceRoles(IvyClient.Roles.TrackingUser);
+                    });
+                })
+                .AddKeycloakAuthorization(prot);
 
             services.AddMvc(setup =>
             {
