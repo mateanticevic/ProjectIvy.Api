@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Tracking;
+using ProjectIvy.Model.View.Tracking;
 using System.Threading.Tasks;
 
 namespace ProjectIvy.Api.Controllers.Tracking
@@ -18,7 +19,7 @@ namespace ProjectIvy.Api.Controllers.Tracking
             _trackingHandler = trackingHandler;
         }
 
-        [HttpGet("Last")]
-        public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
+        [HttpGet("LastLocation")]
+        public async Task<TrackingLocation> GetLastLocation() => await _trackingHandler.GetLastLocation();
     }
 }

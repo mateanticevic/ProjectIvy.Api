@@ -63,14 +63,14 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Distance")]
         public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
 
-        [HttpGet("LastLocation")]
-        public async Task<View.TrackingLocation> GetLastLocation() => await _trackingHandler.GetLastLocation();
-
         [HttpGet("Speed/Average")]
         public double GetAverageSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetAverageSpeed(binding);
 
         [HttpGet("Speed/Max")]
         public double GetMaxSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetMaxSpeed(binding);
+
+        [HttpGet("Last")]
+        public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
 
         [HttpPost("Delete")]
         public async Task<IActionResult> PostDelete([FromBody] IEnumerable<long> timestamps)
