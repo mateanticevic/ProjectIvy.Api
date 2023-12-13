@@ -158,6 +158,14 @@ namespace ProjectIvy.Api
             };
             services.AddKeycloakAuthentication(conf, o => {
                 o.RequireHttpsMetadata = false;
+                o.Events = new JwtBearerEvents
+                            {
+                                OnMessageReceived = context =>
+                                {
+                                    context.Token = context.Request.Cookies["AccessToken"];
+                                    return Task.CompletedTask;
+                                }
+                            };
             });
 
             var prot = new KeycloakProtectionClientOptions()
