@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace ProjectIvy.Api.Controllers.Tracking
 {
     [Route("Tracking")]
-    [Authorize(Policies.TrackingLastViewer)]
+    [Authorize(ApiScopes.TrackingViewLast)]
     public class LastTrackingController : BaseController<TrackingController>
     {
         private readonly ITrackingHandler _trackingHandler;

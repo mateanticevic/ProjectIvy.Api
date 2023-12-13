@@ -16,7 +16,7 @@ using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
 {
-    [Authorize(Policies.TrackingUser)]
+    [Authorize(ApiScopes.TrackingUser)]
     public class TrackingController : BaseController<TrackingController>
     {
         private readonly ITrackingHandler _trackingHandler;

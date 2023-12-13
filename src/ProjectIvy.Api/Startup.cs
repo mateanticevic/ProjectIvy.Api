@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Api.Services;
@@ -116,6 +117,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IUserHandler, UserHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddHandler<IWebHandler, WebHandler>();
+            services.AddSingleton<IAuthorizationHandler, ScopeRequirementHandler>();
 
             services.AddMemoryCache(setup =>
             {
@@ -142,33 +144,10 @@ namespace ProjectIvy.Api
                         {
                             AuthorizationUrl = new Uri($"{_authority}/connect/authorize"),
                             TokenUrl = new Uri($"{_authority}/connect/token"),
-                            Scopes = new Dictionary<string, string>
-                            {
-                                {"api1", "Demo API - full access"}
-                            }
                         }
                     }
                 });
             });
-
-            // JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
-
-            // services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            //             .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, o =>
-            //             {
-            //                 o.RequireHttpsMetadata = false;
-            //                 o.MetadataAddress = $"{_authority}/realms/ivy/.well-known/openid-configuration";
-            //                 o.Authority = $"{_authority}/realms/ivy";
-            //                 o.Audience = "account";
-            //                 o.Events = new JwtBearerEvents
-            //                 {
-            //                     OnMessageReceived = context =>
-            //                     {
-            //                         context.Token = context.Request.Cookies["AccessToken"];
-            //                         return Task.CompletedTask;
-            //                     }
-            //                 };
-            //             });
 
             var conf = new KeycloakAuthenticationOptions()
             {
@@ -191,18 +170,16 @@ namespace ProjectIvy.Api
 
             services.AddAuthorization(options =>
                 {
-                    options.AddPolicy(Policies.TrackingLastViewer, builder =>
+                    var fields = typeof(ApiScopes).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
+
+                    foreach (var field in fields)
                     {
-                        builder.RequireProtectedResource(IvyClient.Resources.Tracking.Name, IvyClient.Resources.Tracking.Scopes.TrackingViewLast);
-                    });
-                    options.AddPolicy(Policies.TrackingCreator, builder =>
-                    {
-                        builder.RequireProtectedResource(IvyClient.Resources.Tracking.Name, IvyClient.Resources.Tracking.Scopes.TrackingCreate);
-                    });
-                    options.AddPolicy(Policies.TrackingUser, builder =>
-                    {
-                        builder.RequireResourceRoles(IvyClient.Roles.TrackingUser);
-                    });
+                        string value = field.GetValue(null).ToString();
+                        options.AddPolicy(value, builder =>
+                        {
+                            builder.Requirements.Add(new ScopeRequirement(value));
+                        });
+                    }
                 })
                 .AddKeycloakAuthorization(prot);
 

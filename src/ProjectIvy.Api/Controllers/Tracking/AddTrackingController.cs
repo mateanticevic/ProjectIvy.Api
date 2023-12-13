@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ProjectIvy.Api.Controllers.Tracking
 {
     [Route("Tracking")]
-    [Authorize(Policies.TrackingCreator)]
+    [Authorize(ApiScopes.TrackingCreate)]
     public class AddTrackingController : BaseController<TrackingController>
     {
         private readonly ITrackingHandler _trackingHandler;
