@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Constants;
@@ -9,6 +11,7 @@ using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense
 {
+    [Authorize(ApiScopes.ExpenseUser)]
     public class ExpenseController : BaseController<ExpenseController>
     {
         private readonly IExpenseHandler _expenseHandler;

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Income;
@@ -9,6 +11,7 @@ using View = ProjectIvy.Model.View.Income;
 
 namespace ProjectIvy.Api.Controllers.Income
 {
+    [Authorize(ApiScopes.IncomeUser)]
     public class IncomeController : BaseController<IncomeController>
     {
         private readonly IIncomeHandler _incomeHandler;

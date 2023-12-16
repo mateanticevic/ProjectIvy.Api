@@ -1,12 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.ExpenseType;
-using System.Collections.Generic;
 using View = ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.ExpenseType
 {
+    [Authorize(ApiScopes.ExpenseUser)]
     public class ExpenseTypeController : BaseController<ExpenseTypeController>
     {
         private readonly IExpenseTypeHandler _expenseTypeHandler;
