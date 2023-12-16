@@ -23,15 +23,9 @@ namespace ProjectIvy.Model.Database.Main.User
 
         public string Email { get; set; }
 
-        public string PasswordHash { get; set; }
-
-        public DateTime PasswordModified { get; set; }
-
         public string Username { get; set; }
 
         public string LastFmUsername { get; set; }
-
-        public string AuthIdentifier { get; set; }
 
         public DateTime Created { get; set; }
 
