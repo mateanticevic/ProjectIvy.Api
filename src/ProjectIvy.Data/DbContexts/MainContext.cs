@@ -3,8 +3,6 @@ using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.Database.Main.Common;
 using ProjectIvy.Model.Database.Main.Contacts;
 using ProjectIvy.Model.Database.Main.Finance;
-using ProjectIvy.Model.Database.Main.Inv;
-using ProjectIvy.Model.Database.Main.Log;
 using ProjectIvy.Model.Database.Main.Net;
 using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.Database.Main.Storage;
@@ -37,8 +35,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<BeerServing> BeerServings { get; set; }
 
         public DbSet<BeerStyle> BeerStyles { get; set; }
-
-        public DbSet<BrowserLog> BrowserLogs { get; set; }
 
         public DbSet<Call> Calls { get; set; }
 
@@ -81,12 +77,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<CountryPolygon> CountryPolygons { get; set; }
 
         public DbSet<Currency> Currencies { get; set; }
-
-        public DbSet<Domain> Domains { get; set; }
-
-        public DbSet<Device> Devices { get; set; }
-
-        public DbSet<DeviceType> DeviceTypes { get; set; }
 
         public DbSet<Expense> Expenses { get; set; }
 
@@ -155,8 +145,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<Vendor> Vendors { get; set; }
 
         public DbSet<VendorPoi> VendorPois { get; set; }
-
-        public DbSet<Web> Webs { get; set; }
 
         public DbSet<Weight> Weights { get; set; }
 
@@ -314,22 +302,6 @@ namespace ProjectIvy.Data.DbContexts
                         .HasOne(x => x.DefaultCar)
                         .WithOne(x => x.User)
                         .HasForeignKey<User>(x => x.DefaultCarId);
-
-            modelBuilder.Entity<Device>()
-                        .HasOne(x => x.DeviceType)
-                        .WithMany(x => x.Devices);
-
-            modelBuilder.Entity<Domain>()
-                        .HasOne(x => x.Web)
-                        .WithMany(x => x.Domains);
-
-            modelBuilder.Entity<BrowserLog>()
-                        .HasOne(x => x.Device)
-                        .WithMany(x => x.BrowserLogs);
-
-            modelBuilder.Entity<BrowserLog>()
-                        .HasOne(x => x.Domain)
-                        .WithMany(x => x.BrowserLogs);
 
             modelBuilder.Entity<Poi>()
                         .HasOne(x => x.PoiCategory)

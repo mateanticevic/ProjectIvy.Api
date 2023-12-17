@@ -28,7 +28,6 @@ using ProjectIvy.Business.Handlers.City;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Business.Handlers.Currency;
-using ProjectIvy.Business.Handlers.Device;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.File;
 using ProjectIvy.Business.Handlers.Flight;
@@ -44,7 +43,6 @@ using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.Handlers.Vendor;
-using ProjectIvy.Business.Handlers.Web;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Services.LastFm;
 using Prometheus;
@@ -99,7 +97,6 @@ namespace ProjectIvy.Api
             services.AddHandler<IConsumationHandler, ConsumationHandler>();
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
-            services.AddHandler<IDeviceHandler, DeviceHandler>();
             services.AddHandler<IDialogflowHandler, DialogflowHandler>();
             services.AddHandler<IFileHandler, FileHandler>();
             services.AddHandler<IFlightHandler, FlightHandler>();
@@ -116,7 +113,6 @@ namespace ProjectIvy.Api
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
-            services.AddHandler<IWebHandler, WebHandler>();
             services.AddSingleton<IAuthorizationHandler, ScopeRequirementHandler>();
 
             services.AddMemoryCache(setup =>
