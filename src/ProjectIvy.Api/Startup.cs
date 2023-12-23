@@ -1,6 +1,4 @@
-﻿using System.Diagnostics.Metrics;
-using System.IdentityModel.Tokens.Jwt;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
@@ -38,7 +36,6 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
-using ProjectIvy.Business.Handlers.Security;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
@@ -83,7 +80,6 @@ namespace ProjectIvy.Api
             services.AddHttpContextAccessor();
             services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));
             services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY")));
-            services.AddSingleton<IAccessTokenHandler, AccessTokenHandler>();
 
             services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<IAccountHandler, AccountHandler>();
@@ -203,7 +199,6 @@ namespace ProjectIvy.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            app.UseLegacyAuth();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseHttpMetrics();

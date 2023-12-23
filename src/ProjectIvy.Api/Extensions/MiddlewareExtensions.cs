@@ -9,10 +9,5 @@ namespace ProjectIvy.Api.Extensions
         {
             return builder.UseMiddleware<ExceptionHandlingMiddleware>();
         }
-
-        public static IApplicationBuilder UseLegacyAuth(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<LegacyAuthMiddleware>();
-        }
     }
 }

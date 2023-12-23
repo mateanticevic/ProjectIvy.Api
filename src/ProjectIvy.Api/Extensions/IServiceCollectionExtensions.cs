@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectIvy.Business.Handlers;
 using ProjectIvy.Common.Interfaces;
-using System;
 
 namespace ProjectIvy.Api.Extensions
 {

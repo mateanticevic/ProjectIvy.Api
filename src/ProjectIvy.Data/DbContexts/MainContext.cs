@@ -4,7 +4,6 @@ using ProjectIvy.Model.Database.Main.Common;
 using ProjectIvy.Model.Database.Main.Contacts;
 using ProjectIvy.Model.Database.Main.Finance;
 using ProjectIvy.Model.Database.Main.Net;
-using ProjectIvy.Model.Database.Main.Security;
 using ProjectIvy.Model.Database.Main.Storage;
 using ProjectIvy.Model.Database.Main.Tracking;
 using ProjectIvy.Model.Database.Main.Transport;
@@ -21,8 +20,6 @@ namespace ProjectIvy.Data.DbContexts
         }
 
         public DbSet<Account> Accounts { get; set; }
-
-        public DbSet<AccessToken> AccessTokens { get; set; }
 
         public DbSet<Airline> Airlines { get; set; }
 
@@ -199,9 +196,6 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<Airport>()
                         .HasOne(x => x.Poi);
-
-            modelBuilder.Entity<AccessToken>()
-                        .HasOne(x => x.User);
 
             modelBuilder.Entity<Beer>()
                         .HasOne(x => x.BeerBrand)
