@@ -12,6 +12,9 @@ namespace ProjectIvy.Api.Controllers.Device
 
         public GeohashController(ILogger<GeohashController> logger, IGeohashHandler geohashHandler) : base(logger) => _geohashHandler = geohashHandler;
 
+        [HttpDelete("{geohash}/Trackings")]
+        public async Task Delete(string geohash) => await _geohashHandler.DeleteTrackings(geohash);
+
         [HttpGet]
         public async Task<IActionResult> Get(GeohashGetBinding binding) => Ok(await _geohashHandler.GetGeohashes(binding));
 
@@ -28,7 +31,7 @@ namespace ProjectIvy.Api.Controllers.Device
 
         [HttpGet("{fromGeohash}/To/{toGeohash}")]
         public async Task<IActionResult> GetGeohashToGeohash(string fromGeohash, string toGeohash, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date)
-            => Ok(await _geohashHandler.FromGeohashToGeohash(new [] { fromGeohash }, new[] { toGeohash }, orderBy));
+            => Ok(await _geohashHandler.FromGeohashToGeohash(new[] { fromGeohash }, new[] { toGeohash }, orderBy));
 
         [HttpGet("Root/Children")]
         public async Task<IActionResult> GetRootChildren() => Ok(await _geohashHandler.GetChildren(null));

@@ -50,6 +50,18 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
+        public async Task DeleteTrackings(string geohash)
+        {
+            using var context = GetMainContext();
+
+            if (geohash.Length < 5)
+                throw new ArgumentException("Geohash must be at least 5 characters long");
+
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => x.Geohash.StartsWith(geohash))
+                                   .ExecuteDeleteAsync();
+        }
+
         public async Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort)
         {
             using var context = GetMainContext();

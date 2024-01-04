@@ -11,6 +11,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
 
+        Task DeleteTrackings(string geohash);
+
         Task<IEnumerable<DateOnly>> GetDays(string geohash);
 
         Task<IEnumerable<string>> GetChildren(string geohash);
