@@ -1,9 +1,8 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 
 namespace ProjectIvy.Model.View.Location
 {
-	public class Location
+    public class Location
 	{
 		public Location(Database.Main.Tracking.Location l)
 		{

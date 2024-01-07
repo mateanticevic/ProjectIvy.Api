@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;

@@ -121,6 +121,10 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Ride> Rides { get; set; }
 
+        public DbSet<Route> Routes { get; set; }
+
+        public DbSet<RoutePoint> RoutePoints { get; set; }
+
         public DbSet<RideType> RideTypes { get; set; }
 
         public DbSet<Tracking> Trackings { get; set; }
@@ -337,6 +341,17 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<CarFuel>()
                         .HasOne(x => x.Car)
                         .WithMany(x => x.CarFuelings);
+
+            modelBuilder.Entity<RoutePoint>()
+                        .HasKey(x => new { x.RouteId, x.Index });
+
+            modelBuilder.Entity<RoutePoint>()
+                        .Property(x => x.Lat)
+                        .HasColumnType("numeric(9, 6)");
+
+            modelBuilder.Entity<RoutePoint>()
+                        .Property(x => x.Lng)
+                        .HasColumnType("numeric(9, 6)");
         }
     }
 }

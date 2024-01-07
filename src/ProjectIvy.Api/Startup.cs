@@ -105,6 +105,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
             services.AddHandler<IPoiHandler, PoiHandler>();
             services.AddHandler<IRideHandler, RideHandler>();
+            services.AddHandler<IRouteHandler, RouteHandler>();
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
