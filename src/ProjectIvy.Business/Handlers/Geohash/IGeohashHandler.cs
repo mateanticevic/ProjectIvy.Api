@@ -9,9 +9,11 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task AddGeohashToLocation(string locationValueId, string geohash);
 
-        Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
+        Task<int> CountUnique(GeohashUniqueGetBinding binding);
 
         Task DeleteTrackings(string geohash);
+
+        Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
 
         Task<IEnumerable<DateOnly>> GetDays(string geohash);
 

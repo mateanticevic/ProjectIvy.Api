@@ -1,8 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Ride;
-using ProjectIvy.Model.View;
-using SixLabors.ImageSharp.ColorSpaces.Companding;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -24,7 +22,6 @@ namespace ProjectIvy.Api.Controllers.Route
         [HttpGet("{id}/Points")]
         public async Task<IEnumerable<decimal[]>> GetPoints(string id) => await _routeHandler.GetRoutePoints(id);
 
-        // POST: api/Route
         [HttpPost]
         public async Task<IActionResult> Post([FromBody] RouteBinding binding)
         {
