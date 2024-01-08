@@ -61,7 +61,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                               .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
                               .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
                               .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                              .WhereIf(binding.To.HasValue, x => x.Timestamp >= binding.To)
+                              .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
                               .CountAsync();
             }
 
@@ -76,7 +76,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
             using var context = GetMainContext();
 
-            if (geohash.Length < 5)
+            if (geohash.Length < 7)
                 throw new ArgumentException("Geohash must be at least 5 characters long");
 
             await context.Trackings.WhereUser(UserId)
@@ -262,7 +262,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                               .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
                               .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
                               .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                              .WhereIf(binding.To.HasValue, x => x.Timestamp >= binding.To)
+                              .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
                               .Select(x => x.Key)
                               .ToListAsync();
             }
