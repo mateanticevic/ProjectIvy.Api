@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
@@ -250,6 +249,30 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                                      .Select(x => x.Geohash)
                                                      .ToListAsync();
             }
+        }
+
+        public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding)
+        {
+            using var context = GetMainContext();
+
+            if (binding.OnlyNew)
+            {
+                return await context.Trackings.WhereUser(UserId)
+                              .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                              .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                              .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                              .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                              .WhereIf(binding.To.HasValue, x => x.Timestamp >= binding.To)
+                              .Select(x => x.Key)
+                              .ToListAsync();
+            }
+
+            return await context.Trackings.WhereUser(UserId)
+                                          .WhereTimestampInclusive(binding)
+                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                          .Select(x => x.Key)
+                                          .ToListAsync();
         }
 
         public async Task RemoveGeohashFromCountry(string countryValueId, string geohash)

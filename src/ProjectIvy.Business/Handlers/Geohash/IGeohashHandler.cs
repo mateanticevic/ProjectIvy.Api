@@ -31,6 +31,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId);
 
+        Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding);
+
         Task RemoveGeohashFromCountry(string countryValueId, string geohash);
 
         Task RemoveGeohashFromLocation(string locationValueId, string geohash);

@@ -18,6 +18,9 @@ namespace ProjectIvy.Api.Controllers.Device
         [HttpGet]
         public async Task<IActionResult> Get(GeohashGetBinding binding) => Ok(await _geohashHandler.GetGeohashes(binding));
 
+        [HttpGet("Unique")]
+        public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding) => await _geohashHandler.GetUnique(binding);
+
         [HttpGet("Unique/Count")]
         public async Task<int> GetUniqueCount(GeohashUniqueGetBinding binding) => await _geohashHandler.CountUnique(binding);
 
