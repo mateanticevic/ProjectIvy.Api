@@ -3,6 +3,7 @@ using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Database.Main.Finance;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace ProjectIvy.Data.Extensions.Entities
 {
@@ -59,7 +60,8 @@ namespace ProjectIvy.Data.Extensions.Entities
                         .WhereIf(!string.IsNullOrWhiteSpace(b.Description), x => x.Comment.Contains(b.Description))
                         .WhereIf(b.AmountFrom.HasValue, x => x.Amount >= b.AmountFrom)
                         .WhereIf(b.ExcludeId != null, x => !b.ExcludeId.Contains(x.ValueId))
-                        .WhereIf(b.AmountTo.HasValue, x => x.Amount <= b.AmountTo);
+                        .WhereIf(b.AmountTo.HasValue, x => x.Amount <= b.AmountTo)
+                        .WhereIf(!string.IsNullOrEmpty(b.Search), x => x.Comment.ToLower().Contains(b.Search.ToLower()));
         }
 
         public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)

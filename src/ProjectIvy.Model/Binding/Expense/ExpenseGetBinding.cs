@@ -1,6 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding.Expense
+﻿using ProjectIvy.Model.Binding.Route;
+
+namespace ProjectIvy.Model.Binding.Expense
 {
-    public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>
+    public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>, ISearchable
     {
         public ExpenseGetBinding() { }
 
@@ -39,5 +41,7 @@
         public IEnumerable<string> VendorId { get; set; }
 
         public IEnumerable<string> ExcludeId { get; set; }
+
+        public string Search { get; set; }
     }
 }
