@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Ride;
 using ProjectIvy.Model.Binding.Route;
+using ProjectIvy.Model.View;
 using System.IO;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -18,7 +19,7 @@ namespace ProjectIvy.Api.Controllers.Route
         }
 
         [HttpGet]
-        public async Task<IEnumerable<Model.View.Route.Route>> Get(RouteGetBinding  b) => await _routeHandler.GetRoutes(b);
+        public async Task<PagedView<Model.View.Route.Route>> Get(RouteGetBinding  b) => await _routeHandler.GetRoutes(b);
 
         [HttpGet("{id}/Points")]
         public async Task<IEnumerable<decimal[]>> GetPoints(string id) => await _routeHandler.GetRoutePoints(id);
