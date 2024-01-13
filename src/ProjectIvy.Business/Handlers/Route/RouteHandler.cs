@@ -5,6 +5,7 @@ using Geohash;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding.Route;
 using ProjectIvy.Model.Database.Main.Tracking;
 
 namespace ProjectIvy.Business.Handlers.Ride;
@@ -25,16 +26,18 @@ public class RouteHandler : Handler<RouteHandler>, IRouteHandler
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Model.View.Route.Route>> GetRoutes()
+    public async Task<IEnumerable<Model.View.Route.Route>> GetRoutes(RouteGetBinding b)
     {
         using var context = GetMainContext();
         return await context.Routes.WhereUser(UserId)
-                                    .Select(x => new Model.View.Route.Route()
-                                    {
-                                        Id = x.ValueId,
-                                        Name = x.Name
-                                    })
-                                    .ToListAsync();
+                                   .WhereIf(!string.IsNullOrEmpty(b.Search), x => x.Name.ToLower().Contains(b.Search.ToLower()))
+                                   .Select(x => new Model.View.Route.Route()
+                                   {
+                                       Id = x.ValueId,
+                                       Name = x.Name
+                                   })
+                                   .Page(b)
+                                   .ToListAsync();
     }
 
     public async Task<IEnumerable<decimal[]>> GetRoutePoints(string routeValueId)
