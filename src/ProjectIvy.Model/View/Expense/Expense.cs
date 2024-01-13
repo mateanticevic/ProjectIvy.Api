@@ -66,5 +66,7 @@ namespace ProjectIvy.Model.View.Expense
         public PaymentType.PaymentType PaymentType { get; set; }
 
         public Vendor.Vendor Vendor { get; set; }
+
+        public string Name => $"[{ExpenseType.Name}] {Comment} ({Amount} {Currency.Code})";
     }
 }
