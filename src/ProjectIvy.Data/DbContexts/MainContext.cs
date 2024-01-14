@@ -101,6 +101,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Location> Locations { get; set; }
 
+        public DbSet<LocationType> LocationTypes { get; set; }
+
         public DbSet<LocationGeohash> LocationGeohashes { get; set; }
 
         public DbSet<Manufacturer> Manufacturers { get; set; }
@@ -334,6 +336,14 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<Location>()
                         .HasMany(x => x.Geohashes)
                         .WithOne(x => x.Location);
+
+            modelBuilder.Entity<Location>()
+                        .Property(x => x.Latitude)
+                        .HasColumnType("numeric(9, 6)");
+
+            modelBuilder.Entity<Location>()
+                        .Property(x => x.Longitude)
+                        .HasColumnType("numeric(9, 6)");
 
             modelBuilder.Entity<CityAccessGeohash>()
                         .HasKey(x => new { x.CityId, x.Geohash });

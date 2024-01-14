@@ -30,7 +30,7 @@ namespace ProjectIvy.Business.Handlers.Location
         {
             using var context = GetMainContext();
 
-            var location = b.ToEntity();
+            var location = b.ToEntity(context);
             location.UserId = UserId;
 
             await context.Locations.AddAsync(location);
