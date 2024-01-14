@@ -13,6 +13,7 @@ using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Geohash;
+using ProjectIvy.Model.View.Location;
 
 namespace ProjectIvy.Business.Handlers.Location
 {
@@ -73,6 +74,15 @@ namespace ProjectIvy.Business.Handlers.Location
                     return days;
                 }
             );
+        }
+
+        public async Task<IEnumerable<LocationType>> GetLocationTypes()
+        {
+            using var context = GetMainContext();
+
+            return await context.LocationTypes.OrderBy(x => x.Name)
+                                              .Select(x => new LocationType(x))
+                                              .ToListAsync();
         }
 
         public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort)

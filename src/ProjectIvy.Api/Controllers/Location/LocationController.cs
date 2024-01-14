@@ -7,6 +7,7 @@ using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Location;
 
 namespace ProjectIvy.Api.Controllers.Location
 {
@@ -28,6 +29,10 @@ namespace ProjectIvy.Api.Controllers.Location
 
         [HttpGet("{locationId}/Days")]
         public async Task<IActionResult> GetDays(string locationId) => Ok(await _locationHandler.GetDays(locationId));
+
+        [HttpGet("Types")]
+        public async Task<IEnumerable<LocationType>> GetTypes()
+            => await _locationHandler.GetLocationTypes();
 
         [HttpPost]
         public async Task Post([FromBody] LocationBinding b) => await _locationHandler.Create(b);

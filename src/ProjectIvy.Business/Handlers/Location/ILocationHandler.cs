@@ -4,6 +4,7 @@ using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Geohash;
+using ProjectIvy.Model.View.Location;
 
 namespace ProjectIvy.Business.Handlers.Location
 {
@@ -14,6 +15,8 @@ namespace ProjectIvy.Business.Handlers.Location
         Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b);
 
         Task<IEnumerable<DateTime>> GetDays(string locationId);
+
+         Task<IEnumerable<LocationType>> GetLocationTypes();
 
         Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort);
 
