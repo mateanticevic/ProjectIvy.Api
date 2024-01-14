@@ -158,7 +158,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             {
                 return db.Trackings.WhereUser(UserId)
                                    .WhereTimestampInclusive(binding)
-                                   .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
+                                   .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
                                    .OrderBy(x => x.Timestamp)
                                    .ToList()
                                    .Select(x => new View.Tracking(x));
@@ -170,7 +170,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             using (var context = GetMainContext())
             {
                 return (await context.Trackings.WhereUser(UserId)
-                                              .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Lng && x.Longitude < binding.BottomRight.Lng && x.Latitude < binding.TopLeft.Lat && x.Latitude > binding.BottomRight.Lat)
+                                              .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
                                               .Select(x => x.Timestamp.Date)
                                               .Distinct()
                                               .OrderByDescending(x => x)

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
 using ProjectIvy.Model.View;
@@ -8,6 +9,8 @@ namespace ProjectIvy.Business.Handlers.Location
 {
     public interface ILocationHandler
     {
+        Task Create(LocationBinding b);
+
         Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b);
 
         Task<IEnumerable<DateTime>> GetDays(string locationId);

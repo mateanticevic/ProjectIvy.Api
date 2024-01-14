@@ -6,7 +6,7 @@ namespace ProjectIvy.Model.View.Tracking
     {
         public KnownLocation(DatabaseModel.Tracking.Location l)
         {
-            Name = l.Description;
+            Name = l.Name;
             TypeId = l.LocationType.ValueId;
         }
 

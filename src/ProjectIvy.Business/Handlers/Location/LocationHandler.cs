@@ -1,13 +1,14 @@
 ﻿using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Geohash;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
 using ProjectIvy.Model.View;
@@ -25,13 +26,24 @@ namespace ProjectIvy.Business.Handlers.Location
             _geohashHandler = geohashHandler;
         }
 
+        public async Task Create(LocationBinding b)
+        {
+            using var context = GetMainContext();
+
+            var location = b.ToEntity();
+            location.UserId = UserId;
+
+            await context.Locations.AddAsync(location);
+            await context.SaveChangesAsync();
+        }
+
         public async Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b)
         {
             using var context = GetMainContext();
 
             return await context.Locations.WhereUser(UserId)
                                           .Include(x => x.Geohashes)
-                                          .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Description.ToLower().Contains(b.Search.ToLower()))
+                                          .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Name.ToLower().Contains(b.Search.ToLower()))
                                           .Select(x => new Model.View.Location.Location(x))
                                           .ToPagedViewAsync(b);
         }

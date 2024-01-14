@@ -4,14 +4,14 @@ using ProjectIvy.Model.Database.Main.Tracking;
 
 namespace ProjectIvy.Business.MapExtensions;
 
-    public static class RouteExtensions
+public static class RouteExtensions
+{
+    public static Route ToEntity(this RouteBinding b)
     {
-        public static Route ToEntity(this RouteBinding b)
+        return new Route
         {
-            return new Route
-            {
-                Name = b.Name,
-                ValueId = b.Name.ToValueId()
-            };
-        }
+            Name = b.Name,
+            ValueId = b.Name.ToValueId()
+        };
     }
+}

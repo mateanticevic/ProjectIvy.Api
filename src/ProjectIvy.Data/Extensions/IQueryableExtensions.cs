@@ -23,11 +23,11 @@ namespace ProjectIvy.Data.Extensions
             if (a == null || b == null)
                 return query;
 
-            decimal minLat = a.Lat < b.Lat ? a.Lat : b.Lat;
-            decimal maxLat = a.Lat > b.Lat ? a.Lat : b.Lat;
+            decimal minLat = a.Latitude < b.Latitude ? a.Latitude : b.Latitude;
+            decimal maxLat = a.Latitude > b.Latitude ? a.Latitude : b.Latitude;
 
-            decimal minLng = a.Lng < b.Lng ? a.Lng : b.Lng;
-            decimal maxLng = a.Lng > b.Lng ? a.Lng : b.Lng;
+            decimal minLng = a.Longitude < b.Longitude ? a.Longitude : b.Longitude;
+            decimal maxLng = a.Longitude > b.Longitude ? a.Longitude : b.Longitude;
 
             query = query.Where(x => x.Latitude > minLat)
                          .Where(x => x.Latitude < maxLat)
