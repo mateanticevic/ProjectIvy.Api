@@ -9,6 +9,8 @@ using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Geohash;
+using ProjectIvy.Model.Binding.Location;
+using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Geohash;
 
 namespace ProjectIvy.Business.Handlers.Location
@@ -23,16 +25,15 @@ namespace ProjectIvy.Business.Handlers.Location
             _geohashHandler = geohashHandler;
         }
 
-        public async Task<IEnumerable<Model.View.Location.Location>> Get()
+        public async Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b)
         {
             using var context = GetMainContext();
 
-            var locations = await context.Locations.WhereUser(UserId)
-                                                   .Include(x => x.Geohashes)
-                                                   .ToListAsync();
-
-            return locations.Select(x => new Model.View.Location.Location(x))
-                            .OrderBy(x => x.Name);
+            return await context.Locations.WhereUser(UserId)
+                                          .Include(x => x.Geohashes)
+                                          .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Description.ToLower().Contains(b.Search.ToLower()))
+                                          .Select(x => new Model.View.Location.Location(x))
+                                          .ToPagedViewAsync(b);
         }
 
         public async Task<IEnumerable<DateTime>> GetDays(string locationId)
