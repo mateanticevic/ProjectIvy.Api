@@ -19,7 +19,7 @@ namespace ProjectIvy.Model.Database.Main.Tracking
 
         public int LocationTypeId { get; set; }
 
-        public int Radius { get; set; }
+        public bool CanContainOtherLocations { get; set; }
 
         public LocationType LocationType { get; set; }
 

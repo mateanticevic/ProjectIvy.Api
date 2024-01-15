@@ -219,7 +219,9 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                          .ToListAsync();
             });
 
-            var location = locationGeohashes.SingleOrDefault(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)));
+            var location = locationGeohashes.Where(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)))
+                                            .OrderBy(x => x.CanContainOtherLocations)
+                                            .FirstOrDefault();
 
             using var context = GetMainContext();
             var flight = await context.Flights.WhereUser(UserId)
