@@ -231,8 +231,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                               .Include(x => x.OriginAirport)
                                               .ThenInclude(x => x.Poi)
                                               .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
-                                              .Take(1)
-                                              .SingleOrDefaultAsync();
+                                              .FirstOrDefaultAsync();
 
             var trackingLocation = new View.TrackingLocation
             {
