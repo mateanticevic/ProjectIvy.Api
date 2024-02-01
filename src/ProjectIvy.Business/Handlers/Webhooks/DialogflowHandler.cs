@@ -1,5 +1,6 @@
 ﻿using Google.Apis.Dialogflow.v2.Data;
 using Newtonsoft.Json.Linq;
+using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Expense;
@@ -45,38 +46,39 @@ namespace ProjectIvy.Business.Handlers.Webhooks
         {
             switch (request.QueryResult.Intent.Name)
             {
-                case "projects/projectivy-rkgwxr/agent/intents/f55a44e6-65c8-44c8-a418-e1f535c7bb89":
+                case DialogflowIntents.CreateExpense:
                     return await CreateExpense(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/2f5e913e-036d-437f-b33e-4ab91e3fbdc7":
+                case DialogflowIntents.GetConsecutiveConsumationDays:
                     return await GetConsecutiveConsumationDays(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/6aed36d0-3e1c-406b-9acf-39bc6fcece99":
+                case DialogflowIntents.GetDistance:
                     return await GetDistance(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/c7020a73-a387-4d04-8c3f-961e6de9f99a":
+                case DialogflowIntents.GetTopSpeed:
                     return await GetTopSpeed(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/9a170975-9470-4719-a6cc-d9f611d34dab":
+                case DialogflowIntents.GetLatestOdometer:
                     return await GetLatestOdometer();
 
-                case "projects/projectivy-rkgwxr/agent/intents/82855d04-184d-43f7-bc39-c594a9dc5773":
+                case DialogflowIntents.SetLatestOdometer:
                     return await SetLatestOdometer(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/2a0a54f2-d03a-4ee5-aefb-af9b24916eb4":
+                case DialogflowIntents.GetConsumationCount:
                     return await GetConsumationCount(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/45356f36-e342-4c71-ae0d-c9c06e3df76d":
+                case DialogflowIntents.GetConsumationSum:
                     return await GetConsumationSum(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/a26b869b-23ff-4426-9158-8566fffc843b":
+                case DialogflowIntents.GetExpenseSum:
                     return await GetExpenseSum(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/970e9c94-06f0-482f-b459-568af5b631e8":
+                case DialogflowIntents.SetWeight:
                     return await SetWeight(request);
 
-                case "projects/projectivy-rkgwxr/agent/intents/b8c5e20f-7c00-42a2-b70f-23611cb677b8":
+                case DialogflowIntents.GetMovieCount:
                     return await GetMovieCount(request);
+
                 default:
                     return new GoogleCloudDialogflowV2WebhookResponse()
                     {
