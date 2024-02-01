@@ -1,4 +1,5 @@
 ﻿using Google.Apis.Dialogflow.v2.Data;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Linq;
 using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Car;
@@ -8,6 +9,7 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.MapExtensions;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Binding.Consumation;
 using ProjectIvy.Model.Binding.Expense;
@@ -57,6 +59,9 @@ namespace ProjectIvy.Business.Handlers.Webhooks
 
                 case DialogflowIntents.GetTopSpeed:
                     return await GetTopSpeed(request);
+
+                case DialogflowIntents.GetLastTimeAtLocation:
+                    return await GetLastTimeAtLocation();
 
                 case DialogflowIntents.GetLatestOdometer:
                     return await GetLatestOdometer();
@@ -167,6 +172,27 @@ namespace ProjectIvy.Business.Handlers.Webhooks
             return new GoogleCloudDialogflowV2WebhookResponse()
             {
                 FulfillmentText = $"You've spent {sum} {user.DefaultCurrency.Code}"
+            };
+        }
+
+        public async Task<GoogleCloudDialogflowV2WebhookResponse> GetLastTimeAtLocation()
+        {
+            using var context = GetMainContext();
+
+            var tracking = await context.Trackings.WhereUser(UserId)
+                                                  .OrderByDescending(x => x.Timestamp)
+                                                  .FirstOrDefaultAsync();
+
+            string parentGeohash = tracking.Geohash.Substring(0, 7);
+
+            var previousTracking = await context.Trackings.WhereUser(UserId)
+                                                          .Where(x => x.Geohash.StartsWith(parentGeohash) && x.Timestamp < tracking.Timestamp.Date)
+                                                          .OrderByDescending(x => x.Timestamp)
+                                                          .FirstOrDefaultAsync();
+
+            return new GoogleCloudDialogflowV2WebhookResponse()
+            {
+                FulfillmentText = previousTracking == null ? "This is the first time you're here." : $"Last time you were here was on {previousTracking.Timestamp:dd MM yyyy}."
             };
         }
 
