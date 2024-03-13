@@ -81,10 +81,9 @@ namespace ProjectIvy.Api
             services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));
             services.AddSingleton<LastFm.IUserHelper>(new LastFm.UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY")));
 
-            services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<IAccountHandler, AccountHandler>();
-            services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IAirlineHandler, AirlineHandler>();
+            services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
             services.AddHandler<ICallHandler, CallHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
@@ -94,12 +93,13 @@ namespace ProjectIvy.Api
             services.AddHandler<ICountryHandler, CountryHandler>();
             services.AddHandler<ICurrencyHandler, CurrencyHandler>();
             services.AddHandler<IDialogflowHandler, DialogflowHandler>();
+            services.AddHandler<IExpenseHandler, ExpenseHandler>();
+            services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IFileHandler, FileHandler>();
             services.AddHandler<IFlightHandler, FlightHandler>();
             services.AddHandler<IGeohashHandler, GeohashHandler>();
-            services.AddHandler<IExpenseHandler, ExpenseHandler>();
-            services.AddHandler<IExpenseTypeHandler, ExpenseTypeHandler>();
             services.AddHandler<IIncomeHandler, IncomeHandler>();
+            services.AddHandler<ILastFmHandler, LastFmHandler>();
             services.AddHandler<ILocationHandler, LocationHandler>();
             services.AddHandler<IMovieHandler, MovieHandler>();
             services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
@@ -109,6 +109,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
+            services.AddHandler<IVacationHandler, VacationHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddSingleton<IAuthorizationHandler, ScopeRequirementHandler>();
 
