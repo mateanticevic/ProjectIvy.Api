@@ -16,22 +16,8 @@ namespace ProjectIvy.Api.Controllers.Route
             _vacationHandler = vacationHandler;
         }
 
-        [HttpDelete("{date:datetime}")]
-        public async Task<IActionResult> Delete(DateTime date)
-        {
-            await _vacationHandler.DeleteVacation(date);
-            return Ok();
-        }
-
-        [HttpPost("{date:datetime}")]
-        public async Task<IActionResult> Post(DateTime date)
-        {
-            await _vacationHandler.CreateVacation(date);
-            return Ok();
-        }
-
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] FilteredPagedBinding binding) => Ok(await _vacationHandler.Get(binding));
+        public async Task<IActionResult> Get([FromQuery] DateTime from, [FromQuery] DateTime to) => Ok(await _vacationHandler.Get(from, to));
 
         [HttpPatch("{date:datetime}")]
         public async Task<IActionResult> PatchDay(DateTime date, [FromBody] CalendarDayUpdateBinding b)

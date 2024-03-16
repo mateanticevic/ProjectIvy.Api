@@ -2,9 +2,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Calendar;
-using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Calendar;
 
 namespace ProjectIvy.Business.Handlers.Vendor
 {
@@ -45,16 +44,49 @@ namespace ProjectIvy.Business.Handlers.Vendor
             await context.SaveChangesAsync();
         }
 
-        public async Task<PagedView<DateTime>> Get(FilteredPagedBinding binding)
+        public async Task<CalendarSection> Get(DateTime from, DateTime to)
         {
             using var context = GetMainContext();
 
-            return await context.WorkDays.WhereUser(UserId)
-                                          .WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
-                                          .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
-                                          .OrderByDescending(x => x.Date)
-                                          .Select(x => x.Date)
-                                          .ToPagedViewAsync(binding);
+            var calendarSection = new CalendarSection();
+            var calendarDays = new List<CalendarDay>();
+
+            var holidays = await context.Holidays.Where(x => x.Date >= from && x.Date <= to)
+                                                 .Select(x => x.Date)
+                                                 .ToListAsync();
+
+            var workDays = await context.WorkDays.WhereUser(UserId)
+                                                 .Include(x => x.WorkDayType)
+                                                 .Where(x => x.Date >= from && x.Date <= to)
+                                                 .Select(x => new { x.Date, x.WorkDayType.ValueId, x.WorkDayType.Name })
+                                                 .ToListAsync();
+
+            foreach (var day in Enumerable.Range(0, (to - from).Days + 1).Select(x => from.AddDays(x)))
+            {
+                var workDay = await context.WorkDays.WhereUser(UserId)
+                                                    .FirstOrDefaultAsync(x => x.Date == day);
+
+                var calendarDay = new CalendarDay()
+                {
+                    Date = day,
+                    IsHoliday = holidays.Contains(day),
+                };
+
+                if (workDays.Any(x => x.Date == day))
+                {
+                    var workDayType = workDays.First(x => x.Date == day);
+                    calendarDay.WorkDayType = new WorkDayType()
+                    {
+                        Id = workDayType.ValueId,
+                        Name = workDayType.Name
+                    };
+                }
+
+                calendarDays.Add(calendarDay);
+            }
+            calendarSection.Days = calendarDays.OrderByDescending(x => x.Date);
+
+            return calendarSection;
         }
 
         public async Task UpdateDay(DateTime day, CalendarDayUpdateBinding b)
@@ -85,15 +117,15 @@ namespace ProjectIvy.Business.Handlers.Vendor
             else
                 context.WorkDays.Update(workDay);
 
-                try
-                {
+            try
+            {
 
-            await context.SaveChangesAsync();
-                }
-                catch(Exception e)
-                {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
 
-                }
+            }
         }
     }
 }
