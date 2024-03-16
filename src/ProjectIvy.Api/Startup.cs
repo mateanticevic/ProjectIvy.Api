@@ -109,7 +109,7 @@ namespace ProjectIvy.Api
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
-            services.AddHandler<IVacationHandler, VacationHandler>();
+            services.AddHandler<ICalendarHandler, CalendarHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
             services.AddSingleton<IAuthorizationHandler, ScopeRequirementHandler>();
 

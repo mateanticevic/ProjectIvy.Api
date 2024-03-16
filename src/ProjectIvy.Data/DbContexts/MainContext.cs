@@ -145,7 +145,7 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Vacation> Vacations { get; set; }
+        public DbSet<WorkDay> WorkDays { get; set; }
 
         public DbSet<Vendor> Vendors { get; set; }
 

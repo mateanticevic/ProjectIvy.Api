@@ -3,12 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.User
 {
-    [Table(nameof(Vacation), Schema = nameof(User))]
-    public class Vacation : UserEntity
+    [Table(nameof(WorkDay), Schema = nameof(User))]
+    public class WorkDay : UserEntity
     {
         [Key]
         public int Id { get; set; }
 
         public DateTime Date { get; set; }
+
+        public int WorkDayTypeId { get; set; }
+
+        public WorkDayType WorkDayType { get; set; }
     }
 }
