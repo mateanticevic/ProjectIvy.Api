@@ -16,8 +16,8 @@ namespace ProjectIvy.Api.Controllers.Route
             _vacationHandler = vacationHandler;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] DateTime from, [FromQuery] DateTime to) => Ok(await _vacationHandler.Get(from, to));
+        [HttpGet("Section")]
+        public async Task<IActionResult> GetSection([FromQuery] DateTime from, [FromQuery] DateTime to) => Ok(await _vacationHandler.Get(from, to));
 
         [HttpPatch("{date:datetime}")]
         public async Task<IActionResult> PatchDay(DateTime date, [FromBody] CalendarDayUpdateBinding b)
