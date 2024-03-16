@@ -3,14 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Calendar;
 
 namespace ProjectIvy.Api.Controllers.Route
 {
-    public class VacationController : BaseController<RouteController>
+    public class CalendarController : BaseController<RouteController>
     {
         private readonly ICalendarHandler _vacationHandler;
 
-        public VacationController(ILogger<RouteController> logger, ICalendarHandler vacationHandler) : base(logger)
+        public CalendarController(ILogger<RouteController> logger, ICalendarHandler vacationHandler) : base(logger)
         {
             _vacationHandler = vacationHandler;
         }
@@ -31,5 +32,12 @@ namespace ProjectIvy.Api.Controllers.Route
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] FilteredPagedBinding binding) => Ok(await _vacationHandler.Get(binding));
+
+        [HttpPatch("{date:datetime}")]
+        public async Task<IActionResult> PatchDay(DateTime date, [FromBody] CalendarDayUpdateBinding b)
+        {
+            await _vacationHandler.UpdateDay(date, b);
+            return Ok();
+        }
     }
 }

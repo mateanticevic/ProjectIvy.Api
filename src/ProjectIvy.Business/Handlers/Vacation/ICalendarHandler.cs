@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Business.Handlers.Vendor
@@ -11,5 +12,7 @@ namespace ProjectIvy.Business.Handlers.Vendor
         Task DeleteVacation(DateTime date);
 
         Task<PagedView<DateTime>> Get(FilteredPagedBinding binding);
+
+        Task UpdateDay(DateTime day, CalendarDayUpdateBinding b);
     }
 }

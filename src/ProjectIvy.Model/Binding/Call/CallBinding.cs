@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Model.Binding.Call
+﻿namespace ProjectIvy.Model.Binding.Call
 {
     public class CallBinding
     {

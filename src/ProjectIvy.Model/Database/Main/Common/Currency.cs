@@ -1,10 +1,9 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
-    [Table("Currency", Schema = "Common")]
+    [Table(nameof(Currency), Schema = nameof(Common))]
     public class Currency : IHasValueId
     {
         [Key]

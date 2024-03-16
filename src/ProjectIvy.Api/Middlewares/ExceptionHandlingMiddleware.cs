@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ProjectIvy.Business.Exceptions;
-using System;
 using System.Net;
 using System.Threading.Tasks;
 

@@ -93,6 +93,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<GeohashCountry> GeohashCountries { get; set; }
 
+        public DbSet<Holiday> Holidays { get; set; }
+
         public DbSet<Income> Incomes { get; set; }
 
         public DbSet<IncomeSource> IncomeSources { get; set; }
@@ -146,6 +148,8 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<User> Users { get; set; }
 
         public DbSet<WorkDay> WorkDays { get; set; }
+
+        public DbSet<WorkDayType> WorkDayTypes { get; set; }
 
         public DbSet<Vendor> Vendors { get; set; }
 
