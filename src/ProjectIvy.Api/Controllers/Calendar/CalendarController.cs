@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Calendar;
+using ProjectIvy.Model.View.Calendar;
 
 namespace ProjectIvy.Api.Controllers.Route
 {
@@ -17,7 +18,7 @@ namespace ProjectIvy.Api.Controllers.Route
         }
 
         [HttpGet("Section")]
-        public async Task<IActionResult> GetSection([FromQuery] DateTime from, [FromQuery] DateTime to) => Ok(await _vacationHandler.Get(from, to));
+        public async Task<CalendarSection> GetSection([FromQuery] DateTime from, [FromQuery] DateTime to) => await _vacationHandler.Get(from, to);
 
         [HttpPatch("{date:datetime}")]
         public async Task<IActionResult> PatchDay(DateTime date, [FromBody] CalendarDayUpdateBinding b)
