@@ -1,6 +1,8 @@
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View.Calendar;
@@ -61,6 +63,13 @@ namespace ProjectIvy.Business.Handlers.Vendor
                                                  .Select(x => new { x.Date, x.WorkDayType.ValueId, x.WorkDayType.Name })
                                                  .ToListAsync();
 
+            var countriesPerDay = await context.Trackings.WhereUser(UserId)
+                                                         .Include(x => x.Country)
+                                                         .Where(x => x.Timestamp >= from && x.Timestamp <= to && x.CountryId != null)
+                                                         .GroupBy(x => x.Timestamp.Date)
+                                                         .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
+                                                         .ToListAsync();
+
             foreach (var day in Enumerable.Range(0, (to - from).Days + 1).Select(x => from.AddDays(x)))
             {
                 var workDay = await context.WorkDays.WhereUser(UserId)
@@ -70,6 +79,7 @@ namespace ProjectIvy.Business.Handlers.Vendor
                 {
                     Date = day,
                     IsHoliday = holidays.Contains(day),
+                    Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x))
                 };
 
                 if (workDays.Any(x => x.Date == day))
