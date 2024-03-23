@@ -8,6 +8,7 @@ using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
@@ -47,6 +48,25 @@ namespace ProjectIvy.Business.Handlers.Location
                                           .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Name.ToLower().Contains(b.Search.ToLower()))
                                           .Select(x => new Model.View.Location.Location(x))
                                           .ToPagedViewAsync(b);
+        }
+
+        public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay(FilteredBinding b)
+        {
+            if (b.From == null || b.To == null)
+                throw new ArgumentException("From and To are required for GetByDay");
+
+            using var context = GetMainContext();
+
+            var locationsPerDay = await (from t in context.Trackings.WhereUser(UserId)
+                    from lg in context.Locations.WhereUser(UserId).Include(x => x.Geohashes).SelectMany(x => x.Geohashes)
+                    where t.Timestamp >= b.From.Value && t.Timestamp <= b.To.Value.AddDays(1)
+                    where t.Geohash.StartsWith(lg.Geohash)
+                    select new { lg.Location, t.Timestamp.Date }).Distinct().ToListAsync();
+
+            return locationsPerDay.GroupBy(x => x.Date)
+                                  .OrderByDescending(x => x.Key)
+                                  .Select(x => new KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>(x.Key, x.Select(y => new Model.View.Location.Location(y.Location))))
+                                  .ToList();
         }
 
         public async Task<IEnumerable<DateTime>> GetDays(string locationId)

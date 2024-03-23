@@ -1,13 +1,11 @@
 using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View.Calendar;
 
-namespace ProjectIvy.Business.Handlers.Vendor
+namespace ProjectIvy.Business.Handlers.Calendar
 {
     public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
     {
@@ -65,7 +63,7 @@ namespace ProjectIvy.Business.Handlers.Vendor
 
             var countriesPerDay = await context.Trackings.WhereUser(UserId)
                                                          .Include(x => x.Country)
-                                                         .Where(x => x.Timestamp >= from && x.Timestamp <= to && x.CountryId != null)
+                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
                                                          .GroupBy(x => x.Timestamp.Date)
                                                          .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
                                                          .ToListAsync();

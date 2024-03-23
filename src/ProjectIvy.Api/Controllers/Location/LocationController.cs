@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.Handlers.Location;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Location;
@@ -26,6 +27,9 @@ namespace ProjectIvy.Api.Controllers.Location
 
         [HttpGet]
         public async Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b) => await _locationHandler.Get(b);
+
+        [HttpGet("ByDay")]
+        public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay([FromQuery] FilteredBinding b) => await _locationHandler.GetByDay(b);
 
         [HttpGet("{locationId}/Days")]
         public async Task<IActionResult> GetDays(string locationId) => Ok(await _locationHandler.GetDays(locationId));

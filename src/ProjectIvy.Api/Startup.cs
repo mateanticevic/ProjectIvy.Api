@@ -19,6 +19,7 @@ using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
+using ProjectIvy.Business.Handlers.Calendar;
 using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Card;

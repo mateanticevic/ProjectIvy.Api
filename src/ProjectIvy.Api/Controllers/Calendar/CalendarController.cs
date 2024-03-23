@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.Business.Handlers.Vendor;
+using ProjectIvy.Business.Handlers.Calendar;
 using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View.Calendar;
 
