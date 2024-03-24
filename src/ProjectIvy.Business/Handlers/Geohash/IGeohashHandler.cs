@@ -5,6 +5,10 @@ namespace ProjectIvy.Business.Handlers.Geohash
 {
     public interface IGeohashHandler
     {
+        Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes);
+
+        Task AddGeohashToCity(string cityValueId, string geohash);
+
         Task AddGeohashToCountry(string countryValueId, string geohash);
 
         Task AddGeohashToLocation(string locationValueId, string geohash);

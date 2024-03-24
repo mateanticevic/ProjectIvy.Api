@@ -16,6 +16,37 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
         }
 
+        public async Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes)
+        {
+            using var context = GetMainContext();
+
+            int cityId = context.Cities.GetId(cityValueId).Value;
+            var entities = geohashes.Select(x => new Model.Database.Main.Common.GeohashCity()
+            {
+                CityId = cityId,
+                Geohash = x
+            });
+            await context.GeohashCities.AddRangeAsync(entities);
+            await context.SaveChangesAsync();
+        }
+
+        public async Task AddGeohashToCity(string cityValueId, string geohash)
+        {
+            using var context = GetMainContext();
+
+            int cityId = context.Cities.GetId(cityValueId).Value;
+            var childGeohashes = context.GeohashCities.Where(x => x.CityId == cityId && x.Geohash.StartsWith(geohash));
+
+            context.GeohashCities.RemoveRange(childGeohashes);
+            var entity = new Model.Database.Main.Common.GeohashCity()
+            {
+                CityId = cityId,
+                Geohash = geohash
+            };
+            await context.GeohashCities.AddAsync(entity);
+            await context.SaveChangesAsync();
+        }
+
         public async Task AddGeohashToCountry(string countryValueId, string geohash)
         {
             using var context = GetMainContext();

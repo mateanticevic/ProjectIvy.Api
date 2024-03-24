@@ -33,6 +33,13 @@ namespace ProjectIvy.Api.Controllers.City
         [HttpGet("Visited")]
         public IEnumerable<View.City> GetVisited() => _cityHandler.GetVisited();
 
+        [HttpPost("{cityId}/Geohash")]
+        public async Task<IActionResult> PostGeohashes(string cityId, [FromBody] IEnumerable<string> geohashes)
+        {
+            await _geohashHandler.AddGeohashToCity(cityId, geohashes);
+            return Ok();
+        }
+
         [HttpPost("Visited/{cityId}")]
         public async Task<IActionResult> PostVisited(string cityId)
         {
