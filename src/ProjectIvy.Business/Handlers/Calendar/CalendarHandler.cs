@@ -83,6 +83,13 @@ namespace ProjectIvy.Business.Handlers.Calendar
                                                          .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
                                                          .ToListAsync();
 
+            var citiesPerDay = await context.Trackings.WhereUser(UserId)
+                                                      .Include(x => x.City)
+                                                      .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CityId != null)
+                                                      .GroupBy(x => x.Timestamp.Date)
+                                                      .Select(x => new { Date = x.Key, Cities = x.Select(c => c.City).Distinct() })
+                                                      .ToListAsync();
+
             var events = await context.Events.WhereUser(UserId)
                                              .Where(x => x.Date >= from && x.Date <= to)
                                              .ToListAsync();
@@ -97,6 +104,7 @@ namespace ProjectIvy.Business.Handlers.Calendar
                     Date = day,
                     Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                     IsHoliday = holidays.Contains(day),
+                    Cities = citiesPerDay.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
                     Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x))
                 };
 

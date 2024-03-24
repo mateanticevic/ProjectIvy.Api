@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Tracking
 {
-    [Table("Tracking", Schema = "Tracking")]
+    [Table(nameof(Tracking), Schema = nameof(Tracking))]
     public class Tracking : UserEntity, IHasTimestamp, ITracking
     {
         [Key]
@@ -24,7 +24,11 @@ namespace ProjectIvy.Model.Database.Main.Tracking
 
         public string Geohash { get; set; }
 
+        public int? CityId { get; set; }
+
         public int? CountryId { get; set; }
+
+        public Common.City City { get; set; }
 
         public Common.Country Country { get; set; }
     }
