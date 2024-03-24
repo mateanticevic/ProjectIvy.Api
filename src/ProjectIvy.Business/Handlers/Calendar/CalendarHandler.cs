@@ -68,6 +68,10 @@ namespace ProjectIvy.Business.Handlers.Calendar
                                                          .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
                                                          .ToListAsync();
 
+            var events = await context.Events.WhereUser(UserId)
+                                             .Where(x => x.Date >= from && x.Date <= to)
+                                             .ToListAsync();
+
             foreach (var day in Enumerable.Range(0, (to - from).Days + 1).Select(x => from.AddDays(x)))
             {
                 var workDay = await context.WorkDays.WhereUser(UserId)
@@ -76,6 +80,7 @@ namespace ProjectIvy.Business.Handlers.Calendar
                 var calendarDay = new CalendarDay()
                 {
                     Date = day,
+                    Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                     IsHoliday = holidays.Contains(day),
                     Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x))
                 };

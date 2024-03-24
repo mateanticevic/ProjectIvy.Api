@@ -75,6 +75,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Currency> Currencies { get; set; }
 
+        public DbSet<Event> Events { get; set; }
+
         public DbSet<Expense> Expenses { get; set; }
 
         public DbSet<ExpenseFile> ExpenseFiles { get; set; }
