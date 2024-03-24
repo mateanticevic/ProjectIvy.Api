@@ -25,4 +25,11 @@ public class CalendarController : BaseController<CalendarController>
         await _vacationHandler.UpdateDay(date, b);
         return Ok();
     }
+
+    [HttpPost("{date:datetime}/Events")]
+    public async Task<IActionResult> PostEvent(DateTime date, [FromBody] string name)
+    {
+        await _vacationHandler.CreateEvent(date, name);
+        return Ok();
+    }
 }

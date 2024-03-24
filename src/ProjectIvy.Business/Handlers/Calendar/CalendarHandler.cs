@@ -13,6 +13,21 @@ namespace ProjectIvy.Business.Handlers.Calendar
         {
         }
 
+        public async Task CreateEvent(DateTime date, string name)
+        {
+            using var context = GetMainContext();
+
+            var @event = new Model.Database.Main.User.Event()
+            {
+                Date = date,
+                Name = name,
+                UserId = UserId,
+                ValueId = $"${date:YYYY-MM-DD}-${name.ToValueId}"
+            };
+            context.Events.Add(@event);
+            await context.SaveChangesAsync();
+        }
+
         public async Task CreateVacation(DateTime date)
         {
             var weekendDays = DayOfWeek.Saturday | DayOfWeek.Sunday;

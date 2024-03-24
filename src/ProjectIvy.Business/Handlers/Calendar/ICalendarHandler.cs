@@ -6,6 +6,8 @@ namespace ProjectIvy.Business.Handlers.Calendar
 {
     public interface ICalendarHandler : IHandler
     {
+        Task CreateEvent(DateTime date, string name);
+
         Task CreateVacation(DateTime date);
 
         Task DeleteVacation(DateTime date);
