@@ -19,6 +19,8 @@ namespace ProjectIvy.Business.Handlers.Location
 
         Task<IEnumerable<DateTime>> GetDays(string locationId);
 
+        Task<IEnumerable<string>> GetGeohashes(string valueId);
+
          Task<IEnumerable<LocationType>> GetLocationTypes();
 
         Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort);

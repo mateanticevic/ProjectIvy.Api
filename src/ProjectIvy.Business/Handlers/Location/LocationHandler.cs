@@ -50,6 +50,17 @@ namespace ProjectIvy.Business.Handlers.Location
                                           .ToPagedViewAsync(b);
         }
 
+        public async Task<IEnumerable<string>> GetGeohashes(string valueId)
+        {
+            using var context = GetMainContext();
+
+            return  (await context.Locations.WhereUser(UserId)
+                                                  .Include(x => x.Geohashes)
+                                                  .FirstOrDefaultAsync(x => x.ValueId == valueId))
+                                                  ?.Geohashes
+                                                  .Select(x => x.Geohash);
+        }
+
         public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay(FilteredBinding b)
         {
             if (b.From == null || b.To == null)

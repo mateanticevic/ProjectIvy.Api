@@ -34,6 +34,9 @@ namespace ProjectIvy.Api.Controllers.Location
         [HttpGet("{locationId}/Days")]
         public async Task<IActionResult> GetDays(string locationId) => Ok(await _locationHandler.GetDays(locationId));
 
+        [HttpGet("{locationId}/Geohashes")]
+        public async Task<IEnumerable<string>> GetGeohashes(string locationId) => await _locationHandler.GetGeohashes(locationId);
+
         [HttpGet("Types")]
         public async Task<IEnumerable<LocationType>> GetTypes()
             => await _locationHandler.GetLocationTypes();
