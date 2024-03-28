@@ -27,9 +27,9 @@ namespace ProjectIvy.Api.Controllers.City
         public async Task<IActionResult> GetGeohashes(string cityId) => Ok(await _geohashHandler.GetCityGeohashes(cityId));
 
         [HttpDelete("{cityId}/Geohash")]
-        public async Task<IActionResult> DeleteGeohashes(string cityId, [FromBody] IEnumerable<string> geohashes)
+        public async Task<IActionResult> DeleteGeohashes(string cityId, [FromQuery] IEnumerable<string> ids)
         {
-            await _geohashHandler.RemoveGeohashFromCity(cityId, geohashes);
+            await _geohashHandler.RemoveGeohashFromCity(cityId, ids);
             return Ok();
         }
 
