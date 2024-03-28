@@ -26,6 +26,13 @@ namespace ProjectIvy.Api.Controllers.City
         [HttpGet("{cityId}/Geohash")]
         public async Task<IActionResult> GetGeohashes(string cityId) => Ok(await _geohashHandler.GetCityGeohashes(cityId));
 
+        [HttpDelete("{cityId}/Geohash")]
+        public async Task<IActionResult> DeleteGeohashes(string cityId, [FromBody] IEnumerable<string> geohashes)
+        {
+            await _geohashHandler.RemoveGeohashFromCity(cityId, geohashes);
+            return Ok();
+        }
+
         [HttpGet("{fromCityId}/To/{toCityId}/Route")]
         public async Task<IActionResult> GetRoutes(string fromCityId, string toCityId, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date)
             => Ok(await _cityHandler.GetRoutes(fromCityId, toCityId, orderBy));

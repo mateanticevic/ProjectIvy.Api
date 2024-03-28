@@ -1,10 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
     [Table(nameof(GeohashCity), Schema = nameof(Common))]
-    public class GeohashCity
+    public class GeohashCity : IHasGeohash
 	{
         public int CityId { get; set; }
 

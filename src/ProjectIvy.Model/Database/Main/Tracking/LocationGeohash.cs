@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectIvy.Model.Database.Main.Tracking
 {
     [Table(nameof(LocationGeohash), Schema = nameof(Tracking))]
-    public class LocationGeohash
+    public class LocationGeohash : IHasGeohash
     {
         [Key]
         public long Id { get; set; }
