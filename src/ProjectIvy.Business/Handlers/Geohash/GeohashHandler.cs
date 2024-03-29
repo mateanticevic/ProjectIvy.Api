@@ -335,11 +335,12 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
-        private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashesToDelete, Expression<Func<TGeohash, bool>> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
+        private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
         {
             TGeohash itemGeohash = null;
-            var geohasesToAdd = new List<string>();
-            foreach (string geohash in geohashesToDelete.OrderBy(x => x))
+            var geohashesToAdd = new List<string>();
+            var geohashesToDelete = new List<TGeohash>();
+            foreach (string geohash in geohashes.OrderBy(x => x))
             {
                 var parentGeohashes = Enumerable.Range(0, geohash.Length - 1).Select(x => geohash.Substring(0, geohash.Length - x));
 
@@ -350,7 +351,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                     continue;
                 else if (itemGeohash.Geohash == geohash)
                 {
-                    geohashItems.Remove(itemGeohash);
+                    geohashesToDelete.Add(itemGeohash);
                     continue;
                 }
 
@@ -361,19 +362,20 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
                     var neighbours = GeohashChars.Where(x => x != geoChar)
                                                  .Select(x => $"{parentGeohash}{x}")
-                                                 .Where(x => !geohasesToAdd.Contains(x))
-                                                 .Where(x => !geohashesToDelete.Contains(x))
+                                                 .Where(x => !geohashesToAdd.Contains(x))
+                                                 .Where(x => !geohashes.Contains(x))
                                                  .ToList();
-                    geohasesToAdd.AddRange(neighbours);
+                    geohashesToAdd.AddRange(neighbours);
                 }
 
                 geohashItems.Remove(itemGeohash);
             }
-            await geohashItems.AddRangeAsync(geohasesToAdd.Distinct().Select(x => {
+            await geohashItems.AddRangeAsync(geohashesToAdd.Distinct().Select(x => {
                 var item = itemFactory(0);
                 item.Geohash = x;
                 return item;
             }));
+            geohashItems.RemoveRange(geohashesToDelete.Distinct());
         }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
