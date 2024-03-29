@@ -124,22 +124,5 @@ namespace ProjectIvy.Business.Handlers.Location
 
             return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
         }
-
-        public async Task SetGeohashes(string locationValueId, IEnumerable<string> geohashes)
-        {
-            using var context = GetMainContext();
-
-            var location = await context.Locations.WhereUser(UserId)
-                                                  .SingleOrDefaultAsync(x => x.ValueId == locationValueId);
-
-            await context.LocationGeohashes.Where(x => x.LocationId == location.Id)
-                                           .ExecuteDeleteAsync();
-
-
-            foreach (string geohash in geohashes)
-                await context.LocationGeohashes.AddAsync(new Model.Database.Main.Tracking.LocationGeohash() { Location = location, Geohash = geohash });
-
-            await context.SaveChangesAsync();
-        }
     }
 }

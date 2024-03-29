@@ -7,11 +7,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
     {
         Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes);
 
-        Task AddGeohashToCity(string cityValueId, string geohash);
+        Task AddGeohashToCountry(string countryValueId, IEnumerable<string> geohashes);
 
-        Task AddGeohashToCountry(string countryValueId, string geohash);
-
-        Task AddGeohashToLocation(string locationValueId, string geohash);
+        Task AddGeohashToLocation(string locationValueId, IEnumerable<string> geohashes);
 
         Task<int> CountUnique(GeohashUniqueGetBinding binding);
 

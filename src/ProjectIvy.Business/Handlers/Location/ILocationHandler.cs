@@ -24,7 +24,5 @@ namespace ProjectIvy.Business.Handlers.Location
          Task<IEnumerable<LocationType>> GetLocationTypes();
 
         Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort);
-
-        Task SetGeohashes(string locationValueId, IEnumerable<string> geohashes);
     }
 }

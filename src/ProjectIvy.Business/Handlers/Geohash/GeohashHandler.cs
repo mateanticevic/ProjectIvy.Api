@@ -20,67 +20,43 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         public async Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes)
         {
-            using var context = GetMainContext();
+           using var context = GetMainContext();
 
             int cityId = context.Cities.GetId(cityValueId).Value;
-            var entities = geohashes.Select(x => new Model.Database.Main.Common.GeohashCity()
-            {
-                CityId = cityId,
-                Geohash = x
-            });
-            await context.GeohashCities.AddRangeAsync(entities);
+            await AddGeohashesTo(context.GeohashCities, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
             await context.SaveChangesAsync();
         }
 
-        public async Task AddGeohashToCity(string cityValueId, string geohash)
+        public async Task AddGeohashToCountry(string countryValueId, IEnumerable<string> geohashes)
         {
-            using var context = GetMainContext();
-
-            int cityId = context.Cities.GetId(cityValueId).Value;
-            var childGeohashes = context.GeohashCities.Where(x => x.CityId == cityId && x.Geohash.StartsWith(geohash));
-
-            context.GeohashCities.RemoveRange(childGeohashes);
-            var entity = new Model.Database.Main.Common.GeohashCity()
-            {
-                CityId = cityId,
-                Geohash = geohash
-            };
-            await context.GeohashCities.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
-
-        public async Task AddGeohashToCountry(string countryValueId, string geohash)
-        {
-            using var context = GetMainContext();
+           using var context = GetMainContext();
 
             int countryId = context.Countries.GetId(countryValueId).Value;
-            var childGeohashes = context.GeohashCountries.Where(x => x.CountryId == countryId && x.Geohash.StartsWith(geohash));
-
-            context.GeohashCountries.RemoveRange(childGeohashes);
-            var entity = new Model.Database.Main.Common.GeohashCountry()
-            {
-                CountryId = countryId,
-                Geohash = geohash
-            };
-            await context.GeohashCountries.AddAsync(entity);
+            await AddGeohashesTo(context.GeohashCountries, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
             await context.SaveChangesAsync();
         }
 
-        public async Task AddGeohashToLocation(string locationValueId, string geohash)
+        public async Task AddGeohashToLocation(string locationValueId, IEnumerable<string> geohashes)
         {
             using var context = GetMainContext();
 
-            int locationId = context.Locations.GetId(locationValueId).Value;
-            var childGeohashes = context.LocationGeohashes.Where(x => x.LocationId == locationId && x.Geohash.StartsWith(geohash));
-
-            context.LocationGeohashes.RemoveRange(childGeohashes);
-            var entity = new Model.Database.Main.Tracking.LocationGeohash()
-            {
-                LocationId = locationId,
-                Geohash = geohash
-            };
-            await context.LocationGeohashes.AddAsync(entity);
+            int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
+            await AddGeohashesTo(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, () => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
             await context.SaveChangesAsync();
+        }
+
+        public async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
+        {
+            foreach (string geohash in geohashes)
+            {
+                var childGeohashes = geohashItems.Where(matchItem)
+                                                 .Where(x => x.Geohash.StartsWith(geohash));
+
+                geohashItems.RemoveRange(childGeohashes);
+                var entity = itemFactory();
+                entity.Geohash = geohash;
+                await geohashItems.AddAsync(entity);
+            }
         }
 
         public async Task<int> CountUnique(GeohashUniqueGetBinding binding)
@@ -370,7 +346,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
                 geohashItems.Remove(itemGeohash);
             }
-            await geohashItems.AddRangeAsync(geohashesToAdd.Distinct().Select(x => {
+            await geohashItems.AddRangeAsync(geohashesToAdd.Distinct().Select(x =>
+            {
                 var item = itemFactory(0);
                 item.Geohash = x;
                 return item;
