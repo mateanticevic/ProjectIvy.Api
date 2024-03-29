@@ -39,8 +39,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task RemoveGeohashFromCity(string cityValueId, IEnumerable<string> geohashes);
 
-        Task RemoveGeohashFromCountry(string countryValueId, string geohash);
+        Task RemoveGeohashFromCountry(string cityValueId, IEnumerable<string> geohashes);
 
-        Task RemoveGeohashFromLocation(string locationValueId, string geohash);
+        Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes);
     }
 }

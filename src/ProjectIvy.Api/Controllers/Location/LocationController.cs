@@ -51,9 +51,9 @@ namespace ProjectIvy.Api.Controllers.Location
         public async Task PostLocationGeohash(string locationId, string geohash)
             => await _geohashHandler.AddGeohashToLocation(locationId, geohash);
 
-        [HttpDelete("{locationId}/Geohashes/{geohash}")]
-        public async Task DeleteLocationGeohash(string locationId, string geohash)
-            => await _geohashHandler.RemoveGeohashFromLocation(locationId, geohash);
+        [HttpDelete("{locationId}/Geohashes")]
+        public async Task DeleteLocationGeohash(string locationId, [FromQuery] IEnumerable<string> ids)
+            => await _geohashHandler.RemoveGeohashFromLocation(locationId, ids);
 
         [HttpGet("{fromLocationId}/To/{toLocationId}")]
         public async Task GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy)

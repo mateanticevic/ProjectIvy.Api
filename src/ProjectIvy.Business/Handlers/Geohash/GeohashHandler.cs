@@ -316,52 +316,21 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
-        public async Task RemoveGeohashFromCountry(string countryValueId, string geohash)
+        public async Task RemoveGeohashFromCountry(string countryValueId, IEnumerable<string> geohashes)
         {
             using var context = GetMainContext();
 
             int countryId = context.Countries.GetId(countryValueId).Value;
-            var parentGeohashes = Enumerable.Range(0, geohash.Length - 1).Select(x => geohash.Substring(0, geohash.Length - x));
-
-            var countryGeohash = await context.GeohashCountries.Where(x => x.CountryId == countryId && parentGeohashes.Contains(x.Geohash))
-                                                               .SingleOrDefaultAsync();
-
-            if (countryGeohash.Geohash == geohash)
-            {
-                context.GeohashCountries.Remove(countryGeohash);
-                await context.SaveChangesAsync();
-                return;
-            }
-
-            for (int i = geohash.Length; i > countryGeohash.Geohash.Length; i--)
-            {
-                char geoChar = geohash[i - 1];
-                string parentGeohash = geohash.Substring(0, i - 1);
-
-                var neighbours = GeohashChars.Where(x => x != geoChar)
-                                             .Select(x => new Model.Database.Main.Common.GeohashCountry()
-                                             {
-                                                 CountryId = countryId,
-                                                 Geohash = $"{parentGeohash}{x}"
-                                             }); ;
-                await context.GeohashCountries.AddRangeAsync(neighbours);
-            }
-
-            context.GeohashCountries.Remove(countryGeohash);
+            await RemoveGeohashFrom(context.GeohashCountries, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
             await context.SaveChangesAsync();
-            return;
         }
 
-        public async Task RemoveGeohashFromLocation(string locationValueId, string geohash)
+        public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
         {
             using var context = GetMainContext();
 
-            int locationId = context.Locations.WhereUser(UserId)
-                                              .GetId(locationValueId).Value;
-
-            var locationGeohash = await context.LocationGeohashes.SingleOrDefaultAsync(x => x.LocationId == locationId && x.Geohash == geohash);
-
-            context.LocationGeohashes.Remove(locationGeohash);
+            int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
+            await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
             await context.SaveChangesAsync();
         }
 
