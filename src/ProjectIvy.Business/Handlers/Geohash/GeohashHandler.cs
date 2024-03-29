@@ -351,7 +351,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 else if (itemGeohash.Geohash == geohash)
                 {
                     geohashItems.Remove(itemGeohash);
-                    return;
+                    continue;
                 }
 
                 for (int i = geohash.Length; i > itemGeohash.Geohash.Length; i--)
