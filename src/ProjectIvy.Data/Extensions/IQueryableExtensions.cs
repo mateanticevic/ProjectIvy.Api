@@ -1,10 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Common;
+using ProjectIvy.Model.Binding.Route;
 using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.View;
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
@@ -57,7 +56,7 @@ namespace ProjectIvy.Data.Extensions
 
         public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding, long? count = null)
         {
-             return new PagedView<T>()
+            return new PagedView<T>()
             {
                 Count = count ?? query.Count(),
                 Items = query.Page(binding).ToList()
@@ -121,5 +120,8 @@ namespace ProjectIvy.Data.Extensions
 
         public static IQueryable<T> WhereIf<T, TItem>(this IQueryable<T> queryable, IEnumerable<TItem> ifHasItems, Expression<Func<T, bool>> condition)
             => ifHasItems != null && ifHasItems.Any() ? queryable.Where(condition) : queryable;
+
+        public static IQueryable<TItem> WhereSearch<TBinding, TItem>(this IQueryable<TItem> query, TBinding binding) where TBinding : ISearchable where TItem : IHasName, IHasValueId
+            => query.WhereIf(!string.IsNullOrEmpty(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()));
     }
 }

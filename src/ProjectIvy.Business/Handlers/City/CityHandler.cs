@@ -41,9 +41,9 @@ namespace ProjectIvy.Business.Handlers.City
             using (var context = GetMainContext())
             {
                 var query = context.Cities.Include(x => x.Country)
-                                          .WhereIf(!string.IsNullOrEmpty(binding.Search), city => city.Name.ToLower().Contains(binding.Search.ToLower()) || city.ValueId.ToLower().Contains(binding.Search.ToLower()))
+                                          .WhereSearch(binding)
                                           .WhereIf(!string.IsNullOrEmpty(binding.CountryId), city => city.Country.ValueId == binding.CountryId)
-                                          .OrderByDescending(x => x.ValueId == binding.Search)
+                                          .OrderByDescending(x => x.ValueId == binding.Search)
                                           .ThenBy(x => x.Name)
                                           .Select(x => new View.City(x));
 
@@ -73,7 +73,7 @@ namespace ProjectIvy.Business.Handlers.City
             using (var context = GetMainContext())
             {
                 var cities = context.CitiesVisited
-                                    .Include(x => x.City)
+                                    .Include(x => x.City)
                                     .WhereUser(UserId)
                                     .Where(x => !x.TripId.HasValue || x.Trip.TimestampEnd < DateTime.Now)
                                     .Select(x => new View.City(x.City))

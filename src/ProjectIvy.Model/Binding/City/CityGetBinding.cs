@@ -1,6 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding.City
+﻿using ProjectIvy.Model.Binding.Route;
+
+namespace ProjectIvy.Model.Binding.City
 {
-    public class CityGetBinding : PagedBinding
+    public class CityGetBinding : PagedBinding, ISearchable
     {
         public string CountryId { get; set; }
 

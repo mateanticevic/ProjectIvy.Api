@@ -62,6 +62,7 @@ namespace ProjectIvy.Business.Handlers.Country
                 long count = countries.Count();
 
                 var items = countries.OrderBy(x => x.Name)
+                                     .WhereSearch(binding)
                                      .Page(binding)
                                      .ToList()
                                      .Select(x => new View.Country(x))
