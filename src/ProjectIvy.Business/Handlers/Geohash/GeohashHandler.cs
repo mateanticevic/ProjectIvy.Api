@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
@@ -334,14 +335,14 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
-        private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashesToDelete, Func<TGeohash, bool> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
+        private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashesToDelete, Expression<Func<TGeohash, bool>> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
         {
             foreach (string geohash in geohashesToDelete)
             {
                 var parentGeohashes = Enumerable.Range(0, geohash.Length - 1).Select(x => geohash.Substring(0, geohash.Length - x));
 
-                var itemGeohash = await geohashItems.Where(x => matchItem(x) && parentGeohashes.Contains(x.Geohash))
-                                                 .SingleOrDefaultAsync();
+                var itemGeohash = await geohashItems.Where(matchItem)
+                                                    .SingleOrDefaultAsync(x => parentGeohashes.Contains(x.Geohash));
 
                 if (itemGeohash.Geohash == geohash)
                 {
