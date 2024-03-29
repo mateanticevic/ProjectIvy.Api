@@ -360,7 +360,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                                      var item = itemFactory(x);
                                                      item.Geohash = $"{parentGeohash}{x}";
                                                      return item;
-                                                 });
+                                                 })
+                                                 .ToList();
                     await geohashItems.AddRangeAsync(neighbours);
                 }
 
