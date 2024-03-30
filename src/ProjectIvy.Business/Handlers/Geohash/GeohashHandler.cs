@@ -24,6 +24,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await AddGeohashesTo(context.CityGeohashes, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
             await context.SaveChangesAsync();
         }
 
@@ -33,6 +36,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await AddGeohashesTo(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
+            await context.Trackings.WhereUser(UserId)
+                       .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                       .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, countryId));
             await context.SaveChangesAsync();
         }
 
