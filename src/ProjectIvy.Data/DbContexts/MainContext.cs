@@ -59,6 +59,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<CityVisited> CitiesVisited { get; set; }
 
+        public DbSet<CityGeohash> CityGeohashes { get; set; }
+
         public DbSet<Consumation> Consumations { get; set; }
 
         public DbSet<Contact> Contacts { get; set; }
@@ -66,6 +68,8 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<ContactType> ContactTypes { get; set; }
 
         public DbSet<Country> Countries { get; set; }
+
+        public DbSet<CountryGeohash> CountryGeohashes { get; set; }
 
         public DbSet<CountryIpRange> CountryIpRanges { get; set; }
 
@@ -90,10 +94,6 @@ namespace ProjectIvy.Data.DbContexts
         public DbSet<FileType> FileTypes { get; set; }
 
         public DbSet<Flight> Flights { get; set; }
-
-        public DbSet<GeohashCity> GeohashCities { get; set; }
-
-        public DbSet<GeohashCountry> GeohashCountries { get; set; }
 
         public DbSet<Holiday> Holidays { get; set; }
 
@@ -335,10 +335,10 @@ namespace ProjectIvy.Data.DbContexts
             modelBuilder.Entity<CallBlacklist>()
                         .HasKey(x => new { x.UserId, x.Number });
 
-            modelBuilder.Entity<GeohashCity>()
+            modelBuilder.Entity<CityGeohash>()
                         .HasKey(x => new { x.CityId, x.Geohash });
 
-            modelBuilder.Entity<GeohashCountry>()
+            modelBuilder.Entity<CountryGeohash>()
                         .HasKey(x => new { x.CountryId, x.Geohash });
 
             modelBuilder.Entity<Location>()

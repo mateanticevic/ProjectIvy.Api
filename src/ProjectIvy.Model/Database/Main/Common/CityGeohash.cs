@@ -2,8 +2,8 @@
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
-    [Table(nameof(GeohashCity), Schema = nameof(Common))]
-    public class GeohashCity : IHasGeohash
+    [Table(nameof(CityGeohash), Schema = nameof(Common))]
+    public class CityGeohash : IHasGeohash
 	{
         public int CityId { get; set; }
 

@@ -2,8 +2,8 @@
 
 namespace ProjectIvy.Model.Database.Main.Common
 {
-    [Table(nameof(GeohashCountry), Schema = nameof(Common))]
-    public class GeohashCountry : IHasGeohash
+    [Table(nameof(CountryGeohash), Schema = nameof(Common))]
+    public class CountryGeohash : IHasGeohash
 	{
         public int CountryId { get; set; }
 

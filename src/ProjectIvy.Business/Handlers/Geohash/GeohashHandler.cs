@@ -23,7 +23,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using var context = GetMainContext();
 
             int cityId = context.Cities.GetId(cityValueId).Value;
-            await AddGeohashesTo(context.GeohashCities, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
+            await AddGeohashesTo(context.CityGeohashes, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
             await context.SaveChangesAsync();
         }
 
@@ -32,7 +32,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using var context = GetMainContext();
 
             int countryId = context.Countries.GetId(countryValueId).Value;
-            await AddGeohashesTo(context.GeohashCountries, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
+            await AddGeohashesTo(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
             await context.SaveChangesAsync();
         }
 
@@ -213,7 +213,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                           .Select(x => geohash.Substring(0, geohash.Length - x))
                                           .ToList();
 
-                return await context.GeohashCities.Include(x => x.City)
+                return await context.CityGeohashes.Include(x => x.City)
                                                   .ThenInclude(x => x.Country)
                                                   .Where(x => geohashes.Contains(x.Geohash))
                                                   .OrderByDescending(x => x.Geohash.Length)
@@ -230,7 +230,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                           .Select(x => geohash.Substring(0, geohash.Length - x))
                                           .ToList();
 
-                return await context.GeohashCountries.Include(x => x.Country)
+                return await context.CountryGeohashes.Include(x => x.Country)
                                                      .Where(x => geohashes.Contains(x.Geohash))
                                                      .OrderByDescending(x => x.Geohash.Length)
                                                      .Select(x => new Model.View.Country.Country(x.Country))
@@ -243,7 +243,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using (var context = GetMainContext())
             {
                 int cityId = context.Cities.GetId(cityValueId).Value;
-                return await context.GeohashCities.Where(x => x.CityId == cityId)
+                return await context.CityGeohashes.Where(x => x.CityId == cityId)
                                                   .Select(x => x.Geohash)
                                                   .ToListAsync();
             }
@@ -254,7 +254,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using (var context = GetMainContext())
             {
                 int countryId = context.Countries.GetId(countryValueId).Value;
-                return await context.GeohashCountries.Where(x => x.CountryId == countryId)
+                return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
                                                      .Select(x => x.Geohash)
                                                      .ToListAsync();
             }
@@ -289,7 +289,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using var context = GetMainContext();
 
             int cityId = context.Cities.GetId(cityValueId).Value;
-            await RemoveGeohashFrom(context.GeohashCities, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
+            await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
             await context.Trackings.WhereUser(UserId)
                                    .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
@@ -301,7 +301,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             using var context = GetMainContext();
 
             int countryId = context.Countries.GetId(countryValueId).Value;
-            await RemoveGeohashFrom(context.GeohashCountries, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
+            await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
             await context.Trackings.WhereUser(UserId)
                                    .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                    .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
