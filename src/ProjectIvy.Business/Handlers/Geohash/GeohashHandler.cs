@@ -20,7 +20,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         public async Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes)
         {
-           using var context = GetMainContext();
+            using var context = GetMainContext();
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await AddGeohashesTo(context.GeohashCities, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
@@ -29,7 +29,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         public async Task AddGeohashToCountry(string countryValueId, IEnumerable<string> geohashes)
         {
-           using var context = GetMainContext();
+            using var context = GetMainContext();
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await AddGeohashesTo(context.GeohashCountries, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
@@ -290,6 +290,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await RemoveGeohashFrom(context.GeohashCities, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
+            await RemoveFromTracking(context, geohashes, x => x.CityId);
             await context.SaveChangesAsync();
         }
 
@@ -299,6 +300,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await RemoveGeohashFrom(context.GeohashCountries, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
+            await RemoveFromTracking(context, geohashes, x => x.CountryId);
             await context.SaveChangesAsync();
         }
 
@@ -321,7 +323,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 var parentGeohashes = Enumerable.Range(0, geohash.Length - 1).Select(x => geohash.Substring(0, geohash.Length - x));
 
                 itemGeohash = itemGeohash != null && geohash.StartsWith(itemGeohash.Geohash) ? itemGeohash : await geohashItems.Where(matchItem)
-                                                    .SingleOrDefaultAsync(x => parentGeohashes.Contains(x.Geohash));
+                                                            .SingleOrDefaultAsync(x => parentGeohashes.Contains(x.Geohash));
 
                 if (itemGeohash is null)
                     continue;
@@ -353,6 +355,13 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 return item;
             }));
             geohashItems.RemoveRange(geohashesToDelete.Distinct());
+        }
+
+        private async Task RemoveFromTracking(MainContext context, IEnumerable<string> geohashes, Func<Model.Database.Main.Tracking.Tracking, int?> matchItem)
+        {
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(x => x.SetProperty(matchItem, (int?)null));
         }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
