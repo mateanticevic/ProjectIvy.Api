@@ -290,7 +290,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await RemoveGeohashFrom(context.GeohashCities, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.GeohashCity() { CityId = cityId });
-            await RemoveFromTracking(context, geohashes, x => x.CityId);
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
             await context.SaveChangesAsync();
         }
 
@@ -300,7 +302,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await RemoveGeohashFrom(context.GeohashCountries, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.GeohashCountry() { CountryId = countryId });
-            await RemoveFromTracking(context, geohashes, x => x.CountryId);
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
             await context.SaveChangesAsync();
         }
 
@@ -355,13 +359,6 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 return item;
             }));
             geohashItems.RemoveRange(geohashesToDelete.Distinct());
-        }
-
-        private async Task RemoveFromTracking(MainContext context, IEnumerable<string> geohashes, Func<Model.Database.Main.Tracking.Tracking, int?> matchItem)
-        {
-            await context.Trackings.WhereUser(UserId)
-                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                   .ExecuteUpdateAsync(x => x.SetProperty(matchItem, (int?)null));
         }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
