@@ -5,6 +5,7 @@ using Microsoft.Extensions.Caching.Memory;
 using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.User;
 using ProjectIvy.Model.Database.Main.User;
 using View = ProjectIvy.Model.View.User;
@@ -37,6 +38,18 @@ namespace ProjectIvy.Business.Handlers.User
                     cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
                     return GetNonCached(id);
                 });
+
+        public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b)
+        {
+            using var context = GetMainContext();
+
+            return await context.Weights.WhereUser(UserId)
+                                        .WhereIf(b.From.HasValue, x => x.Date >= b.From)
+                                        .WhereIf(b.To.HasValue, x => x.Date <= b.To)
+                                        .OrderByDescending(x => x.Date)
+                                        .Select(x => new KeyValuePair<DateTime, decimal>(x.Date, x.Value))
+                                        .ToListAsync();
+        }
 
         public async Task Update(UserUpdateBinding binding)
         {

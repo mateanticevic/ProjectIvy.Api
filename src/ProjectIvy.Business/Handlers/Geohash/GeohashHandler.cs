@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Geohash;
@@ -13,9 +14,11 @@ namespace ProjectIvy.Business.Handlers.Geohash
     public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         private const string GeohashChars = "0123456789bcdefghjkmnpqrstuvwxyz";
+        private readonly ILogger _logger;
 
-        public GeohashHandler(IHandlerContext<GeohashHandler> context) : base(context)
+        public GeohashHandler(IHandlerContext<GeohashHandler> context, ILogger<GeohashHandler> logger) : base(context)
         {
+            _logger = logger;
         }
 
         public async Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes)
@@ -27,7 +30,15 @@ namespace ProjectIvy.Business.Handlers.Geohash
             _ = context.Trackings.WhereUser(UserId)
                                  .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                  .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
-            await context.SaveChangesAsync();
+
+            try
+            {
+                await context.SaveChangesAsync();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error adding geohashes to city");
+            }
         }
 
         public async Task AddGeohashToCountry(string countryValueId, IEnumerable<string> geohashes)
@@ -36,9 +47,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await AddGeohashesTo(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
-            _ = context.Trackings.WhereUser(UserId)
-                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, countryId));
+            // _ = context.Trackings.WhereUser(UserId)
+            //                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+            //                      .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, countryId));
             await context.SaveChangesAsync();
         }
 
