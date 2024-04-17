@@ -79,6 +79,8 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<Currency> Currencies { get; set; }
 
+        public DbSet<CurrencyRate> CurrencyRates { get; set; }
+
         public DbSet<Event> Events { get; set; }
 
         public DbSet<Expense> Expenses { get; set; }
@@ -251,6 +253,9 @@ namespace ProjectIvy.Data.DbContexts
 
             modelBuilder.Entity<CountryListCountry>()
                         .HasKey(x => new { x.CountryId, x.CountryListId });
+
+            modelBuilder.Entity<CurrencyRate>()
+                        .HasKey(x => new { x.FromCurrencyId, x.ToCurrencyId, x.Timestamp });
 
             modelBuilder.Entity<Tracking>()
                         .HasOne(x => x.User)

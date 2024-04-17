@@ -11,6 +11,8 @@ namespace ProjectIvy.Business.Handlers.Account
 
         Task<IEnumerable<View.Account>> Get(AccountGetBinding b);
 
+        Task<decimal> GetNetWorth();
+
         Task<View.AccountOverview> GetOverview(string accountValueId);
 
         Task ProcessHacTransactions(string accountKey, string csv);

@@ -32,7 +32,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             AccountId = accountId,
             Amount = binding.Amount,
             Balance = lastTransaction is null ? (lastTransaction.Balance is null ? null : lastTransaction.Balance + binding.Amount) : 0,
-            Created  = binding.Created
+            Created = binding.Created
         };
 
         await context.Transactions.AddAsync(entity);
@@ -54,6 +54,40 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                             })
                                          .ToListAsync();
         }
+    }
+
+    public async Task<decimal> GetNetWorth()
+    {
+        using var context = GetMainContext();
+        int targetCurrencyId = context.Users.Where(x => x.Id == UserId)
+                                            .Select(x => x.DefaultCurrencyId)
+                                            .Single();
+
+        var accountBalances = await context.Accounts.WhereUser(UserId)
+                                .Include(x => x.Transactions)
+                                .Select(x => new
+                                {
+                                    x.CurrencyId,
+                                    Balance = x.Transactions.Sum(x => x.Amount)
+                                })
+                                .ToListAsync();
+
+        return accountBalances.Select(x =>
+        {
+            if (x.CurrencyId == targetCurrencyId)
+                return x.Balance;
+
+            decimal? rate = context.CurrencyRates.Where(y => y.FromCurrencyId == x.CurrencyId
+                                                        && y.ToCurrencyId == targetCurrencyId)
+                                                .OrderByDescending(x => x.Timestamp)
+                                                .Select(x => x.Rate)
+                                                .FirstOrDefault();
+
+            if (rate is null)
+                return 0;
+
+            return x.Balance * rate.Value;
+        }).Sum(x => x);
     }
 
     public async Task<View.AccountOverview> GetOverview(string accountValueId)
@@ -115,7 +149,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
                 transactions.Add(transaction);
             }
-            
+
             foreach (var transaction in transactions)
             {
                 if (context.Transactions.Any(x => x.Created == transaction.Created
