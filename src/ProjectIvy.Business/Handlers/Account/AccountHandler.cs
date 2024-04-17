@@ -5,9 +5,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Binding.Transaction;
 using ProjectIvy.Model.Database.Main.Finance;
+using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Account;
 
 namespace ProjectIvy.Business.Handlers.Account;
@@ -88,6 +90,18 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
             return x.Balance * rate.Value;
         }).Sum(x => x);
+    }
+
+    public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
+    {
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountValueId).Value;
+
+        return await context.Transactions.Where(x => x.AccountId == accountId)
+                                         .OrderByDescending(x => x.Created)
+                                         .Select(x => new View.Transaction(x))
+                                         .ToPagedViewAsync(b);
     }
 
     public async Task<View.AccountOverview> GetOverview(string accountValueId)

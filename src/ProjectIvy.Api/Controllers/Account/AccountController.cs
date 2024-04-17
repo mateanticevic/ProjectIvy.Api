@@ -2,11 +2,14 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Account;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Binding.Transaction;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Airport
 {
@@ -27,6 +30,10 @@ namespace ProjectIvy.Api.Controllers.Airport
 
         [HttpGet("{accountId}/overview")]
         public async Task<IActionResult> GetOverview(string accountId) => Ok(await _accountHandler.GetOverview(accountId));
+
+        [HttpGet("{accountId}/transaction")]
+        public async Task<PagedView<Model.View.Account.Transaction>> GetTransactions(string accountId, [FromQuery] FilteredPagedBinding binding)
+            => await _accountHandler.GetTransactions(accountId, binding);
 
         [HttpPost("{accountId}/transaction")]
         public async Task<IActionResult> PostTransaction(string accountId, [FromBody] TransactionBinding binding)
