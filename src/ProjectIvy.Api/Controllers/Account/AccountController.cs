@@ -20,7 +20,7 @@ namespace ProjectIvy.Api.Controllers.Airport
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get([FromQuery] AccountGetBinding binding) => Ok(await _accountHandler.Get(binding));
+        public async Task<IEnumerable<Model.View.Account.Account>> Get([FromQuery] AccountGetBinding binding) => await _accountHandler.Get(binding);
 
         [HttpGet("NetWorth")]
         public async Task<decimal> GetNetWorth() => await _accountHandler.GetNetWorth();
