@@ -226,7 +226,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 var dateTimeRe = new Regex("[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}");
                 var match = dateTimeRe.Match(descritpion);
 
-                decimal amount = Convert.ToDecimal(parts[3].Replace(".", string.Empty).Replace(",", "."));
+                decimal amount = Convert.ToDecimal(parts[3].Replace(".", string.Empty));
                 if (amount == 0)
                     continue;
 
@@ -238,7 +238,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                     Created = match.Success ? DateTime.ParseExact(match.Value, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture)
                 };
 
-                if (decimal.TryParse(parts[4].Replace(".", string.Empty).Replace(",", "."), out decimal balance))
+                if (decimal.TryParse(parts[4].Replace(".", string.Empty), out decimal balance))
                     transaction.Balance = balance;
 
                 if (match.Success)
