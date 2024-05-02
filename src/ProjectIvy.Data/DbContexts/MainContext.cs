@@ -277,6 +277,9 @@ namespace ProjectIvy.Data.DbContexts
                         .Property(x => x.ParentCurrencyExchangeRate)
                         .HasPrecision(22, 10);
 
+            modelBuilder.Entity<ExpenseTransaction>()
+                        .HasKey(x => new { x.ExpenseId, x.TransactionId });
+
             modelBuilder.Entity<ExpenseType>()
                         .HasOne(x => x.ParentType)
                         .WithMany(x => x.Children);

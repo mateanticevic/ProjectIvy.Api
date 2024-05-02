@@ -472,7 +472,6 @@ namespace ProjectIvy.Business.Handlers.Expense
             using (var context = GetMainContext())
             {
                 var entity = context.Expenses.WhereUser(UserId)
-                                             .Include(x => x.Transaction)
                                              .SingleOrDefault(x => x.ValueId == binding.Id);
 
                 entity = binding.ToEntity(context, entity);
@@ -518,25 +517,25 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         private void ResolveTransaction(MainContext context, Model.Database.Main.Finance.Expense expense)
         {
-            if (expense.Transaction is not null)
-                context.Transactions.Remove(expense.Transaction);
+            // if (expense.Transaction is not null)
+            //     context.Transactions.Remove(expense.Transaction);
 
-            if (expense.PaymentTypeId == (int)Model.Constants.Database.PaymentType.Cash)
-            {
-                int? accountId = context.Accounts.SingleOrDefault(x => !x.BankId.HasValue && x.CurrencyId == expense.CurrencyId)?.Id;
+            // if (expense.PaymentTypeId == (int)Model.Constants.Database.PaymentType.Cash)
+            // {
+            //     int? accountId = context.Accounts.SingleOrDefault(x => !x.BankId.HasValue && x.CurrencyId == expense.CurrencyId)?.Id;
 
-                if (accountId.HasValue)
-                {
-                    var transaction = new Model.Database.Main.Finance.Transaction()
-                    {
-                        AccountId = accountId.Value,
-                        Amount = -expense.Amount,
-                        Created = expense.Date
-                    };
-                    expense.Transaction = transaction;
-                    context.Transactions.Add(transaction);
-                }
-            }
+            //     if (accountId.HasValue)
+            //     {
+            //         var transaction = new Model.Database.Main.Finance.Transaction()
+            //         {
+            //             AccountId = accountId.Value,
+            //             Amount = -expense.Amount,
+            //             Created = expense.Date
+            //         };
+            //         expense.Transaction = transaction;
+            //         context.Transactions.Add(transaction);
+            //     }
+            // }
         }
 
         private async Task<decimal> SumAmount(GetExpenseSumQuery query)
