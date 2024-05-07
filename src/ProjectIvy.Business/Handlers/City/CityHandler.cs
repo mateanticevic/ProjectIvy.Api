@@ -72,11 +72,13 @@ namespace ProjectIvy.Business.Handlers.City
         {
             using (var context = GetMainContext())
             {
-                var cities = context.CitiesVisited
+                var cities = context.Trackings
                                     .Include(x => x.City)
                                     .WhereUser(UserId)
-                                    .Where(x => !x.TripId.HasValue || x.Trip.TimestampEnd < DateTime.Now)
-                                    .Select(x => new View.City(x.City))
+                                    .Where(x => x.CityId.HasValue)
+                                    .Select(x => x.City)
+                                    .Distinct()
+                                    .Select(x => new View.City(x))
                                     .ToList();
 
                 return cities.Distinct(new View.CityComparer());
