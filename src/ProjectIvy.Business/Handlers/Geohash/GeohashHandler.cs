@@ -27,13 +27,13 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await AddGeohashesTo(context.CityGeohashes, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
-            _ = context.Trackings.WhereUser(UserId)
-                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
 
             try
             {
                 await context.SaveChangesAsync();
+                _ = context.Trackings.WhereUser(UserId)
+                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
             }
             catch (Exception e)
             {
@@ -67,9 +67,12 @@ namespace ProjectIvy.Business.Handlers.Geohash
             foreach (string geohash in geohashes)
             {
                 var childGeohashes = geohashItems.Where(matchItem)
-                                                 .Where(x => x.Geohash.StartsWith(geohash));
+                                                 .Where(x => x.Geohash.StartsWith(geohash))
+                                                 .ToList();
 
-                geohashItems.RemoveRange(childGeohashes);
+                if (childGeohashes.Any())
+                    geohashItems.RemoveRange(childGeohashes);
+
                 var entity = itemFactory();
                 entity.Geohash = geohash;
                 await geohashItems.AddAsync(entity);
