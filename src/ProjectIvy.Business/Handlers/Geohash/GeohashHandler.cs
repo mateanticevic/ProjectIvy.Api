@@ -31,9 +31,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             try
             {
                 await context.SaveChangesAsync();
-                _ = context.Trackings.WhereUser(UserId)
-                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
+                _ = SetCityIdToTrackings(cityId, geohashes);
             }
             catch (Exception e)
             {
@@ -379,6 +377,15 @@ namespace ProjectIvy.Business.Handlers.Geohash
                 return item;
             }));
             geohashItems.RemoveRange(geohashesToDelete.Distinct());
+        }
+
+        private async Task SetCityIdToTrackings(int cityId, IEnumerable<string> geohashes)
+        {
+            using var context = GetMainContext();
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, cityId));
+            await context.SaveChangesAsync();
         }
 
         private IQueryable<DateTime> TimestampsByDay(MainContext context, string geohash, bool last)
