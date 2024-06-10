@@ -28,8 +28,12 @@ namespace ProjectIvy.Model.Database.Main.Tracking
 
         public int? CountryId { get; set; }
 
+        public int? LocationId { get; set; }
+
         public Common.City City { get; set; }
 
         public Common.Country Country { get; set; }
+
+        public Location Location { get; set; }
     }
 }

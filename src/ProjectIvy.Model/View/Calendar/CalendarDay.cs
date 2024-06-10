@@ -10,6 +10,8 @@ public class CalendarDay
 
     public bool IsHoliday { get; set; }
 
+    public IEnumerable<Location.Location> Locations { get; set; }
+
     public DateTime Date { get; set; }
 
     public WorkDayType WorkDayType { get; set; }

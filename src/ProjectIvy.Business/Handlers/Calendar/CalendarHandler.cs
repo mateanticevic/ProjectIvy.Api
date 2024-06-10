@@ -90,6 +90,13 @@ namespace ProjectIvy.Business.Handlers.Calendar
                                                       .Select(x => new { Date = x.Key, Cities = x.Select(c => c.City).Distinct() })
                                                       .ToListAsync();
 
+            var locationsPerDay = await context.Trackings.WhereUser(UserId)
+                                                         .Include(x => x.Location)
+                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
+                                                         .GroupBy(x => x.Timestamp.Date)
+                                                         .Select(x => new { Date = x.Key, Locations = x.Select(c => c.Location).Distinct() })
+                                                         .ToListAsync();
+
             var events = await context.Events.WhereUser(UserId)
                                              .Where(x => x.Date >= from && x.Date <= to)
                                              .ToListAsync();
@@ -101,11 +108,12 @@ namespace ProjectIvy.Business.Handlers.Calendar
 
                 var calendarDay = new CalendarDay()
                 {
+                    Cities = citiesPerDay.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
+                    Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x)),
                     Date = day,
                     Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                     IsHoliday = holidays.Contains(day),
-                    Cities = citiesPerDay.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
-                    Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x))
+                    Locations = locationsPerDay.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)),
                 };
 
                 if (workDays.Any(x => x.Date == day))
