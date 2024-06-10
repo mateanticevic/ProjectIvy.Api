@@ -92,7 +92,7 @@ namespace ProjectIvy.Business.Handlers.Calendar
 
             var locationsPerDay = await context.Trackings.WhereUser(UserId)
                                                          .Include(x => x.Location)
-                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
+                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId != null)
                                                          .GroupBy(x => x.Timestamp.Date)
                                                          .Select(x => new { Date = x.Key, Locations = x.Select(c => c.Location).Distinct() })
                                                          .ToListAsync();
