@@ -92,11 +92,8 @@ namespace ProjectIvy.Business.Handlers.Location
                     var location = await context.Locations.WhereUser(UserId)
                                                           .SingleOrDefaultAsync(x => x.ValueId == locationId);
 
-                    var geohashes = context.LocationGeohashes.Where(x => x.LocationId == location.Id)
-                                                              .Select(x => x.Geohash);
-
                     var days = await context.Trackings.WhereUser(UserId)
-                                                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                                      .Where(x => x.LocationId == location.Id)
                                                       .Select(x => x.Timestamp.Date)
                                                       .Distinct()
                                                       .OrderByDescending(x => x)
