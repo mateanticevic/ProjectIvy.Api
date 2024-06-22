@@ -320,10 +320,10 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int countryId = context.Countries.GetId(countryValueId).Value;
             await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
+            await context.SaveChangesAsync();
             _ = context.Trackings.WhereUser(UserId)
                                  .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                  .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
-            await context.SaveChangesAsync();
         }
 
         public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
