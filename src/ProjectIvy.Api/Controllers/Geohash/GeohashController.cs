@@ -40,10 +40,10 @@ namespace ProjectIvy.Api.Controllers.Device
             => Ok(await _geohashHandler.FromGeohashToGeohash(new[] { fromGeohash }, new[] { toGeohash }, orderBy));
 
         [HttpGet("Root/Children")]
-        public async Task<IActionResult> GetRootChildren() => Ok(await _geohashHandler.GetChildren(null));
+        public async Task<IActionResult> GetRootChildren([FromQuery] GeohashChildrenGetBinding binding) => Ok(await _geohashHandler.GetChildren(null, binding));
 
         [HttpGet("{geohash}/Children")]
-        public async Task<IActionResult> GetChildren(string geohash) => Ok(await _geohashHandler.GetChildren(geohash));
+        public async Task<IActionResult> GetChildren(string geohash, [FromQuery] GeohashChildrenGetBinding binding) => Ok(await _geohashHandler.GetChildren(geohash, binding));
 
         [HttpGet("{geohash}/City")]
         public async Task<IActionResult> GetCity(string geohash) => Ok(await _geohashHandler.GetCity(geohash));

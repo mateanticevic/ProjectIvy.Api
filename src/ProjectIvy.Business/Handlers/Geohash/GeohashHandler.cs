@@ -210,17 +210,18 @@ namespace ProjectIvy.Business.Handlers.Geohash
             }
         }
 
-        public async Task<IEnumerable<string>> GetChildren(string geohash)
+        public async Task<IEnumerable<string>> GetChildren(string geohash, GeohashChildrenGetBinding b)
         {
-            using (var context = GetMainContext())
-            {
-                int geohashLength = geohash?.Length ?? 0;
-                return await context.Trackings.WhereUser(UserId)
-                                              .WhereIf(!string.IsNullOrWhiteSpace(geohash), x => x.Geohash.StartsWith(geohash))
-                                              .GroupBy(x => x.Geohash.Substring(0, geohashLength + 1))
-                                              .Select(x => x.Key)
-                                              .ToListAsync();
-            }
+            using var context = GetMainContext();
+            int geohashLength = geohash?.Length ?? 0;
+
+            int precision = b.Precision ?? geohashLength + 1;
+
+            return await context.Trackings.WhereUser(UserId)
+                                          .WhereIf(!string.IsNullOrWhiteSpace(geohash), x => x.Geohash.StartsWith(geohash))
+                                          .GroupBy(x => x.Geohash.Substring(0, precision))
+                                          .Select(x => x.Key)
+                                          .ToListAsync();
         }
 
         public async Task<Model.View.City.City> GetCity(string geohash)

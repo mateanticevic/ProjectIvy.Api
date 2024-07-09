@@ -19,7 +19,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         Task<IEnumerable<DateOnly>> GetDays(string geohash);
 
-        Task<IEnumerable<string>> GetChildren(string geohash);
+        Task<IEnumerable<string>> GetChildren(string geohash, GeohashChildrenGetBinding b);
 
         Task<Model.View.City.City> GetCity(string geohash);
 
