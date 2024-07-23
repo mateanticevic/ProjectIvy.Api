@@ -113,7 +113,7 @@ namespace ProjectIvy.Business.Handlers.Calendar
                     Date = day,
                     Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                     IsHoliday = holidays.Contains(day),
-                    Locations = locationsPerDay.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)),
+                    Locations = locationsPerDay.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)).OrderBy(x => x.Name),
                 };
 
                 if (workDays.Any(x => x.Date == day))

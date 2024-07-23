@@ -46,6 +46,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 context.ExpenseFiles.Add(entity);
                 context.SaveChanges();
+                ClearCache();
             }
         }
 
