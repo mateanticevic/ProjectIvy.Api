@@ -76,21 +76,23 @@ namespace ProjectIvy.Business.Handlers.Calendar
                                                  .Select(x => new { x.Date, x.WorkDayType.ValueId, x.WorkDayType.Name })
                                                  .ToListAsync();
 
-            var countriesPerDay = await context.Trackings.WhereUser(UserId)
+            bool rangeInFuture = from > DateTime.Now;
+
+            var countriesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                          .Include(x => x.Country)
                                                          .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
                                                          .GroupBy(x => x.Timestamp.Date)
                                                          .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
                                                          .ToListAsync();
 
-            var citiesPerDay = await context.Trackings.WhereUser(UserId)
+            var citiesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                       .Include(x => x.City)
                                                       .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CityId != null)
                                                       .GroupBy(x => x.Timestamp.Date)
                                                       .Select(x => new { Date = x.Key, Cities = x.Select(c => c.City).Distinct() })
                                                       .ToListAsync();
 
-            var locationsPerDay = await context.Trackings.WhereUser(UserId)
+            var locationsPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                          .Include(x => x.Location)
                                                          .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId != null)
                                                          .GroupBy(x => x.Timestamp.Date)
@@ -108,12 +110,12 @@ namespace ProjectIvy.Business.Handlers.Calendar
 
                 var calendarDay = new CalendarDay()
                 {
-                    Cities = citiesPerDay.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
-                    Countries = countriesPerDay.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x)),
+                    Cities = citiesPerDay?.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
+                    Countries = countriesPerDay?.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x)),
                     Date = day,
                     Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                     IsHoliday = holidays.Contains(day),
-                    Locations = locationsPerDay.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)).OrderBy(x => x.Name),
+                    Locations = locationsPerDay?.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)).OrderBy(x => x.Name),
                 };
 
                 if (workDays.Any(x => x.Date == day))
