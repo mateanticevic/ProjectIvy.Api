@@ -1,6 +1,5 @@
 ﻿using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Card;
-using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using View = ProjectIvy.Model.View.Card;
@@ -18,9 +17,11 @@ namespace ProjectIvy.Business.Handlers.Card
             using (var context = GetMainContext())
             {
                 return context.Cards.WhereUser(UserId)
-                                    .Include(x => x.Bank)
-                                    .Include(x => x.CardType)
+                                    .Include(x => x.Bank)
+                                    .Include(x => x.CardType)
+                                    .WhereIf(binding.HasExpired.HasValue, x => (binding.HasExpired.Value && x.Expires <= DateTime.Now) || (!binding.HasExpired.Value && x.Expires >= DateTime.Now))
                                     .WhereIf(binding.IsActive.HasValue, x => x.IsActive == binding.IsActive.Value)
+                                    .OrderByDescending(x => x.Expires)
                                     .Select(x => new View.Card(x))
                                     .ToList();
             }
