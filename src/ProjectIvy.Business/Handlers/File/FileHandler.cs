@@ -34,7 +34,7 @@ namespace ProjectIvy.Business.Handlers.File
                 if (file.UserId != UserId)
                     throw new UnauthorizedException();
 
-                await _azureStorageHelper.DeleteFile($"{ShareName}/file.Uri");
+                await _azureStorageHelper.DeleteFile($"{ShareName}/{file.Uri}");
             }
         }
 
@@ -45,7 +45,7 @@ namespace ProjectIvy.Business.Handlers.File
                 var file = context.Files.Include(x => x.FileType)
                                         .SingleOrDefault(x => x.ValueId == id);
 
-                var data = await _azureStorageHelper.GetFile($"{ShareName}/file.Uri");
+                var data = await _azureStorageHelper.GetFile($"{ShareName}/{file.Uri}");
 
                 if (data == null)
                     throw new ResourceNotFoundException();
