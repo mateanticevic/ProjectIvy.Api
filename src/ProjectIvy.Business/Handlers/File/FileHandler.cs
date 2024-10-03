@@ -74,7 +74,7 @@ namespace ProjectIvy.Business.Handlers.File
                     FileTypeId = fileType.Id,
                     ProviderId = (int)StorageProvider.AzureStorage,
                     SizeInBytes = data.Length,
-                    Uri = fullPath,
+                    Uri = $"{fileName}.{fileType.Extension}",
                     UserId = UserId,
                     ValueId = fileName
                 };
