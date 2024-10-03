@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -10,14 +8,16 @@ using ProjectIvy.Data.Services.AzureStorage;
 using ProjectIvy.Model.Binding.File;
 using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View.File;
-using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using SixLabors.ImageSharp;
 
 namespace ProjectIvy.Business.Handlers.File
 {
     public class FileHandler : Handler<FileHandler>, IFileHandler
     {
         private readonly IAzureStorageHelper _azureStorageHelper;
+
+        private const string ShareName = "documents";
 
         public FileHandler(IHandlerContext<FileHandler> context, IAzureStorageHelper azureStorageHelper) : base(context)
         {
@@ -34,7 +34,7 @@ namespace ProjectIvy.Business.Handlers.File
                 if (file.UserId != UserId)
                     throw new UnauthorizedException();
 
-                await _azureStorageHelper.DeleteFile(file.Uri);
+                await _azureStorageHelper.DeleteFile($"{ShareName}/file.Uri");
             }
         }
 
@@ -45,7 +45,7 @@ namespace ProjectIvy.Business.Handlers.File
                 var file = context.Files.Include(x => x.FileType)
                                         .SingleOrDefault(x => x.ValueId == id);
 
-                var data = await _azureStorageHelper.GetFile(file.Uri);
+                var data = await _azureStorageHelper.GetFile($"{ShareName}/file.Uri");
 
                 if (data == null)
                     throw new ResourceNotFoundException();
@@ -62,7 +62,7 @@ namespace ProjectIvy.Business.Handlers.File
             {
                 var fileType = context.FileTypes.SingleOrDefault(x => x.MimeType == file.MimeType);
 
-                string fullPath = $"{GetFolder((StorageFileType)fileType.Id)}/{fileName}.{fileType.Extension}";
+                string fullPath = $"{ShareName}/{fileName}.{fileType.Extension}";
 
                 var data = fileType.IsImage ? await ProcessImageFile(file) : file.Data;
 
@@ -83,25 +83,6 @@ namespace ProjectIvy.Business.Handlers.File
             }
 
             return fileName;
-        }
-
-        private string GetFolder(StorageFileType fileType)
-        {
-            // TODO: Rewrite
-            var documents = new List<StorageFileType>() { StorageFileType.Pdf, StorageFileType.Msg };
-            var images = new List<StorageFileType>() { StorageFileType.Jpg, StorageFileType.Png };
-            var audio = new List<StorageFileType>() { StorageFileType.Mp3 };
-
-            if (images.Contains(fileType))
-                return "images";
-
-            if (documents.Contains(fileType))
-                return "documents";
-
-            if (audio.Contains(fileType))
-                return "audio";
-
-            return "other";
         }
 
         private async Task<byte[]> ProcessImageFile(FileBinding file)
