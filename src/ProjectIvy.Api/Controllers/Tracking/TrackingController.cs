@@ -1,18 +1,19 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Xml.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Common.Interfaces;
 using ProjectIvy.Common.Parsers;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
+using ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking
 {
@@ -53,6 +54,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
 
         [HttpGet("Count/ByYear")]
         public IActionResult GetCountByYear([FromQuery] FilteredBinding binding) => Ok(_trackingHandler.CountByYear(binding));
+
+        [HttpGet("Details")]
+        public async Task<TrackingDetails> GetDetails([FromQuery] FilteredBinding binding) => await _trackingHandler.GetDetails(binding);
 
         [HttpGet("Count/Unique")]
         public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);

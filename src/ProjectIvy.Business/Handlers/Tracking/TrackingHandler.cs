@@ -15,6 +15,7 @@ using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Tracking;
 using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Business.Handlers.Tracking
@@ -27,7 +28,6 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                IGeohashHandler geohashHandler,
                                IMemoryCache memoryCache) : base(context, memoryCache, nameof(TrackingHandler))
         {
-
             _geohashHandler = geohashHandler;
         }
 
@@ -115,7 +115,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
 
                     var trackings = binding.GroupBy(x => x.Timestamp)
-                                           .Select(x => x.First())
+                                           .Select(x => x.First())
                                            .Where(x => !existingTimestamps.Contains(x.Timestamp))
                                            .Select(x =>
                     {
@@ -201,6 +201,37 @@ namespace ProjectIvy.Business.Handlers.Tracking
             }
         }
 
+        public async Task<TrackingDetails> GetDetails(FilteredBinding binding)
+        {
+            using var context = GetMainContext();
+
+            var trackings = await context.Trackings.WhereUser(UserId)
+                                                   .WhereTimestampInclusive(binding)
+                                                   .OrderBy(x => x.Timestamp)
+                                                   .ToListAsync();
+
+            double ascentInMeters = 0;
+            double descentInMeters = 0;
+            double? previousAltitude = null;
+            foreach (var tracking in trackings)
+            {
+                if (previousAltitude.HasValue && tracking.Altitude.HasValue && tracking.Altitude > previousAltitude)
+                    ascentInMeters += tracking.Altitude.Value - previousAltitude.Value;
+
+                if (previousAltitude.HasValue && tracking.Altitude.HasValue && tracking.Altitude < previousAltitude)
+                    descentInMeters += previousAltitude.Value - tracking.Altitude.Value;
+
+                previousAltitude = tracking.Altitude;
+            }
+
+            return new TrackingDetails
+            {
+                AscentInMeters = (int)ascentInMeters,
+                DescentInMeters = (int)descentInMeters,
+                ElevationGainInMeters = (int)trackings.Max(x => x.Altitude) - (int)trackings.Min(x => x.Altitude)
+            };
+        }
+
         public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
 
         public async Task<View.TrackingLocation> GetLastLocation()
@@ -228,7 +259,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                                               .Include(x => x.Airline)
                                               .Include(x => x.DestinationAirport)
                                               .ThenInclude(x => x.Poi)
-                                              .Include(x => x.OriginAirport)
+                                              .Include(x => x.OriginAirport)
                                               .ThenInclude(x => x.Poi)
                                               .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
                                               .FirstOrDefaultAsync();

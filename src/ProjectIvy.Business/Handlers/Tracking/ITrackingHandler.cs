@@ -1,6 +1,7 @@
 ﻿using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Tracking;
 using ProjectIvy.Model.View;
+using ProjectIvy.Model.View.Tracking;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using View = ProjectIvy.Model.View.Tracking;
@@ -22,6 +23,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
         Task Delete(IEnumerable<long> timestamps);
 
         IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
+
+        Task<TrackingDetails> GetDetails(FilteredBinding binding);
 
         Task<View.Tracking> GetLast(DateTime? at = null);
 
