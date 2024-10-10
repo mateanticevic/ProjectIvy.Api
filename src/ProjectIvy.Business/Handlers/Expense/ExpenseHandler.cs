@@ -23,14 +23,19 @@ using SixLabors.ImageSharp;
 using ZXing.ImageSharp;
 using View = ProjectIvy.Model.View.Expense;
 using System.Text.RegularExpressions;
+using ProjectIvy.Business.Handlers.File;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {
     public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     {
+        private readonly IFileHandler _fileHandler;
+
         public ExpenseHandler(IHandlerContext<ExpenseHandler> context,
+                              IFileHandler fileHandler,
                               IMemoryCache memoryCache) : base(context, memoryCache, nameof(ExpenseHandler))
         {
+            _fileHandler = fileHandler;
         }
 
         public void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
@@ -270,6 +275,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                     DatePaid = DateTime.Now,
                     ExpenseTypeId = template.ExpenseTypeId,
                     NeedsReview = true,
+                    PaymentTypeId = template.PaymentTypeId,
                     UserId = UserId,
                     ValueId = context.Expenses.NextValueId(UserId).ToString(),
                     VendorId = template.VendorId,
@@ -288,7 +294,17 @@ namespace ProjectIvy.Business.Handlers.Expense
                     expense.Date = new DateTime(year.Value, month.Value, dayOfMonth);
                 }
 
+                binding.ImageResize = 0.5f;
+                var file = await _fileHandler.UploadFileInternal(binding);
+                var expenseFile = new Model.Database.Main.Finance.ExpenseFile()
+                {
+                    Expense = expense,
+                    FileId = file.Id,
+                    ExpenseFileTypeId = 1
+                };
+
                 await context.Expenses.AddAsync(expense);
+                await context.ExpenseFiles.AddAsync(expenseFile);
                 await context.SaveChangesAsync();
                 ClearCache();
 

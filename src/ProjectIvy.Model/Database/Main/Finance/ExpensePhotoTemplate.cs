@@ -32,9 +32,13 @@ public class ExpensePhotoTemplate : UserEntity, IHasName, IHasValueId
 
     public int? VendorId { get; set; }
 
+    public int PaymentTypeId { get; set; }
+
     public Currency Currency { get; set; }
 
     public ExpenseType ExpenseType { get; set; }
+
+    public PaymentType PaymentType { get; set; }
 
     public Vendor Vendor { get; set; }
 }

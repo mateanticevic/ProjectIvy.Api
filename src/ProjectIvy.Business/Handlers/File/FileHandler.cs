@@ -54,35 +54,35 @@ public class FileHandler : Handler<FileHandler>, IFileHandler
         }
     }
 
-    public async Task<string> UploadFile(FileBinding file)
+    public async Task<string> UploadFile(FileBinding file) => (await UploadFileInternal(file)).ValueId;
+
+    public async Task<Model.Database.Main.Storage.File> UploadFileInternal(FileBinding file)
     {
         string fileName = Guid.NewGuid().ToString().Replace("-", string.Empty);
 
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var fileType = context.FileTypes.SingleOrDefault(x => x.MimeType == file.MimeType);
+
+        string fullPath = $"{ShareName}/{fileName}.{fileType.Extension}";
+
+        var data = fileType.IsImage ? await ProcessImageFile(file) : file.Data;
+
+        await _azureStorageHelper.UploadFile(fullPath, data);
+
+        var fileEntity = new Model.Database.Main.Storage.File()
         {
-            var fileType = context.FileTypes.SingleOrDefault(x => x.MimeType == file.MimeType);
+            Created = DateTime.Now,
+            FileTypeId = fileType.Id,
+            ProviderId = (int)StorageProvider.AzureStorage,
+            SizeInBytes = data.Length,
+            Uri = $"{fileName}.{fileType.Extension}",
+            UserId = UserId,
+            ValueId = fileName
+        };
+        context.Files.Add(fileEntity);
+        await context.SaveChangesAsync();
 
-            string fullPath = $"{ShareName}/{fileName}.{fileType.Extension}";
-
-            var data = fileType.IsImage ? await ProcessImageFile(file) : file.Data;
-
-            await _azureStorageHelper.UploadFile(fullPath, data);
-
-            var fileEntity = new Model.Database.Main.Storage.File()
-            {
-                Created = DateTime.Now,
-                FileTypeId = fileType.Id,
-                ProviderId = (int)StorageProvider.AzureStorage,
-                SizeInBytes = data.Length,
-                Uri = $"{fileName}.{fileType.Extension}",
-                UserId = UserId,
-                ValueId = fileName
-            };
-            context.Files.Add(fileEntity);
-            await context.SaveChangesAsync();
-        }
-
-        return fileName;
+        return fileEntity;
     }
 
     private async Task<byte[]> ProcessImageFile(FileBinding file)
