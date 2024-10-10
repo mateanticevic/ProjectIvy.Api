@@ -1,4 +1,5 @@
 ﻿using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Binding.File;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.ExpenseType;
 using System.Threading.Tasks;
@@ -31,6 +32,8 @@ namespace ProjectIvy.Business.Handlers.Expense
         int CountVendors(ExpenseGetBinding binding);
 
         string Create(ExpenseBinding binding);
+
+        Task CreateFromPhoto(FileBinding binding);
 
         bool Delete(string valueId);
 

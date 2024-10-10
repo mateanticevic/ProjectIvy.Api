@@ -1,4 +1,6 @@
-﻿using Dapper;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using ProjectIvy.Business.Caching;
@@ -7,17 +9,20 @@ using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
 using ProjectIvy.Data.DbContexts;
-using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
-using ProjectIvy.Data.Sql;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Sql.Main.Scripts;
-using ProjectIvy.Model.Binding;
+using ProjectIvy.Data.Sql;
 using ProjectIvy.Model.Binding.Expense;
-using ProjectIvy.Model.View;
+using ProjectIvy.Model.Binding.File;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.View.ExpenseType;
-using System.Linq;
-using System.Threading.Tasks;
+using ProjectIvy.Model.View;
+using SixLabors.ImageSharp.PixelFormats;
+using SixLabors.ImageSharp;
+using ZXing.ImageSharp;
 using View = ProjectIvy.Model.View.Expense;
+using System.Text.RegularExpressions;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {
@@ -224,6 +229,56 @@ namespace ProjectIvy.Business.Handlers.Expense
                 ClearCache();
 
                 return entity.ValueId;
+            }
+        }
+
+        public async Task CreateFromPhoto(FileBinding binding)
+        {
+            var image = Image.Load<Rgba32>(binding.Data);
+            var reader = new BarcodeReader<Rgba32>();
+
+            var result = reader.Decode(image);
+
+            using var context = GetMainContext();
+            var templates = await context.ExpensePhotoTemplates.WhereUser(UserId).ToListAsync();
+
+            var user = context.Users.Where(x => x.Id == UserId).Single();
+
+            foreach(var template in templates)
+            {
+                if (!new Regex(template.MatchRegex).Match(result.Text).Success)
+                    continue;
+
+                var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(result.Text);
+                var monthRegexMatch = template.MonthRegex is null ? null :  new Regex(template.MonthRegex).Match(result.Text);
+                var dayRegexMatch = template.DayRegex is null ? null :  new Regex(template.DayRegex).Match(result.Text);
+
+                int? year = yearRegexMatch?.Success == true ? int.Parse(yearRegexMatch.Groups[1].Value) : null;
+                int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
+                int? day = dayRegexMatch?.Success == true ? int.Parse(dayRegexMatch.Groups[1].Value) : null;
+
+                var amountRegex = new Regex(template.AmountRegex).Match(result.Text);
+
+                decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value},{amountRegex.Groups[2].Value}") : decimal.Parse(amountRegex.Groups[1].Value);
+
+                var expense = new Model.Database.Main.Finance.Expense()
+                {
+                    Amount = amount,
+                    CurrencyId = template.CurrencyId ?? user.DefaultCurrencyId,
+                    Date = DateTime.Now,
+                    DatePaid = DateTime.Now,
+                    ExpenseTypeId = template.ExpenseTypeId,
+                    NeedsReview = true,
+                    UserId = UserId,
+                    ValueId = context.Expenses.NextValueId(UserId).ToString(),
+                    VendorId = template.VendorId,
+                };
+
+                await context.Expenses.AddAsync(expense);
+                await context.SaveChangesAsync();
+                ClearCache();
+
+                break;
             }
         }
 
