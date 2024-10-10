@@ -244,14 +244,14 @@ namespace ProjectIvy.Business.Handlers.Expense
 
             var user = context.Users.Where(x => x.Id == UserId).Single();
 
-            foreach(var template in templates)
+            foreach (var template in templates)
             {
                 if (!new Regex(template.MatchRegex).Match(result.Text).Success)
                     continue;
 
                 var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(result.Text);
-                var monthRegexMatch = template.MonthRegex is null ? null :  new Regex(template.MonthRegex).Match(result.Text);
-                var dayRegexMatch = template.DayRegex is null ? null :  new Regex(template.DayRegex).Match(result.Text);
+                var monthRegexMatch = template.MonthRegex is null ? null : new Regex(template.MonthRegex).Match(result.Text);
+                var dayRegexMatch = template.DayRegex is null ? null : new Regex(template.DayRegex).Match(result.Text);
 
                 int? year = yearRegexMatch?.Success == true ? int.Parse(yearRegexMatch.Groups[1].Value) : null;
                 int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
@@ -264,6 +264,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 var expense = new Model.Database.Main.Finance.Expense()
                 {
                     Amount = amount,
+                    Comment = template.CommentTemplate,
                     CurrencyId = template.CurrencyId ?? user.DefaultCurrencyId,
                     Date = DateTime.Now,
                     DatePaid = DateTime.Now,
@@ -273,6 +274,19 @@ namespace ProjectIvy.Business.Handlers.Expense
                     ValueId = context.Expenses.NextValueId(UserId).ToString(),
                     VendorId = template.VendorId,
                 };
+
+                if (expense.Comment is not null)
+                    expense.Comment = expense.Comment.Replace("{year}", year?.ToString() ?? string.Empty)
+                                                     .Replace("{month}", month?.ToString() ?? string.Empty)
+                                                     .Replace("{day}", day?.ToString() ?? string.Empty);
+
+                if (year.HasValue && month.HasValue && (day.HasValue || template.DefaultDayOfMonth is not null))
+                {
+                    int dayOfMonth = day ?? (template.DefaultDayOfMonth.Value > 0
+                                                ? template.DefaultDayOfMonth.Value
+                                                : DateTime.DaysInMonth(year.Value, month.Value) + template.DefaultDayOfMonth.Value + 1);
+                    expense.Date = new DateTime(year.Value, month.Value, dayOfMonth);
+                }
 
                 await context.Expenses.AddAsync(expense);
                 await context.SaveChangesAsync();

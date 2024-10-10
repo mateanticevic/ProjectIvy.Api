@@ -12,7 +12,11 @@ public class ExpensePhotoTemplate : UserEntity, IHasName, IHasValueId
 
     public string ValueId { get; set; }
 
+    public int? DefaultDayOfMonth { get; set; }
+
     public int ExpenseTypeId { get; set; }
+
+    public string CommentTemplate { get; set; }
 
     public string MatchRegex { get; set; }
 
