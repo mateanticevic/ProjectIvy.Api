@@ -24,6 +24,7 @@ using ZXing.ImageSharp;
 using View = ProjectIvy.Model.View.Expense;
 using System.Text.RegularExpressions;
 using ProjectIvy.Business.Handlers.File;
+using System.Globalization;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {
@@ -262,9 +263,12 @@ namespace ProjectIvy.Business.Handlers.Expense
                 int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
                 int? day = dayRegexMatch?.Success == true ? int.Parse(dayRegexMatch.Groups[1].Value) : null;
 
+                if (year.HasValue && year.Value.ToString().Length == 2)
+                    year += 2000;
+
                 var amountRegex = new Regex(template.AmountRegex).Match(result.Text);
 
-                decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value},{amountRegex.Groups[2].Value}") : decimal.Parse(amountRegex.Groups[1].Value);
+                decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value}.{amountRegex.Groups[2].Value}", CultureInfo.InvariantCulture) : decimal.Parse(amountRegex.Groups[1].Value);
 
                 var expense = new Model.Database.Main.Finance.Expense()
                 {
