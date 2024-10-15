@@ -315,7 +315,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 if (expense.Comment is not null)
                     expense.Comment = expense.Comment.Replace("{year}", year?.ToString() ?? string.Empty)
-                                                     .Replace("{month}", month?.ToString() ?? string.Empty)
+                                                     .Replace("{month}", month?.ToString("D2") ?? string.Empty)
                                                      .Replace("{day}", day?.ToString() ?? string.Empty);
 
                 if (year.HasValue && month.HasValue && (day.HasValue || template.DefaultDayOfMonth is not null))
@@ -328,7 +328,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
                 if (fileType == FileType.IMG)
                     binding.ImageResize = 0.5f;
-                    
+
                 var file = await _fileHandler.UploadFileInternal(binding);
                 var expenseFile = new Model.Database.Main.Finance.ExpenseFile()
                 {
