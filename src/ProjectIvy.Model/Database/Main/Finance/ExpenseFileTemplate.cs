@@ -3,14 +3,16 @@ using ProjectIvy.Model.Database.Main.Common;
 
 namespace ProjectIvy.Model.Database.Main.Finance;
 
-[Table(nameof(ExpensePhotoTemplate), Schema = nameof(Finance))]
-public class ExpensePhotoTemplate : UserEntity, IHasName, IHasValueId
+[Table(nameof(ExpenseFileTemplate), Schema = nameof(Finance))]
+public class ExpenseFileTemplate : UserEntity, IHasName, IHasValueId
 {
     public int Id { get; set; }
 
     public string Name { get; set; }
 
     public string ValueId { get; set; }
+
+    public string FileType { get; set; }
 
     public int? DefaultDayOfMonth { get; set; }
 

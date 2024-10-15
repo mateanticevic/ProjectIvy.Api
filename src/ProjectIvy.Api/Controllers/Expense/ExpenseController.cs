@@ -137,8 +137,8 @@ public class ExpenseController : BaseController<ExpenseController>
     public string Post([FromBody] ExpenseBinding binding)
         => _expenseHandler.Create(binding);
 
-    [HttpPost("FromPhoto")]
-    public async Task PostFromPhoto()
+    [HttpPost("FromFile")]
+    public async Task PostFromFile()
     {
         var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
@@ -146,7 +146,7 @@ public class ExpenseController : BaseController<ExpenseController>
         {
             await HttpContext.Request.Body.CopyToAsync(ms);
             bytes = ms.ToArray();
-            await _expenseHandler.CreateFromPhoto(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
+            await _expenseHandler.CreateFromFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
         }
     }
 

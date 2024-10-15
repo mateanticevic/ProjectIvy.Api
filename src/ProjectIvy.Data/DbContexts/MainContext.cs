@@ -89,7 +89,7 @@ namespace ProjectIvy.Data.DbContexts
 
         public DbSet<ExpenseFileType> ExpenseFileTypes { get; set; }
 
-        public DbSet<ExpensePhotoTemplate> ExpensePhotoTemplates { get; set; }
+        public DbSet<ExpenseFileTemplate> ExpenseFileTemplates { get; set; }
 
         public DbSet<ExpenseType> ExpenseTypes { get; set; }
 

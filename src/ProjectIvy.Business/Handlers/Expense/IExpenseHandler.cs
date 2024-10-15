@@ -33,7 +33,7 @@ namespace ProjectIvy.Business.Handlers.Expense
 
         string Create(ExpenseBinding binding);
 
-        Task CreateFromPhoto(FileBinding binding);
+        Task CreateFromFile(FileBinding binding);
 
         bool Delete(string valueId);
 

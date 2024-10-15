@@ -25,6 +25,11 @@ using View = ProjectIvy.Model.View.Expense;
 using System.Text.RegularExpressions;
 using ProjectIvy.Business.Handlers.File;
 using System.Globalization;
+using iText.Kernel.Pdf;
+using System.IO;
+using iText.Kernel.Pdf.Canvas.Parser;
+using System.Text;
+using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Business.Handlers.Expense
 {
@@ -238,26 +243,49 @@ namespace ProjectIvy.Business.Handlers.Expense
             }
         }
 
-        public async Task CreateFromPhoto(FileBinding binding)
+        public async Task CreateFromFile(FileBinding binding)
         {
-            var image = Image.Load<Rgba32>(binding.Data);
-            var reader = new BarcodeReader<Rgba32>();
+            var stringBuilder = new StringBuilder();
+            var fileType = FileType.PDF;
 
-            var result = reader.Decode(image);
+            if (binding.MimeType != "application/pdf")
+            {
+                fileType = FileType.IMG;
+                var image = Image.Load<Rgba32>(binding.Data);
+                var reader = new BarcodeReader<Rgba32>();
+
+                var result = reader.Decode(image);
+                stringBuilder.Append(result.Text);
+            }
+
+            using (Stream stream = new MemoryStream(binding.Data))
+            {
+                using var pdfReader = new PdfReader(stream);
+                using var pdfDocument = new PdfDocument(pdfReader);
+
+                for (int i = 1; i <= pdfDocument.GetNumberOfPages(); i++)
+                {
+                    var page = pdfDocument.GetPage(i);
+                    stringBuilder.Append(PdfTextExtractor.GetTextFromPage(page));
+                }
+            }
 
             using var context = GetMainContext();
-            var templates = await context.ExpensePhotoTemplates.WhereUser(UserId).ToListAsync();
+            var templates = await context.ExpenseFileTemplates.WhereUser(UserId)
+                                                              .Where(x => x.FileType == fileType.ToString())
+                                                              .ToListAsync();
 
             var user = context.Users.Where(x => x.Id == UserId).Single();
 
+            string text = stringBuilder.ToString();
             foreach (var template in templates)
             {
-                if (!new Regex(template.MatchRegex).Match(result.Text).Success)
+                if (!new Regex(template.MatchRegex).Match(text).Success)
                     continue;
 
-                var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(result.Text);
-                var monthRegexMatch = template.MonthRegex is null ? null : new Regex(template.MonthRegex).Match(result.Text);
-                var dayRegexMatch = template.DayRegex is null ? null : new Regex(template.DayRegex).Match(result.Text);
+                var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(text);
+                var monthRegexMatch = template.MonthRegex is null ? null : new Regex(template.MonthRegex).Match(text);
+                var dayRegexMatch = template.DayRegex is null ? null : new Regex(template.DayRegex).Match(text);
 
                 int? year = yearRegexMatch?.Success == true ? int.Parse(yearRegexMatch.Groups[1].Value) : null;
                 int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
@@ -266,7 +294,7 @@ namespace ProjectIvy.Business.Handlers.Expense
                 if (year.HasValue && year.Value.ToString().Length == 2)
                     year += 2000;
 
-                var amountRegex = new Regex(template.AmountRegex).Match(result.Text);
+                var amountRegex = new Regex(template.AmountRegex).Match(text);
 
                 decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value}.{amountRegex.Groups[2].Value}", CultureInfo.InvariantCulture) : decimal.Parse(amountRegex.Groups[1].Value);
 
@@ -298,7 +326,9 @@ namespace ProjectIvy.Business.Handlers.Expense
                     expense.Date = new DateTime(year.Value, month.Value, dayOfMonth);
                 }
 
-                binding.ImageResize = 0.5f;
+                if (fileType == FileType.IMG)
+                    binding.ImageResize = 0.5f;
+                    
                 var file = await _fileHandler.UploadFileInternal(binding);
                 var expenseFile = new Model.Database.Main.Finance.ExpenseFile()
                 {
