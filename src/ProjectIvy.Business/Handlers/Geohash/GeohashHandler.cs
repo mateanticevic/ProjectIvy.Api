@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
@@ -60,23 +61,6 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await context.SaveChangesAsync();
         }
 
-        public async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
-        {
-            foreach (string geohash in geohashes)
-            {
-                var childGeohashes = geohashItems.Where(matchItem)
-                                                 .Where(x => x.Geohash.StartsWith(geohash))
-                                                 .ToList();
-
-                if (childGeohashes.Any())
-                    geohashItems.RemoveRange(childGeohashes);
-
-                var entity = itemFactory();
-                entity.Geohash = geohash;
-                await geohashItems.AddAsync(entity);
-            }
-        }
-
         public async Task<int> CountUnique(GeohashUniqueGetBinding binding)
         {
             using var context = GetMainContext();
@@ -84,12 +68,12 @@ namespace ProjectIvy.Business.Handlers.Geohash
             if (binding.OnlyNew)
             {
                 return await context.Trackings.WhereUser(UserId)
-                              .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                              .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                              .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
-                              .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                              .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
-                              .CountAsync();
+                                              .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                              .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                              .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                                              .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                                              .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+                                              .CountAsync();
             }
 
             return await context.Trackings.WhereUser(UserId)
@@ -103,8 +87,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
         {
             using var context = GetMainContext();
 
-            if (geohash.Length < 7)
-                throw new ArgumentException("Geohash must be at least 5 characters long");
+            if (geohash.Length < 6)
+                throw new ArgumentException("Geohash must be at least 6 characters long");
 
             await context.Trackings.WhereUser(UserId)
                                    .Where(x => x.Geohash.StartsWith(geohash))
@@ -125,10 +109,10 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                               .ToList();
 
             var toTimestamps = toGeohashes.Select(x => TimestampsByDay(context, x, false))
-                                        .SelectMany(x => x)
-                                        .GroupBy(x => x.Date)
-                                        .Select(x => x.Min())
-                                        .ToList();
+                                          .SelectMany(x => x)
+                                          .GroupBy(x => x.Date)
+                                          .Select(x => x.Min())
+                                          .ToList();
 
             var routes = fromTimestamps.Join(toTimestamps, x => x.Date, x => x.Date, (from, to) => (from, to))
                                        .Where(x => x.Item1 < x.Item2)
@@ -309,10 +293,9 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int cityId = context.Cities.GetId(cityValueId).Value;
             await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
-            _ = context.Trackings.WhereUser(UserId)
-                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
             await context.SaveChangesAsync();
+
+            _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.CityId, (int?)null));
         }
 
         public async Task RemoveGeohashFromCountry(string countryValueId, IEnumerable<string> geohashes)
@@ -322,9 +305,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
             int countryId = context.Countries.GetId(countryValueId).Value;
             await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
             await context.SaveChangesAsync();
-            _ = context.Trackings.WhereUser(UserId)
-                                 .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                 .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
+
+            _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.CountryId, (int?)null));
         }
 
         public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
@@ -333,6 +315,33 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
             int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
             await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
+            await context.SaveChangesAsync();
+
+            _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.LocationId, (int?)null));
+        }
+
+        private async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
+        {
+            foreach (string geohash in geohashes)
+            {
+                var childGeohashes = geohashItems.Where(matchItem)
+                                                 .Where(x => x.Geohash.StartsWith(geohash))
+                                                 .ToList();
+
+                if (childGeohashes.Any())
+                    geohashItems.RemoveRange(childGeohashes);
+
+                var entity = itemFactory();
+                entity.Geohash = geohash;
+                await geohashItems.AddAsync(entity);
+            }
+        }
+
+        private async Task RemoveFromTracking(MainContext context, IEnumerable<string> geohashes, Expression<Func<SetPropertyCalls<Model.Database.Main.Tracking.Tracking>, SetPropertyCalls<Model.Database.Main.Tracking.Tracking>>> expression)
+        {
+            await context.Trackings.WhereUser(UserId)
+                                   .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                   .ExecuteUpdateAsync(expression);
             await context.SaveChangesAsync();
         }
 
