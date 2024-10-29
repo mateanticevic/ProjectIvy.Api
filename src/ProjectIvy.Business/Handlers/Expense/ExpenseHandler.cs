@@ -278,72 +278,70 @@ namespace ProjectIvy.Business.Handlers.Expense
             var user = context.Users.Where(x => x.Id == UserId).Single();
 
             string text = stringBuilder.ToString();
-            foreach (var template in templates)
+
+            var template = templates.FirstOrDefault(x => new Regex(x.MatchRegex).Match(text).Success);
+            
+            if (template is null)
+                throw new ResourceNotFoundException();
+
+            var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(text);
+            var monthRegexMatch = template.MonthRegex is null ? null : new Regex(template.MonthRegex).Match(text);
+            var dayRegexMatch = template.DayRegex is null ? null : new Regex(template.DayRegex).Match(text);
+
+            int? year = yearRegexMatch?.Success == true ? int.Parse(yearRegexMatch.Groups[1].Value) : null;
+            int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
+            int? day = dayRegexMatch?.Success == true ? int.Parse(dayRegexMatch.Groups[1].Value) : null;
+
+            if (year.HasValue && year.Value.ToString().Length == 2)
+                year += 2000;
+
+            var amountRegex = new Regex(template.AmountRegex).Match(text);
+
+            decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value}.{amountRegex.Groups[2].Value}", CultureInfo.InvariantCulture) : decimal.Parse(amountRegex.Groups[1].Value);
+
+            var expense = new Model.Database.Main.Finance.Expense()
             {
-                if (!new Regex(template.MatchRegex).Match(text).Success)
-                    continue;
+                Amount = amount,
+                Comment = template.CommentTemplate,
+                CurrencyId = template.CurrencyId ?? user.DefaultCurrencyId,
+                Date = DateTime.Now,
+                DatePaid = DateTime.Now,
+                ExpenseTypeId = template.ExpenseTypeId,
+                NeedsReview = true,
+                PaymentTypeId = template.PaymentTypeId,
+                UserId = UserId,
+                ValueId = context.Expenses.NextValueId(UserId).ToString(),
+                VendorId = template.VendorId,
+            };
 
-                var yearRegexMatch = template.YearRegex is null ? null : new Regex(template.YearRegex).Match(text);
-                var monthRegexMatch = template.MonthRegex is null ? null : new Regex(template.MonthRegex).Match(text);
-                var dayRegexMatch = template.DayRegex is null ? null : new Regex(template.DayRegex).Match(text);
+            if (expense.Comment is not null)
+                expense.Comment = expense.Comment.Replace("{year}", year?.ToString() ?? string.Empty)
+                                                 .Replace("{month}", month?.ToString("D2") ?? string.Empty)
+                                                 .Replace("{day}", day?.ToString() ?? string.Empty);
 
-                int? year = yearRegexMatch?.Success == true ? int.Parse(yearRegexMatch.Groups[1].Value) : null;
-                int? month = monthRegexMatch?.Success == true ? int.Parse(monthRegexMatch.Groups[1].Value) : null;
-                int? day = dayRegexMatch?.Success == true ? int.Parse(dayRegexMatch.Groups[1].Value) : null;
-
-                if (year.HasValue && year.Value.ToString().Length == 2)
-                    year += 2000;
-
-                var amountRegex = new Regex(template.AmountRegex).Match(text);
-
-                decimal amount = amountRegex.Groups.Count == 3 ? decimal.Parse($"{amountRegex.Groups[1].Value}.{amountRegex.Groups[2].Value}", CultureInfo.InvariantCulture) : decimal.Parse(amountRegex.Groups[1].Value);
-
-                var expense = new Model.Database.Main.Finance.Expense()
-                {
-                    Amount = amount,
-                    Comment = template.CommentTemplate,
-                    CurrencyId = template.CurrencyId ?? user.DefaultCurrencyId,
-                    Date = DateTime.Now,
-                    DatePaid = DateTime.Now,
-                    ExpenseTypeId = template.ExpenseTypeId,
-                    NeedsReview = true,
-                    PaymentTypeId = template.PaymentTypeId,
-                    UserId = UserId,
-                    ValueId = context.Expenses.NextValueId(UserId).ToString(),
-                    VendorId = template.VendorId,
-                };
-
-                if (expense.Comment is not null)
-                    expense.Comment = expense.Comment.Replace("{year}", year?.ToString() ?? string.Empty)
-                                                     .Replace("{month}", month?.ToString("D2") ?? string.Empty)
-                                                     .Replace("{day}", day?.ToString() ?? string.Empty);
-
-                if (year.HasValue && month.HasValue && (day.HasValue || template.DefaultDayOfMonth is not null))
-                {
-                    int dayOfMonth = day ?? (template.DefaultDayOfMonth.Value > 0
-                                                ? template.DefaultDayOfMonth.Value
-                                                : DateTime.DaysInMonth(year.Value, month.Value) + template.DefaultDayOfMonth.Value + 1);
-                    expense.Date = new DateTime(year.Value, month.Value, dayOfMonth);
-                }
-
-                if (fileType == FileType.IMG)
-                    binding.ImageResize = 0.5f;
-
-                var file = await _fileHandler.UploadFileInternal(binding);
-                var expenseFile = new Model.Database.Main.Finance.ExpenseFile()
-                {
-                    Expense = expense,
-                    FileId = file.Id,
-                    ExpenseFileTypeId = 1
-                };
-
-                await context.Expenses.AddAsync(expense);
-                await context.ExpenseFiles.AddAsync(expenseFile);
-                await context.SaveChangesAsync();
-                ClearCache();
-
-                break;
+            if (year.HasValue && month.HasValue && (day.HasValue || template.DefaultDayOfMonth is not null))
+            {
+                int dayOfMonth = day ?? (template.DefaultDayOfMonth.Value > 0
+                                            ? template.DefaultDayOfMonth.Value
+                                            : DateTime.DaysInMonth(year.Value, month.Value) + template.DefaultDayOfMonth.Value + 1);
+                expense.Date = new DateTime(year.Value, month.Value, dayOfMonth);
             }
+
+            if (fileType == FileType.IMG)
+                binding.ImageResize = 0.5f;
+
+            var file = await _fileHandler.UploadFileInternal(binding);
+            var expenseFile = new Model.Database.Main.Finance.ExpenseFile()
+            {
+                Expense = expense,
+                FileId = file.Id,
+                ExpenseFileTypeId = 1
+            };
+
+            await context.Expenses.AddAsync(expense);
+            await context.ExpenseFiles.AddAsync(expenseFile);
+            await context.SaveChangesAsync();
+            ClearCache();
         }
 
         public bool Delete(string valueId)
