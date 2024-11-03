@@ -24,6 +24,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
 
+        Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null);
+
         Task<TrackingDetails> GetDetails(FilteredBinding binding);
 
         Task<View.Tracking> GetLast(DateTime? at = null);

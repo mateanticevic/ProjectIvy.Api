@@ -76,6 +76,9 @@ namespace ProjectIvy.Api.Controllers.Tracking
         [HttpGet("Last")]
         public async Task<IActionResult> GetLast([FromQuery] DateTime? at = null) => Ok(await _trackingHandler.GetLast(at));
 
+        [HttpGet("Last/Days")]
+        public async Task<IEnumerable<DateTime>> GetLastDays([FromQuery] DateTime? at = null) => await _trackingHandler.GetDaysAtLast(at);
+
         [HttpPost("Delete")]
         public async Task<IActionResult> PostDelete([FromBody] IEnumerable<long> timestamps)
         {

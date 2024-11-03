@@ -234,7 +234,28 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
 
-        public async Task<View.TrackingLocation> GetLastLocation()
+        public async Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null)
+        {
+            using var context = GetMainContext();
+
+            var last = await context.Trackings.WhereUser(UserId)
+                                              .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                              .OrderByDescending(x => x.Timestamp)
+                                              .FirstOrDefaultAsync();
+
+            string parentGeohash = last.Geohash.Substring(0, 7);
+
+            return await context.Trackings.WhereUser(UserId)
+                                          .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                          .Where(x => x.Timestamp.Date != (at.HasValue ? at.Value.Date : DateTime.Now.Date))
+                                          .Where(x => x.Geohash.StartsWith(parentGeohash))
+                                          .Select(x => x.Timestamp.Date)
+                                          .Distinct()
+                                          .OrderByDescending(x => x)
+                                          .ToListAsync();
+        }
+
+        public async Task<TrackingLocation> GetLastLocation()
         {
             var tracking = await GetLastTracking();
             var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
