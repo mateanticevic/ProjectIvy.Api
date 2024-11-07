@@ -28,23 +28,6 @@ namespace ProjectIvy.Business.Handlers.Calendar
             await context.SaveChangesAsync();
         }
 
-        public async Task CreateVacation(DateTime date)
-        {
-            var weekendDays = DayOfWeek.Saturday | DayOfWeek.Sunday;
-            if ((date.DayOfWeek & weekendDays) != 0)
-                throw new Exception();
-
-            using var context = GetMainContext();
-
-            var vacation = new Model.Database.Main.User.WorkDay()
-            {
-                Date = date,
-                UserId = UserId
-            };
-            context.WorkDays.Add(vacation);
-            await context.SaveChangesAsync();
-        }
-
         public async Task DeleteVacation(DateTime date)
         {
             using var context = GetMainContext();
@@ -79,25 +62,26 @@ namespace ProjectIvy.Business.Handlers.Calendar
             bool rangeInFuture = from > DateTime.Now;
 
             var countriesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
-                                                         .Include(x => x.Country)
-                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
-                                                         .GroupBy(x => x.Timestamp.Date)
-                                                         .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
-                                                         .ToListAsync();
+                                                                                   .Include(x => x.Country)
+                                                                                   .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId != null)
+                                                                                   .GroupBy(x => x.Timestamp.Date)
+                                                                                   .Select(x => new { Date = x.Key, Countries = x.Select(c => c.Country).Distinct() })
+                                                                                   .ToListAsync();
 
             var citiesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
-                                                      .Include(x => x.City)
-                                                      .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CityId != null)
-                                                      .GroupBy(x => x.Timestamp.Date)
-                                                      .Select(x => new { Date = x.Key, Cities = x.Select(c => c.City).Distinct() })
-                                                      .ToListAsync();
+                                                                                .Include(x => x.City)
+                                                                                .ThenInclude(x => x.Country)
+                                                                                .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CityId != null)
+                                                                                .GroupBy(x => x.Timestamp.Date)
+                                                                                .Select(x => new { Date = x.Key, Cities = x.Select(c => c.City).Distinct() })
+                                                                                .ToListAsync();
 
             var locationsPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
-                                                         .Include(x => x.Location)
-                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId != null)
-                                                         .GroupBy(x => x.Timestamp.Date)
-                                                         .Select(x => new { Date = x.Key, Locations = x.Select(c => c.Location).Distinct() })
-                                                         .ToListAsync();
+                                                                                   .Include(x => x.Location)
+                                                                                   .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId != null)
+                                                                                   .GroupBy(x => x.Timestamp.Date)
+                                                                                   .Select(x => new { Date = x.Key, Locations = x.Select(c => c.Location).Distinct() })
+                                                                                   .ToListAsync();
 
             var events = await context.Events.WhereUser(UserId)
                                              .Where(x => x.Date >= from && x.Date <= to)

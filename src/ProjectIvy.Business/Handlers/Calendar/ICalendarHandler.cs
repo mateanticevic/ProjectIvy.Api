@@ -8,8 +8,6 @@ namespace ProjectIvy.Business.Handlers.Calendar
     {
         Task CreateEvent(DateTime date, string name);
 
-        Task CreateVacation(DateTime date);
-
         Task DeleteVacation(DateTime date);
 
         Task<CalendarSection> Get(DateTime from, DateTime to);
