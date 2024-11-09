@@ -59,6 +59,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
             int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
             await AddGeohashesTo(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, () => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
             await context.SaveChangesAsync();
+
+            _ = UpdateLocations(locationId);
         }
 
         public async Task<int> CountUnique(GeohashUniqueGetBinding binding)
@@ -404,6 +406,21 @@ namespace ProjectIvy.Business.Handlers.Geohash
                                     .Where(x => x.Geohash.StartsWith(geohash))
                                     .GroupBy(x => x.Timestamp.Date)
                                     .Select(x => last ? x.Max(y => y.Timestamp) : x.Min(y => y.Timestamp));
+        }
+
+        private async Task UpdateLocations(int locationId)
+        {
+            using var context = GetMainContext();
+
+            var geohashes = await context.LocationGeohashes.Where(x => x.LocationId == locationId)
+                                                           .Select(x => x.Geohash)
+                                                           .ToListAsync();
+
+            int updatedCount = await context.Trackings.WhereUser(UserId)
+                                                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                                      .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, locationId));
+
+            _logger.LogInformation("Updated {0} trackings with location {1}", updatedCount, locationId);
         }
     }
 }
