@@ -60,6 +60,8 @@ namespace ProjectIvy.Business.Handlers.Geohash
             await AddGeohashesTo(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, () => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
             await context.SaveChangesAsync();
 
+            _logger.LogInformation("Added {GeohashCount} geohashes to location {LocationId}", geohashes.Count(), locationId);
+
             _ = UpdateLocations(locationId);
         }
 
@@ -410,17 +412,26 @@ namespace ProjectIvy.Business.Handlers.Geohash
 
         private async Task UpdateLocations(int locationId)
         {
-            using var context = GetMainContext();
+            try
+            {
+                using var context = GetMainContext();
 
-            var geohashes = await context.LocationGeohashes.Where(x => x.LocationId == locationId)
-                                                           .Select(x => x.Geohash)
-                                                           .ToListAsync();
+                var geohashes = await context.LocationGeohashes.Where(x => x.LocationId == locationId)
+                                                               .Select(x => x.Geohash)
+                                                               .ToListAsync();
 
-            int updatedCount = await context.Trackings.WhereUser(UserId)
-                                                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                                                      .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, locationId));
+                int updatedCount = await context.Trackings.WhereUser(UserId)
+                                                          .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                                                          .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, locationId));
 
-            _logger.LogInformation("Updated {0} trackings with location {1}", updatedCount, locationId);
+                await context.SaveChangesAsync();
+
+                _logger.LogInformation("Updated {UpdatedCount} trackings with location {LocationId}", updatedCount, locationId);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error updating locations");
+            }
         }
     }
 }
