@@ -415,6 +415,7 @@ namespace ProjectIvy.Business.Handlers.Geohash
             try
             {
                 using var context = GetMainContext();
+                context.Database.SetCommandTimeout(300);
 
                 var geohashes = await context.LocationGeohashes.Where(x => x.LocationId == locationId)
                                                                .Select(x => x.Geohash)
