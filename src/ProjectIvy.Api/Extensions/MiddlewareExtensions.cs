@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using ProjectIvy.Api.Middlewares;
 
-namespace ProjectIvy.Api.Extensions
+namespace ProjectIvy.Api.Extensions;
+
+public static class MiddlewareExtensions
 {
-    public static class MiddlewareExtensions
+    public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder builder)
     {
-        public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder builder)
-        {
-            return builder.UseMiddleware<ExceptionHandlingMiddleware>();
-        }
+        return builder.UseMiddleware<ExceptionHandlingMiddleware>();
     }
 }

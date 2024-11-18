@@ -47,6 +47,7 @@ namespace ProjectIvy.Business.Handlers.Location
                                           .Include(x => x.Geohashes)
                                           .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Name.ToLower().Contains(b.Search.ToLower()))
                                           .Select(x => new Model.View.Location.Location(x))
+                                          .OrderBy(x => x.Name)
                                           .ToPagedViewAsync(b);
         }
 

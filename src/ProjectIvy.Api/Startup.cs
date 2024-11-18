@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json.Converters;
 using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
@@ -42,6 +44,7 @@ using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Webhooks;
+using ProjectIvy.Business.Handlers.WorkDay;
 using ProjectIvy.Business.Services.LastFm;
 using Prometheus;
 using Serilog;
@@ -86,6 +89,7 @@ namespace ProjectIvy.Api
             services.AddHandler<IAirlineHandler, AirlineHandler>();
             services.AddHandler<IAirportHandler, AirportHandler>();
             services.AddHandler<IBeerHandler, BeerHandler>();
+            services.AddHandler<ICalendarHandler, CalendarHandler>();
             services.AddHandler<ICallHandler, CallHandler>();
             services.AddHandler<ICarHandler, CarHandler>();
             services.AddHandler<ICardHandler, CardHandler>();
@@ -110,8 +114,8 @@ namespace ProjectIvy.Api
             services.AddHandler<ITrackingHandler, TrackingHandler>();
             services.AddHandler<ITripHandler, TripHandler>();
             services.AddHandler<IUserHandler, UserHandler>();
-            services.AddHandler<ICalendarHandler, CalendarHandler>();
             services.AddHandler<IVendorHandler, VendorHandler>();
+            services.AddHandler<IWorkDayHandler, WorkDayHandler>();
             services.AddSingleton<IAuthorizationHandler, ScopeRequirementHandler>();
 
             services.AddMemoryCache(setup =>
@@ -122,27 +126,27 @@ namespace ProjectIvy.Api
 
             services.AddControllers(options => options.EnableEndpointRouting = false)
                     .AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
-                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            })
-            .AddNewtonsoftJson();
-            services.AddSwaggerGen(options =>
-            {
-                options.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
-                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
-                {
-                    Type = SecuritySchemeType.OAuth2,
-                    Flows = new OpenApiOAuthFlows
                     {
-                        AuthorizationCode = new OpenApiOAuthFlow
+                        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
+                        options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                    });
+
+            services.AddSwaggerGen(options =>
+                    {
+                        options.SwaggerDoc("v1", new OpenApiInfo { Title = "ProjectIvy", Version = "v1" });
+                        options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
                         {
-                            AuthorizationUrl = new Uri($"{_authority}/connect/authorize"),
-                            TokenUrl = new Uri($"{_authority}/connect/token"),
-                        }
-                    }
-                });
-            });
+                            Type = SecuritySchemeType.OAuth2,
+                            Flows = new OpenApiOAuthFlows
+                            {
+                                AuthorizationCode = new OpenApiOAuthFlow
+                                {
+                                    AuthorizationUrl = new Uri($"{_authority}/connect/authorize"),
+                                    TokenUrl = new Uri($"{_authority}/connect/token"),
+                                }
+                            }
+                        });
+                    });
 
             var conf = new KeycloakAuthenticationOptions()
             {
