@@ -1,6 +1,6 @@
 namespace ProjectIvy.Model.View.Calendar;
 
-public class WorkDayType
+public class WorkDayTypeOld
 {
     public string Id { get; set; }
     

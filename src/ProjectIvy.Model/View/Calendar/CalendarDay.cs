@@ -14,5 +14,5 @@ public class CalendarDay
 
     public DateTime Date { get; set; }
 
-    public WorkDayType WorkDayType { get; set; }
+    public WorkDayTypeOld WorkDayType { get; set; }
 }

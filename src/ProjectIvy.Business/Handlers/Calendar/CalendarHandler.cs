@@ -105,7 +105,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
             if (workDays.Any(x => x.Date == day))
             {
                 var workDayType = workDays.First(x => x.Date == day);
-                calendarDay.WorkDayType = new WorkDayType()
+                calendarDay.WorkDayType = new WorkDayTypeOld()
                 {
                     Id = workDayType.ValueId,
                     Name = workDayType.Name
