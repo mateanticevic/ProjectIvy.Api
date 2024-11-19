@@ -46,6 +46,7 @@ using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Handlers.WorkDay;
 using ProjectIvy.Business.Services.LastFm;
+using ProjectIvy.Model.Converters;
 using Prometheus;
 using Serilog;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
@@ -129,6 +130,7 @@ namespace ProjectIvy.Api
                     {
                         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
                         options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+                        options.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
                     });
 
             services.AddSwaggerGen(options =>

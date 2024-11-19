@@ -74,7 +74,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             throw new NotImplementedException();
         }
 
-        public bool Create(TrackingBinding binding)
+        public async Task Create(TrackingBinding binding)
         {
             using (var db = GetMainContext())
             {
@@ -84,10 +84,8 @@ namespace ProjectIvy.Business.Handlers.Tracking
                 tracking.Geohash = geohasher.Encode((double)binding.Latitude, (double)binding.Longitude, 9);
                 tracking.UserId = UserId;
 
-                db.Trackings.Add(tracking);
-                db.SaveChanges();
-
-                return true;
+                await db.Trackings.AddAsync(tracking);
+                await db.SaveChangesAsync();
             }
         }
 

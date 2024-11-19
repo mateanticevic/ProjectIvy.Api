@@ -16,7 +16,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
 
         IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
 
-        bool Create(TrackingBinding binding);
+        Task Create(TrackingBinding binding);
 
         Task Create(IEnumerable<TrackingBinding> binding);
 
