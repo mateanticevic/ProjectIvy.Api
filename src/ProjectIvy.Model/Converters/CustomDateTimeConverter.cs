@@ -6,24 +6,32 @@ namespace ProjectIvy.Model.Converters;
 
 public class CustomDateTimeConverter : JsonConverter<DateTime>
 {
-    private const string AlternativeDateFormat = "yyyy-MM-ddTHH:mm:ss";
-    private const string DateFormat = "yyyy-MM-dd HH:mm:ss";
+    private const string AlternativeDateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
+    private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    private const string DateFormat = "yyyy-MM-dd";
 
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string value = reader.GetString();
         try
         {
-            return DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+            return DateTime.ParseExact(value, DateTimeFormat, CultureInfo.InvariantCulture);
         }
         catch
         {
-            return DateTime.ParseExact(value, AlternativeDateFormat, CultureInfo.InvariantCulture);
+            try
+            {
+                return DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+            }
+            catch
+            {
+                return DateTime.ParseExact(value, AlternativeDateTimeFormat, CultureInfo.InvariantCulture);
+            }
         }
     }
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.ToString(DateFormat, CultureInfo.InvariantCulture));
+        writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
     }
 }
