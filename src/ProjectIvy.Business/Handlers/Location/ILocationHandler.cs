@@ -17,7 +17,7 @@ namespace ProjectIvy.Business.Handlers.Location
 
         Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay(FilteredBinding b);
 
-        Task<IEnumerable<DateTime>> GetDays(string locationId);
+        Task<IEnumerable<DateTime>> GetDays(string locationId, FilteredBinding binding);
 
         Task<IEnumerable<string>> GetGeohashes(string valueId);
 

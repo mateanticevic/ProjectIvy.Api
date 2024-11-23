@@ -55,7 +55,7 @@ namespace ProjectIvy.Business.Handlers.Location
         {
             using var context = GetMainContext();
 
-            return  (await context.Locations.WhereUser(UserId)
+            return (await context.Locations.WhereUser(UserId)
                                                   .Include(x => x.Geohashes)
                                                   .FirstOrDefaultAsync(x => x.ValueId == valueId))
                                                   ?.Geohashes
@@ -70,10 +70,10 @@ namespace ProjectIvy.Business.Handlers.Location
             using var context = GetMainContext();
 
             var locationsPerDay = await (from t in context.Trackings.WhereUser(UserId)
-                    from lg in context.Locations.WhereUser(UserId).Include(x => x.Geohashes).SelectMany(x => x.Geohashes)
-                    where t.Timestamp >= b.From.Value && t.Timestamp <= b.To.Value.AddDays(1)
-                    where t.Geohash.StartsWith(lg.Geohash)
-                    select new { lg.Location, t.Timestamp.Date }).Distinct().ToListAsync();
+                                         from lg in context.Locations.WhereUser(UserId).Include(x => x.Geohashes).SelectMany(x => x.Geohashes)
+                                         where t.Timestamp >= b.From.Value && t.Timestamp <= b.To.Value.AddDays(1)
+                                         where t.Geohash.StartsWith(lg.Geohash)
+                                         select new { lg.Location, t.Timestamp.Date }).Distinct().ToListAsync();
 
             return locationsPerDay.GroupBy(x => x.Date)
                                   .OrderByDescending(x => x.Key)
@@ -81,7 +81,7 @@ namespace ProjectIvy.Business.Handlers.Location
                                   .ToList();
         }
 
-        public async Task<IEnumerable<DateTime>> GetDays(string locationId)
+        public async Task<IEnumerable<DateTime>> GetDays(string locationId, FilteredBinding binding)
         {
             string cacheKey = BuildUserCacheKey(CacheKeyGenerator.LocationDays(locationId));
             return await MemoryCache.GetOrCreateAsync(cacheKey,
@@ -95,6 +95,8 @@ namespace ProjectIvy.Business.Handlers.Location
 
                     var days = await context.Trackings.WhereUser(UserId)
                                                       .Where(x => x.LocationId == location.Id)
+                                                      .WhereIf(binding.From != null, x => x.Timestamp >= binding.From)
+                                                      .WhereIf(binding.To != null, x => x.Timestamp <= binding.To)
                                                       .Select(x => x.Timestamp.Date)
                                                       .Distinct()
                                                       .OrderByDescending(x => x)
