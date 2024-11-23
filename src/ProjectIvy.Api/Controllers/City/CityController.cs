@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.City;
 using ProjectIvy.Business.Handlers.Geohash;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.City;
 using ProjectIvy.Model.Binding.Geohash;
-using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
 
 namespace ProjectIvy.Api.Controllers.City
@@ -22,6 +23,9 @@ namespace ProjectIvy.Api.Controllers.City
 
         [HttpGet]
         public async Task<IActionResult> Get([FromQuery] CityGetBinding binding) => Ok(await _cityHandler.Get(binding));
+
+        [HttpGet("{cityId}/Days")]
+        public async Task<IEnumerable<DateTime>> GetDays(string cityId, [FromQuery] FilteredBinding binding) => await _cityHandler.GetDays(cityId, binding);
 
         [HttpGet("{cityId}/Geohash")]
         public async Task<IActionResult> GetGeohashes(string cityId) => Ok(await _geohashHandler.GetCityGeohashes(cityId));

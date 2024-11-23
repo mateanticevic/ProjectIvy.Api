@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Model.Binding.City;
+﻿using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Binding.City;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Geohash;
@@ -12,6 +13,8 @@ namespace ProjectIvy.Business.Handlers.City
         Task AddVisitedCity(string cityValueId);
 
         Task<PagedView<View.City>> Get(CityGetBinding binding);
+
+        Task<IEnumerable<DateTime>> GetDays(string cityValueId, FilteredBinding binding);
 
         Task<IEnumerable<RouteTime>> GetRoutes(string fromCityValueId, string toCityValueId, RouteTimeSort sort);
 

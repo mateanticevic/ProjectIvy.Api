@@ -1,12 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.City;
 using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Geohash;
-using System.Linq;
-using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.City;
 
 namespace ProjectIvy.Business.Handlers.City
@@ -15,7 +18,7 @@ namespace ProjectIvy.Business.Handlers.City
     {
         private readonly IGeohashHandler _geohashHandler;
 
-        public CityHandler(IHandlerContext<CityHandler> context, IGeohashHandler geohashHandler) : base(context)
+        public CityHandler(IHandlerContext<CityHandler> context, IGeohashHandler geohashHandler, IMemoryCache memoryCache) : base(context, memoryCache, nameof(GeohashHandler))
         {
             _geohashHandler = geohashHandler;
         }
@@ -49,6 +52,31 @@ namespace ProjectIvy.Business.Handlers.City
 
                 return await query.ToPagedViewAsync(binding);
             }
+        }
+
+        public async Task<IEnumerable<DateTime>> GetDays(string cityValueId, FilteredBinding binding)
+        {
+            string cacheKey = BuildUserCacheKey(CacheKeyGenerator.CityDays(cityValueId));
+            return await MemoryCache.GetOrCreateAsync(cacheKey,
+                async cacheEntry =>
+                {
+                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                    using var context = GetMainContext();
+
+                    var city = await context.Cities.SingleOrDefaultAsync(x => x.ValueId == cityValueId);
+
+                    var days = await context.Trackings.WhereUser(UserId)
+                                                      .Where(x => x.CityId == city.Id)
+                                                      .WhereIf(binding.From != null, x => x.Timestamp >= binding.From)
+                                                      .WhereIf(binding.To != null, x => x.Timestamp <= binding.To)
+                                                      .Select(x => x.Timestamp.Date)
+                                                      .Distinct()
+                                                      .OrderByDescending(x => x)
+                                                      .ToListAsync();
+
+                    return days;
+                }
+            );
         }
 
         public async Task<IEnumerable<RouteTime>> GetRoutes(string fromCityValueId, string toCityValueId, RouteTimeSort sort)

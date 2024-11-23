@@ -6,7 +6,9 @@ namespace ProjectIvy.Business.Caching
 {
     public static class CacheKeyGenerator
 	{
-		public static string BeerBrandsGet(BrandGetBinding b) => $"{nameof(BeerBrandsGet)}_{JsonConvert.SerializeObject(b)}"; 
+		public static string BeerBrandsGet(BrandGetBinding b) => $"{nameof(BeerBrandsGet)}_{JsonConvert.SerializeObject(b)}";
+
+		public static string CityDays(string cityId) => $"{nameof(CityDays)}_{cityId}";
 
 		public static string CurrenciesGet() => nameof(CurrenciesGet);
 

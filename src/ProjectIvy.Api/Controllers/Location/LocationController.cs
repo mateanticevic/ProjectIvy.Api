@@ -32,7 +32,8 @@ namespace ProjectIvy.Api.Controllers.Location
         public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay([FromQuery] FilteredBinding b) => await _locationHandler.GetByDay(b);
 
         [HttpGet("{locationId}/Days")]
-        public async Task<IActionResult> GetDays(string locationId) => Ok(await _locationHandler.GetDays(locationId));
+        public async Task<IActionResult> GetDays(string locationId, [FromQuery] FilteredBinding binding)
+            => Ok(await _locationHandler.GetDays(locationId, binding));
 
         [HttpGet("{locationId}/Geohashes")]
         public async Task<IEnumerable<string>> GetGeohashes(string locationId) => await _locationHandler.GetGeohashes(locationId);
