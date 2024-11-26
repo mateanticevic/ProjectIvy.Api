@@ -131,6 +131,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
             catch (Exception e)
             {
                 Logger.LogError(e?.InnerException, "Failed to save trackings");
+                throw;
             }
         }
 
