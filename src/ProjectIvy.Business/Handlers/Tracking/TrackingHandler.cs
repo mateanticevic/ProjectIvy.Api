@@ -125,7 +125,7 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     await db.Trackings.AddRangeAsync(trackings);
 
                     int count = await db.SaveChangesAsync();
-                    Logger.LogInformation("Inserted {TrackingCount} trackins", count);
+                    Logger.LogInformation("Inserted {TrackingCount} trackings", count);
                 }
             }
             catch (Exception e)
