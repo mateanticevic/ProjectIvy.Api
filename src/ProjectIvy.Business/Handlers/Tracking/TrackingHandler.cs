@@ -124,13 +124,13 @@ namespace ProjectIvy.Business.Handlers.Tracking
                     }).ToList();
                     await db.Trackings.AddRangeAsync(trackings);
 
-                    int affeted = await db.SaveChangesAsync();
-                    Logger.LogInformation("Inserted {TrackingCount} trackins", affeted);
+                    int count = await db.SaveChangesAsync();
+                    Logger.LogInformation("Inserted {TrackingCount} trackins", count);
                 }
             }
             catch (Exception e)
             {
-                Logger.LogError(e?.InnerException, "Failed to save trackings");
+                Logger.LogError(e, "Failed to save trackings");
                 throw;
             }
         }

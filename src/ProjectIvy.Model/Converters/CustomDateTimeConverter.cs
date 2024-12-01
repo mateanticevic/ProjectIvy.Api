@@ -6,6 +6,7 @@ namespace ProjectIvy.Model.Converters;
 
 public class CustomDateTimeConverter : JsonConverter<DateTime>
 {
+    private const string AlternativeDateTimeMsFormat = "yyyy-MM-ddTHH:mm:ss.fffZ";
     private const string AlternativeDateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
     private const string DateFormat = "yyyy-MM-dd";
@@ -21,7 +22,14 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
         {
             try
             {
-                return DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+                try
+                {
+                    return DateTime.ParseExact(value, DateFormat, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return DateTime.ParseExact(value, AlternativeDateTimeMsFormat, CultureInfo.InvariantCulture);
+                }
             }
             catch
             {
