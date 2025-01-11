@@ -2,22 +2,21 @@
 using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
-namespace ProjectIvy.Api.Controllers
+namespace ProjectIvy.Api.Controllers;
+
+[Route("[controller]")]
+public abstract class BaseController<TController> : Controller
 {
-    [Route("[controller]")]
-    public abstract class BaseController<TController> : Controller
+    protected BaseController(ILogger<TController> logger)
     {
-        protected BaseController(ILogger<TController> logger)
-        {
-            Logger = logger;
-        }
+        Logger = logger;
+    }
 
-        protected ILogger Logger { get; }
+    protected ILogger Logger { get; }
 
-        protected async Task<OkResult> Ok(Task task)
-        {
-            await task;
-            return Ok();
-        }
+    protected async Task<OkResult> Ok(Task task)
+    {
+        await task;
+        return Ok();
     }
 }

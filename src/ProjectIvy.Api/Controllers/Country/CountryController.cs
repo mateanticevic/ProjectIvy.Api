@@ -1,5 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Common.Helpers;
@@ -7,11 +10,11 @@ using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
-using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Country;
 
 namespace ProjectIvy.Api.Controllers.Country;
 
+[Authorize(ApiScopes.BasicUser)]
 public class CountryController : BaseController<CountryController>
 {
     private readonly ICountryHandler _countryHandler;

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -7,7 +8,6 @@ using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Binding.File;
 using ProjectIvy.Model.Constants;
 using ProjectIvy.Model.View;
-using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Controllers.Expense;

@@ -1,25 +1,27 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Model.Binding.Movie;
 
-namespace ProjectIvy.Api.Controllers.Movie
+namespace ProjectIvy.Api.Controllers.Movie;
+
+[Route("Movie/MyRating")]
+[Authorize(ApiScopes.MovieUser)]
+public class MovieMyRatingController : BaseController<MovieController>
 {
-    [Route("Movie/MyRating")]
-    public class MovieMyRatingController : BaseController<MovieController>
+    private readonly IMovieHandler _movieHandler;
+
+    public MovieMyRatingController(ILogger<MovieController> logger, IMovieHandler movieHandler) : base(logger)
     {
-        private readonly IMovieHandler _movieHandler;
-
-        public MovieMyRatingController(ILogger<MovieController> logger, IMovieHandler movieHandler) : base(logger)
-        {
-            _movieHandler = movieHandler;
-        }
-
-        [HttpGet("Average")]
-        public double GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetMyRatingAverage(binding);
-
-        [HttpGet("ByYear")]
-        public async Task<IActionResult> GetAveragerByYear([FromQuery] MovieGetBinding binding) => Ok(await _movieHandler.GetMyRatingAverageByYear(binding));
+        _movieHandler = movieHandler;
     }
+
+    [HttpGet("Average")]
+    public double GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetMyRatingAverage(binding);
+
+    [HttpGet("ByYear")]
+    public async Task<IActionResult> GetAveragerByYear([FromQuery] MovieGetBinding binding) => Ok(await _movieHandler.GetMyRatingAverageByYear(binding));
 }

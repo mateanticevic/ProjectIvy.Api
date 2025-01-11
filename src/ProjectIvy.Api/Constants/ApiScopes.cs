@@ -2,6 +2,8 @@ namespace ProjectIvy.Api.Constants;
 
 public static class ApiScopes
 {
+    public const string BasicUser = "basic:user";
+
     public const string BeerCreate = "beer:create";
 
     public const string BeerUser = "beer:user";
@@ -11,6 +13,8 @@ public static class ApiScopes
     public const string FlightUser = "flight:user";
 
     public const string IncomeUser = "income:user";
+
+    public const string MovieUser = "movie:user";
 
     public const string TrackingCreate = "tracking:create";
 
