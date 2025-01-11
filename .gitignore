@@ -28,7 +28,6 @@ src/ProjectIvy.Api/obj
 src/ProjectIvy.Api/bin
 .vs
 .vscode
-/src/ProjectIvy.Api/appsettings.json
 /src/ProjectIvy.Api/StyleCop.Cache
 /src/ProjectIvy.Business/StyleCop.Cache
 /src/ProjectIvy.Common/StyleCop.Cache

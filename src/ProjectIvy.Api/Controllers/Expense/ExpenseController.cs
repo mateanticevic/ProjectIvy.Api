@@ -6,7 +6,6 @@ using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.Binding.File;
-using ProjectIvy.Model.Constants;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Expense;
 
@@ -25,8 +24,6 @@ public class ExpenseController : BaseController<ExpenseController>
     [HttpDelete("{valueId}")]
     public bool Delete(string valueId)
     {
-        Logger.LogInformation((int)LogEvent.ActionCalled, nameof(Delete), valueId);
-
         return _expenseHandler.Delete(valueId);
     }
 

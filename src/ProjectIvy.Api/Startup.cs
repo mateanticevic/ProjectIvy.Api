@@ -13,7 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.OpenApi.Models;
-using Newtonsoft.Json.Converters;
 using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
@@ -61,13 +60,12 @@ namespace ProjectIvy.Api
         public Startup(IWebHostEnvironment env)
         {
             _authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
-            var builder = new ConfigurationBuilder().SetBasePath(env.ContentRootPath)
+            var builder = new ConfigurationBuilder()
                                                     .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                                                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true);
+                                                    .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                                                    .AddEnvironmentVariables();
 
-            builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            Console.WriteLine(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -150,14 +148,7 @@ namespace ProjectIvy.Api
                         });
                     });
 
-            var conf = new KeycloakAuthenticationOptions()
-            {
-                AuthServerUrl = "https://auth.anticevic.net",
-                Realm = "ivy",
-                Resource = "api",
-                VerifyTokenAudience = false,
-            };
-            services.AddKeycloakAuthentication(conf, o => {
+            services.AddKeycloakWebApiAuthentication(Configuration, o => {
                 o.RequireHttpsMetadata = false;
                 o.Events = new JwtBearerEvents
                             {
@@ -165,17 +156,14 @@ namespace ProjectIvy.Api
                                 {
                                     context.Token = context.Request.Cookies["AccessToken"];
                                     return Task.CompletedTask;
+                                },
+                                OnAuthenticationFailed = context =>
+                                {
+                                    Console.WriteLine(context.Exception);
+                                    return Task.CompletedTask;
                                 }
                             };
             });
-
-            var prot = new KeycloakProtectionClientOptions()
-            {
-                AuthServerUrl = "https://auth.anticevic.net",
-                Realm = "ivy",
-                Resource = "api",
-                VerifyTokenAudience = false,
-            };
 
             services.AddAuthorization(options =>
                 {
@@ -190,7 +178,8 @@ namespace ProjectIvy.Api
                         });
                     }
                 })
-                .AddKeycloakAuthorization(prot);
+                .AddKeycloakAuthorization(Configuration)
+                .AddAuthorizationBuilder();
 
             services.AddMvc(setup =>
             {
