@@ -8,6 +8,8 @@ public static class ApiScopes
 
     public const string ExpenseUser = "expense:user";
 
+    public const string FlightUser = "flight:user";
+
     public const string IncomeUser = "income:user";
 
     public const string TrackingCreate = "tracking:create";
