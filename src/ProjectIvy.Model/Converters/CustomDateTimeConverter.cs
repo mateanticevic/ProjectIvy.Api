@@ -10,6 +10,7 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
     private const string AlternativeDateTimeMsNoZFormat = "yyyy-MM-ddTHH:mm:ss.fff";
     private const string AlternativeDateTimeFormat = "yyyy-MM-ddTHH:mm:ss";
     private const string DateTimeFormat = "yyyy-MM-dd HH:mm:ss";
+    private const string DateTimeFormatMs = "yyyy-MM-dd HH:mm:ss.fff";
     private const string DateFormat = "yyyy-MM-dd";
 
     public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -51,6 +52,6 @@ public class CustomDateTimeConverter : JsonConverter<DateTime>
 
     public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
     {
-        writer.WriteStringValue(value.ToString(DateTimeFormat, CultureInfo.InvariantCulture));
+        writer.WriteStringValue(value.ToString(DateTimeFormatMs, CultureInfo.InvariantCulture));
     }
 }
