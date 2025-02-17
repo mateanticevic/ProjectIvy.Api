@@ -10,17 +10,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Dapper" Version="2.1.35" />
+    <PackageReference Include="Dapper" Version="2.1.66" />
     <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
-    <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.68.0.3637" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-    <PackageReference Include="Microsoft.Data.SqlClient" Version="5.2.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.0" />
+    <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.69.0.3690" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.0" />
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.2" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.6" />
-    <PackageReference Include="ZXing.Net" Version="0.16.9" />
-    <PackageReference Include="ZXing.Net.Bindings.ImageSharp.V3" Version="0.16.16" />
+    <PackageReference Include="ZXing.Net" Version="0.16.10" />
+    <PackageReference Include="ZXing.Net.Bindings.ImageSharp.V3" Version="0.16.17" />
     <PackageReference Include="geohash-dotnet" Version="2.2.0" />
-    <PackageReference Include="itext7" Version="9.0.0" />
+    <PackageReference Include="itext7" Version="9.1.0" />
   </ItemGroup>
 
   <ItemGroup>
