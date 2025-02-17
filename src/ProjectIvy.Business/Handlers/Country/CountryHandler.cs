@@ -78,14 +78,12 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
 
     public async Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            int countryId = context.Countries.GetId(countryValueId).Value;
-            return context.Cities.Where(x => x.CountryId == countryId)
-                                       .OrderByDescending(x => x.Population)
-                                       .Select(x => new Model.View.City.City(x))
-                                       .ToPagedView(binding);
-        }
+        using var context = GetMainContext();
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        return await context.Cities.Where(x => x.CountryId == countryId)
+                                   .OrderByDescending(x => x.Population)
+                                   .Select(x => new Model.View.City.City(x))
+                                   .ToPagedViewAsync(binding);
     }
 
     public async Task<IEnumerable<View.CountryList>> GetLists()
@@ -116,6 +114,7 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
     {
         return await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.CountriesVisited()), async cacheKey =>
         {
+            cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
             using var context = GetMainContext();
 
             return await context.Trackings
@@ -127,40 +126,6 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
                                 .Select(x => new View.Country(x.Key))
                                 .ToListAsync();
         });
-
-        //using (var context = GetMainContext())
-        //{
-
-        //    var countries = context.CitiesVisited
-        //                           .Include(x => x.Trip)
-        //                           .Include(x => x.City)
-        //                           .Where(x => x.Trip.UserId == UserId)
-        //                           .Where(x => x.Trip.TimestampEnd < DateTime.Now)
-        //                           .WhereIf(binding.From.HasValue, x => x.Trip.TimestampEnd > binding.From.Value)
-        //                           .WhereIf(binding.To.HasValue, x => x.Trip.TimestampStart < binding.To.Value)
-        //                           .Select(x => new { EnteredOn = x.Timestamp, x.City.Country, TimestampStart = x.Trip.TimestampStart })
-        //                           .OrderBy(x => x.TimestampStart)
-        //                           .ThenBy(x => x.EnteredOn)
-        //                           .Select(x => new View.Country(x.Country))
-        //                           .ToList();
-
-        //    var user = context.Users.GetById(UserId);
-
-        //    var birthCountry = user.BirthCityId.HasValue ? context.Cities.Include(x => x.Country)
-        //                                                                 .SingleOrDefault(x => x.Id == user.BirthCityId.Value)
-        //                                                                 .Country : null;
-
-        //    if (birthCountry != null)
-        //    {
-        //        var existingBirthCountry = countries.FirstOrDefault(x => x.Id == birthCountry.ValueId);
-        //        if (existingBirthCountry != null)
-        //            countries.Remove(existingBirthCountry);
-
-        //        countries.Insert(0, new View.Country(birthCountry));
-        //    }
-
-        //    return countries.Distinct(new View.CountryComparer());
-        //}
     }
 
     public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear()

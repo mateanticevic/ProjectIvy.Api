@@ -56,4 +56,7 @@ public class LocationController : BaseController<LocationController>
     [HttpGet("{fromLocationId}/To/{toLocationId}")]
     public async Task GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy)
         => Ok(await _locationHandler.FromLocationToLocation(fromLocationId, toLocationId, orderBy));
+
+    [HttpPost("{locationId}/Scan")]
+    public async Task Scan(string locationId) => await _locationHandler.UpdateTrackings(locationId);
 }
