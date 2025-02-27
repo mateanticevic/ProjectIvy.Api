@@ -1,15 +1,13 @@
-﻿using System;
-using DatabaseModel = ProjectIvy.Model.Database.Main;
+﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
 
-namespace ProjectIvy.Model.View.Country
+namespace ProjectIvy.Model.View.Country;
+
+public class CountryVisited : Country
 {
-    public class CountryVisited : Country
+    public CountryVisited(DatabaseModel.Common.Country x, DateTime visitedOn) : base(x)
     {
-        public CountryVisited(DatabaseModel.Common.Country x, DateTime visitedOn) : base(x)
-        {
-            VisitedOn = visitedOn;
-        }
-
-        public DateTime VisitedOn { get; set; }
+        VisitedOn = visitedOn;
     }
+
+    public DateTime VisitedOn { get; set; }
 }

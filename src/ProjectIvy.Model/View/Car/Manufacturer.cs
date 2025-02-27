@@ -1,12 +1,11 @@
-﻿namespace ProjectIvy.Model.View.Car
-{
-    public class Manufacturer
-    {
-        public Manufacturer(Database.Main.Transport.Manufacturer c)
-        {
-            Name = c.Name;
-        }
+﻿namespace ProjectIvy.Model.View.Car;
 
-        public string Name { get; set; }
+public class Manufacturer
+{
+    public Manufacturer(Database.Main.Transport.Manufacturer c)
+    {
+        Name = c.Name;
     }
+
+    public string Name { get; set; }
 }
