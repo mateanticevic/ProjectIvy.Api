@@ -1,11 +1,10 @@
-﻿namespace ProjectIvy.Model.Binding
+﻿namespace ProjectIvy.Model.Binding;
+
+public class PagedBinding : IPagedBinding
 {
-    public class PagedBinding : IPagedBinding
-    {
-        public bool PageAll { get; set; }
+    public bool PageAll { get; set; }
 
-        public int Page { get; set; } = 0;
+    public int Page { get; set; } = 0;
 
-        public int PageSize { get; set; } = 10;
-    }
+    public int PageSize { get; set; } = 10;
 }
