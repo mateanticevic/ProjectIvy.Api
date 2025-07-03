@@ -1,11 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace ProjectIvy.Model.Services.LastFm
+namespace ProjectIvy.Model.Services.LastFm;
+
+public class TopTracks
 {
-    public class TopTracks
-    {
-        [JsonProperty("@attr")]
-        public string Prop { get; set; }
-    }
+    [JsonProperty("@attr")]
+    public string Prop { get; set; }
 }

@@ -1,19 +1,18 @@
 ﻿using System;
 
-namespace ProjectIvy.Common.Interfaces
+namespace ProjectIvy.Common.Interfaces;
+
+public interface ITracking
 {
-    public interface ITracking
-    {
-        double? Accuracy { get; set; }
+    double? Accuracy { get; set; }
 
-        double? Altitude { get; set; }
+    double? Altitude { get; set; }
 
-        decimal Latitude { get; set; }
+    decimal Latitude { get; set; }
 
-        decimal Longitude { get; set; }
+    decimal Longitude { get; set; }
 
-        double? Speed { get; set; }
+    double? Speed { get; set; }
 
-        DateTime Timestamp { get; set; }
-    }
+    DateTime Timestamp { get; set; }
 }

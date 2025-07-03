@@ -1,12 +1,11 @@
-﻿namespace ProjectIvy.Business.Exceptions
-{
-    public class ResourceExistsException : Exception
-    {
-        public ResourceExistsException(string resourceName)
-        {
-            ResourceName = resourceName;
-        }
+﻿namespace ProjectIvy.Business.Exceptions;
 
-        public string ResourceName { get; set; }
+public class ResourceExistsException : Exception
+{
+    public ResourceExistsException(string resourceName)
+    {
+        ResourceName = resourceName;
     }
+
+    public string ResourceName { get; set; }
 }

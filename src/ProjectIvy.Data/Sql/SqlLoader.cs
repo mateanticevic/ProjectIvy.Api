@@ -2,18 +2,17 @@
 using System.Reflection;
 using System.Text;
 
-namespace ProjectIvy.Data.Sql
-{
-    public static class SqlLoader
-    {
-        public static string Load(string resourceName)
-        {
-            var stream = typeof(SqlLoader).GetTypeInfo().Assembly.GetManifestResourceStream(resourceName);
+namespace ProjectIvy.Data.Sql;
 
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+public static class SqlLoader
+{
+    public static string Load(string resourceName)
+    {
+        var stream = typeof(SqlLoader).GetTypeInfo().Assembly.GetManifestResourceStream(resourceName);
+
+        using (var reader = new StreamReader(stream, Encoding.UTF8))
+        {
+            return reader.ReadToEnd();
         }
     }
 }

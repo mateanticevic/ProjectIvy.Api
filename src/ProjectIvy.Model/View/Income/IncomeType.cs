@@ -1,17 +1,16 @@
 ﻿using DatabaseModel = ProjectIvy.Model.Database.Main;
 
-namespace ProjectIvy.Model.View.Income
+namespace ProjectIvy.Model.View.Income;
+
+public class IncomeType
 {
-    public class IncomeType
+    public IncomeType(DatabaseModel.Finance.IncomeType x)
     {
-        public IncomeType(DatabaseModel.Finance.IncomeType x)
-        {
-            Id = x.ValueId;
-            Name = x.Name;
-        }
-
-        public string Id { get; set; }
-
-        public string Name { get; set; }
+        Id = x.ValueId;
+        Name = x.Name;
     }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 }

@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ProjectIvy.Model.Binding.Beer
+namespace ProjectIvy.Model.Binding.Beer;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum BeerSort
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum BeerSort
-    {
-        Abv,
-        Name
-    }
+    Abv,
+    Name
 }

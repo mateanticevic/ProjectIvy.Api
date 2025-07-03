@@ -1,6 +1,5 @@
-﻿namespace ProjectIvy.Business.Exceptions
+﻿namespace ProjectIvy.Business.Exceptions;
+
+public class UnauthorizedException : Exception
 {
-    public class UnauthorizedException : Exception
-    {
-    }
 }

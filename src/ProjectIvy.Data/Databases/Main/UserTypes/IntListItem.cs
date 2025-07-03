@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Data.Databases.Main.UserTypes
+﻿namespace ProjectIvy.Data.Databases.Main.UserTypes;
+
+public class IntListItem
 {
-    public class IntListItem
-    {
-        public int Value { get; set; }
-    }
+    public int Value { get; set; }
 }

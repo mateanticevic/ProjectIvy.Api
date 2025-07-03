@@ -1,13 +1,12 @@
-﻿namespace ProjectIvy.Model.Binding.File
+﻿namespace ProjectIvy.Model.Binding.File;
+
+public class FileBinding
 {
-    public class FileBinding
-    {
-        public byte[] Data { get; set; }
+    public byte[] Data { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public string MimeType { get; set; }
+    public string MimeType { get; set; }
 
-        public double? ImageResize { get; set; }
-    }
+    public double? ImageResize { get; set; }
 }

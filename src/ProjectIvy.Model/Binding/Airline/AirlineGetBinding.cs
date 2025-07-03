@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Airline
+﻿namespace ProjectIvy.Model.Binding.Airline;
+
+public class AirlineGetBinding
 {
-    public class AirlineGetBinding
-    {
-        public string Search { get; set; }
-    }
+    public string Search { get; set; }
 }

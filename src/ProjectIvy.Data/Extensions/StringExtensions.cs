@@ -1,12 +1,12 @@
 ﻿using System.Text.RegularExpressions;
 
-namespace ProjectIvy.Data.Extensions
+namespace ProjectIvy.Data.Extensions;
+
+public static class StringExtensions
 {
-    public static class StringExtensions
-    {
-        private static IEnumerable<(string, string)> _replacements =
-            new List<(string, string)>()
-            {
+    private static IEnumerable<(string, string)> _replacements =
+        new List<(string, string)>()
+        {
                 (@"#|\'|'°|\(|\)|:|\.|,|-", string.Empty),
                 (" ", "-"),
                 ("õ|ö|ó|ø", "o"),
@@ -19,19 +19,18 @@ namespace ProjectIvy.Data.Extensions
                 ("ý", "y"),
                 ("ž", "z"),
                 ("&", "and"),
-            };
+        };
 
-        public static string ToValueId(this string name)
+    public static string ToValueId(this string name)
+    {
+        string valueId = name.ToLowerInvariant();
+
+        foreach (var replacementRegex in _replacements)
         {
-            string valueId = name.ToLowerInvariant();
-
-            foreach (var replacementRegex in _replacements)
-            {
-                var regex = new Regex(replacementRegex.Item1);
-                valueId = regex.Replace(valueId, replacementRegex.Item2);
-            }
-
-            return valueId;
+            var regex = new Regex(replacementRegex.Item1);
+            valueId = regex.Replace(valueId, replacementRegex.Item2);
         }
+
+        return valueId;
     }
 }

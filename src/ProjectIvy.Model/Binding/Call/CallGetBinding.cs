@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Call
+﻿namespace ProjectIvy.Model.Binding.Call;
+
+public class CallGetBinding : FilteredPagedBinding
 {
-    public class CallGetBinding : FilteredPagedBinding
-    {
-        public string Number { get; set; }
-    }
+    public string Number { get; set; }
 }

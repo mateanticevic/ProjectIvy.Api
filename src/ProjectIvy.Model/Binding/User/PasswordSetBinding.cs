@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.User
+﻿namespace ProjectIvy.Model.Binding.User;
+
+public class PasswordSetBinding
 {
-    public class PasswordSetBinding
-    {
-        public string Password { get; set; }
-    }
+    public string Password { get; set; }
 }

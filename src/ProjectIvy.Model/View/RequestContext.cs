@@ -1,11 +1,10 @@
-﻿namespace ProjectIvy.Model.View
+﻿namespace ProjectIvy.Model.View;
+
+public class RequestContext
 {
-    public class RequestContext
-    {
-        public string IpAddress { get; set; }
+    public string IpAddress { get; set; }
 
-        public string OperatingSystem { get; set; }
+    public string OperatingSystem { get; set; }
 
-        public string UserAgent { get; set; }
-    }
+    public string UserAgent { get; set; }
 }

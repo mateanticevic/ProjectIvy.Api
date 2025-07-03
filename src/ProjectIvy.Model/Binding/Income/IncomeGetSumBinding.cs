@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Income
+﻿namespace ProjectIvy.Model.Binding.Income;
+
+public class IncomeGetSumBinding : IncomeGetBinding
 {
-    public class IncomeGetSumBinding : IncomeGetBinding
-    {
-        public string TargetCurrencyId { get; set; }
-    }
+    public string TargetCurrencyId { get; set; }
 }

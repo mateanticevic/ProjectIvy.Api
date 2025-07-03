@@ -3,10 +3,9 @@ using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.Airline;
 using ProjectIvy.Model.View.Airline;
 
-namespace ProjectIvy.Business.Handlers.Airport
+namespace ProjectIvy.Business.Handlers.Airport;
+
+public interface IAirlineHandler
 {
-    public interface IAirlineHandler
-    {
-        Task<IEnumerable<Airline>> Get(AirlineGetBinding binding);
-    }
+    Task<IEnumerable<Airline>> Get(AirlineGetBinding binding);
 }

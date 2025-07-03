@@ -5,24 +5,23 @@ using ProjectIvy.Model.Binding.Transaction;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Account;
 
-namespace ProjectIvy.Business.Handlers.Account
+namespace ProjectIvy.Business.Handlers.Account;
+
+public interface IAccountHandler
 {
-    public interface IAccountHandler
-    {
-        Task CreateTransaction(string accountValueId, TransactionBinding binding);
+    Task CreateTransaction(string accountValueId, TransactionBinding binding);
 
-        Task<IEnumerable<View.Account>> Get(AccountGetBinding b);
+    Task<IEnumerable<View.Account>> Get(AccountGetBinding b);
 
-        Task<decimal> GetNetWorth();
+    Task<decimal> GetNetWorth();
 
-        Task<View.AccountOverview> GetOverview(string accountValueId);
+    Task<View.AccountOverview> GetOverview(string accountValueId);
 
-        Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b);
+    Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b);
 
-        Task ProcessHacTransactions(string accountKey, string csv);
+    Task ProcessHacTransactions(string accountKey, string csv);
 
-        Task ProcessOtpBankTransactions(string accountKey, string csv);
+    Task ProcessOtpBankTransactions(string accountKey, string csv);
 
-        Task ProcessRevolutTransactions(string accountKey, string csv);
-    }
+    Task ProcessRevolutTransactions(string accountKey, string csv);
 }

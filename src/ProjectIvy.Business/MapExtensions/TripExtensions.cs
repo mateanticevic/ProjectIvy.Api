@@ -2,20 +2,19 @@
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.Database.Main.Travel;
 
-namespace ProjectIvy.Business.MapExtensions
+namespace ProjectIvy.Business.MapExtensions;
+
+public static class TripExtensions
 {
-    public static class TripExtensions
+    public static Trip ToEntity(this TripBinding binding, Trip trip = null)
     {
-        public static Trip ToEntity(this TripBinding binding, Trip trip = null)
-        {
-            trip = trip ?? new Trip();
+        trip = trip ?? new Trip();
 
-            trip.ValueId = binding.Name.ToValueId();
-            trip.Name = binding.Name;
-            trip.TimestampEnd = binding.TimestampEnd;
-            trip.TimestampStart = binding.TimestampStart;
+        trip.ValueId = binding.Name.ToValueId();
+        trip.Name = binding.Name;
+        trip.TimestampEnd = binding.TimestampEnd;
+        trip.TimestampStart = binding.TimestampStart;
 
-            return trip;
-        }
+        return trip;
     }
 }

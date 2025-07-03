@@ -1,10 +1,9 @@
-﻿namespace ProjectIvy.Model.Constants
+﻿namespace ProjectIvy.Model.Constants;
+
+public enum LogEvent
 {
-    public enum LogEvent
-    {
-        Exception,
-        ApiInitiated = 100,
-        ControllerInstance = 200,
-        ActionCalled
-    }
+    Exception,
+    ApiInitiated = 100,
+    ControllerInstance = 200,
+    ActionCalled
 }

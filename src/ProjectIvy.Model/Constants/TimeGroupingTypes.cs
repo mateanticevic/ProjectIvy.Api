@@ -1,11 +1,10 @@
-﻿namespace ProjectIvy.Model.Constants
+﻿namespace ProjectIvy.Model.Constants;
+
+public enum TimeGroupingTypes
 {
-    public enum TimeGroupingTypes
-    {
-        Day,
-        Week,
-        Month,
-        Year,
-        Decade
-    }
+    Day,
+    Week,
+    Month,
+    Year,
+    Decade
 }

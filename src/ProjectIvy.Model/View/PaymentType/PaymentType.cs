@@ -1,17 +1,16 @@
 ﻿using DatabaseModel = ProjectIvy.Model.Database.Main.Finance;
 
-namespace ProjectIvy.Model.View.PaymentType
+namespace ProjectIvy.Model.View.PaymentType;
+
+public class PaymentType
 {
-    public class PaymentType
+    public PaymentType(DatabaseModel.PaymentType x)
     {
-        public PaymentType(DatabaseModel.PaymentType x)
-        {
-            Id = x.ValueId;
-            Name = x.Name;
-        }
-
-        public string Id { get; set; }
-
-        public string Name { get; set; }
+        Id = x.ValueId;
+        Name = x.Name;
     }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 }

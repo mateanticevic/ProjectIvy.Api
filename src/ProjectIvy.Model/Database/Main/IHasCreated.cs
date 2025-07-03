@@ -1,8 +1,7 @@
 ﻿using System;
-namespace ProjectIvy.Model.Database.Main
+namespace ProjectIvy.Model.Database.Main;
+
+public interface IHasCreated
 {
-    public interface IHasCreated
-    {
-        DateTime Created { get; set; }
-    }
+    DateTime Created { get; set; }
 }

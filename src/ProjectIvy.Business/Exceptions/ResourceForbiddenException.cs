@@ -1,6 +1,5 @@
-﻿namespace ProjectIvy.Business.Exceptions
+﻿namespace ProjectIvy.Business.Exceptions;
+
+public class ResourceForbiddenException : Exception
 {
-    public class ResourceForbiddenException : Exception
-    {
-    }
 }

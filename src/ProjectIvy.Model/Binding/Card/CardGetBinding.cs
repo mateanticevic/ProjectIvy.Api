@@ -1,9 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding.Card
-{
-    public class CardGetBinding
-    {
-        public bool? HasExpired { get; set; }
+﻿namespace ProjectIvy.Model.Binding.Card;
 
-        public bool? IsActive { get; set; }
-    }
+public class CardGetBinding
+{
+    public bool? HasExpired { get; set; }
+
+    public bool? IsActive { get; set; }
 }

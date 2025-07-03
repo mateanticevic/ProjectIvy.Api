@@ -1,24 +1,23 @@
-﻿using ProjectIvy.Model.Binding.Flight;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Flight;
 using ProjectIvy.Model.View;
-using System.Threading.Tasks;
 using Views = ProjectIvy.Model.View;
 
-namespace ProjectIvy.Business.Handlers.Flight
+namespace ProjectIvy.Business.Handlers.Flight;
+
+public interface IFlightHandler
 {
-    public interface IFlightHandler
-    {
-        int Count(FlightGetBinding binding);
+    int Count(FlightGetBinding binding);
 
-        Task Create(FlightBinding binding);
+    Task Create(FlightBinding binding);
 
-        Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding);
+    Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding);
 
-        IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
+    IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
 
-        IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
+    IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
 
-        PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
+    PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
 
-        Task Update(string valueId, FlightBinding flight);
-    }
+    Task Update(string valueId, FlightBinding flight);
 }

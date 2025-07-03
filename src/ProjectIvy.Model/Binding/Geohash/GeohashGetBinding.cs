@@ -1,11 +1,10 @@
-﻿namespace ProjectIvy.Model.Binding.Geohash
+﻿namespace ProjectIvy.Model.Binding.Geohash;
+
+public class GeohashGetBinding : FilteredBinding
 {
-    public class GeohashGetBinding : FilteredBinding
-    {
-        public string Geohash { get; set; }
+    public string Geohash { get; set; }
 
-        public int Precision { get; set; } = 9;
+    public int Precision { get; set; } = 9;
 
-        public bool All { get; set; }
-    }
+    public bool All { get; set; }
 }

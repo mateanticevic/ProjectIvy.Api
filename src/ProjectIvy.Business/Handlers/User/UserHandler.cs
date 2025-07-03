@@ -10,87 +10,86 @@ using ProjectIvy.Model.Binding.User;
 using ProjectIvy.Model.Database.Main.User;
 using View = ProjectIvy.Model.View.User;
 
-namespace ProjectIvy.Business.Handlers.User
+namespace ProjectIvy.Business.Handlers.User;
+
+public class UserHandler : Handler<UserHandler>, IUserHandler
 {
-    public class UserHandler : Handler<UserHandler>, IUserHandler
+
+
+    public UserHandler(IHandlerContext<UserHandler> context,
+                       IMemoryCache memoryCache) : base(context, memoryCache, nameof(UserHandler))
     {
+    }
 
-
-        public UserHandler(IHandlerContext<UserHandler> context,
-                           IMemoryCache memoryCache) : base(context, memoryCache, nameof(UserHandler))
+    public View.User Get(string username)
+    {
+        using (var db = GetMainContext())
         {
+            var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
+
+            return new View.User(userEntity);
         }
+    }
 
-        public View.User Get(string username)
-        {
-            using (var db = GetMainContext())
+    public View.User Get(int? id = null)
+        => MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.UserGet()),
+            cacheEntry =>
             {
-                var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
+                cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
+                return GetNonCached(id);
+            });
 
-                return new View.User(userEntity);
-            }
-        }
+    public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b)
+    {
+        using var context = GetMainContext();
 
-        public View.User Get(int? id = null)
-            => MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.UserGet()),
-                cacheEntry =>
-                {
-                    cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                    return GetNonCached(id);
-                });
+        return await context.Weights.WhereUser(UserId)
+                                    .WhereIf(b.From.HasValue, x => x.Date >= b.From)
+                                    .WhereIf(b.To.HasValue, x => x.Date <= b.To)
+                                    .OrderByDescending(x => x.Date)
+                                    .Select(x => new KeyValuePair<DateTime, decimal>(x.Date, x.Value))
+                                    .ToListAsync();
+    }
 
-        public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b)
+    public async Task Update(UserUpdateBinding binding)
+    {
+        using (var context = GetMainContext())
         {
-            using var context = GetMainContext();
+            var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
+            context.Update(binding.ToEntity(context, user));
 
-            return await context.Weights.WhereUser(UserId)
-                                        .WhereIf(b.From.HasValue, x => x.Date >= b.From)
-                                        .WhereIf(b.To.HasValue, x => x.Date <= b.To)
-                                        .OrderByDescending(x => x.Date)
-                                        .Select(x => new KeyValuePair<DateTime, decimal>(x.Date, x.Value))
-                                        .ToListAsync();
+            await context.SaveChangesAsync();
         }
+    }
 
-        public async Task Update(UserUpdateBinding binding)
+    public async Task SetWeight(decimal weight)
+    {
+        using (var context = GetMainContext())
         {
-            using (var context = GetMainContext())
+            var entity = new Weight()
             {
-                var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
-                context.Update(binding.ToEntity(context, user));
+                UserId = UserId,
+                Date = DateTime.Now,
+                Value = weight
+            };
 
-                await context.SaveChangesAsync();
-            }
+            await context.Weights.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
+    }
 
-        public async Task SetWeight(decimal weight)
+    private View.User GetNonCached(int? id = null)
+    {
+        id = id.HasValue ? id : UserId;
+
+        using (var db = GetMainContext())
         {
-            using (var context = GetMainContext())
-            {
-                var entity = new Weight()
-                {
-                    UserId = UserId,
-                    Date = DateTime.Now,
-                    Value = weight
-                };
+            var userEntity = db.Users.Include(x => x.DefaultCar)
+                                     .Include(x => x.DefaultCurrency)
+                                     .Include(x => x.DefaultCar.CarModel)
+                                     .SingleOrDefault(x => x.Id == id);
 
-                await context.Weights.AddAsync(entity);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        private View.User GetNonCached(int? id = null)
-        {
-            id = id.HasValue ? id : UserId;
-
-            using (var db = GetMainContext())
-            {
-                var userEntity = db.Users.Include(x => x.DefaultCar)
-                                         .Include(x => x.DefaultCurrency)
-                                         .Include(x => x.DefaultCar.CarModel)
-                                         .SingleOrDefault(x => x.Id == id);
-
-                return new View.User(userEntity);
-            }
+            return new View.User(userEntity);
         }
     }
 }

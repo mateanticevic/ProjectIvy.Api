@@ -1,13 +1,12 @@
-﻿using ProjectIvy.Common.Interfaces;
-using System;
+﻿using System;
+using ProjectIvy.Common.Interfaces;
 
-namespace ProjectIvy.Data.Services.LastFm
+namespace ProjectIvy.Data.Services.LastFm;
+
+public class UserFactory : IServiceFactory<IUserHelper>
 {
-    public class UserFactory : IServiceFactory<IUserHelper>
+    public IUserHelper Build()
     {
-        public IUserHelper Build()
-        {
-            return new UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY"));
-        }
+        return new UserHelper(Environment.GetEnvironmentVariable("LAST_FM_KEY"));
     }
 }

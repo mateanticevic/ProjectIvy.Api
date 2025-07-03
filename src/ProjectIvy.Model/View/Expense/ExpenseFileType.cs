@@ -1,15 +1,14 @@
-﻿namespace ProjectIvy.Model.View.Expense
+﻿namespace ProjectIvy.Model.View.Expense;
+
+public class ExpenseFileType
 {
-    public class ExpenseFileType
+    public ExpenseFileType(Database.Main.Finance.ExpenseFileType entity)
     {
-        public ExpenseFileType(Database.Main.Finance.ExpenseFileType entity)
-        {
-            Id = entity.ValueId;
-            Name = entity.Name;
-        }
-
-        public string Id { get; set; }
-
-        public string Name { get; set; }
+        Id = entity.ValueId;
+        Name = entity.Name;
     }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 }

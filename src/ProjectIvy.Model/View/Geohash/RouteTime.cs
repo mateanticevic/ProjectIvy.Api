@@ -1,12 +1,10 @@
-﻿namespace ProjectIvy.Model.View.Geohash
+﻿namespace ProjectIvy.Model.View.Geohash;
+
+public class RouteTime
 {
-    public class RouteTime
-	{
-		public TimeSpan Duration { get; set; }
+    public TimeSpan Duration { get; set; }
 
-		public DateTime From { get; set; }
+    public DateTime From { get; set; }
 
-        public DateTime To { get; set; }
-    }
+    public DateTime To { get; set; }
 }
-

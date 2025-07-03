@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Web
+﻿namespace ProjectIvy.Model.Binding.Web;
+
+public class WebTimeGetPagedBinding : FilteredPagedBinding
 {
-    public class WebTimeGetPagedBinding : FilteredPagedBinding
-    {
-        public string DeviceId { get; set; }
-    }
+    public string DeviceId { get; set; }
 }

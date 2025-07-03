@@ -1,13 +1,12 @@
 ﻿using System;
-namespace ProjectIvy.Model.Binding.Geohash
+
+namespace ProjectIvy.Model.Binding.Geohash;
+
+public class RouteGetBinding
 {
-	public class RouteGetBinding
-	{
-		public IEnumerable<string> From { get; set; }
+	public IEnumerable<string> From { get; set; }
 
-		public IEnumerable<string> To { get; set; }
+	public IEnumerable<string> To { get; set; }
 
-		public RouteTimeSort OrderBy { get; set; }
-	}
+	public RouteTimeSort OrderBy { get; set; }
 }
-

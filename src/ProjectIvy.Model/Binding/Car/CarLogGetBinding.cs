@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Car
+﻿namespace ProjectIvy.Model.Binding.Car;
+
+public class CarLogGetBinding : FilteredPagedBinding
 {
-    public class CarLogGetBinding : FilteredPagedBinding
-    {
-        public bool? HasOdometer { get; set; }
-    }
+    public bool? HasOdometer { get; set; }
 }

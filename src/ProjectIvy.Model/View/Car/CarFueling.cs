@@ -1,17 +1,16 @@
 ﻿using System;
-namespace ProjectIvy.Model.View.Car
+
+namespace ProjectIvy.Model.View.Car;
+
+public class CarFueling
 {
-	public class CarFueling
+	public CarFueling(Database.Main.Transport.CarFuel c)
 	{
-		public CarFueling(Database.Main.Transport.CarFuel c)
-		{
-			AmountInLiters = c.AmountInLiters;
-            Date = c.Timestamp;
-		}
-
-		public decimal AmountInLiters { get; set; }
-
-		public DateTime Date { get; set; }
+		AmountInLiters = c.AmountInLiters;
+		Date = c.Timestamp;
 	}
-}
 
+	public decimal AmountInLiters { get; set; }
+
+	public DateTime Date { get; set; }
+}

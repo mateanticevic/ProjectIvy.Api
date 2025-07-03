@@ -1,46 +1,45 @@
-﻿using ProjectIvy.Model.Binding.Movie;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Movie;
 using ProjectIvy.Model.View;
-using System.Threading.Tasks;
 using View = ProjectIvy.Model.View.Movie;
 
-namespace ProjectIvy.Business.Handlers.Movie
+namespace ProjectIvy.Business.Handlers.Movie;
+
+public interface IMovieHandler : IHandler
 {
-    public interface IMovieHandler : IHandler
-    {
-        PagedView<View.Movie> Get(MovieGetBinding binding);
+    PagedView<View.Movie> Get(MovieGetBinding binding);
 
-        View.Movie Get(string imdbId);
+    View.Movie Get(string imdbId);
 
-        int Count(MovieGetBinding binding);
+    int Count(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<DateTime, int>> CountByMonthOfYear(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<DateTime, int>> CountByMonthOfYear(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<short, int>> CountByMovieYear(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<short, int>> CountByMovieYear(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<short, int>> CountByMyRating(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<short, int>> CountByMyRating(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
 
-        IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding);
+    IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding);
 
-        double GetMyRatingAverage(MovieGetBinding binding);
+    double GetMyRatingAverage(MovieGetBinding binding);
 
-        Task<IEnumerable<KeyValuePair<int, decimal>>> GetMyRatingAverageByYear(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> GetMyRatingAverageByYear(MovieGetBinding binding);
 
-        double GetRatingAverage(MovieGetBinding binding);
+    double GetRatingAverage(MovieGetBinding binding);
 
-        Task<IEnumerable<KeyValuePair<int, decimal>>> GetRatingAverageByYear(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> GetRatingAverageByYear(MovieGetBinding binding);
 
-        int GetRuntimeAverage(MovieGetBinding binding);
+    int GetRuntimeAverage(MovieGetBinding binding);
 
-        int GetSum(MovieGetBinding binding, Func<Model.Database.Main.User.Movie, int> selector);
-    }
+    int GetSum(MovieGetBinding binding, Func<Model.Database.Main.User.Movie, int> selector);
 }

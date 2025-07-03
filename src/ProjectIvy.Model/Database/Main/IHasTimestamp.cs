@@ -1,9 +1,8 @@
 ﻿using System;
 
-namespace ProjectIvy.Model.Database.Main
+namespace ProjectIvy.Model.Database.Main;
+
+public interface IHasTimestamp
 {
-    public interface IHasTimestamp
-    {
-        DateTime Timestamp { get; set; }
-    }
+    DateTime Timestamp { get; set; }
 }

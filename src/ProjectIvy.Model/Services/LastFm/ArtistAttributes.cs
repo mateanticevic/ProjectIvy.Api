@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Services.LastFm
+﻿namespace ProjectIvy.Model.Services.LastFm;
+
+public class ArtistAttributes
 {
-    public class ArtistAttributes
-    {
-        public string Rank { get; set; }
-    }
+    public string Rank { get; set; }
 }

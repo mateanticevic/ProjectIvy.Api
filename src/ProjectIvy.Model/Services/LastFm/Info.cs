@@ -1,10 +1,9 @@
 ﻿using Newtonsoft.Json;
 
-namespace ProjectIvy.Model.Services.LastFm
+namespace ProjectIvy.Model.Services.LastFm;
+
+public class Info
 {
-    public class Info
-    {
-        [JsonProperty("playcount")]
-        public int PlayCount { get; set; }
-    }
+    [JsonProperty("playcount")]
+    public int PlayCount { get; set; }
 }

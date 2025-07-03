@@ -1,7 +1,6 @@
-namespace ProjectIvy.Model.Constants.Database
+namespace ProjectIvy.Model.Constants.Database;
+
+public enum PaymentType
 {
-    public enum PaymentType
-    {
-        Cash = 1
-    }
+    Cash = 1
 }

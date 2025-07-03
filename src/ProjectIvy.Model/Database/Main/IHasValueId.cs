@@ -1,9 +1,8 @@
-﻿namespace ProjectIvy.Model.Database.Main
-{
-    public interface IHasValueId
-    {
-        int Id { get; set; }
+﻿namespace ProjectIvy.Model.Database.Main;
 
-        string ValueId { get; set; }
-    }
+public interface IHasValueId
+{
+    int Id { get; set; }
+
+    string ValueId { get; set; }
 }

@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ProjectIvy.Business.Constants
+namespace ProjectIvy.Business.Constants;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum TransactionSource
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum TransactionSource
-    {
-        Hac,
-        OtpBank,
-        Revolut,
-    }
+    Hac,
+    OtpBank,
+    Revolut,
 }

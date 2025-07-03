@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 
-namespace ProjectIvy.Business.Handlers
+namespace ProjectIvy.Business.Handlers;
+
+public interface IHandler
 {
-    public interface IHandler
-    {
-        ILogger Logger { get; }
-    }
+    ILogger Logger { get; }
 }

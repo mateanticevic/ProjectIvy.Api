@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Database.Main
+﻿namespace ProjectIvy.Model.Database.Main;
+
+public interface IHasName
 {
-    public interface IHasName
-    {
-        string Name { get; set; }
-    }
+    string Name { get; set; }
 }

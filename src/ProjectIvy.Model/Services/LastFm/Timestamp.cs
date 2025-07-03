@@ -1,13 +1,12 @@
 ﻿using Newtonsoft.Json;
 
-namespace ProjectIvy.Model.Services.LastFm
-{
-    public class Timestamp
-    {
-        [JsonProperty("#text")]
-        public string Text { get; set; }
+namespace ProjectIvy.Model.Services.LastFm;
 
-        [JsonProperty("uts")]
-        public int Unix { get; set; }
-    }
+public class Timestamp
+{
+    [JsonProperty("#text")]
+    public string Text { get; set; }
+
+    [JsonProperty("uts")]
+    public int Unix { get; set; }
 }

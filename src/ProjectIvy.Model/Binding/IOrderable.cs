@@ -1,9 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding
-{
-    public interface IOrderable<T>
-    {
-        bool OrderAscending { get; set; }
+﻿namespace ProjectIvy.Model.Binding;
 
-        T OrderBy { get; set; }
-    }
+public interface IOrderable<T>
+{
+    bool OrderAscending { get; set; }
+
+    T OrderBy { get; set; }
 }

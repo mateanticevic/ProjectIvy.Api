@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Constants
+﻿namespace ProjectIvy.Model.Constants;
+
+public static class LogMessage
 {
-    public static class LogMessage
-    {
-        public const string UnknownException = "Unknown exception";
-    }
+    public const string UnknownException = "Unknown exception";
 }

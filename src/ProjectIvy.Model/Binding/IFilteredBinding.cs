@@ -1,10 +1,9 @@
 ﻿using System;
 
-namespace ProjectIvy.Model.Binding
+namespace ProjectIvy.Model.Binding;
+
+public interface IFilteredBinding
 {
-    public interface IFilteredBinding
-    {
-        DateTime? From { get; set; }
-        DateTime? To { get; set; }
-    }
+    DateTime? From { get; set; }
+    DateTime? To { get; set; }
 }

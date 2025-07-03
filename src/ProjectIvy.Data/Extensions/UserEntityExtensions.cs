@@ -1,41 +1,40 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.Generic;
+using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.Database.Main.User;
-using System.Collections.Generic;
-using System.Linq;
 
-namespace ProjectIvy.Data.Extensions
+namespace ProjectIvy.Data.Extensions;
+
+public static class UserEntityExtensions
 {
-    public static class UserEntityExtensions
+    public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, int userId) where T : UserEntity
     {
-        public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, int userId) where T : UserEntity
-        {
-            return collection.Where(x => x.UserId == userId);
-        }
+        return collection.Where(x => x.UserId == userId);
+    }
 
-        public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, User user) where T : UserEntity
-        {
-            return collection.Where(x => x.UserId == user.Id);
-        }
+    public static IQueryable<T> WhereUser<T>(this DbSet<T> collection, User user) where T : UserEntity
+    {
+        return collection.Where(x => x.UserId == user.Id);
+    }
 
-        public static IEnumerable<T> WhereUser<T>(this ICollection<T> collection, int userId) where T : UserEntity
-        {
-            return collection.Where(x => x.UserId == userId);
-        }
+    public static IEnumerable<T> WhereUser<T>(this ICollection<T> collection, int userId) where T : UserEntity
+    {
+        return collection.Where(x => x.UserId == userId);
+    }
 
-        public static IEnumerable<T> WhereUser<T>(this ICollection<T> collection, User user) where T : UserEntity
-        {
-            return collection.Where(x => x.User == user);
-        }
+    public static IEnumerable<T> WhereUser<T>(this ICollection<T> collection, User user) where T : UserEntity
+    {
+        return collection.Where(x => x.User == user);
+    }
 
-        public static IQueryable<T> WhereUser<T>(this IQueryable<T> collection, int userId) where T : UserEntity
-        {
-            return collection.Where(x => x.UserId == userId);
-        }
+    public static IQueryable<T> WhereUser<T>(this IQueryable<T> collection, int userId) where T : UserEntity
+    {
+        return collection.Where(x => x.UserId == userId);
+    }
 
-        public static IQueryable<T> WhereUser<T>(this IQueryable<T> collection, User user) where T : UserEntity
-        {
-            return collection.Where(x => x.User == user);
-        }
+    public static IQueryable<T> WhereUser<T>(this IQueryable<T> collection, User user) where T : UserEntity
+    {
+        return collection.Where(x => x.User == user);
     }
 }

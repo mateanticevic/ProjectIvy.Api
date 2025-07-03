@@ -1,7 +1,7 @@
 ﻿using System;
-namespace ProjectIvy.Model.Binding.Ride
+
+namespace ProjectIvy.Model.Binding.Ride;
+
+public class RideGetBinding : FilteredBinding
 {
-    public class RideGetBinding : FilteredBinding
-    {
-    }
 }

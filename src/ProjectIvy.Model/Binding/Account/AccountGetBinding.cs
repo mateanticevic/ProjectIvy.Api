@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Account
+﻿namespace ProjectIvy.Model.Binding.Account;
+
+public class AccountGetBinding
 {
-    public class AccountGetBinding
-    {
-        public bool? IsActive { get; set; }
-    }
+    public bool? IsActive { get; set; }
 }

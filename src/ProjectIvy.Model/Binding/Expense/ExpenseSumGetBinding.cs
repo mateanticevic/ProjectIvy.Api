@@ -1,36 +1,35 @@
 ﻿using System;
 
-namespace ProjectIvy.Model.Binding.Expense
+namespace ProjectIvy.Model.Binding.Expense;
+
+public class ExpenseSumGetBinding : ExpenseGetBinding
 {
-    public class ExpenseSumGetBinding : ExpenseGetBinding
+    public ExpenseSumGetBinding() { }
+
+    public ExpenseSumGetBinding(FilteredBinding binding) : base(binding) { }
+
+    public bool ByBaseType { get; set; }
+
+    public string TargetCurrencyId { get; set; }
+
+    public ExpenseSumGetBinding Override(string typeId)
     {
-        public ExpenseSumGetBinding() { }
+        TypeId = new[] { typeId };
 
-        public ExpenseSumGetBinding(FilteredBinding binding) : base(binding) { }
+        return this;
+    }
 
-        public bool ByBaseType { get; set; }
+    public ExpenseSumGetBinding OverrideDay(DayOfWeek day)
+    {
+        Day = new DayOfWeek[] { day };
 
-        public string TargetCurrencyId { get; set; }
+        return this;
+    }
 
-        public ExpenseSumGetBinding Override(string typeId)
-        {
-            TypeId = new[] { typeId };
+    public ExpenseSumGetBinding OverrideMonth(int month)
+    {
+        Month = new int[] { month };
 
-            return this;
-        }
-
-        public ExpenseSumGetBinding OverrideDay(DayOfWeek day)
-        {
-            Day = new DayOfWeek[] { day };
-
-            return this;
-        }
-
-        public ExpenseSumGetBinding OverrideMonth(int month)
-        {
-            Month = new int[] { month };
-
-            return this;
-        }
+        return this;
     }
 }

@@ -1,40 +1,39 @@
 ﻿using System.Linq;
 using System.Web;
 
-namespace ProjectIvy.Model.Services.LastFm.Request
+namespace ProjectIvy.Model.Services.LastFm.Request;
+
+public abstract class BaseRequest
 {
-    public abstract class BaseRequest
+    private readonly string _url;
+
+    protected BaseRequest(string url, string key, string user)
     {
-        private readonly string _url;
+        Api_Key = key;
+        User = user;
+        _url = url;
+    }
 
-        protected BaseRequest(string url, string key, string user)
-        {
-            Api_Key = key;
-            User = user;
-            _url = url;
-        }
+    public string Api_Key { get; set; }
 
-        public string Api_Key { get; set; }
+    public string User { get; set; }
 
-        public string User { get; set; }
+    public string Format => "json";
 
-        public string Format => "json";
+    public int? Limit { get; set; }
 
-        public int? Limit { get; set; }
+    public int? Page { get; set; }
 
-        public int? Page { get; set; }
+    public abstract string Method { get; }
 
-        public abstract string Method { get; }
+    public string ToUrl() => $"{_url}?{ToQueryString()}";
 
-        public string ToUrl() => $"{_url}?{ToQueryString()}";
+    public string ToQueryString()
+    {
+        var properties = this.GetType().GetProperties()
+                                       .Where(x => x.GetValue(this, null) != null)
+                                       .Select(x => x.Name.ToLowerInvariant() + "=" + HttpUtility.UrlEncode(x.GetValue(this, null).ToString()));
 
-        public string ToQueryString()
-        {
-            var properties = this.GetType().GetProperties()
-                                           .Where(x => x.GetValue(this, null) != null)
-                                           .Select(x => x.Name.ToLowerInvariant() + "=" + HttpUtility.UrlEncode(x.GetValue(this, null).ToString()));
-
-            return string.Join("&", properties.ToArray());
-        }
+        return string.Join("&", properties.ToArray());
     }
 }

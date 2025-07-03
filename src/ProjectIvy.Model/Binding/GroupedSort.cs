@@ -1,8 +1,7 @@
-﻿namespace ProjectIvy.Model.Binding
+﻿namespace ProjectIvy.Model.Binding;
+
+public enum GroupedSort
 {
-    public enum GroupedSort
-    {
-        Data,
-        Date
-    }
+    Data,
+    Date
 }

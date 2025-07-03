@@ -1,9 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding.Car
-{
-    public class CarLogBinding
-    {
-        public string CarValueId { get; set; }
+﻿namespace ProjectIvy.Model.Binding.Car;
 
-        public int Odometer { get; set; }
-    }
+public class CarLogBinding
+{
+    public string CarValueId { get; set; }
+
+    public int Odometer { get; set; }
 }

@@ -1,9 +1,8 @@
-﻿namespace ProjectIvy.Model.Binding.Transaction
-{
-    public class TransactionBinding
-    {
-        public decimal Amount { get; set; }
+﻿namespace ProjectIvy.Model.Binding.Transaction;
 
-        public DateTime Created { get; set; }
-    }
+public class TransactionBinding
+{
+    public decimal Amount { get; set; }
+
+    public DateTime Created { get; set; }
 }

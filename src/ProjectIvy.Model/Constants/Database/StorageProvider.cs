@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Constants.Database
+﻿namespace ProjectIvy.Model.Constants.Database;
+
+public enum StorageProvider
 {
-    public enum StorageProvider
-    {
-        AzureStorage = 1
-    }
+    AzureStorage = 1
 }

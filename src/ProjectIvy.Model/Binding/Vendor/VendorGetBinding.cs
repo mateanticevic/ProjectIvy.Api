@@ -1,7 +1,6 @@
-﻿namespace ProjectIvy.Model.Binding.Vendor
+﻿namespace ProjectIvy.Model.Binding.Vendor;
+
+public class VendorGetBinding : PagedBinding
 {
-    public class VendorGetBinding : PagedBinding
-    {
-        public string Search { get; set; }
-    }
+    public string Search { get; set; }
 }

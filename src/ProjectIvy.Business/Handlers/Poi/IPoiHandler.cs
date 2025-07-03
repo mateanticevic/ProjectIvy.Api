@@ -1,15 +1,14 @@
-﻿using ProjectIvy.Model.Binding.Poi;
+﻿using System.Collections.Generic;
+using ProjectIvy.Model.Binding.Poi;
 using ProjectIvy.Model.View;
-using System.Collections.Generic;
 
-namespace ProjectIvy.Business.Handlers.Poi
+namespace ProjectIvy.Business.Handlers.Poi;
+
+public interface IPoiHandler : IHandler
 {
-    public interface IPoiHandler : IHandler
-    {
-        void Create(PoiBinding binding);
+    void Create(PoiBinding binding);
 
-        PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding);
+    PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding);
 
-        IEnumerable<Model.View.Poi.PoiCategory> GetCategories();
-    }
+    IEnumerable<Model.View.Poi.PoiCategory> GetCategories();
 }

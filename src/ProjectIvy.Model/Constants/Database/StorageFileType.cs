@@ -1,11 +1,10 @@
-﻿namespace ProjectIvy.Model.Constants.Database
+﻿namespace ProjectIvy.Model.Constants.Database;
+
+public enum StorageFileType
 {
-    public enum StorageFileType
-    {
-        Pdf = 1,
-        Jpg = 2,
-        Png = 3,
-        Msg = 4,
-        Mp3 = 5
-    }
+    Pdf = 1,
+    Jpg = 2,
+    Png = 3,
+    Msg = 4,
+    Mp3 = 5
 }

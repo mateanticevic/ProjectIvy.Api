@@ -1,12 +1,11 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 
-namespace ProjectIvy.Model.Binding.Income
+namespace ProjectIvy.Model.Binding.Income;
+
+[JsonConverter(typeof(StringEnumConverter))]
+public enum IncomeSort
 {
-    [JsonConverter(typeof(StringEnumConverter))]
-    public enum IncomeSort
-    {
-        Date,
-        Amount
-    }
+    Date,
+    Amount
 }

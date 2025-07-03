@@ -1,11 +1,10 @@
 ﻿using System;
-namespace ProjectIvy.Model.Binding.Car
+
+namespace ProjectIvy.Model.Binding.Car;
+
+public class CarFuelingBinding
 {
-	public class CarFuelingBinding
-	{
-		public DateTime Date { get; set; }
+	public DateTime Date { get; set; }
 
-		public decimal AmountInLiters { get; set; }
-	}
+	public decimal AmountInLiters { get; set; }
 }
-
