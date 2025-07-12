@@ -13,9 +13,10 @@ namespace ProjectIvy.Data.Extensions;
 public static class IQueryableExtensions
 {
     public static int? GetId<T>(this IQueryable<T> query, string valueId) where T : class, IHasValueId
-    {
-        return query.SingleOrDefault(x => x.ValueId == valueId)?.Id;
-    }
+        => query.SingleOrDefault(x => x.ValueId == valueId)?.Id;
+
+    public static async Task<int?> GetIdAsync<T>(this IQueryable<T> query, string valueId) where T : class, IHasValueId
+        => (await query.SingleOrDefaultAsync(x => x.ValueId == valueId))?.Id;
 
     public static IQueryable<T> InsideRectangle<T>(this IQueryable<T> query, LocationBinding a, LocationBinding b) where T : IHasLocation
     {

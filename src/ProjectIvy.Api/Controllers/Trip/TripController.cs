@@ -16,74 +16,75 @@ public class TripController : BaseController<TripController>
     public TripController(ILogger<TripController> logger, ITripHandler tripHandler) : base(logger) => _tripHandler = tripHandler;
 
     [HttpDelete("{tripId}")]
-    public StatusCodeResult Delete(string tripId)
+    public async Task<StatusCodeResult> Delete(string tripId)
     {
-        _tripHandler.Delete(tripId);
+        await _tripHandler.Delete(tripId);
 
-        return new StatusCodeResult(StatusCodes.Status200OK);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{tripId}/City/{cityId}")]
-    public StatusCodeResult DeleteCity(string tripId, string cityId)
+    public async Task<StatusCodeResult> DeleteCity(string tripId, string cityId)
     {
-        _tripHandler.RemoveCity(tripId, cityId);
+        await _tripHandler.RemoveCity(tripId, cityId);
 
-        return new StatusCodeResult(StatusCodes.Status200OK);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{tripId}/Expense/{expenseId}")]
-    public StatusCodeResult DeleteExpense(string tripId, string expenseId)
+    public async Task<StatusCodeResult> DeleteExpense(string tripId, string expenseId)
     {
-        _tripHandler.RemoveExpense(tripId, expenseId);
+        await _tripHandler.RemoveExpense(tripId, expenseId);
 
-        return new StatusCodeResult(StatusCodes.Status200OK);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
     [HttpDelete("{tripId}/Poi/{poiId}")]
-    public StatusCodeResult DeletePoi(string tripId, string poiId)
+    public async Task<StatusCodeResult> DeletePoi(string tripId, string poiId)
     {
-        _tripHandler.RemovePoi(tripId, poiId);
+        await _tripHandler.RemovePoi(tripId, poiId);
 
-        return new StatusCodeResult(StatusCodes.Status200OK);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
     [HttpGet]
-    public PagedView<View.Trip> Get(TripGetBinding binding) => _tripHandler.Get(binding);
+    public async Task<PagedView<View.Trip>> Get(TripGetBinding binding) => await _tripHandler.Get(binding);
 
     [HttpGet("{tripId}")]
-    public View.Trip Get(string tripId) => _tripHandler.GetSingle(tripId);
+    public async Task<View.Trip> Get(string tripId)
+        => await _tripHandler.GetSingle(tripId);
 
     [HttpGet("Days/ByYear")]
     public async Task<IActionResult> GetDaysByYear([FromQuery] TripGetBinding binding) => Ok(await _tripHandler.DaysByYear(binding));
 
     [HttpPost("{tripId}/Poi/{poiId}")]
-    public StatusCodeResult PostPoi(string tripId, string poiId)
+    public async Task<StatusCodeResult> PostPoi(string tripId, string poiId)
     {
-        _tripHandler.AddPoi(tripId, poiId);
+        await _tripHandler.AddPoi(tripId, poiId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
     [HttpPost("{tripId}/City/{cityId}")]
-    public StatusCodeResult PostCity(string tripId, string cityId)
+    public async Task<StatusCodeResult> PostCity(string tripId, string cityId)
     {
-        _tripHandler.AddCity(tripId, cityId);
+        await _tripHandler.AddCity(tripId, cityId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
     [HttpPost("{tripId}/Expense/{expenseId}")]
-    public StatusCodeResult PostExpense(string tripId, string expenseId)
+    public async Task<StatusCodeResult> PostExpense(string tripId, string expenseId)
     {
-        _tripHandler.AddExpense(tripId, expenseId);
+        await _tripHandler.AddExpense(tripId, expenseId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpPost("")]
-    public StatusCodeResult Post([FromBody] TripBinding binding, string tripId)
+    [HttpPost]
+    public async Task<StatusCodeResult> Post([FromBody] TripBinding binding)
     {
-        _tripHandler.Create(binding);
+        await _tripHandler.Create(binding);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }

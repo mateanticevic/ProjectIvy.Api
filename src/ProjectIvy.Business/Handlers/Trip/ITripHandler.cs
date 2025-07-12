@@ -7,25 +7,25 @@ namespace ProjectIvy.Business.Handlers.Trip;
 
 public interface ITripHandler
 {
-    void AddCity(string tripValueId, string cityValueId);
+    Task AddCity(string tripValueId, string cityValueId);
 
-    void AddExpense(string tripValueId, string expenseValueId);
+    Task AddExpense(string tripValueId, string expenseValueId);
 
-    void AddPoi(string tripValueId, string poiValueId);
+    Task AddPoi(string tripValueId, string poiValueId);
 
-    void Create(TripBinding binding);
+    Task Create(TripBinding binding);
 
     Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding);
 
-    void Delete(string valueId);
+    Task Delete(string valueId);
 
-    PagedView<View.Trip> Get(TripGetBinding binding);
+    Task<PagedView<View.Trip>> Get(TripGetBinding binding);
 
-    View.Trip GetSingle(string valueId);
+    Task<View.Trip> GetSingle(string valueId);
 
-    void RemoveCity(string tripValueId, string cityValueId);
+    Task RemoveCity(string tripValueId, string cityValueId);
 
-    void RemoveExpense(string tripValueId, string expenseValueId);
+    Task RemoveExpense(string tripValueId, string expenseValueId);
 
-    void RemovePoi(string tripValueId, string poiValueId);
+    Task RemovePoi(string tripValueId, string poiValueId);
 }
