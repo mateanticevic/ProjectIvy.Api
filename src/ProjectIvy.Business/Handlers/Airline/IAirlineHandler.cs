@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.Airline;
 using ProjectIvy.Model.View.Airline;
 

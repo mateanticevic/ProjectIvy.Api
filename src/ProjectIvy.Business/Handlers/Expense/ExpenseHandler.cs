@@ -344,19 +344,15 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         ClearCache();
     }
 
-    public bool Delete(string valueId)
+    public async Task Delete(string valueId)
     {
-        using (var db = GetMainContext())
-        {
-            var entity = db.Expenses.WhereUser(UserId)
-                                    .SingleOrDefault(x => x.ValueId == valueId);
+        using var db = GetMainContext();
+        var entity = db.Expenses.WhereUser(UserId)
+                                .SingleOrDefault(x => x.ValueId == valueId);
 
-            db.Expenses.Remove(entity);
-            db.SaveChanges();
-            ClearCache();
-
-            return true;
-        }
+        db.Expenses.Remove(entity);
+        await db.SaveChangesAsync();
+        ClearCache();
     }
 
     public View.Expense Get(string expenseId)
@@ -390,15 +386,13 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 
     public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Expenses.IncludeAll()
-                                   .WhereUser(UserId)
-                                   .SingleOrDefault(x => x.ValueId == expenseId)
-                                   .ExpenseFiles
-                                   .Select(x => new View.ExpenseFile(x))
-                                   .ToList();
-        }
+        using var context = GetMainContext();
+        return context.Expenses.IncludeAll()
+                               .WhereUser(UserId)
+                               .SingleOrDefault(x => x.ValueId == expenseId)
+                               .ExpenseFiles
+                               .Select(x => new View.ExpenseFile(x))
+                               .ToList();
     }
 
     public async Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding)

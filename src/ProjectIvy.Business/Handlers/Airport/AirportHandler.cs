@@ -16,24 +16,21 @@ public class AirportHandler : Handler<AirportHandler>, IAirportHandler
 
     public long Count(AirportGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Airports.Where(binding, context, UserId)
-                                   .LongCount();
-        }
+        using var context = GetMainContext();
+
+        return context.Airports.Where(binding, context, UserId)
+                               .LongCount();
     }
 
     public PagedView<View.Airport> Get(AirportGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Airports.Where(binding, context, UserId)
-                                   .WhereIf(binding.Search, x => x.Iata == binding.Search.ToUpper() || x.Name.ToLower().Contains(binding.Search.ToLower()))
-                                   .Include(x => x.Poi)
-                                   .ThenInclude(x => x.PoiCategory)
-                                   .OrderByDescending(x => x.Iata == binding.Search)
-                                   .Select(x => new View.Airport(x))
-                                   .ToPagedView(binding);
-        }
+        using var context = GetMainContext();
+        return context.Airports.Where(binding, context, UserId)
+                               .WhereIf(binding.Search, x => x.Iata == binding.Search.ToUpper() || x.Name.ToLower().Contains(binding.Search.ToLower()))
+                               .Include(x => x.Poi)
+                               .ThenInclude(x => x.PoiCategory)
+                               .OrderByDescending(x => x.Iata == binding.Search)
+                               .Select(x => new View.Airport(x))
+                               .ToPagedView(binding);
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Beer;

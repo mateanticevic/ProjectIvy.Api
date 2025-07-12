@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
@@ -16,11 +15,10 @@ public class AirlineHandler : Handler<AirlineHandler>, IAirlineHandler
 
     public async Task<IEnumerable<Airline>> Get(AirlineGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return await context.Airlines.WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
-                                         .Select(x => new Airline(x))
-                                         .ToListAsync();
-        }
+        using var context = GetMainContext();
+
+        return await context.Airlines.WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
+                                     .Select(x => new Airline(x))
+                                     .ToListAsync();
     }
 }

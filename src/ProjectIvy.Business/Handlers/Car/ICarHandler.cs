@@ -37,9 +37,9 @@ public interface ICarHandler : IHandler
 
     Task<IEnumerable<View.CarLog>> GetLogs(string carValueId, CarLogGetBinding binding);
 
-    View.CarLog GetLatestLog(CarLogGetBinding binding);
+    CarLog GetLatestLog(CarLogGetBinding binding);
 
-    View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
+    CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
 
     Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
 

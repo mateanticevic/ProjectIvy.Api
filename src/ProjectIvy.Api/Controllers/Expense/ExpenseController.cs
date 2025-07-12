@@ -22,10 +22,8 @@ public class ExpenseController : BaseController<ExpenseController>
     }
 
     [HttpDelete("{valueId}")]
-    public bool Delete(string valueId)
-    {
-        return _expenseHandler.Delete(valueId);
-    }
+    public async Task Delete(string valueId)
+        => await _expenseHandler.Delete(valueId);
 
     [HttpGet("{expenseId}")]
     public View.Expense Get(string expenseId)

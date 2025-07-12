@@ -35,7 +35,7 @@ public interface IExpenseHandler : IHandler
 
     Task CreateFromFile(FileBinding binding);
 
-    bool Delete(string valueId);
+    Task Delete(string valueId);
 
     View.Expense Get(string expenseId);
 

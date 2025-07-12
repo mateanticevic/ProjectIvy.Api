@@ -5,7 +5,6 @@ using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Call;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Call;
