@@ -34,30 +34,25 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
         }
     }
 
-    public PagedView<View.Income> Get(IncomeGetBinding binding)
+    public async Task<PagedView<View.Income>> Get(IncomeGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Incomes.WhereUser(UserId)
-                                  .Include(x => x.Currency)
-                                  .Include(x => x.IncomeSource)
-                                  .Include(x => x.IncomeType)
-                                  .Where(binding, context)
-                                  .OrderBy(binding)
-                                  .Select(x => new View.Income(x))
-                                  .ToPagedView(binding);
-        }
+        using var context = GetMainContext();
+        return await context.Incomes.WhereUser(UserId)
+                                    .Include(x => x.Currency)
+                                    .Include(x => x.IncomeSource)
+                                    .Include(x => x.IncomeType)
+                                    .Where(binding, context)
+                                    .OrderBy(binding)
+                                    .Select(x => new View.Income(x))
+                                    .ToPagedViewAsync(binding);
     }
 
-    public int GetCount(FilteredBinding binding)
+    public async Task<int> GetCount(FilteredBinding binding)
     {
-        using (var db = GetMainContext())
-        {
-            var query = db.Incomes.WhereUser(UserId)
-                                  .Where(x => x.Date >= binding.From && x.Date <= binding.To);
-
-            return query.Count();
-        }
+        using var db = GetMainContext();
+        return await db.Incomes.WhereUser(UserId)
+                               .Where(x => x.Date >= binding.From && x.Date <= binding.To)
+                               .CountAsync();
     }
 
     public async Task<IEnumerable<View.IncomeSource>> GetSources()

@@ -19,10 +19,10 @@ public class IncomeController : BaseController<IncomeController>
     public IncomeController(ILogger<IncomeController> logger, IIncomeHandler incomeHandler) : base(logger) => _incomeHandler = incomeHandler;
 
     [HttpGet]
-    public PagedView<View.Income> Get([FromQuery] IncomeGetBinding binding) => _incomeHandler.Get(binding);
+    public async Task<PagedView<View.Income>> Get([FromQuery] IncomeGetBinding binding) => await _incomeHandler.Get(binding);
 
     [HttpGet("Count")]
-    public int GetCount([FromQuery] FilteredBinding binding) => _incomeHandler.GetCount(binding);
+    public async Task<int> GetCount([FromQuery] FilteredBinding binding) => await _incomeHandler.GetCount(binding);
 
     [HttpGet("Source")]
     public async Task<IActionResult> GetSources() => Ok(await _incomeHandler.GetSources());

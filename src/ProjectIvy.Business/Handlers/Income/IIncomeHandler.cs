@@ -10,9 +10,9 @@ public interface IIncomeHandler : IHandler
 {
     Task Add(IncomeBinding binding);
 
-    PagedView<View.Income> Get(IncomeGetBinding binding);
+    Task<PagedView<View.Income>> Get(IncomeGetBinding binding);
 
-    int GetCount(FilteredBinding binding);
+    Task<int> GetCount(FilteredBinding binding);
 
     Task<IEnumerable<View.IncomeSource>> GetSources();
 
