@@ -132,6 +132,7 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                               .ThenInclude(x => x.Poi)
                               .OrderByDescending(x => x.DateOfArrivalLocal)
                               .Select(x => new Views.Flight.Flight(x))
+                              .ToList()
                               .GroupBy(x => x.DepartureLocal.Year)
                               .Select(g => new KeyValuePair<int, int>(g.Key, g.Sum(x => x.DistanceInKm ?? 0)));
     }
