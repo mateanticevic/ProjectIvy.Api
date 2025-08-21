@@ -35,6 +35,9 @@ public class FlightController : BaseController<FlightController>
     [HttpGet]
     public PagedView<Model.View.Flight.Flight> Get([FromQuery] FlightGetBinding binding) => _flightHandler.Get(binding);
 
+    [HttpGet("Distance/ByYear")]
+    public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear() => _flightHandler.GetDistanceByYear();
+
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] FlightBinding binding)
     {

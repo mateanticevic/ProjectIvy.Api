@@ -19,5 +19,7 @@ public interface IFlightHandler
 
     PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
 
+    IEnumerable<KeyValuePair<int, int>> GetDistanceByYear();
+
     Task Update(string valueId, FlightBinding flight);
 }

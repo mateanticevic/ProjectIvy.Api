@@ -120,6 +120,22 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
         }
     }
 
+    public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear()
+    {
+        using var context = GetMainContext();
+
+        return context.Flights.WhereUser(UserId)
+                              .Include(x => x.Airline)
+                              .Include(x => x.DestinationAirport)
+                              .ThenInclude(x => x.Poi)
+                              .Include(x => x.OriginAirport)
+                              .ThenInclude(x => x.Poi)
+                              .OrderByDescending(x => x.DateOfArrivalLocal)
+                              .Select(x => new Views.Flight.Flight(x))
+                              .GroupBy(x => x.DepartureLocal.Year)
+                              .Select(g => new KeyValuePair<int, int>(g.Key, g.Sum(x => x.DistanceInKm ?? 0)));
+    }
+
     public async Task Update(string valueId, FlightBinding flight)
     {
         using var context = GetMainContext();
