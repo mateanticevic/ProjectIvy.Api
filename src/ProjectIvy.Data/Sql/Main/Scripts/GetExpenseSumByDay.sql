@@ -6,6 +6,7 @@
 --DECLARE @ExpenseTypeValueId NVARCHAR(MAX) = NULL
 --DECLARE @VendorValueId NVARCHAR(MAX) = NULL
 --DECLARE @ExpenseIds dbo.IntList
+--DECLARE @ExcludedTypeIds dbo.IntList
 --INSERT INTO @ExpenseIds (Value) VALUES (50)
 --INSERT INTO @ExpenseIds (Value) VALUES (51)
 
@@ -77,5 +78,6 @@ WHERE 1=1
 	AND (@To IS NULL OR e.[Date] <= @To)
     AND (@Month IS NULL OR MONTH(e.[Date]) = @Month)
 	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExpenseIds) OR EXISTS(SELECT TOP 1 * FROM @ExpenseIds WHERE [Value] = e.Id))
+	AND (NOT EXISTS (SELECT TOP 1 * FROM @ExcludedTypeIds) OR NOT EXISTS(SELECT TOP 1 * FROM @ExcludedTypeIds WHERE [Value] = e.ExpenseTypeId))
 	AND ISNULL(@UserId, e.UserId) = e.UserId
 GROUP BY CONVERT(DATE, e.[Date])

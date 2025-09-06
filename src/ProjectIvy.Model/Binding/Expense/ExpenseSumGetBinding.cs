@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Model.Binding.Expense;
+﻿namespace ProjectIvy.Model.Binding.Expense;
 
 public class ExpenseSumGetBinding : ExpenseGetBinding
 {

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
+﻿using System.Data;
 using Microsoft.Data.SqlClient;
 using ProjectIvy.Data.Databases.Main.UserTypes;
 using ProjectIvy.Data.Extensions;
@@ -25,6 +23,8 @@ public class GetExpenseSumQuery : IDynamicParameters
     public string VendorValueId { get; set; }
 
     public IEnumerable<int> ExpenseIds { get; set; }
+
+    public IEnumerable<int> ExcludedTypeIds { get; set; }
 
     public void AddParameters(IDbCommand command, Identity identity)
     {
