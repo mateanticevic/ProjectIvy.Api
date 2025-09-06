@@ -31,9 +31,11 @@ public class GetExpenseSumQuery : IDynamicParameters
         var sqlCommand = (SqlCommand)command;
         sqlCommand.CommandType = CommandType.Text;
 
-        var intList = new IntList(ExpenseIds);
+        var expenseIdList = new IntList(ExpenseIds);
+        var excludedTypeIdList = new IntList(ExcludedTypeIds);
 
-        sqlCommand.Parameters.Add(intList.ToSqlParameter(nameof(ExpenseIds)));
+        sqlCommand.Parameters.Add(expenseIdList.ToSqlParameter(nameof(ExpenseIds)));
+        sqlCommand.Parameters.Add(excludedTypeIdList.ToSqlParameter(nameof(ExcludedTypeIds)));
         sqlCommand.Parameters.Add(From.ToSqlParameter(nameof(From)));
         sqlCommand.Parameters.Add(To.ToSqlParameter(nameof(To)));
         sqlCommand.Parameters.Add(Month.ToSqlParameter(nameof(Month)));
