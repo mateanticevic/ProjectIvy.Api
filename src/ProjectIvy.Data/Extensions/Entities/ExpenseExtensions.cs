@@ -42,10 +42,10 @@ public static class ExpenseExtensions
         {
             expenseTypes = context.ExpenseTypes.GetAll().ToList();
 
-            if (typeIds?.Any() != false)
+            if (typeIds?.Any() == true)
                 childTypeIds = expenseTypes.ToChildTypeIds(typeIds);
 
-            if (excludedTypeIds?.Any() != false)
+            if (excludedTypeIds?.Any() == true)
                 excludedChildTypeIds = expenseTypes.ToChildTypeIds(excludedTypeIds);
         }
 
