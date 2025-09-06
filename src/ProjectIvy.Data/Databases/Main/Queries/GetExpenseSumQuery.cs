@@ -24,18 +24,14 @@ public class GetExpenseSumQuery : IDynamicParameters
 
     public IEnumerable<int> ExpenseIds { get; set; }
 
-    public IEnumerable<int> ExcludedTypeIds { get; set; }
-
     public void AddParameters(IDbCommand command, Identity identity)
     {
         var sqlCommand = (SqlCommand)command;
         sqlCommand.CommandType = CommandType.Text;
 
         var expenseIdList = new IntList(ExpenseIds);
-        var excludedTypeIdList = new IntList(ExcludedTypeIds);
 
         sqlCommand.Parameters.Add(expenseIdList.ToSqlParameter(nameof(ExpenseIds)));
-        sqlCommand.Parameters.Add(excludedTypeIdList.ToSqlParameter(nameof(ExcludedTypeIds)));
         sqlCommand.Parameters.Add(From.ToSqlParameter(nameof(From)));
         sqlCommand.Parameters.Add(To.ToSqlParameter(nameof(To)));
         sqlCommand.Parameters.Add(Month.ToSqlParameter(nameof(Month)));

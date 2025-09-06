@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Model.Binding.Expense;
@@ -31,16 +30,23 @@ public static class ExpenseExtensions
     {
         var cardIds = context.Cards.GetIds(b.CardId);
         var currencyIds = context.Currencies.GetIds(b.CurrencyId);
-        var expenseTypeIds = context.ExpenseTypes.GetIds(b.TypeId);
+        var typeIds = context.ExpenseTypes.GetIds(b.TypeId);
+        var excludedTypeIds = context.ExpenseTypes.GetIds(b.ExcludeTypeId);
         var paymentTypeIds = context.PaymentTypes.GetIds(b.PaymentTypeId);
         var vendorIds = context.Vendors.GetIds(b.VendorId);
 
         IEnumerable<ExpenseType> expenseTypes = null;
         IEnumerable<int> childTypeIds = null;
-        if (expenseTypeIds?.Any() != null)
+        IEnumerable<int> excludedChildTypeIds = null;
+        if (typeIds?.Any() != false || excludedTypeIds?.Any() != false)
         {
             expenseTypes = context.ExpenseTypes.GetAll().ToList();
-            childTypeIds = expenseTypes.ToChildTypeIds(expenseTypeIds);
+
+            if (typeIds?.Any() != false)
+                childTypeIds = expenseTypes.ToChildTypeIds(typeIds);
+
+            if (excludedTypeIds?.Any() != false)
+                excludedChildTypeIds = expenseTypes.ToChildTypeIds(excludedTypeIds);
         }
 
         var days = b.Day?.Select(x => (int)x).ToList();
@@ -49,7 +55,8 @@ public static class ExpenseExtensions
                     .WhereIf(b.To.HasValue, x => x.Date <= b.To)
                     .WhereIf(cardIds, x => x.CardId.HasValue && cardIds.Contains(x.CardId.Value))
                     .WhereIf(paymentTypeIds, x => x.PaymentTypeId.HasValue && paymentTypeIds.Contains(x.PaymentTypeId.Value))
-                    .WhereIf(expenseTypeIds, x => expenseTypeIds.Contains(x.ExpenseTypeId) || childTypeIds.Contains(x.ExpenseTypeId))
+                    .WhereIf(typeIds, x => typeIds.Contains(x.ExpenseTypeId) || childTypeIds.Contains(x.ExpenseTypeId))
+                    .WhereIf(excludedTypeIds, x => !excludedTypeIds.Contains(x.ExpenseTypeId) && !excludedChildTypeIds.Contains(x.ExpenseTypeId))
                     .WhereIf(vendorIds, x => x.VendorId.HasValue && vendorIds.Contains(x.VendorId.Value))
                     .WhereIf(currencyIds, x => currencyIds.Contains(x.CurrencyId))
                     .WhereIf(days != null, x => days.Contains(((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date)) % 7))

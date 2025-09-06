@@ -42,5 +42,7 @@ public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>, 
 
     public IEnumerable<string> ExcludeId { get; set; }
 
+    public IEnumerable<string> ExcludeTypeId { get; set; }
+
     public string Search { get; set; }
 }
