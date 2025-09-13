@@ -16,7 +16,9 @@ using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
+using ProjectIvy.Api.Mcp;
 using ProjectIvy.Api.Services;
+using ProjectIvy.Api.Middlewares;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
@@ -123,7 +125,8 @@ public class Startup
         });
         services.AddHostedService<MetricsBackgroundService>();
 
-        services.AddControllers(options => options.EnableEndpointRouting = false)
+        // Enable endpoint routing (required for UseRouting/UseEndpoints middleware)
+        services.AddControllers()
                 .AddJsonOptions(options =>
                 {
                     options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter(JsonNamingPolicy.CamelCase));
@@ -148,6 +151,7 @@ public class Startup
                     });
                 });
 
+        // Register the individual schemes first (Keycloak JWT + MCP)
         services.AddKeycloakWebApiAuthentication(Configuration, o =>
         {
             o.RequireHttpsMetadata = false;
@@ -166,6 +170,58 @@ public class Startup
             };
         });
 
+        services.AddAuthentication(options =>
+        {
+            // Use a policy scheme that can decide at runtime which underlying scheme to use
+            options.DefaultScheme = "dynamic";
+            options.DefaultAuthenticateScheme = "dynamic";
+            options.DefaultChallengeScheme = "dynamic";
+        })
+        .AddPolicyScheme("dynamic", "Dynamic Auth (JWT or MCP)", policy =>
+        {
+            policy.ForwardDefaultSelector = context =>
+            {
+                // Heuristic 1: MCP endpoint path (adjust if MapMcp uses a different base path)
+                var path = context.Request.Path.Value?.ToLowerInvariant();
+                string chosen;
+                if (path != null && path.StartsWith("/mcp"))
+                {
+                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
+                    context.Items["ChosenAuthScheme"] = chosen;
+                    Log.Debug("Dynamic auth selector chose {Scheme} based on path {Path}", chosen, path);
+                    return chosen;
+                }
+
+                // Heuristic 2: Check for a custom MCP header (if clients send one, e.g. X-MCP-Client)
+                if (context.Request.Headers.ContainsKey("X-MCP-Client"))
+                {
+                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
+                    context.Items["ChosenAuthScheme"] = chosen;
+                    Log.Debug("Dynamic auth selector chose {Scheme} based on header X-MCP-Client for path {Path}", chosen, path);
+                    return chosen;
+                }
+
+                // Heuristic 3: Accept header indicates MCP media type
+                var accept = context.Request.Headers["Accept"].ToString();
+                if (!string.IsNullOrEmpty(accept) && accept.Contains("application/mcp", StringComparison.OrdinalIgnoreCase))
+                {
+                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
+                    context.Items["ChosenAuthScheme"] = chosen;
+                    Log.Debug("Dynamic auth selector chose {Scheme} based on Accept header {Accept} for path {Path}", chosen, accept, path);
+                    return chosen;
+                }
+
+                // Otherwise fall back to JWT (Keycloak)
+                chosen = JwtBearerDefaults.AuthenticationScheme;
+                context.Items["ChosenAuthScheme"] = chosen;
+                Log.Debug("Dynamic auth selector defaulted to {Scheme} for path {Path}", chosen, path);
+                return chosen;
+            };
+        })
+        .AddMcp()
+        // Keycloak already registered above; AddAuthentication() returns a builder so we can chain
+        ;
+
         services.AddAuthorization(options =>
             {
                 var fields = typeof(ApiScopes).GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.FlattenHierarchy);
@@ -178,6 +234,20 @@ public class Startup
                         builder.Requirements.Add(new ScopeRequirement(value));
                     });
                 }
+
+                // Policy that explicitly requires the MCP scheme (for endpoints that should not accept JWT)
+                options.AddPolicy("McpAccess", builder =>
+                {
+                    builder.AddAuthenticationSchemes(ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme)
+                           .RequireAuthenticatedUser();
+                });
+
+                // Policy that explicitly requires JWT (if you need to exclude MCP for some endpoints)
+                options.AddPolicy("JwtAccess", builder =>
+                {
+                    builder.AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
+                           .RequireAuthenticatedUser();
+                });
             })
             .AddKeycloakAuthorization(Configuration)
             .AddAuthorizationBuilder();
@@ -189,6 +259,10 @@ public class Startup
                              .Build();
             setup.Filters.Add(new AuthorizeFilter(policy));
         });
+
+        services.AddMcpServer()
+                .WithHttpTransport()
+                .WithTools<ExpenseTools>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -198,19 +272,7 @@ public class Startup
             app.UseDeveloperExceptionPage();
         }
 
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseHttpMetrics();
-        app.UseMetricServer();
-        app.UseStaticFiles();
-
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
-        });
-
-
+        // Global exception handling should be early in the pipeline (after routing so route data is available, before auth/business logic)
         app.UseSerilogRequestLogging(configure =>
         {
             configure.EnrichDiagnosticContext = (context, httpContext) =>
@@ -228,11 +290,34 @@ public class Startup
 
             };
         });
+
+        app.UseRouting();
+
+    // Timing & basic diagnostics (before auth to capture unauthenticated as well)
+    app.UseRequestTiming();
+
         app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
 
-        app.UseDeveloperExceptionPage();
+        app.UseAuthentication();
+        app.UseAuthorization();
+    // MCP diagnostics (after auth so scheme is resolved)
+    app.UseMcpDiagnostics();
+        app.UseHttpMetrics();
+        app.UseMetricServer();
+        app.UseStaticFiles();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
+        });
         app.UseExceptionHandling();
 
-        app.UseMvc();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapMcp();
+            // Prometheus metrics already configured; MapMetrics would duplicate if used here.
+        });
     }
 }
