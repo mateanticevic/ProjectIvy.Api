@@ -45,3 +45,4 @@ src/ProjectIvy.Api/bin
 launchSettings.json
 Properties
 *.DS_Store
+logs/

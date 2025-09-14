@@ -415,13 +415,14 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
     {
         string cacheKey = BuildUserCacheKey(CacheKeyGenerator.ExpensesSumAmount(binding));
-        return await MemoryCache.GetOrCreateAsync(cacheKey,
+        var x = await MemoryCache.GetOrCreateAsync(cacheKey,
             async cacheEntry =>
             {
                 AddCacheKey(cacheKey);
                 cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
                 return await SumAmountNonCached(binding);
             });
+        return x;
     }
 
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding)

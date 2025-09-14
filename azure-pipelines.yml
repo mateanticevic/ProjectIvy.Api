@@ -4,6 +4,7 @@
 
 trigger:
 - master
+- mcp
 
 resources:
 - repo: self
