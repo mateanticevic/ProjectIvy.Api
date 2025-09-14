@@ -20,6 +20,12 @@ public class ExpenseTools
         _logger = logger;
     }
 
+    [McpServerTool, Description("Increase input by one")]
+    public async Task<decimal> IncreaseByOne(int input)
+    {
+        return input + 1;
+    }
+
     [McpServerTool, Description("Get total sum of expenses")]
     public async Task<decimal> GetSum(DateTime? from, DateTime? to)
     {

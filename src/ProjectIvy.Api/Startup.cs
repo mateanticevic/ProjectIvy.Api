@@ -268,11 +268,8 @@ public class Startup
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
     {
         if (env.IsDevelopment())
-        {
             app.UseDeveloperExceptionPage();
-        }
 
-        // Global exception handling should be early in the pipeline (after routing so route data is available, before auth/business logic)
         app.UseSerilogRequestLogging(configure =>
         {
             configure.EnrichDiagnosticContext = (context, httpContext) =>
@@ -292,16 +289,9 @@ public class Startup
         });
 
         app.UseRouting();
-
-    // Timing & basic diagnostics (before auth to capture unauthenticated as well)
-    app.UseRequestTiming();
-
         app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
-
         app.UseAuthentication();
         app.UseAuthorization();
-    // MCP diagnostics (after auth so scheme is resolved)
-    app.UseMcpDiagnostics();
         app.UseHttpMetrics();
         app.UseMetricServer();
         app.UseStaticFiles();
