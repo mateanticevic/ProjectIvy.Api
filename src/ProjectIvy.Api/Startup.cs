@@ -261,8 +261,7 @@ public class Startup
 
         services.AddMcpServer()
                 .WithHttpTransport()
-                .WithTools<ExpenseTools>()
-                .WithTools<BeerTools>();
+                .WithToolsFromAssembly();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

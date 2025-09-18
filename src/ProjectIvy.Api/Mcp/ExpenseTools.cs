@@ -8,6 +8,8 @@ using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View;
 using ProjectIvy.Business.Handlers.User;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Mcp;
 
@@ -49,6 +51,32 @@ public class ExpenseTools
         };
         var id = _expenseHandler.Create(newExpense);
         return id;
+    }
+
+    [McpServerTool, Description("Get total sum of expenses")]
+    public async Task<PagedView<Expense>> GetExpenses([Description("Start date")] DateTime? from,
+                                                      [Description("End date")] DateTime? to,
+                                                      [Description("Page number")] int page = 1,
+                                                      [Description("Page size")] int pageSize = 20,
+                                                      [Description("Type ID")] string typeId = null)
+    {
+        try
+        {
+            var binding = new ExpenseGetBinding()
+            {
+                From = from,
+                Page = page,
+                PageSize = pageSize,
+                To = to ?? DateTime.UtcNow,
+                TypeId = typeId is null ? null : [typeId],
+            };
+            return _expenseHandler.Get(binding);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "MCP Tool GetExpenses failed");
+            throw;
+        }
     }
 
     [McpServerTool, Description("Hierarchy of expense types")]
