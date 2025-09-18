@@ -19,10 +19,14 @@ public class ExpenseTools
     private readonly IUserHandler _userHandler;
     private readonly ILogger<ExpenseTools> _logger;
 
-    public ExpenseTools(IExpenseHandler expenseHandler, IExpenseTypeHandler expenseTypeHandler, ILogger<ExpenseTools> logger)
+    public ExpenseTools(IExpenseHandler expenseHandler,
+                        IExpenseTypeHandler expenseTypeHandler,
+                        IUserHandler userHandler,
+                        ILogger<ExpenseTools> logger)
     {
         _expenseHandler = expenseHandler;
         _expenseTypeHandler = expenseTypeHandler;
+        _userHandler = userHandler;
         _logger = logger;
     }
 
