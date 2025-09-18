@@ -53,7 +53,7 @@ public class ExpenseTools
         return id;
     }
 
-    [McpServerTool, Description("Get total sum of expenses")]
+    [McpServerTool, Description("Get paged list of expenses")]
     public async Task<PagedView<Expense>> GetExpenses([Description("Start date")] DateTime? from,
                                                       [Description("End date")] DateTime? to,
                                                       [Description("Page number")] int page = 1,
