@@ -18,7 +18,6 @@ using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
 using ProjectIvy.Api.Mcp;
 using ProjectIvy.Api.Services;
-using ProjectIvy.Api.Middlewares;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
@@ -262,7 +261,8 @@ public class Startup
 
         services.AddMcpServer()
                 .WithHttpTransport()
-                .WithTools<ExpenseTools>();
+                .WithTools<ExpenseTools>()
+                .WithTools<BeerTools>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -307,7 +307,6 @@ public class Startup
         {
             endpoints.MapControllers();
             endpoints.MapMcp();
-            // Prometheus metrics already configured; MapMetrics would duplicate if used here.
         });
     }
 }
