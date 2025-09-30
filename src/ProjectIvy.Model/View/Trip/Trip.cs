@@ -40,5 +40,7 @@ public class Trip
 
     public IEnumerable<Poi.Poi> Pois { get; set; }
 
+    public IEnumerable<Stay.Stay> Stays { get; set; }
+
     public decimal TotalSpent { get; set; }
 }

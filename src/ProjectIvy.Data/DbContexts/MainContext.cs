@@ -137,6 +137,8 @@ public class MainContext : DbContext
 
     public DbSet<RideType> RideTypes { get; set; }
 
+    public DbSet<Stay> Stays { get; set; }
+
     public DbSet<Tracking> Trackings { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }

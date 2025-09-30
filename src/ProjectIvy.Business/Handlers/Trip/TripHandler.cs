@@ -218,10 +218,18 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
             totalSpent = await db.ExecuteScalarAsync<decimal>(sql, query);
         }
 
+        var stays = await context.Stays.WhereUser(UserId)
+                                       .Where(x => x.Date >= trip.TimestampStart.Date && x.Date <= trip.TimestampEnd.Date)
+                                       .Include(x => x.City)
+                                       .Include(x => x.Country)
+                                       .OrderBy(x => x.Date)
+                                       .ToListAsync();
+
         var tripView = new View.Trip.Trip(trip)
         {
             Expenses = expenses.Select(x => new View.Expense.Expense(x)),
             Distance = _trackingHandler.GetDistance(new Model.Binding.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
+            Stays = stays.Select(x => new View.Stay.Stay(x)),
             TotalSpent = totalSpent
         };
 
