@@ -39,6 +39,7 @@ using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
+using ProjectIvy.Business.Handlers.Stay;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.Trip;
 using ProjectIvy.Business.Handlers.User;
@@ -111,6 +112,7 @@ public class Startup
         services.AddHandler<IPoiHandler, PoiHandler>();
         services.AddHandler<IRideHandler, RideHandler>();
         services.AddHandler<IRouteHandler, RouteHandler>();
+        services.AddHandler<IStayHandler, StayHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();
         services.AddHandler<ITripHandler, TripHandler>();
         services.AddHandler<IUserHandler, UserHandler>();
