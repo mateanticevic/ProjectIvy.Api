@@ -7,7 +7,7 @@ namespace ProjectIvy.Business.Handlers.Stay;
 
 public interface IStayHandler
 {
-    Task AddStay(DateTime date, string cityId, string countryId);
+    Task AddStay(StayBinding binding);
 
     Task<PagedView<View.Stay>> GetStays(StayGetBinding binding);
 }

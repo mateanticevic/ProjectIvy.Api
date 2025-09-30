@@ -16,19 +16,30 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
     {
     }
 
-    public async Task AddStay(DateTime date, string cityValueId, string countryValueId)
+    public async Task AddStay(StayBinding binding)
     {
         using var context = GetMainContext();
         
         int? cityId = null;
-        if (!string.IsNullOrEmpty(cityValueId))
-            cityId = context.Cities.GetId(cityValueId);
+        int countryId;
 
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        if (!string.IsNullOrEmpty(binding.CityId))
+        {
+            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.Id == cityId);
+            if (city != null)
+            {
+                cityId = city.Id;
+                countryId = city.CountryId;
+            }
+            else
+                countryId = context.Countries.GetId(binding.CountryId).Value;
+        }
+        else
+            countryId = context.Countries.GetId(binding.CountryId).Value;
         
         var stay = new Database.Travel.Stay()
         {   
-            Date = date,
+            Date = binding.Date,
             CityId = cityId,
             CountryId = countryId,
             UserId = UserId

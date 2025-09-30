@@ -8,8 +8,6 @@ public class Stay
     {
         Id = x.Id;
         Date = x.Date;
-        CityId = x.CityId;
-        CountryId = x.CountryId;
         City = x.City != null ? new City.City(x.City) : null;
         Country = new Country.Country(x.Country);
     }
@@ -17,10 +15,6 @@ public class Stay
     public int Id { get; set; }
 
     public DateTime Date { get; set; }
-
-    public int? CityId { get; set; }
-
-    public int CountryId { get; set; }
 
     public City.City City { get; set; }
 
