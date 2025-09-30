@@ -25,7 +25,7 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
 
         if (!string.IsNullOrEmpty(binding.CityId))
         {
-            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.Id == cityId);
+            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.ValueId == binding.CityId);
             if (city != null)
             {
                 cityId = city.Id;
