@@ -39,7 +39,8 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
         
         var stay = new Database.Travel.Stay()
         {   
-            Date = binding.Date,
+            From = binding.From,
+            To = binding.To,
             CityId = cityId,
             CountryId = countryId,
             UserId = UserId

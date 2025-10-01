@@ -12,13 +12,11 @@ public static class StayExtensions
         {
             case StaySort.Date:
             default:
-                return query.OrderBy(b.OrderAscending, x => x.Date);
+                return query.OrderBy(b.OrderAscending, x => x.From);
         }
     }
 
     public static IQueryable<Stay> Where(this IQueryable<Stay> query, StayGetBinding b)
-        => query.WhereIf(b.From.HasValue, x => x.Date >= b.From.Value)
-                .WhereIf(b.To.HasValue, x => x.Date <= b.To.Value)
-                .WhereIf(b.CityId, x => b.CityId.Contains(x.City.ValueId))
+        => query.WhereIf(b.CityId, x => b.CityId.Contains(x.City.ValueId))
                 .WhereIf(b.CountryId, x => b.CountryId.Contains(x.Country.ValueId));
 }

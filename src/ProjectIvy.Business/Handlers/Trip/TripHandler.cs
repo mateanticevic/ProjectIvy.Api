@@ -219,10 +219,10 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         }
 
         var stays = await context.Stays.WhereUser(UserId)
-                                       .Where(x => x.Date >= trip.TimestampStart.Date && x.Date <= trip.TimestampEnd.Date)
+                                       .Where(x => x.From >= trip.TimestampStart.Date && x.From <= trip.TimestampEnd.Date)
                                        .Include(x => x.City)
                                        .Include(x => x.Country)
-                                       .OrderBy(x => x.Date)
+                                       .OrderBy(x => x.From)
                                        .ToListAsync();
 
         var tripView = new View.Trip.Trip(trip)

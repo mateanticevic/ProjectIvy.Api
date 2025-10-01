@@ -18,10 +18,9 @@ public class StayController : BaseController<StayController>
     [HttpGet]
     public async Task<PagedView<View.Stay>> Get(StayGetBinding binding) => await _stayHandler.GetStays(binding);
 
-    [HttpPost("{date}")]
-    public async Task<StatusCodeResult> Post(DateTime date, [FromBody] StayBinding binding)
+    [HttpPost]
+    public async Task<StatusCodeResult> Post([FromBody] StayBinding binding)
     {
-        binding.Date = date;
         await _stayHandler.AddStay(binding);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
