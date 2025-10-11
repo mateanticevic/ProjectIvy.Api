@@ -63,4 +63,39 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
                     .Select(x => new View.Stay.Stay(x))
                     .ToPagedViewAsync(binding);
     }
+
+    public async Task Update(int id, StayBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var stay = await context.Stays.WhereUser(UserId).SingleOrDefaultAsync(x => x.Id == id);
+        
+        if (stay == null)
+            throw new Exceptions.ResourceNotFoundException();
+
+        int? cityId = null;
+        int countryId;
+
+        if (!string.IsNullOrEmpty(binding.CityId))
+        {
+            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.ValueId == binding.CityId);
+            if (city != null)
+            {
+                cityId = city.Id;
+                countryId = city.CountryId;
+            }
+            else
+                countryId = context.Countries.GetId(binding.CountryId).Value;
+        }
+        else
+            countryId = context.Countries.GetId(binding.CountryId).Value;
+
+        stay.From = binding.From;
+        stay.To = binding.To;
+        stay.CityId = cityId;
+        stay.CountryId = countryId;
+
+        context.Stays.Update(stay);
+        await context.SaveChangesAsync();
+    }
 }

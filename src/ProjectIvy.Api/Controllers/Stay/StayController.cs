@@ -25,4 +25,7 @@ public class StayController : BaseController<StayController>
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
+
+    [HttpPut("{id}")]
+    public async Task Put(int id, [FromBody] StayBinding binding) => await _stayHandler.Update(id, binding);
 }

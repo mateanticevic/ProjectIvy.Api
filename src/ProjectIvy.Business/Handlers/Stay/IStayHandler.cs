@@ -10,4 +10,6 @@ public interface IStayHandler
     Task AddStay(StayBinding binding);
 
     Task<PagedView<View.Stay>> GetStays(StayGetBinding binding);
+
+    Task Update(int id, StayBinding binding);
 }
