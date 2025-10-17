@@ -16,7 +16,6 @@ using Microsoft.OpenApi.Models;
 using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Api.Extensions;
-using ProjectIvy.Api.Mcp;
 using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
@@ -219,9 +218,7 @@ public class Startup
                 return chosen;
             };
         })
-        .AddMcp()
-        // Keycloak already registered above; AddAuthentication() returns a builder so we can chain
-        ;
+        .AddMcp();
 
         services.AddAuthorization(options =>
             {
@@ -286,6 +283,24 @@ public class Startup
                 }
                 context.Set("Version", GetType().Assembly.GetName().Version.ToString());
 
+                // Add all HTTP request headers as header_{headerName}
+                foreach (var header in httpContext.Request.Headers)
+                {
+                    string headerName = header.Key.Replace("-", "");
+                    string headerValue = header.Value.ToString();
+                    
+                    // Mask sensitive headers
+                    if (header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(headerValue))
+                    {
+                        headerValue = headerValue.Length > 6 ? $"*****{headerValue[^6..]}" : "*****";
+                    }
+                    else if (header.Key.Equals("Cookie", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(headerValue))
+                    {
+                        headerValue = "*****";
+                    }
+                    
+                    context.Set($"header_{headerName}", headerValue);
+                }
             };
         });
 

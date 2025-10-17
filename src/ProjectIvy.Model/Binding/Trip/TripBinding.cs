@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProjectIvy.Model.Binding.Trip;
+﻿namespace ProjectIvy.Model.Binding.Trip;
 
 public class TripBinding
 {
