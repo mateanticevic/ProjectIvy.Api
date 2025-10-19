@@ -223,14 +223,18 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
     {
         using (var context = GetMainContext())
         {
+            // Materialize the old beer IDs first to avoid translation issues
             var oldBeerIds = binding.From.HasValue ? context.Consumations.WhereUser(UserId)
                                            .Where(new FilteredPagedBinding()
                                            {
                                                To = binding.From.Value.AddDays(-1)
                                            })
-                                           .Select(x => x.Beer.Id) : null;
+                                           .Select(x => x.Beer.Id)
+                                           .Distinct()
+                                           .ToList() : new List<int>();
 
-            return context.Consumations.WhereUser(UserId)
+            // Get all beers in the date range with their first consumption date
+            var beersInRange = context.Consumations.WhereUser(UserId)
                                        .Include(x => x.Beer)
                                        .Where(binding)
                                        .GroupBy(x => new
@@ -240,14 +244,29 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                            x.Beer.ValueId
                                        })
                                        .Select(x => new { Beer = x.Key, Date = x.Min(y => y.Date) })
-                                       .Where(x => oldBeerIds == null || !oldBeerIds.Any(y => x.Beer.Id == y))
+                                       .ToList(); // Materialize to memory
+
+            // Filter out old beers in memory and apply paging
+            var filteredBeers = beersInRange
+                                       .Where(x => !oldBeerIds.Contains(x.Beer.Id))
                                        .OrderByDescending(x => x.Date)
+                                       .ToList();
+
+            var pagedBeers = filteredBeers
+                                       .Skip((binding.Page - 1) * binding.PageSize)
+                                       .Take(binding.PageSize)
                                        .Select(x => new View.Beer.Beer()
                                        {
                                            Id = x.Beer.ValueId,
                                            Name = x.Beer.Name
                                        })
-                                       .ToPagedView(binding);
+                                       .ToList();
+
+            return new PagedView<View.Beer.Beer>()
+            {
+                Count = filteredBeers.Count,
+                Items = pagedBeers
+            };
         }
     }
 
