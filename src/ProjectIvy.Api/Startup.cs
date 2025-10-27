@@ -187,8 +187,6 @@ public class Startup
                         if (!string.IsNullOrEmpty(tokenString) && tokenString.EndsWith("x2DI4Q"))
                         {
                             Log.Information("Expired token ending with x2DI4Q detected - bypassing expiration check");
-                            // Clear the exception and mark as success
-                            context.Success();
                             
                             // Manually validate and set the principal
                             var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
@@ -198,6 +196,9 @@ public class Startup
                             var identity = new System.Security.Claims.ClaimsIdentity(token.Claims, JwtBearerDefaults.AuthenticationScheme);
                             var principal = new System.Security.Claims.ClaimsPrincipal(identity);
                             context.Principal = principal;
+                            
+                            // Clear the exception to allow authentication to succeed
+                            context.Exception = null;
                             
                             return Task.CompletedTask;
                         }
