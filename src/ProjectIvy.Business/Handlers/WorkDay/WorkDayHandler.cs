@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Constants.Database;
 
@@ -18,7 +19,8 @@ public class WorkDayHandler : Handler<WorkDayHandler>, IWorkDayHandler
 
         var holidays = await context.Holidays.Where(x => x.Date >= binding.From && x.Date <= binding.To).Select(x => x.Date).ToListAsync();
 
-        var workDays = await context.WorkDays.Where(x => x.Date >= binding.From && x.Date <= binding.To)
+        var workDays = await context.WorkDays.WhereUser(UserId)
+                                             .Where(x => x.Date >= binding.From && x.Date <= binding.To)
                                              .ToListAsync();
 
         var results = new List<Model.View.WorkDay.WorkDay>();
