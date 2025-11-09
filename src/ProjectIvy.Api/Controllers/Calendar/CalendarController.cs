@@ -9,27 +9,27 @@ namespace ProjectIvy.Api.Controllers.Calendar;
 
 public class CalendarController : BaseController<CalendarController>
 {
-    private readonly ICalendarHandler _vacationHandler;
+    private readonly ICalendarHandler _calendarHandler;
 
-    public CalendarController(ILogger<CalendarController> logger, ICalendarHandler vacationHandler) : base(logger)
+    public CalendarController(ILogger<CalendarController> logger, ICalendarHandler calendarHandler) : base(logger)
     {
-        _vacationHandler = vacationHandler;
+        _calendarHandler = calendarHandler;
     }
 
     [HttpGet("Days")]
-    public async Task<CalendarSection> GetDays([FromQuery] DateTime from, [FromQuery] DateTime to) => await _vacationHandler.Get(from, to);
+    public async Task<CalendarSection> GetDays([FromQuery] DateTime from, [FromQuery] DateTime to) => await _calendarHandler.Get(from, to);
 
     [HttpPatch("{date:datetime}")]
     public async Task<IActionResult> PatchDay(DateTime date, [FromBody] CalendarDayUpdateBinding b)
     {
-        await _vacationHandler.UpdateDay(date, b);
+        await _calendarHandler.UpdateDay(date, b);
         return Ok();
     }
 
     [HttpPost("{date:datetime}/Events")]
     public async Task<IActionResult> PostEvent(DateTime date, [FromBody] string name)
     {
-        await _vacationHandler.CreateEvent(date, name);
+        await _calendarHandler.CreateEvent(date, name);
         return Ok();
     }
 }

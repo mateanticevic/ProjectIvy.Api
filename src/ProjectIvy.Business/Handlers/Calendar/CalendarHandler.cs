@@ -78,6 +78,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
 
         var locationsPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                                                .Include(x => x.Location)
+                                                                               .ThenInclude(x => x.LocationType)
                                                                                .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId != null)
                                                                                .GroupBy(x => x.Timestamp.Date)
                                                                                .Select(x => new { Date = x.Key, Locations = x.Select(c => c.Location).Distinct() })

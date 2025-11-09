@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 
 namespace ProjectIvy.Model.View.Location;
@@ -11,6 +10,7 @@ public class Location
 		Id = l.ValueId;
 		Name = l.Name;
 		Geohashes = l.Geohashes?.Select(x => x.Geohash).ToList();
+		Type = new LocationType(l.LocationType);
 	}
 
 	public string Id { get; set; }
@@ -19,4 +19,6 @@ public class Location
 
 	[JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
 	public IEnumerable<string> Geohashes { get; set; }
+
+	public LocationType Type { get; set; }
 }
