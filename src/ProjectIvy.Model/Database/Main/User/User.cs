@@ -27,6 +27,8 @@ public class User : IHasCreatedModified
 
     public string LastFmUsername { get; set; }
 
+    public string IcsCalendarUrl { get; set; }
+
     public DateTime Created { get; set; }
 
     public DateTime Modified { get; set; }

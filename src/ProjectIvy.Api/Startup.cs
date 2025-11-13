@@ -45,6 +45,7 @@ using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.Handlers.Vendor;
 using ProjectIvy.Business.Handlers.Webhooks;
 using ProjectIvy.Business.Handlers.WorkDay;
+using ProjectIvy.Business.Services.Calendar;
 using ProjectIvy.Business.Services.LastFm;
 using ProjectIvy.Model.Converters;
 using Prometheus;
@@ -80,6 +81,9 @@ public class Startup
             options.UseCaseSensitivePaths = true;
         });
         services.AddLogging();
+
+        services.AddHttpClient();
+        services.AddScoped<IIcsCalendarService, IcsCalendarService>();
 
         services.AddHttpContextAccessor();
         services.AddSingleton<AzureStorage.IAzureStorageHelper>(new AzureStorage.AzureStorageHelper(Environment.GetEnvironmentVariable("CONNECTION_STRING_AZURE_STORAGE")));

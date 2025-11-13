@@ -1,6 +1,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Services.Calendar;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View.Calendar;
@@ -9,8 +10,11 @@ namespace ProjectIvy.Business.Handlers.Calendar;
 
 public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
 {
-    public CalendarHandler(IHandlerContext<CalendarHandler> context) : base(context)
+    private readonly IIcsCalendarService _icsCalendarService;
+
+    public CalendarHandler(IHandlerContext<CalendarHandler> context, IIcsCalendarService icsCalendarService) : base(context)
     {
+        _icsCalendarService = icsCalendarService;
     }
 
     public async Task CreateEvent(DateTime date, string name)
@@ -88,7 +92,13 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                                          .Where(x => x.Date >= from && x.Date <= to)
                                          .ToListAsync();
 
-        foreach (var day in Enumerable.Range(0, (to - from).Days + 1).Select(x => from.AddDays(x)))
+        var user = await context.Users.FindAsync(UserId);
+        IEnumerable<IcsCalendarEvent> icsEvents = null;
+        if (!string.IsNullOrWhiteSpace(user?.IcsCalendarUrl))
+            icsEvents = await _icsCalendarService.GetEventsAsync(user.IcsCalendarUrl, from, to);
+
+        int dayCount = Math.Max(0, (to - from).Days + 1);
+        foreach (var day in Enumerable.Range(0, dayCount).Select(x => from.AddDays(x)))
         {
             var workDay = await context.WorkDays.WhereUser(UserId)
                                                 .FirstOrDefaultAsync(x => x.Date == day);
@@ -99,6 +109,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Countries = countriesPerDay?.SingleOrDefault(x => x.Date == day)?.Countries.Select(x => new Model.View.Country.Country(x)),
                 Date = day,
                 Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
+                ExternalEvents = icsEvents?.Where(x => x.Start.Date == day.Date),
                 IsHoliday = holidays.Contains(day),
                 Locations = locationsPerDay?.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)).OrderBy(x => x.Name),
             };
@@ -153,7 +164,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
 
             await context.SaveChangesAsync();
         }
-        catch (Exception e)
+        catch (Exception)
         {
 
         }

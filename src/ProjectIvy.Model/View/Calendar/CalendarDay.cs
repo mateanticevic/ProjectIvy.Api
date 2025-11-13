@@ -8,6 +8,8 @@ public class CalendarDay
 
     public IEnumerable<Event> Events { get; set; }
 
+    public IEnumerable<IcsCalendarEvent> ExternalEvents { get; set; }
+
     public bool IsHoliday { get; set; }
 
     public IEnumerable<Location.Location> Locations { get; set; }
