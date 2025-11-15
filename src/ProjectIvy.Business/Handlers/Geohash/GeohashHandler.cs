@@ -299,7 +299,10 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
         await context.SaveChangesAsync();
 
-        _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.CityId, (int?)null));
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
+        await context.SaveChangesAsync();
     }
 
     public async Task RemoveGeohashFromCountry(string countryValueId, IEnumerable<string> geohashes)
@@ -310,7 +313,10 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
         await context.SaveChangesAsync();
 
-        _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.CountryId, (int?)null));
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
+        await context.SaveChangesAsync();
     }
 
     public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
@@ -321,7 +327,10 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
         await context.SaveChangesAsync();
 
-        _ = RemoveFromTracking(context, geohashes, x => x.SetProperty(x => x.LocationId, (int?)null));
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, (int?)null));
+        await context.SaveChangesAsync();
     }
 
     private async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
@@ -339,14 +348,6 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
             entity.Geohash = geohash;
             await geohashItems.AddAsync(entity);
         }
-    }
-
-    private async Task RemoveFromTracking(MainContext context, IEnumerable<string> geohashes, Expression<Func<SetPropertyCalls<Model.Database.Main.Tracking.Tracking>, SetPropertyCalls<Model.Database.Main.Tracking.Tracking>>> expression)
-    {
-        await context.Trackings.WhereUser(UserId)
-                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                               .ExecuteUpdateAsync(expression);
-        await context.SaveChangesAsync();
     }
 
     private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
