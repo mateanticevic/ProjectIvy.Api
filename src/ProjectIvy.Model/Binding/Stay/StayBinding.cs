@@ -1,12 +1,8 @@
 namespace ProjectIvy.Model.Binding.Stay;
 
-public class StayBinding
-{
-    public DateTime From { get; set; }
-
-    public DateTime To { get; set; }
-
-    public string CityId { get; set; }
-
-    public string CountryId { get; set; }
-}
+public record StayBinding(
+    DateTime From,
+    DateTime To,
+    string CityId,
+    string CountryId
+);
