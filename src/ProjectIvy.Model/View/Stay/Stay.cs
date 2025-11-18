@@ -6,14 +6,17 @@ public class Stay
 {
     public Stay(DatabaseModel.Travel.Stay x)
     {
-        Id = x.Id;
-        From = x.From;
-        To = x.To;
         City = x.City != null ? new City.City(x.City) : null;
         Country = new Country.Country(x.Country);
+        From = x.From;
+        Id = x.Id;
+        IsBooked = x.IsBooked;
+        To = x.To;
     }
 
     public int Id { get; set; }
+
+    public bool IsBooked { get; set; }
 
     public DateTime From { get; set; }
 

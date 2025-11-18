@@ -7,6 +7,8 @@ public class Stay : UserEntity
 {
     public int Id { get; set; }
 
+    public bool IsBooked { get; set; }
+
     public DateTime From { get; set; }
 
     public DateTime To { get; set; }
