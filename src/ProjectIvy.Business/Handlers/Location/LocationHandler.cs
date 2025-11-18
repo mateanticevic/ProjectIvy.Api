@@ -50,6 +50,7 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
 
         return await context.Locations.WhereUser(UserId)
                                       .Include(x => x.Geohashes)
+                                      .Include(x => x.LocationType)
                                       .WhereIf(!string.IsNullOrWhiteSpace(b.Search), x => x.Name.ToLower().Contains(b.Search.ToLower()))
                                       .OrderBy(x => x.Name)
                                       .Select(x => new Model.View.Location.Location(x))
