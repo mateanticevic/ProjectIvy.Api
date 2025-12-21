@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Account;
@@ -17,6 +18,19 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 {
     public AccountHandler(IHandlerContext<AccountHandler> context) : base(context)
     {
+    }
+
+    public async Task<string> Create(AccountBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var entity = binding.ToEntity(context);
+        entity.UserId = UserId;
+
+        await context.Accounts.AddAsync(entity);
+        await context.SaveChangesAsync();
+
+        return entity.ValueId;
     }
 
     public async Task CreateTransaction(string accountValueId, TransactionBinding binding)

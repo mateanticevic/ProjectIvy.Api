@@ -9,6 +9,8 @@ namespace ProjectIvy.Business.Handlers.Account;
 
 public interface IAccountHandler
 {
+    Task<string> Create(AccountBinding binding);
+
     Task CreateTransaction(string accountValueId, TransactionBinding binding);
 
     Task<IEnumerable<View.Account>> Get(AccountGetBinding b);

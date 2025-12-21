@@ -24,6 +24,9 @@ public class AccountController : BaseController<AccountController>
     [HttpGet]
     public async Task<IEnumerable<Model.View.Account.Account>> Get([FromQuery] AccountGetBinding binding) => await _accountHandler.Get(binding);
 
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] AccountBinding binding) => Ok(await _accountHandler.Create(binding));
+
     [HttpGet("NetWorth")]
     public async Task<decimal> GetNetWorth() => await _accountHandler.GetNetWorth();
 
