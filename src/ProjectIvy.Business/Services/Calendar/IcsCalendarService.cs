@@ -29,13 +29,13 @@ public class IcsCalendarService : IIcsCalendarService
 
             var events = calendar.Events
                 .Where(e => e.Start != null && 
-                           e.Start.AsSystemLocal >= from && 
-                           e.Start.AsSystemLocal <= to)
+                           e.Start.Value >= from && 
+                           e.Start.Value <= to)
                 .Select(e => new IcsCalendarEvent
                 {
                     Summary = e.Summary,
-                    Start = e.Start.AsSystemLocal,
-                    End = e.End?.AsSystemLocal,
+                    Start = e.Start.Value,
+                    End = e.End?.Value,
                     Description = e.Description,
                     Location = e.Location,
                     Uid = e.Uid
