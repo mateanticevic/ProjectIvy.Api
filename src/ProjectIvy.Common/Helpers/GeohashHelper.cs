@@ -18,7 +18,7 @@ public static class GeohashHelper
         foreach (string parentGeohash in parentGeohashes)
         {
             if (parentGeohash.Length >= childPrecision)
-                childGeohashes.Add(parentGeohash.Substring(0, childPrecision));
+                childGeohashes.Add(parentGeohash);
             else
             {
                 var subhashes = geohasher.GetSubhashes(parentGeohash);
