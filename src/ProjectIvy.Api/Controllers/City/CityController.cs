@@ -28,10 +28,16 @@ public class CityController : BaseController<CityController>
     public async Task<IActionResult> Get([FromQuery] CityGetBinding binding) => Ok(await _cityHandler.Get(binding));
 
     [HttpGet("{cityId}/Days")]
-    public async Task<IEnumerable<DateTime>> GetDays(string cityId, [FromQuery] FilteredBinding binding) => await _cityHandler.GetDays(cityId, binding);
+    public async Task<IEnumerable<DateTime>> GetDays(string cityId, [FromQuery] FilteredBinding binding)
+        => await _cityHandler.GetDays(cityId, binding);
 
     [HttpGet("{cityId}/Geohash")]
-    public async Task<IActionResult> GetGeohashes(string cityId) => Ok(await _geohashHandler.GetCityGeohashes(cityId));
+    public async Task<IActionResult> GetGeohashes(string cityId)
+        => Ok(await _geohashHandler.GetCityGeohashes(cityId));
+
+    [HttpGet("{cityId}/Geohash/Visited")]
+    public async Task<IActionResult> GetGeohashesVisited(string cityId, [FromQuery] GeohashCityVisitedGetBinding binding)
+        => Ok(await _geohashHandler.GetCityGeohashesVisited(cityId, binding));
 
     [HttpDelete("{cityId}/Geohash")]
     public async Task<IActionResult> DeleteGeohashes(string cityId, [FromQuery] IEnumerable<string> ids)

@@ -3,8 +3,8 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Geohash;
@@ -247,24 +247,37 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
     public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
     {
-        using (var context = GetMainContext())
-        {
-            int cityId = context.Cities.GetId(cityValueId).Value;
-            return await context.CityGeohashes.Where(x => x.CityId == cityId)
-                                              .Select(x => x.Geohash)
-                                              .ToListAsync();
-        }
+        using var context = GetMainContext();
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        return await context.CityGeohashes.Where(x => x.CityId == cityId)
+                                          .Select(x => x.Geohash)
+                                          .ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding)
+    {
+        using var context = GetMainContext();
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        var cityGeohashes = await context.CityGeohashes.Where(x => x.CityId == cityId)
+                                                   .Select(x => x.Geohash)
+                                                   .ToListAsync();
+
+        var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
+        string jsql = string.Join(",", cityGeohashesResolved.Select(x => $"'{x}'"));
+
+        return cityGeohashesResolved.Where(x => context.Trackings
+                                        .Any(y => y.Geohash.StartsWith(x)))
+                                    .Distinct()
+                                    .ToList();
     }
 
     public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
     {
-        using (var context = GetMainContext())
-        {
-            int countryId = context.Countries.GetId(countryValueId).Value;
-            return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
-                                                 .Select(x => x.Geohash)
-                                                 .ToListAsync();
-        }
+        using var context = GetMainContext();
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
+                                             .Select(x => x.Geohash)
+                                             .ToListAsync();
     }
 
     public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding)

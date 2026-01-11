@@ -31,6 +31,8 @@ public interface IGeohashHandler
 
     Task<IEnumerable<string>> GetCityGeohashes(string cityValueId);
 
+    Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding);
+
     Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId);
 
     Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding);
