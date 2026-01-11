@@ -47,7 +47,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         {
             AccountId = accountId,
             Amount = binding.Amount,
-            Balance = lastTransaction is null ? (lastTransaction.Balance is null ? null : lastTransaction.Balance + binding.Amount) : 0,
+            Balance = lastTransaction is not null ? (lastTransaction.Balance is null ? null : lastTransaction.Balance + binding.Amount) : 0,
             Created = binding.Created
         };
 
