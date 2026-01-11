@@ -263,7 +263,6 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
                                                    .ToListAsync();
 
         var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
-        string jsql = string.Join(",", cityGeohashesResolved.Select(x => $"'{x}'"));
 
         return cityGeohashesResolved.Where(x => context.Trackings
                                         .Any(y => y.Geohash.StartsWith(x)))
@@ -278,6 +277,22 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
                                              .Select(x => x.Geohash)
                                              .ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding)
+    {
+        using var context = GetMainContext();
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        var countryGeohashes = await context.CountryGeohashes.Where(x => x.CountryId == countryId)
+                                                   .Select(x => x.Geohash)
+                                                   .ToListAsync();
+
+        var countryGeohashesResolved = GeohashHelper.ResolveChildGeohashes(countryGeohashes, binding.Precision);
+
+        return countryGeohashesResolved.Where(x => context.Trackings
+                                        .Any(y => y.Geohash.StartsWith(x)))
+                                    .Distinct()
+                                    .ToList();
     }
 
     public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding)

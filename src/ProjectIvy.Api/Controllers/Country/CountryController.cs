@@ -8,6 +8,7 @@ using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Country;
+using ProjectIvy.Model.Binding.Geohash;
 using ProjectIvy.Model.Binding.Trip;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Country;
@@ -40,6 +41,10 @@ public class CountryController : BaseController<CountryController>
 
     [HttpGet("{countryId}/Geohash")]
     public async Task<IActionResult> GetGeohashes(string countryId) => Ok(await _geohashHandler.GetCountryGeohashes(countryId));
+
+    [HttpGet("{countryId}/Geohash/Visited")]
+    public async Task<IActionResult> GetGeohashesVisited(string countryId, [FromQuery] GeohashCountryVisitedGetBinding binding)
+        => Ok(await _geohashHandler.GetCountryGeohashesVisited(countryId, binding));
 
     [HttpGet("Single")]
     public async Task<IActionResult> GetSingle(double latitude, double longitude) => Ok(await _geohashHandler.GetCountry(GeohashHelper.LocationToGeohash(latitude, longitude)));

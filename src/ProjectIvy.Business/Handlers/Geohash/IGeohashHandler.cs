@@ -35,6 +35,8 @@ public interface IGeohashHandler
 
     Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId);
 
+    Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding);
+
     Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding);
 
     Task RemoveGeohashFromCity(string cityValueId, IEnumerable<string> geohashes);
