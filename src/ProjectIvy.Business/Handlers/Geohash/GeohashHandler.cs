@@ -265,6 +265,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
 
         return cityGeohashesResolved.Where(x => context.Trackings
+                                        .WhereUser(UserId)
                                         .Any(y => y.Geohash.StartsWith(x)))
                                     .Distinct()
                                     .ToList();
