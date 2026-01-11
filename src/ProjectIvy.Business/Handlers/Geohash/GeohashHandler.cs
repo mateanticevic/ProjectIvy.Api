@@ -290,6 +290,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         var countryGeohashesResolved = GeohashHelper.ResolveChildGeohashes(countryGeohashes, binding.Precision);
 
         return countryGeohashesResolved.Where(x => context.Trackings
+                                        .WhereUser(UserId)
                                         .Any(y => y.Geohash.StartsWith(x)))
                                     .Distinct()
                                     .ToList();
