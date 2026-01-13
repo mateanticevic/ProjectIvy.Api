@@ -57,19 +57,46 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
     public async Task<IEnumerable<View.Account>> Get(AccountGetBinding b)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        const int baseCurrencyId = 3;
+        int defaultCurrencyId = (await context.Users.SingleOrDefaultAsync(x => x.Id == UserId))!.DefaultCurrencyId;
+        
+        var accounts = await context.Accounts.WhereUser(UserId)
+                                     .Include(x => x.Bank)
+                                     .Include(x => x.Currency)
+                                     .WhereIf(b.IsActive, x => x.Active == b.IsActive)
+                                     .Select(x => new
+                                     {
+                                         Account = x,
+                                         Balance = x.Transactions.Sum(t => t.Amount),
+                                         RateToBase = x.CurrencyId == baseCurrencyId ? (decimal?)1 : context.CurrencyRates
+                                             .Where(r => r.FromCurrencyId == baseCurrencyId 
+                                                      && r.ToCurrencyId == x.CurrencyId)
+                                             .OrderByDescending(r => r.Timestamp)
+                                             .Select(r => (decimal?)r.Rate)
+                                             .FirstOrDefault(),
+                                         RateFromBase = defaultCurrencyId == baseCurrencyId ? (decimal?)1 : context.CurrencyRates
+                                             .Where(r => r.FromCurrencyId == baseCurrencyId 
+                                                      && r.ToCurrencyId == defaultCurrencyId)
+                                             .OrderByDescending(r => r.Timestamp)
+                                             .Select(r => (decimal?)r.Rate)
+                                             .FirstOrDefault()
+                                     })
+                                     .ToListAsync();
+
+        return accounts.Select(x =>
         {
-            return await context.Accounts.WhereUser(UserId)
-                                         .Include(x => x.Bank)
-                                         .Include(x => x.Currency)
-                                         .WhereIf(b.IsActive, x => x.Active == b.IsActive)
-                                         .Select(x =>
-                                            new View.Account(x)
-                                            {
-                                                Balance = x.Transactions.Sum(x => x.Amount)
-                                            })
-                                         .ToListAsync();
-        }
+            var balance = x.Balance;
+            decimal balanceInDefaultCurrency = x.RateToBase.HasValue && x.RateFromBase.HasValue
+                    ? balance / x.RateToBase.Value * x.RateFromBase.Value
+                    : 0;
+
+            return new View.Account(x.Account)
+            {
+                Balance = balance,
+                BalanceInDefaultCurrency = Math.Round(balanceInDefaultCurrency, 3)
+            };
+        }).ToList();
     }
 
     public async Task<decimal> GetNetWorth()

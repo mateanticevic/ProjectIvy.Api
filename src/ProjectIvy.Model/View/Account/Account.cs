@@ -21,5 +21,7 @@ public class Account
 
     public decimal Balance { get; set; }
 
+    public decimal BalanceInDefaultCurrency { get; set; }
+
     public Currency.Currency Currency { get; set; }
 }
