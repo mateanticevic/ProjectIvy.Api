@@ -83,6 +83,8 @@ public class MainContext : DbContext
 
     public DbSet<CurrencyRate> CurrencyRates { get; set; }
 
+    public DbSet<Employment> Employments { get; set; }
+
     public DbSet<Event> Events { get; set; }
 
     public DbSet<Expense> Expenses { get; set; }

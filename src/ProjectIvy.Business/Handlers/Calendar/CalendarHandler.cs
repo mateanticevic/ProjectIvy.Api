@@ -53,6 +53,9 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
         var calendarSection = new CalendarSection();
         var calendarDays = new List<CalendarDay>();
 
+        var employments = await context.Employments.WhereUser(UserId)
+                                                   .ToListAsync();
+
         var holidays = await context.Holidays.Where(x => x.Date >= from && x.Date <= to)
                                              .Select(x => x.Date)
                                              .ToListAsync();
@@ -65,21 +68,21 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
 
         bool rangeInFuture = from > DateTime.Now;
 
-          var countriesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
-                                             .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId.HasValue)
-                                             .GroupBy(x => new { Date = x.Timestamp.Date, CountryId = x.CountryId.Value })
-                                             .Select(x => x.Key)
-                                             .Join(context.Countries,
-                                                 t => t.CountryId,
-                                                 c => c.Id,
-                                                 (t, c) => new { t.Date, Country = c })
-                                             .GroupBy(x => x.Date)
-                                             .Select(x => new { Date = x.Key, Countries = x.Select(y => y.Country) })
-                                             .ToListAsync();
+        var countriesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
+                                           .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CountryId.HasValue)
+                                           .GroupBy(x => new { x.Timestamp.Date, CountryId = x.CountryId.Value })
+                                           .Select(x => x.Key)
+                                           .Join(context.Countries,
+                                               t => t.CountryId,
+                                               c => c.Id,
+                                               (t, c) => new { t.Date, Country = c })
+                                           .GroupBy(x => x.Date)
+                                           .Select(x => new { Date = x.Key, Countries = x.Select(y => y.Country) })
+                                           .ToListAsync();
 
         var citiesPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                         .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.CityId.HasValue)
-                                          .GroupBy(x => new { Date = x.Timestamp.Date, CityId = x.CityId.Value })
+                                          .GroupBy(x => new { x.Timestamp.Date, CityId = x.CityId.Value })
                                           .Select(x => x.Key)
                                                         .Join(context.Cities.Include(x => x.Country),
                                                               t => t.CityId,
@@ -91,7 +94,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
 
         var locationsPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
                                                            .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId.HasValue)
-                                             .GroupBy(x => new { Date = x.Timestamp.Date, LocationId = x.LocationId.Value })
+                                             .GroupBy(x => new { x.Timestamp.Date, LocationId = x.LocationId.Value })
                                              .Select(x => x.Key)
                                                            .Join(context.Locations.Include(x => x.LocationType),
                                                                  t => t.LocationId,
@@ -130,10 +133,19 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
             if (workDays.Any(x => x.Date == day))
             {
                 var workDayType = workDays.First(x => x.Date == day);
-                calendarDay.WorkDayType = new WorkDayTypeOld()
+                calendarDay.WorkDayType = new()
                 {
                     Id = workDayType.ValueId,
                     Name = workDayType.Name
+                };
+            }
+            else if (!new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(day.DayOfWeek)
+                && employments.Any(x => x.From <= day && (x.To is null || x.To >= day)))
+            {
+                calendarDay.WorkDayType = new()
+                {
+                    Id = "office",
+                    Name = "Office"
                 };
             }
 
@@ -149,7 +161,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
         using var context = GetMainContext();
 
         var workDay = await context.WorkDays.WhereUser(UserId)
-                                        .FirstOrDefaultAsync(x => x.Date == day);
+                                            .FirstOrDefaultAsync(x => x.Date == day);
 
         workDay ??= new Model.Database.Main.User.WorkDay()
         {
