@@ -15,5 +15,9 @@ public class Employment : UserEntity
 
     public int CompanyId { get; set; }
 
+    public int DefaultWorkDayTypeId { get; set; }
+
     public Common.Company Company { get; set; }
+
+    public User.WorkDayType DefaultWorkDayType { get; set; }
 }

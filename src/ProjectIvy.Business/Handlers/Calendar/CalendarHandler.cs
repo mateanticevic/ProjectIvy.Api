@@ -53,9 +53,6 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
         var calendarSection = new CalendarSection();
         var calendarDays = new List<CalendarDay>();
 
-        var employments = await context.Employments.WhereUser(UserId)
-                                                   .ToListAsync();
-
         var holidays = await context.Holidays.Where(x => x.Date >= from && x.Date <= to)
                                              .Select(x => x.Date)
                                              .ToListAsync();
@@ -114,6 +111,9 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
             icsEvents = await _icsCalendarService.GetEventsAsync(user.IcsCalendarUrl, from, to);
 
         int dayCount = Math.Max(0, (to - from).Days + 1);
+        var employments = await context.Employments.WhereUser(UserId)
+                                                   .Include(x => x.DefaultWorkDayType)
+                                                   .ToListAsync();
         foreach (var day in Enumerable.Range(0, dayCount).Select(x => from.AddDays(x)))
         {
             var workDay = await context.WorkDays.WhereUser(UserId)
@@ -139,14 +139,14 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                     Name = workDayType.Name
                 };
             }
-            else if (!new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(day.DayOfWeek)
-                && employments.Any(x => x.From <= day && (x.To is null || x.To >= day)))
+            else if (!new[] { DayOfWeek.Saturday, DayOfWeek.Sunday }.Contains(day.DayOfWeek))
             {
-                calendarDay.WorkDayType = new()
+                var employment = employments.FirstOrDefault(x => x.From <= day && (x.To is null || x.To >= day));
+                calendarDay.WorkDayType = employment is not null ? new()
                 {
-                    Id = "office",
-                    Name = "Office"
-                };
+                    Id = employment.DefaultWorkDayType.ValueId,
+                    Name = employment.DefaultWorkDayType.Name
+                } : null;
             }
 
             calendarDays.Add(calendarDay);
