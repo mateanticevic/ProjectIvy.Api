@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -27,7 +28,8 @@ public class VendorController : BaseController<VendorController>
     public ViewVendor.Vendor Get(string id) => _vendorHandler.Get(id);
 
     [HttpGet]
-    public PagedView<ViewVendor.Vendor> Get([FromQuery] VendorGetBinding binding) => _vendorHandler.Get(binding);
+    public async Task<PagedView<ViewVendor.Vendor>> Get([FromQuery] VendorGetBinding binding)
+        => await _vendorHandler.Get(binding);
 
     [HttpGet("{vendorId}/Poi")]
     public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true }).Items;

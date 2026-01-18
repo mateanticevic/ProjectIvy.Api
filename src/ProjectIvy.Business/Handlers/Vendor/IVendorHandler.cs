@@ -1,4 +1,5 @@
-﻿using ProjectIvy.Model.Binding.Vendor;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Model.Binding.Vendor;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Vendor;
 
@@ -8,5 +9,5 @@ public interface IVendorHandler : IHandler
 {
     View.Vendor Get(string id);
 
-    PagedView<View.Vendor> Get(VendorGetBinding binding);
+    Task<PagedView<View.Vendor>> Get(VendorGetBinding binding);
 }

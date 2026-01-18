@@ -27,6 +27,8 @@ public class MainContext : DbContext
 
     public DbSet<Bank> Banks { get; set; }
 
+    public DbSet<Brand> Brands { get; set; }
+
     public DbSet<Beer> Beers { get; set; }
 
     public DbSet<BeerBrand> BeerBrands { get; set; }

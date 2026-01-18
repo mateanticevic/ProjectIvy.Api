@@ -20,6 +20,7 @@ using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
 using ProjectIvy.Business.Handlers.Beer;
+using ProjectIvy.Business.Handlers.Brand;
 using ProjectIvy.Business.Handlers.Calendar;
 using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Business.Handlers.Car;
@@ -93,6 +94,7 @@ public class Startup
         services.AddHandler<IAirlineHandler, AirlineHandler>();
         services.AddHandler<IAirportHandler, AirportHandler>();
         services.AddHandler<IBeerHandler, BeerHandler>();
+        services.AddHandler<IBrandHandler, BrandHandler>();
         services.AddHandler<ICalendarHandler, CalendarHandler>();
         services.AddHandler<ICallHandler, CallHandler>();
         services.AddHandler<ICarHandler, CarHandler>();
