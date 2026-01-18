@@ -3,6 +3,7 @@ using ProjectIvy.Model.Database.Main.Beer;
 using ProjectIvy.Model.Database.Main.Common;
 using ProjectIvy.Model.Database.Main.Contacts;
 using ProjectIvy.Model.Database.Main.Finance;
+using ProjectIvy.Model.Database.Main.Inventory;
 using ProjectIvy.Model.Database.Main.Net;
 using ProjectIvy.Model.Database.Main.Storage;
 using ProjectIvy.Model.Database.Main.Tracking;
@@ -112,6 +113,8 @@ public class MainContext : DbContext
     public DbSet<IncomeSource> IncomeSources { get; set; }
 
     public DbSet<IncomeType> IncomeTypes { get; set; }
+
+    public DbSet<InventoryItem> InventoryItems { get; set; }
 
     public DbSet<Location> Locations { get; set; }
 
