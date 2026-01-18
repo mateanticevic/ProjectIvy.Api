@@ -114,16 +114,20 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
     {
         return await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.CountriesVisited()), async cacheKey =>
         {
-            cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromDays(1);
+            cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
             using var context = GetMainContext();
 
             return await context.Trackings
                                 .WhereUser(UserId)
                                 .Where(x => x.CountryId.HasValue)
-                                .Include(x => x.Country)
-                                .GroupBy(x => x.Country)
-                                .OrderBy(x => x.Min(y => y.Timestamp))
-                                .Select(x => new View.Country(x.Key))
+                                .GroupBy(x => x.CountryId.Value)
+                                .Select(x => new { x.Key, Visited = x.Min(y => y.Timestamp) })
+                                .Join(context.Countries,
+                                      t => t.Key,
+                                      c => c.Id,
+                                      (t, c) => new { t.Key, t.Visited, Country = c })
+                                .OrderBy(x => x.Visited)
+                                .Select(x => new View.Country(x.Country))
                                 .ToListAsync();
         });
     }
