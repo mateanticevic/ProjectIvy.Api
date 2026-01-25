@@ -8,6 +8,8 @@ namespace ProjectIvy.Business.Handlers.Expense;
 
 public interface IExpenseTypeHandler : IHandler
 {
+    Task<ExpenseType> Create(ExpenseTypeBinding binding);
+
     IEnumerable<ExpenseType> Get(ExpenseTypeGetBinding binding);
 
     IEnumerable<ExpenseFileType> GetFileTypes();

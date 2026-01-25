@@ -17,6 +17,32 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
     {
     }
 
+    public async Task<ExpenseType> Create(ExpenseTypeBinding binding)
+    {
+        using var context = GetMainContext();
+        
+        int? parentTypeId = null;
+        if (!string.IsNullOrWhiteSpace(binding.ParentId))
+        {
+            var parentType = await context.ExpenseTypes.FirstOrDefaultAsync(x => x.ValueId == binding.ParentId);
+            if (parentType == null)
+                throw new ResourceNotFoundException();
+            parentTypeId = parentType.Id;
+        }
+
+        var expenseType = new Database.ExpenseType
+        {
+            Name = binding.Name,
+            ParentTypeId = parentTypeId,
+            ValueId = Guid.NewGuid().ToString()
+        };
+
+        context.ExpenseTypes.Add(expenseType);
+        await context.SaveChangesAsync();
+
+        return new ExpenseType(expenseType);
+    }
+
     public IEnumerable<ExpenseType> Get(ExpenseTypeGetBinding binding)
     {
         using (var context = GetMainContext())
