@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -20,4 +21,11 @@ public class ExpenseTypeController : BaseController<ExpenseTypeController>
 
     [HttpGet("Tree")]
     public IEnumerable<View.Node<View.ExpenseType.ExpenseType>> GetTree() => _expenseTypeHandler.GetTree();
+
+    [HttpPost("{parentValueId}/ExpenseType/{childValueId}")]
+    public async Task<IActionResult> SetParent(string parentValueId, string childValueId)
+    {
+        await _expenseTypeHandler.SetParent(parentValueId, childValueId);
+        return Ok();
+    }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.ExpenseType;
 using ProjectIvy.Model.View;
@@ -72,6 +74,15 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
                 yield return new Node<ExpenseType>() { This = new ExpenseType(type), Children = GetChildrenNodes(typeEntities, type.Id) };
             }
         }
+    }
+
+    public async Task SetParent(string parentValueId, string childValueId)
+    {
+        using var context = GetMainContext();
+        var parentType = await context.ExpenseTypes.FirstOrDefaultAsync(x => x.ValueId == parentValueId) ?? throw new ResourceNotFoundException();
+        var childType = await context.ExpenseTypes.FirstOrDefaultAsync(x => x.ValueId == childValueId) ?? throw new ResourceNotFoundException();
+        childType.ParentTypeId = parentType.Id;
+        await context.SaveChangesAsync();
     }
 
     private IEnumerable<Node<ExpenseType>> GetChildrenNodes(IEnumerable<Database.ExpenseType> entities, int parentId)

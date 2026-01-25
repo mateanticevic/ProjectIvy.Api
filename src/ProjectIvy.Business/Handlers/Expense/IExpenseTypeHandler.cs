@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Threading.Tasks;
 using ProjectIvy.Model.Binding.ExpenseType;
 using ProjectIvy.Model.View;
 using ProjectIvy.Model.View.Expense;
@@ -13,4 +13,6 @@ public interface IExpenseTypeHandler : IHandler
     IEnumerable<ExpenseFileType> GetFileTypes();
 
     IEnumerable<Node<ExpenseType>> GetTree();
+
+    Task SetParent(string parentValueId, string childValueId);
 }
