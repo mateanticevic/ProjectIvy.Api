@@ -56,7 +56,7 @@ public class CityHandler : Handler<CityHandler>, ICityHandler
 
     public async Task<IEnumerable<DateTime>> GetDays(string cityValueId, FilteredBinding binding)
     {
-        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.CityDays(cityValueId));
+        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.CityDays(cityValueId, binding));
         return await MemoryCache.GetOrCreateAsync(cacheKey,
             async cacheEntry =>
             {
