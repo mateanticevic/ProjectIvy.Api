@@ -12,6 +12,7 @@ public class City
         Country = x.Country?.ConvertTo(y => new Country.Country(y));
         Lat = x.Lat;
         Lng = x.Lng;
+        TimeZone = x.Timezone ?? x.Country?.Timezone;
     }
 
     public string Id { get; set; }
@@ -23,6 +24,8 @@ public class City
     public decimal? Lng { get; set; }
 
     public Country.Country Country { get; set; }
+
+    public string TimeZone { get; set; }
 }
 
 public class CityComparer : IEqualityComparer<City>

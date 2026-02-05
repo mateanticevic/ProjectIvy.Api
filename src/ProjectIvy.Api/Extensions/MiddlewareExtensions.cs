@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using ProjectIvy.Api.Middlewares;
 using Serilog;
-using System;
 using System.Reflection;
 
 namespace ProjectIvy.Api.Extensions;
@@ -35,17 +34,13 @@ public static class MiddlewareExtensions
                 {
                     string headerName = header.Key.Replace("-", "");
                     string headerValue = header.Value.ToString();
-                    
+
                     // Mask sensitive headers
                     if (header.Key.Equals("Authorization", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(headerValue))
-                    {
                         headerValue = headerValue.Length > 6 ? $"*****{headerValue[^6..]}" : "*****";
-                    }
                     else if (header.Key.Equals("Cookie", StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(headerValue))
-                    {
                         headerValue = "*****";
-                    }
-                    
+
                     context.Set($"header_{headerName}", headerValue);
                 }
             };

@@ -24,6 +24,8 @@ public class City : IHasValueId, IHasName
 
     public long? Population { get; set; }
 
+    public string Timezone { get; set; }
+
     public Country Country { get; set; }
 
     public ICollection<Transport.Airport> Airports { get; set; }

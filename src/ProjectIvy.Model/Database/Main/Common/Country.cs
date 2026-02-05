@@ -15,5 +15,7 @@ public class Country : IHasValueId, IHasName
 
     public long? Population { get; set; }
 
+    public string Timezone { get; set; }
+
     public ICollection<City> Cities { get; set; }
 }
