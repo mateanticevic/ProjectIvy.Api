@@ -19,6 +19,7 @@ using ProjectIvy.Api.Extensions;
 using ProjectIvy.Api.Services;
 using ProjectIvy.Business.Handlers.Account;
 using ProjectIvy.Business.Handlers.Airport;
+using ProjectIvy.Business.Handlers.Bank;
 using ProjectIvy.Business.Handlers.Beer;
 using ProjectIvy.Business.Handlers.Brand;
 using ProjectIvy.Business.Handlers.Calendar;
@@ -94,6 +95,7 @@ public class Startup
         services.AddHandler<IAccountHandler, AccountHandler>();
         services.AddHandler<IAirlineHandler, AirlineHandler>();
         services.AddHandler<IAirportHandler, AirportHandler>();
+        services.AddHandler<IBankHandler, BankHandler>();
         services.AddHandler<IBeerHandler, BeerHandler>();
         services.AddHandler<IBrandHandler, BrandHandler>();
         services.AddHandler<ICalendarHandler, CalendarHandler>();
