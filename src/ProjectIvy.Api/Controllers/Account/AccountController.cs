@@ -27,6 +27,13 @@ public class AccountController : BaseController<AccountController>
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AccountBinding binding) => Ok(await _accountHandler.Create(binding));
 
+    [HttpPut("{accountId}")]
+    public async Task<IActionResult> Put(string accountId, [FromBody] AccountBinding binding)
+    {
+        await _accountHandler.Update(accountId, binding);
+        return Ok();
+    }
+
     [HttpGet("NetWorth")]
     public async Task<decimal> GetNetWorth() => await _accountHandler.GetNetWorth();
 

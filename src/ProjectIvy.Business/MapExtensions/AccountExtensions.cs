@@ -16,7 +16,6 @@ public static class AccountExtensions
         a.BankId = string.IsNullOrWhiteSpace(b.BankId) ? null : context.Banks.GetId(b.BankId);
         a.CurrencyId = context.Currencies.GetId(b.CurrencyId).Value;
         a.Active = b.Active;
-        a.ValueId = Guid.NewGuid().ToString();
 
         return a;
     }

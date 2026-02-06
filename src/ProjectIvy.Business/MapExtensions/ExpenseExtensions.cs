@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Database.Main;
 using ProjectIvy.Model.Database.Main.Finance;
 
 namespace ProjectIvy.Business.MapExtensions;
@@ -35,7 +36,7 @@ public static class ExpenseExtensions
         return entity;
     }
 
-    public static string LastValueId(this DbSet<Expense> set, int userId)
+    public static string LastValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
     {
         return set.WhereUser(userId)
                   .OrderByDescending(x => EF.Functions.DataLength(x.ValueId))
@@ -44,7 +45,7 @@ public static class ExpenseExtensions
                   ?.ValueId;
     }
 
-    public static int NextValueId(this DbSet<Expense> set, int userId)
+    public static int NextValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
     {
         string lastValueId = set.LastValueId(userId);
 

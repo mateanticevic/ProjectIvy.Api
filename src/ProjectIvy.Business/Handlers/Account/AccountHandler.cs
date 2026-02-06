@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding;
@@ -14,6 +15,7 @@ using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Account;
 
 namespace ProjectIvy.Business.Handlers.Account;
+
 public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 {
     public AccountHandler(IHandlerContext<AccountHandler> context) : base(context)
@@ -26,11 +28,22 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
         var entity = binding.ToEntity(context);
         entity.UserId = UserId;
+        entity.ValueId = context.Accounts.NextValueId(UserId).ToString();
 
         await context.Accounts.AddAsync(entity);
         await context.SaveChangesAsync();
 
         return entity.ValueId;
+    }
+
+    public async Task Update(string accountValueId, AccountBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var entity = await context.Accounts.WhereUser(UserId)
+                                           .SingleOrDefaultAsync(x => x.ValueId == accountValueId) ?? throw new ResourceNotFoundException();
+        binding.ToEntity(context, entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task CreateTransaction(string accountValueId, TransactionBinding binding)
@@ -60,7 +73,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         using var context = GetMainContext();
         const int baseCurrencyId = 3;
         int defaultCurrencyId = (await context.Users.SingleOrDefaultAsync(x => x.Id == UserId))!.DefaultCurrencyId;
-        
+
         var accounts = await context.Accounts.WhereUser(UserId)
                                      .Include(x => x.Bank)
                                      .Include(x => x.Currency)
@@ -70,13 +83,13 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                          Account = x,
                                          Balance = x.Transactions.Sum(t => t.Amount),
                                          RateToBase = x.CurrencyId == baseCurrencyId ? (decimal?)1 : context.CurrencyRates
-                                             .Where(r => r.FromCurrencyId == baseCurrencyId 
+                                             .Where(r => r.FromCurrencyId == baseCurrencyId
                                                       && r.ToCurrencyId == x.CurrencyId)
                                              .OrderByDescending(r => r.Timestamp)
                                              .Select(r => (decimal?)r.Rate)
                                              .FirstOrDefault(),
                                          RateFromBase = defaultCurrencyId == baseCurrencyId ? (decimal?)1 : context.CurrencyRates
-                                             .Where(r => r.FromCurrencyId == baseCurrencyId 
+                                             .Where(r => r.FromCurrencyId == baseCurrencyId
                                                       && r.ToCurrencyId == defaultCurrencyId)
                                              .OrderByDescending(r => r.Timestamp)
                                              .Select(r => (decimal?)r.Rate)
