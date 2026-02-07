@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.Common.Extensions;
-using System;
 
 namespace ProjectIvy.Model.View.Car;
 
@@ -20,4 +19,6 @@ public class CarService
     public DateTime Date { get; set; }
 
     public string Description { get; set; }
+
+    public int Odometer { get; set; }
 }

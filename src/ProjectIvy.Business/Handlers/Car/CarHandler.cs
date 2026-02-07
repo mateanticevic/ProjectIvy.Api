@@ -93,62 +93,64 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
 
     public View.Car Get(string carId)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var car = context.Cars.WhereUser(UserId)
+                              .Include(x => x.CarServices)
+                              .Include($"{nameof(Model.Database.Main.Transport.Car.CarServices)}.{nameof(Model.Database.Main.Transport.CarServiceType)}")
+                              .Include(x => x.CarModel)
+                              .ThenInclude(x => x.Manufacturer)
+                              .SingleOrDefault(x => x.ValueId == carId);
+
+        var lastLog = context.CarLogs.Where(x => x.Odometer.HasValue && x.CarId == car.Id)
+                                     .OrderByDescending(x => x.Odometer)
+                                     .FirstOrDefault();
+
+        int averageKmPerDay = lastLog.Odometer.Value / lastLog.Timestamp.Subtract(car.FirstRegistered.Value).Days;
+
+        var serviceDue = new List<CarServiceDue>();
+        foreach (var serviceInterval in context.CarServiceIntervals
+                                               .Include(x => x.CarServiceType)
+                                               .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
+                                               .ToList())
         {
-            var car = context.Cars.WhereUser(UserId)
-                                  .Include(x => x.CarServices)
-                                  .Include($"{nameof(Model.Database.Main.Transport.Car.CarServices)}.{nameof(Model.Database.Main.Transport.CarServiceType)}")
-                                  .Include(x => x.CarModel)
-                                  .ThenInclude(x => x.Manufacturer)
-                                  .SingleOrDefault(x => x.ValueId == carId);
+            var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
+                                             .OrderByDescending(x => x.Date)
+                                             .FirstOrDefault();
 
-            var lastLog = context.CarLogs.Where(x => x.Odometer.HasValue && x.CarId == car.Id)
-                                         .OrderByDescending(x => x.Odometer)
-                                         .FirstOrDefault();
-
-            int averageKmPerDay = lastLog.Odometer.Value / lastLog.Timestamp.Subtract(car.FirstRegistered.Value).Days;
-
-            var serviceDue = new List<View.CarServiceDue>();
-            foreach (var serviceInterval in context.CarServiceIntervals
-                                                   .Include(x => x.CarServiceType)
-                                                   .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
-                                                   .ToList())
+            if (lastService == null && car.FirstRegistered.HasValue)
             {
-                var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
-                                                 .OrderByDescending(x => x.Date)
-                                                 .FirstOrDefault();
+                int? dueIn = serviceInterval.Range.HasValue ? serviceInterval.Range - lastLog.Odometer : null;
 
-                if (lastService == null && car.FirstRegistered.HasValue)
+                serviceDue.Add(new CarServiceDue
                 {
-                    int? dueIn = serviceInterval.Range.HasValue ? serviceInterval.Range - lastLog.Odometer : null;
-
-                    serviceDue.Add(new View.CarServiceDue
-                    {
-                        DueAt = serviceInterval.Range.HasValue ? serviceInterval.Range : null,
-                        DueIn = dueIn,
-                        DueBefore = serviceInterval.Days.HasValue ? car.FirstRegistered.Value.AddDays(serviceInterval.Days.Value) : null,
-                        DueBeforeApprox = dueIn.HasValue ? DateTime.Now.AddDays(dueIn.Value / averageKmPerDay) : null,
-                        ServiceType = new View.CarServiceType(serviceInterval.CarServiceType)
-                    });
-                }
-                else
-                {
-                    int? aproximateOdometer = context.CarLogs.GetAproximateOdometer(car.Id, lastService.Date);
-                    int? dueIn = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range - lastLog.Odometer : null;
-
-                    serviceDue.Add(new View.CarServiceDue()
-                    {
-                        DueAt = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range.Value : null,
-                        DueIn = dueIn,
-                        DueBefore = serviceInterval.Days.HasValue ? lastService.Date.AddDays(serviceInterval.Days.Value) : null,
-                        DueBeforeApprox = dueIn.HasValue ? DateTime.Now.AddDays(dueIn.Value / averageKmPerDay) : null,
-                        ServiceType = new View.CarServiceType(lastService.CarServiceType)
-                    });
-                }
+                    DueAt = serviceInterval.Range.HasValue ? serviceInterval.Range : null,
+                    DueIn = dueIn,
+                    DueBefore = serviceInterval.Days.HasValue ? car.FirstRegistered.Value.AddDays(serviceInterval.Days.Value) : null,
+                    DueBeforeApprox = dueIn.HasValue ? DateTime.Now.AddDays(dueIn.Value / averageKmPerDay) : null,
+                    ServiceType = new CarServiceType(serviceInterval.CarServiceType)
+                });
             }
+            else
+            {
+                int? aproximateOdometer = context.CarLogs.GetAproximateOdometer(car.Id, lastService.Date);
+                int? dueIn = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range - lastLog.Odometer : null;
 
-            return new View.Car(car) { ServiceDue = serviceDue };
+                serviceDue.Add(new CarServiceDue()
+                {
+                    DueAt = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range.Value : null,
+                    DueIn = dueIn,
+                    DueBefore = serviceInterval.Days.HasValue ? lastService.Date.AddDays(serviceInterval.Days.Value) : null,
+                    DueBeforeApprox = dueIn.HasValue ? DateTime.Now.AddDays(dueIn.Value / averageKmPerDay) : null,
+                    ServiceType = new CarServiceType(lastService.CarServiceType)
+                });
+            }
         }
+
+        return new(car)
+        {
+            Services = car.CarServices.OrderByDescending(x => x.Date).Select(x => new CarService(x) { Odometer = context.CarLogs.GetAproximateOdometer(car.Id, x.Date) ?? 0 }).ToList(),
+            ServiceDue = serviceDue
+        };
     }
 
     public async Task<decimal> GetAverageConsumption(string carValueId)
