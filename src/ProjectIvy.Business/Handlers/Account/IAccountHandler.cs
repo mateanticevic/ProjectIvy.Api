@@ -13,7 +13,7 @@ public interface IAccountHandler
 
     Task CreateTransaction(string accountValueId, TransactionBinding binding);
 
-    Task<IEnumerable<View.Account>> Get(AccountGetBinding b);
+    Task<PagedView<View.Account>> Get(AccountGetBinding b);
 
     Task<decimal> GetNetWorth();
 

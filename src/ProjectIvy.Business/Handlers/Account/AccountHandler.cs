@@ -36,16 +36,6 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         return entity.ValueId;
     }
 
-    public async Task Update(string accountValueId, AccountBinding binding)
-    {
-        using var context = GetMainContext();
-
-        var entity = await context.Accounts.WhereUser(UserId)
-                                           .SingleOrDefaultAsync(x => x.ValueId == accountValueId) ?? throw new ResourceNotFoundException();
-        binding.ToEntity(context, entity);
-        await context.SaveChangesAsync();
-    }
-
     public async Task CreateTransaction(string accountValueId, TransactionBinding binding)
     {
         using var context = GetMainContext();
@@ -68,13 +58,13 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         await context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<View.Account>> Get(AccountGetBinding b)
+    public async Task<PagedView<View.Account>> Get(AccountGetBinding b)
     {
         using var context = GetMainContext();
         const int baseCurrencyId = 3;
         int defaultCurrencyId = (await context.Users.SingleOrDefaultAsync(x => x.Id == UserId))!.DefaultCurrencyId;
 
-        var accounts = await context.Accounts.WhereUser(UserId)
+        var accountsQuery = context.Accounts.WhereUser(UserId)
                                      .Include(x => x.Bank)
                                      .Include(x => x.Currency)
                                      .WhereIf(b.IsActive, x => x.Active == b.IsActive)
@@ -94,10 +84,15 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                              .OrderByDescending(r => r.Timestamp)
                                              .Select(r => (decimal?)r.Rate)
                                              .FirstOrDefault()
-                                     })
+                                     });
+
+        var totalCount = await accountsQuery.CountAsync();
+        var accounts = await accountsQuery
+                                     .Skip(b.Page * b.PageSize)
+                                     .Take(b.PageSize)
                                      .ToListAsync();
 
-        return accounts.Select(x =>
+        var items = accounts.Select(x =>
         {
             var balance = x.Balance;
             decimal balanceInDefaultCurrency = x.RateToBase.HasValue && x.RateFromBase.HasValue
@@ -110,6 +105,12 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 BalanceInDefaultCurrency = Math.Round(balanceInDefaultCurrency, 3)
             };
         }).ToList();
+
+        return new PagedView<View.Account>
+        {
+            Items = items,
+            Count = totalCount
+        };
     }
 
     public async Task<decimal> GetNetWorth()
@@ -326,6 +327,16 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
             await context.SaveChangesAsync();
         }
+    }
+
+    public async Task Update(string accountValueId, AccountBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var entity = await context.Accounts.WhereUser(UserId)
+                                           .SingleOrDefaultAsync(x => x.ValueId == accountValueId) ?? throw new ResourceNotFoundException();
+        binding.ToEntity(context, entity);
+        await context.SaveChangesAsync();
     }
 
     private IEnumerable<string> ParseCsvLine(string line, char separator = ',')

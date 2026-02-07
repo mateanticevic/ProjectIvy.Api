@@ -4,12 +4,15 @@ public class Account
 {
     public Account(Database.Main.Finance.Account a)
     {
+        Active = a.Active;
         Id = a.ValueId;
         Name = a.Name;
         Bank = a.BankId.HasValue ? new Bank.Bank(a.Bank) : null;
         Currency = new Currency.Currency(a.Currency);
         Iban = a.Iban;
     }
+
+    public bool Active { get; set; }
 
     public string Id { get; set; }
 

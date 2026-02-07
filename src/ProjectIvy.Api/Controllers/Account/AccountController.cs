@@ -10,7 +10,7 @@ using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Binding.Transaction;
 using ProjectIvy.Model.View;
 
-namespace ProjectIvy.Api.Controllers.Airport;
+namespace ProjectIvy.Api.Controllers.Account;
 
 public class AccountController : BaseController<AccountController>
 {
@@ -22,7 +22,8 @@ public class AccountController : BaseController<AccountController>
     }
 
     [HttpGet]
-    public async Task<IEnumerable<Model.View.Account.Account>> Get([FromQuery] AccountGetBinding binding) => await _accountHandler.Get(binding);
+    public async Task<PagedView<Model.View.Account.Account>> Get([FromQuery] AccountGetBinding binding)
+        => await _accountHandler.Get(binding);
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] AccountBinding binding) => Ok(await _accountHandler.Create(binding));
