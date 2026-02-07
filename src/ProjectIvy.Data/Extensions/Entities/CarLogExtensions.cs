@@ -9,13 +9,16 @@ public static class CarLogExtensions
 {
     public static int? GetAproximateOdometer(this IQueryable<CarLog> logs, int carId, DateTime dateTime)
     {
-        var lastLogBefore = logs.Where(x => x.CarId == carId && x.Timestamp < dateTime && x.Odometer.HasValue)
+        var lastLogBefore = logs.Where(x => x.CarId == carId && x.Timestamp.Date <= dateTime.Date && x.Odometer.HasValue)
                                 .OrderByDescending(x => x.Timestamp)
                                 .FirstOrDefault();
 
         var firstLogAfter = logs.Where(x => x.CarId == carId && x.Timestamp > dateTime && x.Odometer.HasValue)
                                 .OrderBy(x => x.Timestamp)
                                 .FirstOrDefault();
+
+        if (lastLogBefore.Timestamp.Date == dateTime.Date)
+            return lastLogBefore.Odometer;
 
         if (lastLogBefore == null)
             return null;
