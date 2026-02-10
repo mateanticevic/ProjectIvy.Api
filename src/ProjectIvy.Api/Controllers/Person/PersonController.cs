@@ -5,6 +5,8 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Person;
 using ProjectIvy.Model.Binding.Person;
+using ProjectIvy.Model.View;
+using View = ProjectIvy.Model.View.Person;
 
 namespace ProjectIvy.Api.Controllers.Person;
 
@@ -19,8 +21,8 @@ public class PersonController : BaseController<PersonController>
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] PersonGetBinding binding) => Ok(await _personHandler.Get(binding));
+    public async Task<PagedView<View.Person>> Get([FromQuery] PersonGetBinding binding) => await _personHandler.Get(binding);
 
-    [HttpGet("bydateofbirth")]
-    public async Task<IActionResult> GetByDateOfBirth() => Ok(await _personHandler.GetByDateOfBirth());
+    [HttpGet("ByDateOfBirth")]
+    public async Task<IEnumerable<View.PersonByDateOfBirth>> GetByDateOfBirth() => await _personHandler.GetByDateOfBirth();
 }
