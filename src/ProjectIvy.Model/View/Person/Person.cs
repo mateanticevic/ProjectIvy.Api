@@ -2,13 +2,21 @@
 
 namespace ProjectIvy.Model.View.Person;
 
-public record Person(DatabaseModel.Person p)
+public record Person
 {
-    public string Id { get; set; } = p.ValueId;
+    public Person(DatabaseModel.Person p)
+    {
+        Id = p.ValueId;
+        FirstName = p.FirstName;
+        LastName = p.LastName;
+        DateOfBirth = p.DateOfBirth;
+    }
+    
+    public string Id { get; set; }
 
-    public string FirstName { get; set; } = p.FirstName;
+    public string FirstName { get; set; }
 
-    public string LastName { get; set; } = p.LastName;
+    public string LastName { get; set; }
 
-    public DateTime DateOfBirth { get; set; } = p.DateOfBirth;
+    public DateTime DateOfBirth { get; set; }
 }

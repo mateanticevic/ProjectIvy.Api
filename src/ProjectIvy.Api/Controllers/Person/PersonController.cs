@@ -20,4 +20,7 @@ public class PersonController : BaseController<PersonController>
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] PersonGetBinding binding) => Ok(await _personHandler.Get(binding));
+
+    [HttpGet("bydateofbirth")]
+    public async Task<IActionResult> GetByDateOfBirth() => Ok(await _personHandler.GetByDateOfBirth());
 }
