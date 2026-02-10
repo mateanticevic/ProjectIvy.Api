@@ -39,6 +39,7 @@ using ProjectIvy.Business.Handlers.Inventory;
 using ProjectIvy.Business.Handlers.Location;
 using ProjectIvy.Business.Handlers.Movie;
 using ProjectIvy.Business.Handlers.PaymentType;
+using ProjectIvy.Business.Handlers.Person;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
 using ProjectIvy.Business.Handlers.Stay;
@@ -118,6 +119,7 @@ public class Startup
         services.AddHandler<ILocationHandler, LocationHandler>();
         services.AddHandler<IMovieHandler, MovieHandler>();
         services.AddHandler<IPaymentTypeHandler, PaymentTypeHandler>();
+        services.AddHandler<IPersonHandler, PersonHandler>();
         services.AddHandler<IPoiHandler, PoiHandler>();
         services.AddHandler<IRideHandler, RideHandler>();
         services.AddHandler<IRouteHandler, RouteHandler>();

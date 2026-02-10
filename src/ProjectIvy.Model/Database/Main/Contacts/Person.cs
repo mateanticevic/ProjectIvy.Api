@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ProjectIvy.Model.Database.Main.Contacts;
@@ -17,7 +15,11 @@ public class Person : UserEntity, IHasCreatedModified, IHasValueId
 
     public string LastName { get; set; }
 
+    public bool IsDeleted { get; set; }
+
     public DateTime Created { get; set; }
+
+    public DateTime DateOfBirth { get; set; }
 
     public DateTime Modified { get; set; }
 
