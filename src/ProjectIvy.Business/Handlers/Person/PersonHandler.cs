@@ -36,7 +36,7 @@ public class PersonHandler : Handler<PersonHandler>, IPersonHandler
                      .ToPagedViewAsync(binding);
     }
 
-    public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<View.Person>>>> GetByDateOfBirth()
+    public async Task<IEnumerable<View.PersonByDateOfBirth>> GetByDateOfBirth()
     {
         using var context = GetMainContext();
         
@@ -48,10 +48,11 @@ public class PersonHandler : Handler<PersonHandler>, IPersonHandler
                                   .ToListAsync();
 
         return people.GroupBy(x => x.DateOfBirth)
-                     .Select(g => new KeyValuePair<DateTime, IEnumerable<View.Person>>(
-                         g.Key,
-                         g.Select(p => new View.Person(p))
-                     ))
+                     .Select(g => new View.PersonByDateOfBirth
+                     {
+                         DateOfBirth = g.Key,
+                         People = g.Select(p => new View.Person(p))
+                     })
                      .ToList();
     }
 }

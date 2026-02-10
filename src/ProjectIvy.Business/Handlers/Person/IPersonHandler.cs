@@ -10,5 +10,5 @@ public interface IPersonHandler
 {
     Task<PagedView<View.Person>> Get(PersonGetBinding binding);
 
-    Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<View.Person>>>> GetByDateOfBirth();
+    Task<IEnumerable<View.PersonByDateOfBirth>> GetByDateOfBirth();
 }
