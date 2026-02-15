@@ -33,6 +33,7 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 
         var itemOwnership = new Database.InventoryItemOwnership
         {
+            InventoryItem = entity,
             OwnershipId = context.Ownerships.GetId(binding.OwershipId) ?? context.Ownerships.GetId(DefaultOwnershipValueId).Value,
             Created = DateTime.UtcNow
         };
