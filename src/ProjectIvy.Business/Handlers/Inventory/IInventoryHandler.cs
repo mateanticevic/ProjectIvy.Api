@@ -13,5 +13,7 @@ public interface IInventoryHandler
 
     Task LinkItemToExpense(string itemValueId, string expenseValueId);
 
+    Task UnlinkItemFromExpense(string itemValueId, string expenseValueId);
+
     Task UpdateItem(string valueId, InventoryItemBinding binding);
 }

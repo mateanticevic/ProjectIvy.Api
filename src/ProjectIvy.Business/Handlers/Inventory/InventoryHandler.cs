@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
@@ -55,17 +56,10 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 
         var item = await context.InventoryItems
                                 .WhereUser(UserId)
-                                .SingleOrDefaultAsync(x => x.ValueId == itemValueId);
-
-        if (item == null)
-            throw new Exceptions.ResourceNotFoundException();
-
+                                .SingleOrDefaultAsync(x => x.ValueId == itemValueId) ?? throw new ResourceNotFoundException();
         var expense = await context.Expenses
                                    .WhereUser(UserId)
-                                   .SingleOrDefaultAsync(x => x.ValueId == expenseValueId);
-
-        if (expense == null)
-            throw new Exceptions.ResourceNotFoundException();
+                                   .SingleOrDefaultAsync(x => x.ValueId == expenseValueId) ?? throw new ResourceNotFoundException();
 
         var entity = new Database.InventoryItemExpense
         {
@@ -74,6 +68,24 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
         };
 
         await context.InventoryItemExpenses.AddAsync(entity);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UnlinkItemFromExpense(string itemValueId, string expenseValueId)
+    {
+        using var context = GetMainContext();
+
+        var item = await context.InventoryItems
+                                .WhereUser(UserId)
+                                .SingleOrDefaultAsync(x => x.ValueId == itemValueId) ?? throw new ResourceNotFoundException();
+        var expense = await context.Expenses
+                                   .WhereUser(UserId)
+                                   .SingleOrDefaultAsync(x => x.ValueId == expenseValueId) ?? throw new ResourceNotFoundException();
+
+        var link = await context.InventoryItemExpenses
+                                .SingleOrDefaultAsync(x => x.InventoryItemId == item.Id && x.ExpenseId == expense.Id) ?? throw new ResourceNotFoundException();
+
+        context.InventoryItemExpenses.Remove(link);
         await context.SaveChangesAsync();
     }
 
