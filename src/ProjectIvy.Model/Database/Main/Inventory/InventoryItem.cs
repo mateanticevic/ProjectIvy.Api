@@ -16,4 +16,8 @@ public class InventoryItem : UserEntity, IHasName
     public int? BrandId { get; set; }
 
     public Common.Brand Brand { get; set; }
+
+    public ICollection<InventoryItemExpense> InventoryItemExpenses { get; set; }
+
+    public ICollection<InventoryItemOwnership> InventoryItemOwnerships { get; set; }
 }

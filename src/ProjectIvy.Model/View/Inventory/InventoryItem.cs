@@ -1,3 +1,4 @@
+using System.Linq;
 using BrandView = ProjectIvy.Model.View.Brand.Brand;
 using DatabaseModel = ProjectIvy.Model.Database.Main.Inventory;
 
@@ -11,7 +12,12 @@ public class InventoryItem
     {
         Id = x.ValueId;
         Name = x.Name;
-        Brand = x.Brand != null ? new BrandView(x.Brand) : null;
+        Brand = x.Brand != null ? new (x.Brand) : null;
+        Ownership = x.InventoryItemOwnerships?
+            .OrderByDescending(o => o.Created)
+            .FirstOrDefault()?.Ownership != null
+            ? new Ownership(x.InventoryItemOwnerships.OrderByDescending(o => o.Created).First().Ownership)
+            : null;
     }
 
     public string Id { get; set; }
@@ -19,4 +25,6 @@ public class InventoryItem
     public string Name { get; set; }
 
     public BrandView Brand { get; set; }
+
+    public Ownership Ownership { get; set; }
 }

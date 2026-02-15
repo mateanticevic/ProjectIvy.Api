@@ -118,6 +118,8 @@ public class MainContext : DbContext
 
     public DbSet<InventoryItemExpense> InventoryItemExpenses { get; set; }
 
+    public DbSet<InventoryItemOwnership> InventoryItemOwnerships { get; set; }
+
     public DbSet<Location> Locations { get; set; }
 
     public DbSet<LocationType> LocationTypes { get; set; }
@@ -127,6 +129,8 @@ public class MainContext : DbContext
     public DbSet<Manufacturer> Manufacturers { get; set; }
 
     public DbSet<Movie> Movies { get; set; }
+
+    public DbSet<Ownership> Ownerships { get; set; }
 
     public DbSet<PaymentProvider> PaymentProviders { get; set; }
 

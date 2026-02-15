@@ -1,9 +1,7 @@
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
-using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.Inventory;
@@ -15,6 +13,8 @@ namespace ProjectIvy.Business.Handlers.Inventory;
 
 public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 {
+    private const string DefaultOwnershipValueId = "owned";
+
     public InventoryHandler(IHandlerContext<InventoryHandler> context) : base(context)
     {
     }
@@ -43,6 +43,8 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
         var query = context.InventoryItems
                            .WhereUser(UserId)
                            .Include(x => x.Brand)
+                           .Include(x => x.InventoryItemOwnerships)
+                           .ThenInclude(x => x.Ownership)
                            .Where(binding);
 
         return await query.OrderBy(binding)
@@ -69,6 +71,24 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 
         await context.InventoryItemExpenses.AddAsync(entity);
         await context.SaveChangesAsync();
+
+        var hasOwnerships = await context.InventoryItemOwnerships
+                                         .AnyAsync(x => x.InventoryItemId == item.Id);
+
+        if (!hasOwnerships)
+        {
+            var ownershipId = context.Ownerships.GetId(DefaultOwnershipValueId);
+
+            var ownership = new Database.InventoryItemOwnership
+            {
+                InventoryItemId = item.Id,
+                OwnershipId = ownershipId.Value,
+                Created = expense.Date
+            };
+
+            await context.InventoryItemOwnerships.AddAsync(ownership);
+            await context.SaveChangesAsync();
+        }
     }
 
     public async Task UnlinkItemFromExpense(string itemValueId, string expenseValueId)
