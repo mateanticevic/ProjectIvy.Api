@@ -14,11 +14,23 @@ namespace ProjectIvy.Business.Handlers.User;
 
 public class UserHandler : Handler<UserHandler>, IUserHandler
 {
-
-
     public UserHandler(IHandlerContext<UserHandler> context,
                        IMemoryCache memoryCache) : base(context, memoryCache, nameof(UserHandler))
     {
+    }
+
+    public async Task AddWeight(WeightBinding binding)
+    {
+        using var context = GetMainContext();
+        var entity = new Weight()
+        {
+            UserId = UserId,
+            Date = binding.Date,
+            Value = binding.Weight
+        };
+
+        await context.Weights.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public View.User Get(string username)
@@ -53,29 +65,25 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
 
     public async Task Update(UserUpdateBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
-            context.Update(binding.ToEntity(context, user));
+        using var context = GetMainContext();
+        var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
+        context.Update(binding.ToEntity(context, user));
 
-            await context.SaveChangesAsync();
-        }
+        await context.SaveChangesAsync();
     }
 
     public async Task SetWeight(decimal weight)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var entity = new Weight()
         {
-            var entity = new Weight()
-            {
-                UserId = UserId,
-                Date = DateTime.Now,
-                Value = weight
-            };
+            UserId = UserId,
+            Date = DateTime.Now,
+            Value = weight
+        };
 
-            await context.Weights.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
+        await context.Weights.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     private View.User GetNonCached(int? id = null)

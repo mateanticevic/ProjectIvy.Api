@@ -24,6 +24,13 @@ public class UserController : BaseController<UserController>
     [HttpGet("Weight")]
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight([FromQuery] FilteredBinding b) => await _userHandler.GetWeight(b);
 
+    [HttpPost("Weight")]
+    public async Task<IActionResult> PostWeight([FromBody] WeightBinding binding)
+    {
+        await _userHandler.AddWeight(binding);
+        return Ok();
+    }
+
     [HttpPut]
     public async Task<IActionResult> Put([FromBody] UserUpdateBinding binding)
     {

@@ -7,6 +7,8 @@ namespace ProjectIvy.Business.Handlers.User;
 
 public interface IUserHandler : IHandler
 {
+    Task AddWeight(WeightBinding binding);
+
     View.User Get(string username);
 
     View.User Get(int? id = null);
