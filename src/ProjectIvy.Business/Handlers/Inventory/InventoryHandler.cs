@@ -31,7 +31,14 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
             UserId = UserId
         };
 
+        var itemOwnership = new Database.InventoryItemOwnership
+        {
+            OwnershipId = context.Ownerships.GetId(binding.OwershipId) ?? context.Ownerships.GetId(DefaultOwnershipValueId).Value,
+            Created = DateTime.UtcNow
+        };
+
         await context.InventoryItems.AddAsync(entity);
+        await context.InventoryItemOwnerships.AddAsync(itemOwnership);
         await context.SaveChangesAsync();
 
         return entity.ValueId;
@@ -124,15 +131,33 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 
         var item = await context.InventoryItems
                                  .WhereUser(UserId)
-                                 .SingleOrDefaultAsync(x => x.ValueId == valueId);
+                                 .SingleOrDefaultAsync(x => x.ValueId == valueId) ?? throw new ResourceNotFoundException();
 
-        if (item == null)
-            throw new Exceptions.ResourceNotFoundException();
+        var ownershipId = context.Ownerships.GetId(binding.OwershipId) ?? context.Ownerships.GetId(DefaultOwnershipValueId).Value;
+        var lastOwnershipId = await context.InventoryItemOwnerships
+                                           .Where(x => x.InventoryItemId == item.Id)
+                                           .OrderByDescending(x => x.Created)
+                                           .ThenByDescending(x => x.Id)
+                                           .Select(x => (int?)x.OwnershipId)
+                                           .FirstOrDefaultAsync();
 
         item.Name = binding.Name;
         item.BrandId = context.Brands.GetId(binding.BrandId);
 
         context.InventoryItems.Update(item);
+
+        if (!lastOwnershipId.HasValue || lastOwnershipId.Value != ownershipId)
+        {
+            var itemOwnership = new Database.InventoryItemOwnership
+            {
+                InventoryItemId = item.Id,
+                OwnershipId = ownershipId,
+                Created = DateTime.UtcNow
+            };
+
+            await context.InventoryItemOwnerships.AddAsync(itemOwnership);
+        }
+
         await context.SaveChangesAsync();
     }
 }
