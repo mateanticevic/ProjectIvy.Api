@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,34 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
         return await query.OrderBy(binding)
                           .Select(x => new View.InventoryItem(x))
                           .ToPagedViewAsync(binding);
+    }
+
+    public async Task LinkItemToExpense(string itemValueId, string expenseValueId)
+    {
+        using var context = GetMainContext();
+
+        var item = await context.InventoryItems
+                                .WhereUser(UserId)
+                                .SingleOrDefaultAsync(x => x.ValueId == itemValueId);
+
+        if (item == null)
+            throw new Exceptions.ResourceNotFoundException();
+
+        var expense = await context.Expenses
+                                   .WhereUser(UserId)
+                                   .SingleOrDefaultAsync(x => x.ValueId == expenseValueId);
+
+        if (expense == null)
+            throw new Exceptions.ResourceNotFoundException();
+
+        var entity = new Database.InventoryItemExpense
+        {
+            InventoryItemId = item.Id,
+            ExpenseId = expense.Id
+        };
+
+        await context.InventoryItemExpenses.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task UpdateItem(string valueId, InventoryItemBinding binding)

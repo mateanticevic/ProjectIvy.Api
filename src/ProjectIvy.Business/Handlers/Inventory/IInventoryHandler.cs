@@ -11,5 +11,7 @@ public interface IInventoryHandler
 
     Task<PagedView<View.InventoryItem>> GetItems(InventoryItemGetBinding binding);
 
+    Task LinkItemToExpense(string itemValueId, string expenseValueId);
+
     Task UpdateItem(string valueId, InventoryItemBinding binding);
 }

@@ -16,19 +16,27 @@ public class InventoryController : BaseController<InventoryController>
     public InventoryController(ILogger<InventoryController> logger, IInventoryHandler inventoryHandler) : base(logger)
         => _inventoryHandler = inventoryHandler;
 
-    [HttpGet("item")]
+    [HttpGet("Item")]
     public async Task<PagedView<View.InventoryItem>> GetItems(InventoryItemGetBinding binding)
         => await _inventoryHandler.GetItems(binding);
 
-    [HttpPost("item")]
-    public async Task<StatusCodeResult> CreateItem([FromBody] InventoryItemBinding binding)
+    [HttpPost("Item")]
+    public async Task<StatusCodeResult> PostItem([FromBody] InventoryItemBinding binding)
     {
         await _inventoryHandler.CreateItem(binding);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpPut("item/{valueId}")]
+    [HttpPut("Item/{valueId}")]
     public async Task UpdateItem(string valueId, [FromBody] InventoryItemBinding binding)
         => await _inventoryHandler.UpdateItem(valueId, binding);
+
+    [HttpPost("item/{itemValueId}/expense/{expenseValueId}")]
+    public async Task<StatusCodeResult> PostItemExpense(string itemValueId, string expenseValueId)
+    {
+        await _inventoryHandler.LinkItemToExpense(itemValueId, expenseValueId);
+
+        return new StatusCodeResult(StatusCodes.Status201Created);
+    }
 }
