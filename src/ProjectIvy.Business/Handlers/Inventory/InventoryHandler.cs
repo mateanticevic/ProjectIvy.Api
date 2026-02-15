@@ -52,6 +52,15 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
                           .ToPagedViewAsync(binding);
     }
 
+    public async Task<IEnumerable<View.Ownership>> GetOwnerships()
+    {
+        using var context = GetMainContext();
+        return await context.Ownerships
+                            .OrderBy(x => x.Name)
+                            .Select(x => new View.Ownership(x))
+                            .ToListAsync();
+    }
+
     public async Task LinkItemToExpense(string itemValueId, string expenseValueId)
     {
         using var context = GetMainContext();

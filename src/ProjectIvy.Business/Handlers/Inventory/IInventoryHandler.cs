@@ -11,6 +11,8 @@ public interface IInventoryHandler
 
     Task<PagedView<View.InventoryItem>> GetItems(InventoryItemGetBinding binding);
 
+    Task<IEnumerable<View.Ownership>> GetOwnerships();
+
     Task LinkItemToExpense(string itemValueId, string expenseValueId);
 
     Task UnlinkItemFromExpense(string itemValueId, string expenseValueId);

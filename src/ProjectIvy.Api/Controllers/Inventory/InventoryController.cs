@@ -20,6 +20,10 @@ public class InventoryController : BaseController<InventoryController>
     public async Task<PagedView<View.InventoryItem>> GetItems(InventoryItemGetBinding binding)
         => await _inventoryHandler.GetItems(binding);
 
+    [HttpGet("Ownership")]
+    public async Task<IEnumerable<View.Ownership>> GetOwnerships()
+        => await _inventoryHandler.GetOwnerships();
+
     [HttpPost("Item")]
     public async Task<StatusCodeResult> PostItem([FromBody] InventoryItemBinding binding)
     {
