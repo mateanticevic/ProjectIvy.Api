@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Common.Extensions;
@@ -25,15 +26,28 @@ public class VendorHandler : Handler<VendorHandler>, IVendorHandler
 
     public async Task<PagedView<View.Vendor>> Get(VendorGetBinding binding)
     {
-        string searchPattern = $"%{binding.Search}%";
-
         using var context = GetMainContext();
-        return await context.Vendors.WhereIf(binding?.Search != null,
-                                                x => EF.Functions.Like(x.ValueId, searchPattern) ||
-                                                     EF.Functions.Like(x.Name, searchPattern))
-                                                      .OrderByDescending(x => x.ValueId == binding.Search)
-                                                      .ThenBy(x => x.Name)
-                                                      .Select(x => new View.Vendor(x))
-                                                      .ToPagedViewAsync(binding);
+        var query = context.Vendors.AsQueryable();
+        string search = binding?.Search;
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            var searchWords = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            var searchQuery = query.Where(x => false);
+
+            foreach (var searchWord in searchWords)
+            {
+                string searchPattern = $"%{searchWord}%";
+                searchQuery = searchQuery.Union(query.Where(x => EF.Functions.Like(x.ValueId, searchPattern) ||
+                                                                  EF.Functions.Like(x.Name, searchPattern)));
+            }
+
+            query = searchQuery;
+        }
+
+        return await query.OrderByDescending(x => x.ValueId == search)
+                          .ThenBy(x => x.Name)
+                          .Select(x => new View.Vendor(x))
+                          .ToPagedViewAsync(binding);
     }
 }
