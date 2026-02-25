@@ -29,10 +29,11 @@ public class VendorHandler : Handler<VendorHandler>, IVendorHandler
         using var context = GetMainContext();
         var query = context.Vendors.AsQueryable();
         string search = binding?.Search;
+        string[] searchWords = Array.Empty<string>();
 
         if (!string.IsNullOrWhiteSpace(search))
         {
-            var searchWords = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            searchWords = search.Split(' ', StringSplitOptions.RemoveEmptyEntries);
             var searchQuery = query.Where(x => false);
 
             foreach (var searchWord in searchWords)
@@ -45,7 +46,8 @@ public class VendorHandler : Handler<VendorHandler>, IVendorHandler
             query = searchQuery;
         }
 
-        return await query.OrderByDescending(x => x.ValueId == search)
+        return await query.OrderByDescending(x => searchWords.Contains(x.ValueId) || searchWords.Contains(x.Name))
+                          .ThenByDescending(x => x.ValueId == search)
                           .ThenBy(x => x.Name)
                           .Select(x => new View.Vendor(x))
                           .ToPagedViewAsync(binding);
