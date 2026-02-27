@@ -37,7 +37,7 @@ public interface IConsumationHandler : IHandler
 
     PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding);
 
-    PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding);
+    PagedView<View.Beer.Beer> GetNewBeers(ConsumationGetBinding binding);
 
     PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding);
 

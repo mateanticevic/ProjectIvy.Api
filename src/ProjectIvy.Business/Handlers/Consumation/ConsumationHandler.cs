@@ -219,55 +219,60 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         }
     }
 
-    public PagedView<View.Beer.Beer> GetNewBeers(FilteredPagedBinding binding)
+    public PagedView<View.Beer.Beer> GetNewBeers(ConsumationGetBinding binding)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var oldConsumationBinding = new ConsumationGetBinding
         {
-            // Materialize the old beer IDs first to avoid translation issues
-            var oldBeerIds = binding.From.HasValue ? context.Consumations.WhereUser(UserId)
-                                           .Where(new FilteredPagedBinding()
-                                           {
-                                               To = binding.From.Value.AddDays(-1)
-                                           })
-                                           .Select(x => x.Beer.Id)
-                                           .Distinct()
-                                           .ToList() : new List<int>();
+            To = binding.From?.AddDays(-1),
+            BeerId = binding.BeerId,
+            BrandId = binding.BrandId,
+            CountryId = binding.CountryId,
+            Serving = binding.Serving,
+            StyleId = binding.StyleId
+        };
 
-            // Get all beers in the date range with their first consumption date
-            var beersInRange = context.Consumations.WhereUser(UserId)
-                                       .Include(x => x.Beer)
-                                       .Where(binding)
-                                       .GroupBy(x => new
-                                       {
-                                           x.Beer.Id,
-                                           x.Beer.Name,
-                                           x.Beer.ValueId
-                                       })
-                                       .Select(x => new { Beer = x.Key, Date = x.Min(y => y.Date) })
-                                       .ToList(); // Materialize to memory
+        var oldBeerIds = binding.From.HasValue
+            ? context.Consumations.WhereUser(UserId)
+                                 .Where(oldConsumationBinding, context)
+                                 .Select(x => x.Beer.Id)
+                                 .Distinct()
+                                 .ToList()
+            : new List<int>();
 
-            // Filter out old beers in memory and apply paging
-            var filteredBeers = beersInRange
-                                       .Where(x => !oldBeerIds.Contains(x.Beer.Id))
-                                       .OrderByDescending(x => x.Date)
-                                       .ToList();
+        // Get all beers in the date range with their first consumption date
+        var beersInRange = context.Consumations.WhereUser(UserId)
+                                   .Where(binding, context)
+                                   .GroupBy(x => new
+                                   {
+                                       x.Beer.Id,
+                                       x.Beer.Name,
+                                       x.Beer.ValueId
+                                   })
+                                   .Select(x => new { Beer = x.Key, Date = x.Min(y => y.Date) })
+                                   .ToList();
 
-            var pagedBeers = filteredBeers
-                                       .Skip((binding.Page - 1) * binding.PageSize)
-                                       .Take(binding.PageSize)
-                                       .Select(x => new View.Beer.Beer()
-                                       {
-                                           Id = x.Beer.ValueId,
-                                           Name = x.Beer.Name
-                                       })
-                                       .ToList();
+        // Filter out old beers in memory and apply paging
+        var filteredBeers = beersInRange
+                                   .Where(x => !oldBeerIds.Contains(x.Beer.Id))
+                                   .OrderByDescending(x => x.Date)
+                                   .ToList();
 
-            return new PagedView<View.Beer.Beer>()
-            {
-                Count = filteredBeers.Count,
-                Items = pagedBeers
-            };
-        }
+        var pagedBeers = filteredBeers
+                                   .Skip((binding.Page - 1) * binding.PageSize)
+                                   .Take(binding.PageSize)
+                                   .Select(x => new View.Beer.Beer()
+                                   {
+                                       Id = x.Beer.ValueId,
+                                       Name = x.Beer.Name
+                                   })
+                                   .ToList();
+
+        return new PagedView<View.Beer.Beer>()
+        {
+            Count = filteredBeers.Count,
+            Items = pagedBeers
+        };
     }
 
     public PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding)

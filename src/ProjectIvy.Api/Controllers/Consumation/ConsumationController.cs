@@ -39,7 +39,7 @@ public class ConsumationController : BaseController<ConsumationController>
     public IActionResult GetBeer(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBeers(binding));
 
     [HttpGet("Beer/New")]
-    public IActionResult GetBeerNew(FilteredPagedBinding binding) => Ok(_consumationHandler.GetNewBeers(binding));
+    public IActionResult GetBeerNew(ConsumationGetBinding binding) => Ok(_consumationHandler.GetNewBeers(binding));
 
     [HttpGet("Brand")]
     public IActionResult GetBrands(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBrands(binding));
