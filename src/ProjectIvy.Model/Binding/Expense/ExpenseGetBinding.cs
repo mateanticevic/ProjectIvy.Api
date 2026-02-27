@@ -40,6 +40,8 @@ public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>, 
 
     public IEnumerable<string> VendorId { get; set; }
 
+    public IEnumerable<string> ExternalId { get; set; }
+
     public IEnumerable<string> ExcludeId { get; set; }
 
     public IEnumerable<string> ExcludeTypeId { get; set; }

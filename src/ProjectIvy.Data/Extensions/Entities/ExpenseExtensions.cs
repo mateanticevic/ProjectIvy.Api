@@ -66,6 +66,7 @@ public static class ExpenseExtensions
                     .WhereIf(b.NeedsReview.HasValue, x => !(b.NeedsReview.Value ^ x.NeedsReview))
                     .WhereIf(!string.IsNullOrWhiteSpace(b.Description), x => x.Comment.Contains(b.Description))
                     .WhereIf(b.AmountFrom.HasValue, x => x.Amount >= b.AmountFrom)
+                    .WhereIf(b.ExternalId != null, x => b.ExternalId.Contains(x.ExternalId))
                     .WhereIf(b.ExcludeId != null, x => !b.ExcludeId.Contains(x.ValueId))
                     .WhereIf(b.AmountTo.HasValue, x => x.Amount <= b.AmountTo)
                     .WhereIf(!string.IsNullOrEmpty(b.Search), x => x.Comment.ToLower().Contains(b.Search.ToLower()));
