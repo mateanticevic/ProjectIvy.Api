@@ -18,6 +18,8 @@ public class Expense : UserEntity, IHasValueId, IHasCreatedModified
 
     public string ValueId { get; set; }
 
+    public string ExternalId { get; set; }
+
     public decimal Amount { get; set; }
 
     public string Comment { get; set; }

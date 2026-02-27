@@ -9,6 +9,7 @@ public class Expense
     public Expense(DatabaseModel.Finance.Expense x)
     {
         Amount = x.Amount;
+        ExternalId = x.ExternalId;
         Card = x.Card.ConvertTo(y => new Card.Card(y));
         Comment = x.Comment;
         Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
@@ -28,6 +29,8 @@ public class Expense
         NeedsReview = x.NeedsReview;
         InstallmentRef = x.InstallmentRef;
     }
+
+    public string ExternalId { get; set; }
 
     public decimal Amount { get; set; }
 

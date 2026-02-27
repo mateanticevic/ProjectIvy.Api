@@ -2,6 +2,8 @@
 
 public class ExpenseBinding
 {
+    public string ExternalId { get; set; }
+
     public decimal Amount { get; set; }
 
     public decimal? ParentCurrencyExchangeRate { get; set; }
