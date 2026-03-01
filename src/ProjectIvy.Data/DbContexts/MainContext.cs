@@ -160,6 +160,8 @@ public class MainContext : DbContext
 
     public DbSet<Trip> Trips { get; set; }
 
+    public DbSet<ToDo> ToDos { get; set; }
+
     public DbSet<TripPoi> TripPois { get; set; }
 
     public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }
