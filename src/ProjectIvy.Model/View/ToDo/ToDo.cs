@@ -17,4 +17,6 @@ public class ToDo
     public string Name { get; set; }
 
     public string Description { get; set; }
+
+    public IEnumerable<Model.View.Tag.Tag> Tags { get; set; }
 }

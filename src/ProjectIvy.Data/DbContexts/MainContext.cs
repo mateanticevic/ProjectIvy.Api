@@ -154,6 +154,8 @@ public class MainContext : DbContext
 
     public DbSet<Stay> Stays { get; set; }
 
+    public DbSet<Tag> Tags { get; set; }
+
     public DbSet<Tracking> Trackings { get; set; }
 
     public DbSet<Transaction> Transactions { get; set; }
@@ -161,6 +163,8 @@ public class MainContext : DbContext
     public DbSet<Trip> Trips { get; set; }
 
     public DbSet<ToDo> ToDos { get; set; }
+
+    public DbSet<ToDoTag> ToDoTags { get; set; }
 
     public DbSet<TripPoi> TripPois { get; set; }
 
@@ -363,6 +367,9 @@ public class MainContext : DbContext
 
         modelBuilder.Entity<TripExpenseInclude>()
                     .HasKey(x => new { x.ExpenseId, x.TripId });
+
+        modelBuilder.Entity<ToDoTag>()
+                .HasKey(x => new { x.ToDoId, x.TagId });
 
         modelBuilder.Entity<CallBlacklist>()
                     .HasKey(x => new { x.UserId, x.Number });
