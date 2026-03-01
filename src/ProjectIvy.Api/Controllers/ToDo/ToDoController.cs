@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Model.Binding.ToDo;
+using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.ToDo;
 
@@ -20,7 +21,7 @@ public class ToDoController : BaseController<ToDoController>
     }
 
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] ToDoGetBinding binding) => Ok(await _toDoHandler.Get(binding));
+    public async Task<PagedView<Model.View.ToDo.ToDo>> Get([FromQuery] ToDoGetBinding binding) => await _toDoHandler.Get(binding);
 
     [HttpPost]
     public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
