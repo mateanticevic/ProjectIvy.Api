@@ -1,9 +1,12 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
+using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.ToDo;
 using ProjectIvy.Model.View;
+using Database = ProjectIvy.Model.Database.Main.User;
 using View = ProjectIvy.Model.View.ToDo;
 
 namespace ProjectIvy.Business.Handlers.ToDo;
@@ -12,6 +15,25 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
 {
     public ToDoHandler(IHandlerContext<ToDoHandler> context) : base(context)
     {
+    }
+
+    public async Task<string> Create(ToDoBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var entity = new Database.ToDo
+        {
+            Name = binding.Name,
+            Description = binding.Description,
+            Created = DateTime.UtcNow,
+            ValueId = binding.Name.ToValueId(),
+            UserId = UserId
+        };
+
+        await context.ToDos.AddAsync(entity);
+        await context.SaveChangesAsync();
+
+        return entity.ValueId;
     }
 
     public async Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding)
@@ -81,5 +103,55 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             Count = query.LongCount(),
             Items = items
         };
+    }
+
+    public async Task LinkTag(string toDoValueId, string tagValueId)
+    {
+        using var context = GetMainContext();
+
+        var toDoId = await context.ToDos.WhereUser(UserId)
+                                   .Where(x => x.ValueId == toDoValueId)
+                                   .Select(x => (long?)x.Id)
+                                   .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var tagId = await context.Tags.WhereUser(UserId)
+                                      .Where(x => x.ValueId == tagValueId)
+                                      .Select(x => (int?)x.Id)
+                                      .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        bool exists = await context.ToDoTags.AnyAsync(x => x.ToDoId == toDoId && x.TagId == tagId);
+        if (exists)
+        {
+            return;
+        }
+
+        await context.ToDoTags.AddAsync(new Database.ToDoTag
+        {
+            ToDoId = toDoId,
+            TagId = tagId
+        });
+
+        await context.SaveChangesAsync();
+    }
+
+    public async Task UnlinkTag(string toDoValueId, string tagValueId)
+    {
+        using var context = GetMainContext();
+
+        var toDoId = await context.ToDos.WhereUser(UserId)
+                                        .Where(x => x.ValueId == toDoValueId)
+                                        .Select(x => (long?)x.Id)
+                                        .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var tagId = await context.Tags.WhereUser(UserId)
+                                      .Where(x => x.ValueId == tagValueId)
+                                      .Select(x => (int?)x.Id)
+                                      .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var link = await context.ToDoTags
+                                .SingleOrDefaultAsync(x => x.ToDoId == toDoId && x.TagId == tagId) ?? throw new ResourceNotFoundException();
+
+        context.ToDoTags.Remove(link);
+        await context.SaveChangesAsync();
     }
 }

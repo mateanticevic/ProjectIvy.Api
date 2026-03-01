@@ -1,5 +1,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -20,4 +21,25 @@ public class ToDoController : BaseController<ToDoController>
 
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] ToDoGetBinding binding) => Ok(await _toDoHandler.Get(binding));
+
+    [HttpPost]
+    public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
+    {
+        await _toDoHandler.Create(binding);
+        return new StatusCodeResult(StatusCodes.Status201Created);
+    }
+
+    [HttpPost("{id}/tag/{tagId}")]
+    public async Task<StatusCodeResult> PostTag(string id, string tagId)
+    {
+        await _toDoHandler.LinkTag(id, tagId);
+        return new StatusCodeResult(StatusCodes.Status201Created);
+    }
+
+    [HttpDelete("{id}/tag/{tagId}")]
+    public async Task<StatusCodeResult> DeleteTag(string id, string tagId)
+    {
+        await _toDoHandler.UnlinkTag(id, tagId);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
 }
