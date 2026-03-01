@@ -43,6 +43,7 @@ using ProjectIvy.Business.Handlers.Person;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
 using ProjectIvy.Business.Handlers.Stay;
+using ProjectIvy.Business.Handlers.Tag;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Business.Handlers.ToDo;
 using ProjectIvy.Business.Handlers.Trip;
@@ -125,6 +126,7 @@ public class Startup
         services.AddHandler<IRideHandler, RideHandler>();
         services.AddHandler<IRouteHandler, RouteHandler>();
         services.AddHandler<IStayHandler, StayHandler>();
+        services.AddHandler<ITagHandler, TagHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();
         services.AddHandler<IToDoHandler, ToDoHandler>();
         services.AddHandler<ITripHandler, TripHandler>();
