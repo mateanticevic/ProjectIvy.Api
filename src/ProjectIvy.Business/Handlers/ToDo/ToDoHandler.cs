@@ -94,6 +94,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
         }
 
+        if (binding.IsCompleted.HasValue)
+            query = query.Where(x => x.IsCompleted == binding.IsCompleted.Value);
+
         var pagedToDos = await query.OrderByDescending(x => x.ValueId == binding.Search)
                                     .ThenByDescending(x => x.Created)
                                     .ThenBy(x => x.Name)
