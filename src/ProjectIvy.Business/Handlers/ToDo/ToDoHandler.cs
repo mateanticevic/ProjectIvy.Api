@@ -24,6 +24,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         {
             Name = binding.Name,
             Description = binding.Description,
+            IsCompleted = false,
             Created = DateTime.UtcNow,
             ValueId = binding.Name.ToValueId(),
             UserId = UserId
@@ -33,6 +34,26 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         await context.SaveChangesAsync();
 
         return entity.ValueId;
+    }
+
+    public async Task Update(string toDoValueId, ToDoBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var toDo = await context.ToDos.WhereUser(UserId)
+                                     .SingleOrDefaultAsync(x => x.ValueId == toDoValueId) ?? throw new ResourceNotFoundException();
+
+        bool wasCompleted = toDo.IsCompleted;
+
+        toDo.Name = binding.Name;
+        toDo.Description = binding.Description;
+        toDo.IsCompleted = binding.IsCompleted;
+
+        if (!wasCompleted && toDo.IsCompleted)
+            toDo.CompletedOn = DateTime.UtcNow;
+
+        context.ToDos.Update(toDo);
+        await context.SaveChangesAsync();
     }
 
     public async Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding)

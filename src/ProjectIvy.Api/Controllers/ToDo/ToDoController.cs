@@ -30,6 +30,9 @@ public class ToDoController : BaseController<ToDoController>
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
+    [HttpPut("{id}")]
+    public async Task Put(string id, [FromBody] ToDoBinding binding) => await _toDoHandler.Update(id, binding);
+
     [HttpPost("{id}/tag/{tagId}")]
     public async Task<StatusCodeResult> PostTag(string id, string tagId)
     {
