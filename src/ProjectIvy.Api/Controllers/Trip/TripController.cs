@@ -47,6 +47,14 @@ public class TripController : BaseController<TripController>
         return new StatusCodeResult(StatusCodes.Status204NoContent);
     }
 
+    [HttpDelete("{tripId}/ToDo/{toDoId}")]
+    public async Task<StatusCodeResult> DeleteToDo(string tripId, string toDoId)
+    {
+        await _tripHandler.RemoveToDo(tripId, toDoId);
+
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
     [HttpGet]
     public async Task<PagedView<View.Trip>> Get(TripGetBinding binding) => await _tripHandler.Get(binding);
 
@@ -77,6 +85,14 @@ public class TripController : BaseController<TripController>
     public async Task<StatusCodeResult> PostExpense(string tripId, string expenseId)
     {
         await _tripHandler.AddExpense(tripId, expenseId);
+
+        return new StatusCodeResult(StatusCodes.Status201Created);
+    }
+
+    [HttpPost("{tripId}/ToDo/{toDoId}")]
+    public async Task<StatusCodeResult> PostToDo(string tripId, string toDoId)
+    {
+        await _tripHandler.AddToDo(tripId, toDoId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }

@@ -13,6 +13,8 @@ public interface ITripHandler
 
     Task AddPoi(string tripValueId, string poiValueId);
 
+    Task AddToDo(string tripValueId, string toDoValueId);
+
     Task Create(TripBinding binding);
 
     Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding);
@@ -28,4 +30,6 @@ public interface ITripHandler
     Task RemoveExpense(string tripValueId, string expenseValueId);
 
     Task RemovePoi(string tripValueId, string poiValueId);
+
+    Task RemoveToDo(string tripValueId, string toDoValueId);
 }

@@ -84,6 +84,25 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         await context.SaveChangesAsync();
     }
 
+    public async Task AddToDo(string tripValueId, string toDoValueId)
+    {
+        using var context = GetMainContext();
+        int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
+        long toDoId = await context.ToDos.WhereUser(UserId)
+                                         .Where(x => x.ValueId == toDoValueId)
+                                         .Select(x => (long?)x.Id)
+                                         .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var tripToDo = new TripTodo()
+        {
+            ToDoId = toDoId,
+            TripId = tripId
+        };
+
+        await context.TripToDos.AddAsync(tripToDo);
+        await context.SaveChangesAsync();
+    }
+
     public async Task Create(TripBinding binding)
     {
         using var context = GetMainContext();
@@ -281,6 +300,28 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         if (tripPoi != null)
         {
             context.TripPois.Remove(tripPoi);
+            await context.SaveChangesAsync();
+        }
+        else
+        {
+            throw new ResourceNotFoundException();
+        }
+    }
+
+    public async Task RemoveToDo(string tripValueId, string toDoValueId)
+    {
+        using var context = GetMainContext();
+        int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
+        long toDoId = await context.ToDos.WhereUser(UserId)
+                                         .Where(x => x.ValueId == toDoValueId)
+                                         .Select(x => (long?)x.Id)
+                                         .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var tripToDo = await context.TripToDos.SingleOrDefaultAsync(x => x.TripId == tripId && x.ToDoId == toDoId);
+
+        if (tripToDo != null)
+        {
+            context.TripToDos.Remove(tripToDo);
             await context.SaveChangesAsync();
         }
         else

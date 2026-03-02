@@ -172,6 +172,8 @@ public class MainContext : DbContext
 
     public DbSet<TripExpenseInclude> TripExpensesIncluded { get; set; }
 
+    public DbSet<TripTodo> TripToDos { get; set; }
+
     public DbSet<TrackingDistance> TrackingDistances { get; set; }
 
     public DbSet<User> Users { get; set; }
@@ -367,6 +369,9 @@ public class MainContext : DbContext
 
         modelBuilder.Entity<TripExpenseInclude>()
                     .HasKey(x => new { x.ExpenseId, x.TripId });
+
+        modelBuilder.Entity<TripTodo>()
+                .HasKey(x => new { x.ToDoId, x.TripId });
 
         modelBuilder.Entity<ToDoTag>()
                 .HasKey(x => new { x.ToDoId, x.TagId });
