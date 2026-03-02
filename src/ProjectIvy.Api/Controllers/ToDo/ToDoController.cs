@@ -24,7 +24,7 @@ public class ToDoController : BaseController<ToDoController>
     public async Task<PagedView<Model.View.ToDo.ToDo>> Get([FromQuery] ToDoGetBinding binding) => await _toDoHandler.Get(binding);
 
     [HttpGet("Count/ByTag")]
-    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag() => await _toDoHandler.GetCountByTag();
+    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag([FromQuery] ToDoGetBinding binding) => await _toDoHandler.GetCountByTag(binding);
 
     [HttpPost]
     public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
