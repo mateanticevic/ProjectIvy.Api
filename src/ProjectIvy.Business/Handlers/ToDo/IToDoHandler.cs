@@ -13,6 +13,8 @@ public interface IToDoHandler
 
     Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding);
 
+    Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag();
+
     Task LinkTag(string toDoValueId, string tagValueId);
 
     Task UnlinkTag(string toDoValueId, string tagValueId);

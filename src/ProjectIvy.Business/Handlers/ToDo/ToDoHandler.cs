@@ -52,6 +52,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         if (!wasCompleted && toDo.IsCompleted)
             toDo.CompletedOn = DateTime.UtcNow;
 
+        if (wasCompleted && !toDo.IsCompleted)
+            toDo.CompletedOn = null;
+
         context.ToDos.Update(toDo);
         await context.SaveChangesAsync();
     }
@@ -125,6 +128,25 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             Count = query.LongCount(),
             Items = items
         };
+    }
+
+    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag()
+    {
+        using var context = GetMainContext();
+
+          return await context.ToDoTags
+                        .Join(context.ToDos.WhereUser(UserId),
+                            toDoTag => toDoTag.ToDoId,
+                            toDo => toDo.Id,
+                            (toDoTag, _) => toDoTag.TagId)
+                        .Join(context.Tags.WhereUser(UserId),
+                            tagId => tagId,
+                            tag => tag.Id,
+                            (_, tag) => tag)
+                        .GroupBy(x => x)
+                            .OrderByDescending(x => x.Count())
+                            .Select(x => new KeyValuePair<Model.View.Tag.Tag, int>(new Model.View.Tag.Tag(x.Key), x.Count()))
+                            .ToListAsync();
     }
 
     public async Task LinkTag(string toDoValueId, string tagValueId)
