@@ -94,11 +94,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
         }
 
-        if (binding.IsCompleted.HasValue)
-            query = query.Where(x => x.IsCompleted == binding.IsCompleted.Value);
+        query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
 
-        var pagedToDos = await query.OrderByDescending(x => x.ValueId == binding.Search)
-                                    .ThenByDescending(x => x.Created)
+        var pagedToDos = await query.OrderByDescending(x => x.Created)
                                     .ThenBy(x => x.Name)
                                     .Page(binding)
                                     .ToListAsync();
@@ -116,9 +114,10 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
 
         var items = pagedToDos.Select(x =>
         {
-            var toDo = new View.ToDo(x);
-            toDo.Tags = tagsByToDoId.GetValueOrDefault(x.Id) ?? Enumerable.Empty<Model.View.Tag.Tag>();
-            return toDo;
+            return new View.ToDo(x)
+            {
+                Tags = tagsByToDoId.GetValueOrDefault(x.Id) ?? Enumerable.Empty<Model.View.Tag.Tag>()
+            };
         });
 
         return new PagedView<View.ToDo>

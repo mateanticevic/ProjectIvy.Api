@@ -9,7 +9,7 @@ public class ToDo : UserEntity, IHasCreated, IHasName
     [Key]
     public long Id { get; set; }
 
-    public DateTime CompletedOn { get; set; }
+    public DateTime? CompletedOn { get; set; }
 
     public DateTime Created { get; set; }
 
