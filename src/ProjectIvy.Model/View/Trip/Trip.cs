@@ -6,6 +6,10 @@ namespace ProjectIvy.Model.View.Trip;
 
 public class Trip
 {
+    public Trip()
+    {
+    }
+
     public Trip(DatabaseModel.Travel.Trip x)
     {
         Id = x.ValueId;

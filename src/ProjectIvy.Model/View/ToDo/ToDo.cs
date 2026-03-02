@@ -18,5 +18,7 @@ public class ToDo
 
     public string Description { get; set; }
 
-    public IEnumerable<Model.View.Tag.Tag> Tags { get; set; }
+    public IEnumerable<Tag.Tag> Tags { get; set; }
+
+    public IEnumerable<Trip.Trip> Trips { get; set; }
 }

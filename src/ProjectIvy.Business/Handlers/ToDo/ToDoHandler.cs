@@ -115,11 +115,31 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                         .GroupBy(x => x.ToDoId)
                                         .ToDictionaryAsync(x => x.Key, x => x.Select(y => y.Tag).AsEnumerable());
 
+        var tripsByToDoId = await context.TripToDos
+                                         .Where(x => todoIds.Contains(x.ToDoId))
+                                         .Join(context.Trips.WhereUser(UserId),
+                                               tripToDo => tripToDo.TripId,
+                                               trip => trip.Id,
+                                               (tripToDo, trip) => new
+                                               {
+                                                   tripToDo.ToDoId,
+                                                   Trip = new Model.View.Trip.Trip
+                                                   {
+                                                       Id = trip.ValueId,
+                                                       Name = trip.Name,
+                                                       TimestampStart = trip.TimestampStart,
+                                                       TimestampEnd = trip.TimestampEnd
+                                                   }
+                                               })
+                                         .GroupBy(x => x.ToDoId)
+                                         .ToDictionaryAsync(x => x.Key, x => x.Select(y => y.Trip).AsEnumerable());
+
         var items = pagedToDos.Select(x =>
         {
             return new View.ToDo(x)
             {
-                Tags = tagsByToDoId.GetValueOrDefault(x.Id) ?? Enumerable.Empty<Model.View.Tag.Tag>()
+                Tags = tagsByToDoId.GetValueOrDefault(x.Id) ?? [],
+                Trips = tripsByToDoId.GetValueOrDefault(x.Id) ?? []
             };
         });
 
