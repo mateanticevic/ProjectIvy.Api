@@ -205,6 +205,71 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                             .ToListAsync();
     }
 
+    public async Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip(ToDoGetBinding binding)
+    {
+        using var context = GetMainContext();
+        var query = context.ToDos.WhereUser(UserId);
+
+        var requestedTagValueIds = binding.TagId?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                                .Distinct()
+                                                .ToList();
+
+        if (requestedTagValueIds?.Any() == true)
+        {
+            var resolvedTagIds = await context.Tags.WhereUser(UserId)
+                                                   .Where(x => requestedTagValueIds.Contains(x.ValueId))
+                                                   .Select(x => x.Id)
+                                                   .ToListAsync();
+
+            if (!resolvedTagIds.Any() || resolvedTagIds.Count != requestedTagValueIds.Count)
+            {
+                return Enumerable.Empty<KeyValuePair<Model.View.Trip.Trip, int>>();
+            }
+
+            query = query.Where(x => context.ToDoTags
+                                            .Where(y => y.ToDoId == x.Id && resolvedTagIds.Contains(y.TagId))
+                                            .Select(y => y.TagId)
+                                            .Distinct()
+                                            .Count() == resolvedTagIds.Count);
+        }
+
+        if (!string.IsNullOrEmpty(binding.Search))
+        {
+            var searchLower = binding.Search.ToLower();
+            query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
+        }
+
+        query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
+
+        return await context.TripToDos
+                        .Join(query,
+                            tripToDo => tripToDo.ToDoId,
+                            toDo => toDo.Id,
+                            (tripToDo, _) => tripToDo.TripId)
+                        .Join(context.Trips.WhereUser(UserId),
+                            tripId => tripId,
+                            trip => trip.Id,
+                            (_, trip) => trip)
+                        .GroupBy(x => new
+                        {
+                            x.ValueId,
+                            x.Name,
+                            x.TimestampStart,
+                            x.TimestampEnd
+                        })
+                            .OrderByDescending(x => x.Count())
+                            .Select(x => new KeyValuePair<Model.View.Trip.Trip, int>(
+                                new Model.View.Trip.Trip
+                                {
+                                    Id = x.Key.ValueId,
+                                    Name = x.Key.Name,
+                                    TimestampStart = x.Key.TimestampStart,
+                                    TimestampEnd = x.Key.TimestampEnd
+                                },
+                                x.Count()))
+                            .ToListAsync();
+    }
+
     public async Task LinkTag(string toDoValueId, string tagValueId)
     {
         using var context = GetMainContext();

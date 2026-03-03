@@ -15,6 +15,8 @@ public interface IToDoHandler
 
     Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag(ToDoGetBinding binding);
 
+    Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip(ToDoGetBinding binding);
+
     Task LinkTag(string toDoValueId, string tagValueId);
 
     Task UnlinkTag(string toDoValueId, string tagValueId);

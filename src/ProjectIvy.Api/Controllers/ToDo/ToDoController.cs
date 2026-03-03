@@ -24,7 +24,12 @@ public class ToDoController : BaseController<ToDoController>
     public async Task<PagedView<Model.View.ToDo.ToDo>> Get([FromQuery] ToDoGetBinding binding) => await _toDoHandler.Get(binding);
 
     [HttpGet("Count/ByTag")]
-    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag([FromQuery] ToDoGetBinding binding) => await _toDoHandler.GetCountByTag(binding);
+    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag([FromQuery] ToDoGetBinding binding)
+        => await _toDoHandler.GetCountByTag(binding);
+
+    [HttpGet("Count/ByTrip")]
+    public async Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip([FromQuery] ToDoGetBinding binding)
+        => await _toDoHandler.GetCountByTrip(binding);
 
     [HttpPost]
     public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
