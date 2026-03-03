@@ -99,10 +99,14 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
 
         query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
 
-        var pagedToDos = await query.OrderByDescending(x => x.Created)
-                                    .ThenBy(x => x.Name)
-                                    .Page(binding)
-                                    .ToListAsync();
+         var orderedQuery = binding.IsCompleted == true
+             ? query.OrderByDescending(x => x.CompletedOn)
+                 .ThenBy(x => x.Name)
+             : query.OrderByDescending(x => x.Created)
+                 .ThenBy(x => x.Name);
+
+         var pagedToDos = await orderedQuery.Page(binding)
+                             .ToListAsync();
 
         var todoIds = pagedToDos.Select(x => x.Id).ToList();
 
