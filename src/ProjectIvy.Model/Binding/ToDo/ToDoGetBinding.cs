@@ -2,7 +2,7 @@ using ProjectIvy.Model.Binding.Route;
 
 namespace ProjectIvy.Model.Binding.ToDo;
 
-public class ToDoGetBinding : PagedBinding, ISearchable
+public class ToDoGetBinding : FilteredPagedBinding, ISearchable
 {
     public bool? IsCompleted { get; set; }
 

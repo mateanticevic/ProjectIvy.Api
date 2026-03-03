@@ -124,6 +124,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
         }
 
+        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
+                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
+
         query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
 
          var orderedQuery = binding.IsCompleted == true
@@ -238,6 +241,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
         }
 
+        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
+                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
+
         query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
 
         return await context.ToDoTags
@@ -311,6 +317,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             var searchLower = binding.Search.ToLower();
             query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
         }
+
+        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
+                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
 
         query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
 
