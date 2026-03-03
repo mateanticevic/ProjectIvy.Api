@@ -91,6 +91,33 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                             .Count() == resolvedTagIds.Count);
         }
 
+        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                                  .Distinct()
+                                                  .ToList();
+
+        if (requestedTripValueIds?.Any() == true)
+        {
+            var resolvedTripIds = await context.Trips.WhereUser(UserId)
+                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
+                                                     .Select(x => x.Id)
+                                                     .ToListAsync();
+
+            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
+            {
+                return new PagedView<View.ToDo>
+                {
+                    Count = 0,
+                    Items = Enumerable.Empty<View.ToDo>()
+                };
+            }
+
+            query = query.Where(x => context.TripToDos
+                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
+                                            .Select(y => y.TripId)
+                                            .Distinct()
+                                            .Count() == resolvedTripIds.Count);
+        }
+
         if (!string.IsNullOrEmpty(binding.Search))
         {
             var searchLower = binding.Search.ToLower();
@@ -182,6 +209,29 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                             .Count() == resolvedTagIds.Count);
         }
 
+        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                                  .Distinct()
+                                                  .ToList();
+
+        if (requestedTripValueIds?.Any() == true)
+        {
+            var resolvedTripIds = await context.Trips.WhereUser(UserId)
+                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
+                                                     .Select(x => x.Id)
+                                                     .ToListAsync();
+
+            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
+            {
+                return Enumerable.Empty<KeyValuePair<Model.View.Tag.Tag, int>>();
+            }
+
+            query = query.Where(x => context.TripToDos
+                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
+                                            .Select(y => y.TripId)
+                                            .Distinct()
+                                            .Count() == resolvedTripIds.Count);
+        }
+
         if (!string.IsNullOrEmpty(binding.Search))
         {
             var searchLower = binding.Search.ToLower();
@@ -231,6 +281,29 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                             .Select(y => y.TagId)
                                             .Distinct()
                                             .Count() == resolvedTagIds.Count);
+        }
+
+        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                                  .Distinct()
+                                                  .ToList();
+
+        if (requestedTripValueIds?.Any() == true)
+        {
+            var resolvedTripIds = await context.Trips.WhereUser(UserId)
+                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
+                                                     .Select(x => x.Id)
+                                                     .ToListAsync();
+
+            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
+            {
+                return Enumerable.Empty<KeyValuePair<Model.View.Trip.Trip, int>>();
+            }
+
+            query = query.Where(x => context.TripToDos
+                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
+                                            .Select(y => y.TripId)
+                                            .Distinct()
+                                            .Count() == resolvedTripIds.Count);
         }
 
         if (!string.IsNullOrEmpty(binding.Search))

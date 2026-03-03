@@ -9,8 +9,6 @@ public interface IToDoHandler
 {
     Task<string> Create(ToDoBinding binding);
 
-    Task Update(string toDoValueId, ToDoBinding binding);
-
     Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag(ToDoGetBinding binding);
@@ -20,4 +18,6 @@ public interface IToDoHandler
     Task LinkTag(string toDoValueId, string tagValueId);
 
     Task UnlinkTag(string toDoValueId, string tagValueId);
+
+    Task Update(string toDoValueId, ToDoBinding binding);
 }
