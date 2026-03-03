@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Model.Binding.Movie;

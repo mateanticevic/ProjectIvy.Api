@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding.ToDo;
 using ProjectIvy.Model.View;
 using Database = ProjectIvy.Model.Database.Main.User;
@@ -62,72 +63,8 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
     public async Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding)
     {
         using var context = GetMainContext();
-        var query = context.ToDos.WhereUser(UserId);
-
-        var requestedTagValueIds = binding.TagId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                .Distinct()
-                                                .ToList();
-
-        if (requestedTagValueIds?.Any() == true)
-        {
-            var resolvedTagIds = await context.Tags.WhereUser(UserId)
-                                                   .Where(x => requestedTagValueIds.Contains(x.ValueId))
-                                                   .Select(x => x.Id)
-                                                   .ToListAsync();
-
-            if (!resolvedTagIds.Any() || resolvedTagIds.Count != requestedTagValueIds.Count)
-            {
-                return new PagedView<View.ToDo>
-                {
-                    Count = 0,
-                    Items = Enumerable.Empty<View.ToDo>()
-                };
-            }
-
-            query = query.Where(x => context.ToDoTags
-                                            .Where(y => y.ToDoId == x.Id && resolvedTagIds.Contains(y.TagId))
-                                            .Select(y => y.TagId)
-                                            .Distinct()
-                                            .Count() == resolvedTagIds.Count);
-        }
-
-        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                  .Distinct()
-                                                  .ToList();
-
-        if (requestedTripValueIds?.Any() == true)
-        {
-            var resolvedTripIds = await context.Trips.WhereUser(UserId)
-                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
-                                                     .Select(x => x.Id)
-                                                     .ToListAsync();
-
-            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
-            {
-                return new PagedView<View.ToDo>
-                {
-                    Count = 0,
-                    Items = Enumerable.Empty<View.ToDo>()
-                };
-            }
-
-            query = query.Where(x => context.TripToDos
-                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
-                                            .Select(y => y.TripId)
-                                            .Distinct()
-                                            .Count() == resolvedTripIds.Count);
-        }
-
-        if (!string.IsNullOrEmpty(binding.Search))
-        {
-            var searchLower = binding.Search.ToLower();
-            query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
-        }
-
-        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
-                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
-
-        query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
+        var query = context.ToDos.WhereUser(UserId)
+                                 .Where(binding, context, UserId);
 
          var orderedQuery = binding.IsCompleted == true
              ? query.OrderByDescending(x => x.CompletedOn)
@@ -187,64 +124,8 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
     public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag(ToDoGetBinding binding)
     {
         using var context = GetMainContext();
-        var query = context.ToDos.WhereUser(UserId);
-
-        var requestedTagValueIds = binding.TagId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                .Distinct()
-                                                .ToList();
-
-        if (requestedTagValueIds?.Any() == true)
-        {
-            var resolvedTagIds = await context.Tags.WhereUser(UserId)
-                                                   .Where(x => requestedTagValueIds.Contains(x.ValueId))
-                                                   .Select(x => x.Id)
-                                                   .ToListAsync();
-
-            if (!resolvedTagIds.Any() || resolvedTagIds.Count != requestedTagValueIds.Count)
-            {
-                return Enumerable.Empty<KeyValuePair<Model.View.Tag.Tag, int>>();
-            }
-
-            query = query.Where(x => context.ToDoTags
-                                            .Where(y => y.ToDoId == x.Id && resolvedTagIds.Contains(y.TagId))
-                                            .Select(y => y.TagId)
-                                            .Distinct()
-                                            .Count() == resolvedTagIds.Count);
-        }
-
-        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                  .Distinct()
-                                                  .ToList();
-
-        if (requestedTripValueIds?.Any() == true)
-        {
-            var resolvedTripIds = await context.Trips.WhereUser(UserId)
-                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
-                                                     .Select(x => x.Id)
-                                                     .ToListAsync();
-
-            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
-            {
-                return Enumerable.Empty<KeyValuePair<Model.View.Tag.Tag, int>>();
-            }
-
-            query = query.Where(x => context.TripToDos
-                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
-                                            .Select(y => y.TripId)
-                                            .Distinct()
-                                            .Count() == resolvedTripIds.Count);
-        }
-
-        if (!string.IsNullOrEmpty(binding.Search))
-        {
-            var searchLower = binding.Search.ToLower();
-            query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
-        }
-
-        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
-                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
-
-        query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
+        var query = context.ToDos.WhereUser(UserId)
+                                 .Where(binding, context, UserId);
 
         return await context.ToDoTags
                         .Join(query,
@@ -264,64 +145,8 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
     public async Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip(ToDoGetBinding binding)
     {
         using var context = GetMainContext();
-        var query = context.ToDos.WhereUser(UserId);
-
-        var requestedTagValueIds = binding.TagId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                .Distinct()
-                                                .ToList();
-
-        if (requestedTagValueIds?.Any() == true)
-        {
-            var resolvedTagIds = await context.Tags.WhereUser(UserId)
-                                                   .Where(x => requestedTagValueIds.Contains(x.ValueId))
-                                                   .Select(x => x.Id)
-                                                   .ToListAsync();
-
-            if (!resolvedTagIds.Any() || resolvedTagIds.Count != requestedTagValueIds.Count)
-            {
-                return Enumerable.Empty<KeyValuePair<Model.View.Trip.Trip, int>>();
-            }
-
-            query = query.Where(x => context.ToDoTags
-                                            .Where(y => y.ToDoId == x.Id && resolvedTagIds.Contains(y.TagId))
-                                            .Select(y => y.TagId)
-                                            .Distinct()
-                                            .Count() == resolvedTagIds.Count);
-        }
-
-        var requestedTripValueIds = binding.TripId?.Where(x => !string.IsNullOrWhiteSpace(x))
-                                                  .Distinct()
-                                                  .ToList();
-
-        if (requestedTripValueIds?.Any() == true)
-        {
-            var resolvedTripIds = await context.Trips.WhereUser(UserId)
-                                                     .Where(x => requestedTripValueIds.Contains(x.ValueId))
-                                                     .Select(x => x.Id)
-                                                     .ToListAsync();
-
-            if (!resolvedTripIds.Any() || resolvedTripIds.Count != requestedTripValueIds.Count)
-            {
-                return Enumerable.Empty<KeyValuePair<Model.View.Trip.Trip, int>>();
-            }
-
-            query = query.Where(x => context.TripToDos
-                                            .Where(y => y.ToDoId == x.Id && resolvedTripIds.Contains(y.TripId))
-                                            .Select(y => y.TripId)
-                                            .Distinct()
-                                            .Count() == resolvedTripIds.Count);
-        }
-
-        if (!string.IsNullOrEmpty(binding.Search))
-        {
-            var searchLower = binding.Search.ToLower();
-            query = query.Where(x => x.Name.ToLower().Contains(searchLower) || x.ValueId.ToLower().Contains(searchLower));
-        }
-
-        query = query.WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
-                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value);
-
-        query = query.WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
+        var query = context.ToDos.WhereUser(UserId)
+                                 .Where(binding, context, UserId);
 
         return await context.TripToDos
                         .Join(query,
