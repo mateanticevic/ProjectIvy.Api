@@ -22,7 +22,7 @@ public static class ExpenseExtensions
         entity.Date = binding.Date;
         entity.DatePaid = binding.DatePaid ?? entity.Date;
         entity.ExpenseTypeId = context.ExpenseTypes.GetId(binding.ExpenseTypeId).Value;
-        entity.ExternalId = binding.ExternalId;
+        entity.ExternalId = string.IsNullOrEmpty(binding.ExternalId) ? entity.ExternalId : binding.ExternalId;
         entity.Modified = DateTime.Now;
         entity.NeedsReview = binding.NeedsReview;
         entity.ParentAmount = binding.ParentAmount;

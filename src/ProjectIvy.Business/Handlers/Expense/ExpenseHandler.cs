@@ -227,20 +227,18 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
             binding.VendorId = CreateVendor(binding.VendorName);
 
-        using (var db = GetMainContext())
-        {
-            var entity = binding.ToEntity(db);
-            entity.UserId = UserId;
-            entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
+        using var db = GetMainContext();
+        var entity = binding.ToEntity(db);
+        entity.UserId = UserId;
+        entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
 
-            db.Expenses.Add(entity);
-            ResolveTransaction(db, entity);
+        db.Expenses.Add(entity);
+        ResolveTransaction(db, entity);
 
-            db.SaveChanges();
-            ClearCache();
+        db.SaveChanges();
+        ClearCache();
 
-            return entity.ValueId;
-        }
+        return entity.ValueId;
     }
 
     public async Task CreateFromFile(FileBinding binding)
@@ -582,21 +580,19 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
             binding.VendorId = CreateVendor(binding.VendorName);
 
-        using (var context = GetMainContext())
-        {
-            var entity = context.Expenses.WhereUser(UserId)
-                                         .SingleOrDefault(x => x.ValueId == binding.Id);
+        using var context = GetMainContext();
+        var entity = context.Expenses.WhereUser(UserId)
+                                     .SingleOrDefault(x => x.ValueId == binding.Id);
 
-            entity = binding.ToEntity(context, entity);
+        entity = binding.ToEntity(context, entity);
 
-            context.Expenses.Update(entity);
-            ResolveTransaction(context, entity);
+        context.Expenses.Update(entity);
+        ResolveTransaction(context, entity);
 
-            context.SaveChanges();
-            ClearCache();
+        context.SaveChanges();
+        ClearCache();
 
-            return true;
-        }
+        return true;
     }
 
     private string CreateVendor(string name)
