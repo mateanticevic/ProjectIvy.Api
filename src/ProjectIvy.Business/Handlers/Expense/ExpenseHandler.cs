@@ -30,6 +30,7 @@ using ZXing.ImageSharp;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf;
 using View = ProjectIvy.Model.View.Expense;
+using Microsoft.Extensions.Logging;
 
 namespace ProjectIvy.Business.Handlers.Expense;
 
@@ -612,8 +613,9 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 
     public PagedView<View.Expense> GetNonCached(ExpenseGetBinding binding)
     {
-        using (var context = GetMainContext())
+        try
         {
+            using var context = GetMainContext();
             return context.Expenses.WhereUser(UserId)
                                    .IncludeAll()
                                    .Where(binding, context)
@@ -621,6 +623,11 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                    .ThenByDescending(x => x.Created)
                                    .Select(x => new View.Expense(x))
                                    .ToPagedView(binding);
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "Error in GetNonCached with binding {@binding}", binding);
+            throw;
         }
     }
 
