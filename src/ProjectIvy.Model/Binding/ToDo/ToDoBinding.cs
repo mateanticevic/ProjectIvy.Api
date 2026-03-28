@@ -7,4 +7,8 @@ public class ToDoBinding
     public string Description { get; set; }
 
     public bool IsCompleted { get; set; }
+
+    public int? EstimatedPrice { get; set; }
+
+    public string CurrencyId { get; set; }
 }

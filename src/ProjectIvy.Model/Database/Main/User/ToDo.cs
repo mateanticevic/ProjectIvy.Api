@@ -20,4 +20,8 @@ public class ToDo : UserEntity, IHasCreated, IHasName
     public string Name { get; set; }
 
     public string Description { get; set; }
+
+    public int? EstimatedPrice { get; set; }
+
+    public int? CurrencyId { get; set; }
 }

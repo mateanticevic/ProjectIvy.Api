@@ -21,6 +21,11 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
     {
         using var context = GetMainContext();
 
+        int? currencyId = null;
+
+        if (binding.EstimatedPrice.HasValue)
+            currencyId = context.GetCurrencyId(binding.CurrencyId, UserId);
+
         var entity = new Database.ToDo
         {
             Name = binding.Name,
@@ -28,7 +33,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
             IsCompleted = false,
             Created = DateTime.UtcNow,
             ValueId = binding.Name.ToValueId(),
-            UserId = UserId
+            UserId = UserId,
+            EstimatedPrice = binding.EstimatedPrice,
+            CurrencyId = currencyId
         };
 
         await context.ToDos.AddAsync(entity);
@@ -49,6 +56,10 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         toDo.Name = binding.Name;
         toDo.Description = binding.Description;
         toDo.IsCompleted = binding.IsCompleted;
+        toDo.EstimatedPrice = binding.EstimatedPrice;
+        toDo.CurrencyId = binding.EstimatedPrice.HasValue
+            ? context.GetCurrencyId(binding.CurrencyId, UserId)
+            : null;
 
         if (!wasCompleted && toDo.IsCompleted)
             toDo.CompletedOn = DateTime.UtcNow;
@@ -76,6 +87,19 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                              .ToListAsync();
 
         var todoIds = pagedToDos.Select(x => x.Id).ToList();
+        var currencyIds = pagedToDos.Where(x => x.CurrencyId.HasValue)
+                                    .Select(x => x.CurrencyId.Value)
+                                    .Distinct()
+                                    .ToList();
+
+        var currenciesById = await context.Currencies
+                                          .Where(x => currencyIds.Contains(x.Id))
+                                          .Select(x => new
+                                          {
+                                              x.Id,
+                                              Currency = new Model.View.Currency.Currency(x)
+                                          })
+                                          .ToDictionaryAsync(x => x.Id, x => x.Currency);
 
         var tagsByToDoId = await context.ToDoTags
                                         .Where(x => todoIds.Contains(x.ToDoId))
@@ -109,6 +133,9 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         {
             return new View.ToDo(x)
             {
+                Currency = x.CurrencyId.HasValue
+                    ? currenciesById.GetValueOrDefault(x.CurrencyId.Value)
+                    : null,
                 Tags = tagsByToDoId.GetValueOrDefault(x.Id) ?? [],
                 Trips = tripsByToDoId.GetValueOrDefault(x.Id) ?? []
             };

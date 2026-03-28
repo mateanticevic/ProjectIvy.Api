@@ -8,6 +8,7 @@ public class ToDo
         Created = x.Created;
         Name = x.Name;
         Description = x.Description;
+        EstimatedPrice = x.EstimatedPrice;
     }
 
     public string Id { get; set; }
@@ -17,6 +18,10 @@ public class ToDo
     public string Name { get; set; }
 
     public string Description { get; set; }
+
+    public int? EstimatedPrice { get; set; }
+
+    public Currency.Currency Currency { get; set; }
 
     public IEnumerable<Tag.Tag> Tags { get; set; }
 
