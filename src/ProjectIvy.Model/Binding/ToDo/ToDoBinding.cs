@@ -13,4 +13,6 @@ public class ToDoBinding
     public int? EstimatedPrice { get; set; }
 
     public string CurrencyId { get; set; }
+
+    public IEnumerable<string> TagIds { get; set; }
 }
