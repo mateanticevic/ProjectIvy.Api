@@ -8,7 +8,6 @@ using ProjectIvy.Model.Binding.Expense;
 using ProjectIvy.Model.View.ExpenseType;
 using ProjectIvy.Model.View;
 using ProjectIvy.Business.Handlers.User;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Api.Mcp;
