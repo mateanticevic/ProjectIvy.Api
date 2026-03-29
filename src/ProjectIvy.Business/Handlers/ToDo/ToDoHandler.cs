@@ -204,6 +204,33 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                             .ToListAsync();
     }
 
+    public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ToDoGetBinding binding)
+    {
+        using var context = GetMainContext();
+
+        return await context.ToDos.WhereUser(UserId)
+                                  .Where(binding, context, UserId)
+                                  .Where(x => x.EstimatedPrice.HasValue && x.CurrencyId.HasValue)
+                                  .Join(context.Currencies,
+                                        toDo => toDo.CurrencyId!.Value,
+                                        currency => currency.Id,
+                                        (toDo, currency) => new
+                                        {
+                                            currency.ValueId,
+                                            currency.Name,
+                                            EstimatedPrice = (decimal)toDo.EstimatedPrice!.Value
+                                        })
+                                  .GroupBy(x => new { x.ValueId, x.Name })
+                                  .Select(x => new KeyValuePair<Model.View.Currency.Currency, decimal>(
+                                      new Model.View.Currency.Currency
+                                      {
+                                          Id = x.Key.ValueId,
+                                          Name = x.Key.Name
+                                      },
+                                      x.Sum(y => y.EstimatedPrice)))
+                                  .ToListAsync();
+    }
+
     public async Task LinkTag(string toDoValueId, string tagValueId)
     {
         using var context = GetMainContext();

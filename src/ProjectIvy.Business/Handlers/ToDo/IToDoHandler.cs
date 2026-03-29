@@ -15,6 +15,8 @@ public interface IToDoHandler
 
     Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip(ToDoGetBinding binding);
 
+    Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ToDoGetBinding binding);
+
     Task LinkTag(string toDoValueId, string tagValueId);
 
     Task UnlinkTag(string toDoValueId, string tagValueId);

@@ -31,6 +31,10 @@ public class ToDoController : BaseController<ToDoController>
     public async Task<IEnumerable<KeyValuePair<Model.View.Trip.Trip, int>>> GetCountByTrip([FromQuery] ToDoGetBinding binding)
         => await _toDoHandler.GetCountByTrip(binding);
 
+    [HttpGet("Sum/ByCurrency")]
+    public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> GetSumByCurrency([FromQuery] ToDoGetBinding binding)
+        => await _toDoHandler.SumByCurrency(binding);
+
     [HttpPost]
     public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
     {
