@@ -8,6 +8,7 @@ public class ToDo
         Created = x.Created;
         Name = x.Name;
         Description = x.Description;
+        DueDate = x.DueDate;
         EstimatedPrice = x.EstimatedPrice;
     }
 
@@ -18,6 +19,8 @@ public class ToDo
     public string Name { get; set; }
 
     public string Description { get; set; }
+
+    public DateTime? DueDate { get; set; }
 
     public int? EstimatedPrice { get; set; }
 

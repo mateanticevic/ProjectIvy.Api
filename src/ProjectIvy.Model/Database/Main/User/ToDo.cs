@@ -19,6 +19,8 @@ public class ToDo : UserEntity, IHasCreated, IHasName
 
     public string Name { get; set; }
 
+    public DateTime? DueDate { get; set; }
+
     public string Description { get; set; }
 
     public int? EstimatedPrice { get; set; }

@@ -30,6 +30,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         {
             Name = binding.Name,
             Description = binding.Description,
+            DueDate = binding.DueDate,
             IsCompleted = false,
             Created = DateTime.UtcNow,
             ValueId = binding.Name.ToValueId(),
@@ -55,6 +56,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
 
         toDo.Name = binding.Name;
         toDo.Description = binding.Description;
+        toDo.DueDate = binding.DueDate;
         toDo.IsCompleted = binding.IsCompleted;
         toDo.EstimatedPrice = binding.EstimatedPrice;
         toDo.CurrencyId = binding.EstimatedPrice.HasValue
