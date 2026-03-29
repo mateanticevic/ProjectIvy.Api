@@ -233,6 +233,79 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                   .ToListAsync();
     }
 
+    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>>>> SumByTag(ToDoGetBinding binding)
+    {
+        using var context = GetMainContext();
+        var query = context.ToDos.WhereUser(UserId)
+                                 .Where(binding, context, UserId)
+                                 .Where(x => x.EstimatedPrice.HasValue && x.CurrencyId.HasValue);
+
+        var aggregated = await context.ToDoTags
+                                      .Join(query,
+                                            toDoTag => toDoTag.ToDoId,
+                                            toDo => toDo.Id,
+                                            (toDoTag, toDo) => new
+                                            {
+                                                toDoTag.TagId,
+                                                CurrencyId = toDo.CurrencyId!.Value,
+                                                EstimatedPrice = (decimal)toDo.EstimatedPrice!.Value
+                                            })
+                                      .Join(context.Tags.WhereUser(UserId),
+                                            x => x.TagId,
+                                            tag => tag.Id,
+                                            (x, tag) => new
+                                            {
+                                                x.CurrencyId,
+                                                x.EstimatedPrice,
+                                                TagId = tag.ValueId,
+                                                TagName = tag.Name
+                                            })
+                                      .Join(context.Currencies,
+                                            x => x.CurrencyId,
+                                            currency => currency.Id,
+                                            (x, currency) => new
+                                            {
+                                                x.TagId,
+                                                x.TagName,
+                                                CurrencyId = currency.ValueId,
+                                                CurrencyName = currency.Name,
+                                                x.EstimatedPrice
+                                            })
+                                      .GroupBy(x => new
+                                      {
+                                          x.TagId,
+                                          x.TagName,
+                                          x.CurrencyId,
+                                          x.CurrencyName
+                                      })
+                                      .Select(x => new
+                                      {
+                                          x.Key.TagId,
+                                          x.Key.TagName,
+                                          x.Key.CurrencyId,
+                                          x.Key.CurrencyName,
+                                          Sum = x.Sum(y => y.EstimatedPrice)
+                                      })
+                                      .ToListAsync();
+
+        return aggregated.GroupBy(x => new { x.TagId, x.TagName })
+                         .OrderByDescending(x => x.Sum(y => y.Sum))
+                         .Select(x => new KeyValuePair<Model.View.Tag.Tag, IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>>(
+                             new Model.View.Tag.Tag(new Model.Database.Main.Common.Tag
+                             {
+                                 ValueId = x.Key.TagId,
+                                 Name = x.Key.TagName
+                             }),
+                             x.OrderByDescending(y => y.Sum)
+                              .Select(y => new KeyValuePair<Model.View.Currency.Currency, decimal>(
+                                  new Model.View.Currency.Currency
+                                  {
+                                      Id = y.CurrencyId,
+                                      Name = y.CurrencyName
+                                  },
+                                  y.Sum))));
+    }
+
     public async Task LinkTag(string toDoValueId, string tagValueId)
     {
         using var context = GetMainContext();

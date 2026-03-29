@@ -35,6 +35,10 @@ public class ToDoController : BaseController<ToDoController>
     public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> GetSumByCurrency([FromQuery] ToDoGetBinding binding)
         => await _toDoHandler.SumByCurrency(binding);
 
+    [HttpGet("Sum/ByTag")]
+    public async Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>>>> GetSumByTag([FromQuery] ToDoGetBinding binding)
+        => await _toDoHandler.SumByTag(binding);
+
     [HttpPost]
     public async Task<StatusCodeResult> Post([FromBody] ToDoBinding binding)
     {
