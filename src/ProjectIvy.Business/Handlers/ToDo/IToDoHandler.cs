@@ -9,6 +9,8 @@ public interface IToDoHandler
 {
     Task<string> Create(ToDoBinding binding);
 
+    Task Delete(string toDoValueId);
+
     Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<Model.View.Tag.Tag, int>>> GetCountByTag(ToDoGetBinding binding);

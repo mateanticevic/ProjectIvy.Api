@@ -49,6 +49,13 @@ public class ToDoController : BaseController<ToDoController>
     [HttpPut("{id}")]
     public async Task Put(string id, [FromBody] ToDoBinding binding) => await _toDoHandler.Update(id, binding);
 
+    [HttpDelete("{id}")]
+    public async Task<StatusCodeResult> Delete(string id)
+    {
+        await _toDoHandler.Delete(id);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
     [HttpPost("{id}/tag/{tagId}")]
     public async Task<StatusCodeResult> PostTag(string id, string tagId)
     {

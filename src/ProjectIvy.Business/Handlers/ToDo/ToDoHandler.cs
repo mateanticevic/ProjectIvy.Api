@@ -66,6 +66,33 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         return entity.ValueId;
     }
 
+    public async Task Delete(string toDoValueId)
+    {
+        using var context = GetMainContext();
+
+        var toDo = await context.ToDos.WhereUser(UserId)
+                                     .SingleOrDefaultAsync(x => x.ValueId == toDoValueId) ?? throw new ResourceNotFoundException();
+
+        var toDoTags = await context.ToDoTags.Where(x => x.ToDoId == toDo.Id)
+                                             .ToListAsync();
+
+        if (toDoTags.Count > 0)
+        {
+            context.ToDoTags.RemoveRange(toDoTags);
+        }
+
+        var tripToDos = await context.TripToDos.Where(x => x.ToDoId == toDo.Id)
+                                               .ToListAsync();
+
+        if (tripToDos.Count > 0)
+        {
+            context.TripToDos.RemoveRange(tripToDos);
+        }
+
+        context.ToDos.Remove(toDo);
+        await context.SaveChangesAsync();
+    }
+
     public async Task Update(string toDoValueId, ToDoBinding binding)
     {
         using var context = GetMainContext();
