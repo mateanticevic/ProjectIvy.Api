@@ -77,17 +77,13 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                              .ToListAsync();
 
         if (toDoTags.Count > 0)
-        {
             context.ToDoTags.RemoveRange(toDoTags);
-        }
 
         var tripToDos = await context.TripToDos.Where(x => x.ToDoId == toDo.Id)
                                                .ToListAsync();
 
         if (tripToDos.Count > 0)
-        {
             context.TripToDos.RemoveRange(tripToDos);
-        }
 
         context.ToDos.Remove(toDo);
         await context.SaveChangesAsync();
@@ -184,14 +180,15 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         var query = context.ToDos.WhereUser(UserId)
                                  .Where(binding, context, UserId);
 
-         var orderedQuery = binding.IsCompleted == true
-             ? query.OrderByDescending(x => x.CompletedOn)
-                 .ThenBy(x => x.Name)
-             : query.OrderByDescending(x => x.Created)
-                 .ThenBy(x => x.Name);
+        var orderedQuery = binding.IsCompleted == true
+            ? query.OrderByDescending(x => x.CompletedOn)
+                .ThenBy(x => x.Name)
+            : query.OrderByDescending(x => x.DueDate.HasValue)
+                .ThenBy(x => x.DueDate)
+                .ThenBy(x => x.Created);
 
-         var pagedToDos = await orderedQuery.Page(binding)
-                             .ToListAsync();
+        var pagedToDos = await orderedQuery.Page(binding)
+                            .ToListAsync();
 
         var todoIds = pagedToDos.Select(x => x.Id).ToList();
         var currencyIds = pagedToDos.Where(x => x.CurrencyId.HasValue)
