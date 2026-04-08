@@ -52,6 +52,8 @@ public class Expense : UserEntity, IHasValueId, IHasCreatedModified
 
     public bool NeedsReview { get; set; }
 
+    public bool ExcludeFromMonthlySums { get; set; }
+
     public Currency Currency { get; set; }
 
     public decimal? ParentAmount { get; set; }

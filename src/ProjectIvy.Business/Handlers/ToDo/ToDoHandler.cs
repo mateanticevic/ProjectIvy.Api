@@ -185,7 +185,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                 .ThenBy(x => x.Name)
             : query.OrderByDescending(x => x.DueDate.HasValue)
                 .ThenBy(x => x.DueDate)
-                .ThenBy(x => x.Created);
+                .ThenByDescending(x => x.Created);
 
         var pagedToDos = await orderedQuery.Page(binding)
                             .ToListAsync();

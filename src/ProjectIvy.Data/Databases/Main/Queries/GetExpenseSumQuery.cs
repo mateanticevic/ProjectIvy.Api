@@ -24,6 +24,8 @@ public class GetExpenseSumQuery : IDynamicParameters
 
     public IEnumerable<int> ExpenseIds { get; set; }
 
+    public bool ExcludeFromMonthlySums { get; set; }
+
     public void AddParameters(IDbCommand command, Identity identity)
     {
         var sqlCommand = (SqlCommand)command;
@@ -39,5 +41,6 @@ public class GetExpenseSumQuery : IDynamicParameters
         sqlCommand.Parameters.Add(TargetCurrencyId.ToSqlParameter(nameof(TargetCurrencyId)));
         sqlCommand.Parameters.Add(VendorValueId.ToSqlParameter(nameof(VendorValueId)));
         sqlCommand.Parameters.Add(ExpenseTypeValueId.ToSqlParameter(nameof(ExpenseTypeValueId)));
+        sqlCommand.Parameters.Add(ExcludeFromMonthlySums.ToSqlParameter(nameof(ExcludeFromMonthlySums)));
     }
 }

@@ -425,7 +425,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     }
 
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding)
-        => await SumAmountByDay(await SumBindingToQuery(binding));
+        => await SumAmountByDay(await SumBindingToQuery(binding, excludeFromMonthlySums: true));
 
     public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByDayOfWeek(ExpenseSumGetBinding binding)
     {
@@ -437,7 +437,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                   .ToList()
                                   .Select(x => new KeyValuePair<DayOfWeek, Task<decimal>>(
                                       x,
-                                      SumAmount(binding.OverrideDay(x)))
+                                      SumAmount(binding.OverrideDay(x), excludeFromMonthlySums: true))
                                   )
                                   .ToList();
 
@@ -454,7 +454,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             var tasks = Enumerable.Range(1, 12)
                                   .Select(x => new KeyValuePair<int, Task<decimal>>(
                                       x,
-                                      SumAmount(binding.OverrideMonth(x))));
+                                      SumAmount(binding.OverrideMonth(x), excludeFromMonthlySums: true)));
 
             await Task.WhenAll(tasks.Select(x => x.Value));
             return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
@@ -472,7 +472,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                               .Select(x => new FilteredBinding(x.from, x.to))
                               .ToList();
 
-            var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
+            var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To), excludeFromMonthlySums: true)));
 
             return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
         }
@@ -488,7 +488,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                           .Select(x => new FilteredBinding(x.from, x.to))
                           .ToList();
 
-        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<IEnumerable<KeyValuePair<string, decimal>>>>(x, SumByType(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
+        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<IEnumerable<KeyValuePair<string, decimal>>>>(x, SumByType(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To), excludeFromMonthlySums: true)));
         await Task.WhenAll(tasks.Select(x => x.Value));
 
         return tasks.Select(x => new KeyValuePair<string, IEnumerable<KeyValuePair<string, decimal>>>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
@@ -553,9 +553,12 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     }
 
     public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding)
+        => await SumByType(binding, excludeFromMonthlySums: false);
+
+    private async Task<IEnumerable<KeyValuePair<string, decimal>>> SumByType(ExpenseSumGetBinding binding, bool excludeFromMonthlySums)
     {
         using var sql = GetSqlConnection();
-        var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), await SumBindingToQuery(binding));
+        var results = await sql.QueryAsync<(int TypeId, string TypeValueId, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByType), await SumBindingToQuery(binding, excludeFromMonthlySums));
 
         using var context = GetMainContext();
 
@@ -665,8 +668,16 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         }
     }
 
+    private async Task<decimal> SumAmount(ExpenseSumGetBinding binding, bool excludeFromMonthlySums)
+        => excludeFromMonthlySums
+            ? await SumAmountNonCached(binding, excludeFromMonthlySums)
+            : await SumAmount(binding);
+
     private async Task<decimal> SumAmountNonCached(ExpenseSumGetBinding binding)
-        => await SumAmount(await SumBindingToQuery(binding));
+        => await SumAmountNonCached(binding, excludeFromMonthlySums: false);
+
+    private async Task<decimal> SumAmountNonCached(ExpenseSumGetBinding binding, bool excludeFromMonthlySums)
+        => await SumAmount(await SumBindingToQuery(binding, excludeFromMonthlySums));
 
     private async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(GetExpenseSumQuery query)
     {
@@ -678,26 +689,25 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         }
     }
 
-    private async Task<GetExpenseSumQuery> SumBindingToQuery(ExpenseSumGetBinding binding)
+    private async Task<GetExpenseSumQuery> SumBindingToQuery(ExpenseSumGetBinding binding, bool excludeFromMonthlySums = false)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
+
+        var expenseIds = await context.Expenses.WhereUser(UserId)
+                                               .Where(binding, context)
+                                               .Select(x => x.Id)
+                                               .ToListAsync();
+
+        if (!expenseIds.Any())
+            return null;
+
+        return new GetExpenseSumQuery()
         {
-            int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
-
-            var expenseIds = await context.Expenses.WhereUser(UserId)
-                                                   .Where(binding, context)
-                                                   .Select(x => x.Id)
-                                                   .ToListAsync();
-
-            if (!expenseIds.Any())
-                return null;
-
-            return new GetExpenseSumQuery()
-            {
-                ExpenseIds = expenseIds,
-                TargetCurrencyId = targetCurrencyId,
-                UserId = UserId
-            };
-        }
+            ExpenseIds = expenseIds,
+            TargetCurrencyId = targetCurrencyId,
+            UserId = UserId,
+            ExcludeFromMonthlySums = excludeFromMonthlySums
+        };
     }
 }
