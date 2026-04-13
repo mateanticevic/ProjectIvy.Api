@@ -46,6 +46,8 @@ public static class ToDoExtensions
         return query.WhereIf(!string.IsNullOrEmpty(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()))
                     .WhereIf(binding.From.HasValue, x => x.Created >= binding.From.Value)
                     .WhereIf(binding.To.HasValue, x => x.Created <= binding.To.Value)
+                    .WhereIf(binding.FromDueDate.HasValue, x => x.DueDate.HasValue && x.DueDate.Value >= binding.FromDueDate.Value)
+                    .WhereIf(binding.ToDueDate.HasValue, x => x.DueDate.HasValue && x.DueDate.Value <= binding.ToDueDate.Value)
                     .WhereIf(binding.IsCompleted.HasValue, x => x.IsCompleted == binding.IsCompleted.Value);
     }
 }
