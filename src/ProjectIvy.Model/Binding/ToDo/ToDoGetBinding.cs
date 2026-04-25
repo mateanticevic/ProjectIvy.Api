@@ -8,9 +8,8 @@ public class ToDoGetBinding : FilteredPagedBinding, ISearchable
     public bool? IsCompleted { get; set; }
 
     public DateTime? FromDueDate { get; set; }
-    
-    public DateTime? ToDueDate { get; set; }
 
+    public DateTime? ToDueDate { get; set; }
 
     public IEnumerable<string> TagId { get; set; }
 

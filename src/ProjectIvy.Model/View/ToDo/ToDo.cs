@@ -4,12 +4,13 @@ public class ToDo
 {
     public ToDo(Database.Main.User.ToDo x)
     {
-        Id = x.ValueId;
         Created = x.Created;
-        Name = x.Name;
         Description = x.Description;
         DueDate = x.DueDate;
         EstimatedPrice = x.EstimatedPrice;
+        Id = x.ValueId;
+        IsCompleted = x.IsCompleted;
+        Name = x.Name;
     }
 
     public string Id { get; set; }
@@ -19,6 +20,8 @@ public class ToDo
     public string Name { get; set; }
 
     public string Description { get; set; }
+
+    public bool IsCompleted { get; set; }
 
     public DateTime? DueDate { get; set; }
 
