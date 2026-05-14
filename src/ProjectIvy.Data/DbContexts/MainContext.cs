@@ -114,6 +114,10 @@ public class MainContext : DbContext
 
     public DbSet<IncomeType> IncomeTypes { get; set; }
 
+    public DbSet<Loan> Loans { get; set; }
+
+    public DbSet<LoanPayment> LoanPayments { get; set; }
+
     public DbSet<InventoryItem> InventoryItems { get; set; }
 
     public DbSet<InventoryItemExpense> InventoryItemExpenses { get; set; }
