@@ -46,7 +46,7 @@ public class ExceptionHandlingMiddleware
         }
         catch (Exception e)
         {
-            logger.LogError(e, string.Empty);
+            logger.LogError(e, "Unhandled exception");
             await HandleException(httpContext, e);
         }
     }

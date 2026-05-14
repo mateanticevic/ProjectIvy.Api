@@ -313,6 +313,8 @@ public class Startup
         if (env.IsDevelopment())
             app.UseDeveloperExceptionPage();
 
+        app.UseExceptionHandling();
+
         app.UseSerilogRequestLoggingWithEnrichment(GetType().Assembly);
 
         app.UseRouting();
@@ -328,7 +330,6 @@ public class Startup
         {
             c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
         });
-        app.UseExceptionHandling();
 
         app.UseEndpoints(endpoints =>
         {
