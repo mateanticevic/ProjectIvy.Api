@@ -32,7 +32,7 @@ public class ExpenseTools
     }
 
     [McpServerTool, Description("Add new expense")]
-    public string AddExpense([Description("Amount of the expense")] decimal amount,
+    public async Task<string> AddExpense([Description("Amount of the expense")] decimal amount,
                                          [Description("Expense type id")] string typeId,
                                          [Description("Date when expense occurred, in YYYY-MM-DD format")] DateTime? date = null,
                                          [Description("Currency id in ISO 4217 format")] string currencyId = null)
@@ -48,7 +48,7 @@ public class ExpenseTools
             ExpenseTypeId = typeId,
             PaymentTypeId = "cash"
         };
-        var id = _expenseHandler.Create(newExpense);
+        var id = await _expenseHandler.Create(newExpense);
         return id;
     }
 

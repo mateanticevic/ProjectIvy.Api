@@ -31,7 +31,7 @@ public interface IExpenseHandler : IHandler
 
     int CountVendors(ExpenseGetBinding binding);
 
-    string Create(ExpenseBinding binding);
+    Task<string> Create(ExpenseBinding binding);
 
     Task CreateFromFile(FileBinding binding);
 

@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System.Collections.Concurrent;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.Handlers.File;
@@ -30,12 +32,12 @@ using ZXing.ImageSharp;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf;
 using View = ProjectIvy.Model.View.Expense;
-using Microsoft.Extensions.Logging;
 
 namespace ProjectIvy.Business.Handlers.Expense;
 
 public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 {
+    private static readonly ConcurrentDictionary<int, object> _createLocks = new();
     private readonly IFileHandler _fileHandler;
 
     public ExpenseHandler(IHandlerContext<ExpenseHandler> context,
@@ -223,23 +225,27 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         }
     }
 
-    public string Create(ExpenseBinding binding)
+    public async Task<string> Create(ExpenseBinding binding)
     {
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
             binding.VendorId = CreateVendor(binding.VendorName);
 
-        using var db = GetMainContext();
-        var entity = binding.ToEntity(db);
-        entity.UserId = UserId;
-        entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
+        var userLock = _createLocks.GetOrAdd(UserId, _ => new object());
+        lock (userLock)
+        {
+            using var db = GetMainContext();
+            var entity = binding.ToEntity(db);
+            entity.UserId = UserId;
+            entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
 
-        db.Expenses.Add(entity);
-        ResolveTransaction(db, entity);
+            db.Expenses.Add(entity);
+            ResolveTransaction(db, entity);
 
-        db.SaveChanges();
-        ClearCache();
+            db.SaveChanges();
+            ClearCache();
 
-        return entity.ValueId;
+            return entity.ValueId;
+        }
     }
 
     public async Task CreateFromFile(FileBinding binding)

@@ -129,8 +129,8 @@ public class ExpenseController : BaseController<ExpenseController>
     }
 
     [HttpPost]
-    public string Post([FromBody] ExpenseBinding binding)
-        => _expenseHandler.Create(binding);
+    public async Task<string> Post([FromBody] ExpenseBinding binding)
+        => await _expenseHandler.Create(binding);
 
     [HttpPost("FromFile")]
     public async Task PostFromFile()
