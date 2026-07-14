@@ -110,6 +110,8 @@ public class MainContext : DbContext
 
     public DbSet<Income> Incomes { get; set; }
 
+    public DbSet<JournalEntry> JournalEntries { get; set; }
+
     public DbSet<IncomeSource> IncomeSources { get; set; }
 
     public DbSet<IncomeType> IncomeTypes { get; set; }

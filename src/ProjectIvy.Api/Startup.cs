@@ -36,6 +36,7 @@ using ProjectIvy.Business.Handlers.Flight;
 using ProjectIvy.Business.Handlers.Geohash;
 using ProjectIvy.Business.Handlers.Income;
 using ProjectIvy.Business.Handlers.Inventory;
+using ProjectIvy.Business.Handlers.JournalEntry;
 using ProjectIvy.Business.Handlers.Loan;
 using ProjectIvy.Business.Handlers.Location;
 using ProjectIvy.Business.Handlers.Movie;
@@ -118,6 +119,7 @@ public class Startup
         services.AddHandler<IGeohashHandler, GeohashHandler>();
         services.AddHandler<IIncomeHandler, IncomeHandler>();
         services.AddHandler<IInventoryHandler, InventoryHandler>();
+        services.AddHandler<IJournalEntryHandler, JournalEntryHandler>();
         services.AddHandler<ILastFmHandler, LastFmHandler>();
         services.AddHandler<ILoanHandler, LoanHandler>();
         services.AddHandler<ILocationHandler, LocationHandler>();
