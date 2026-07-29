@@ -15,6 +15,8 @@ public static class SqlScripts
 
     public static string GetIncomeSum { get; } = Build(nameof(GetIncomeSum));
 
+    public static string GetVisitedLocations { get; } = Build(nameof(GetVisitedLocations));
+
     public static string GetWebTimeSum { get; } = Build(nameof(GetWebTimeSum));
 
     public static string GetWebTimeTotal { get; } = Build(nameof(GetWebTimeTotal));

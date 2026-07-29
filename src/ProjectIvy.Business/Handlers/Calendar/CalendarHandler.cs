@@ -1,8 +1,11 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Services.Calendar;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Sql;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding.Calendar;
 using ProjectIvy.Model.View.Calendar;
 
@@ -89,17 +92,20 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                                                         .Select(x => new { Date = x.Key, Cities = x.Select(y => y.City) })
                                                         .ToListAsync();
 
-        var locationsPerDay = rangeInFuture ? default : await context.Trackings.WhereUser(UserId)
-                                                           .Where(x => x.Timestamp >= from && x.Timestamp.Date <= to && x.LocationId.HasValue)
-                                             .GroupBy(x => new { x.Timestamp.Date, LocationId = x.LocationId.Value })
-                                             .Select(x => x.Key)
-                                                           .Join(context.Locations.Include(x => x.LocationType),
-                                                                 t => t.LocationId,
-                                                                 l => l.Id,
-                                                                 (t, l) => new { t.Date, Location = l })
-                                                           .GroupBy(x => x.Date)
-                                                           .Select(x => new { Date = x.Key, Locations = x.Select(y => y.Location) })
-                                                           .ToListAsync();
+        IEnumerable<(int LocationId, DateTime EnterTime, DateTime ExitTime)> visits = null;
+        Dictionary<int, Model.Database.Main.Tracking.Location> locationsById = null;
+        if (!rangeInFuture)
+        {
+            using var sql = GetSqlConnection();
+            visits = (await sql.QueryAsync<(int LocationId, DateTime EnterTime, DateTime ExitTime)>(
+                SqlLoader.Load(SqlScripts.GetVisitedLocations),
+                new { From = from, To = to.Date.AddDays(1), UserId })).ToList();
+
+            var locationIds = visits.Select(x => x.LocationId).Distinct().ToList();
+            locationsById = await context.Locations.Include(x => x.LocationType)
+                                                   .Where(x => locationIds.Contains(x.Id))
+                                                   .ToDictionaryAsync(x => x.Id);
+        }
 
         var events = await context.Events.WhereUser(UserId)
                                          .Where(x => x.Date >= from && x.Date <= to)
@@ -127,7 +133,9 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                 ExternalEvents = icsEvents?.Where(x => x.Start.Date == day.Date),
                 IsHoliday = holidays.Contains(day),
-                Locations = locationsPerDay?.SingleOrDefault(x => x.Date == day)?.Locations.Select(x => new Model.View.Location.Location(x)).OrderBy(x => x.Name),
+                Locations = visits?.Where(x => x.EnterTime < day.AddDays(1) && x.ExitTime > day)
+                                   .OrderBy(x => x.EnterTime)
+                                   .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId], x.EnterTime, x.ExitTime)),
             };
 
             if (workDays.Any(x => x.Date == day))

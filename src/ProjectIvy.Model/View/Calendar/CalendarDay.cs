@@ -12,7 +12,7 @@ public class CalendarDay
 
     public bool IsHoliday { get; set; }
 
-    public IEnumerable<Location.Location> Locations { get; set; }
+    public IEnumerable<Location.LocationVisited> Locations { get; set; }
 
     public DateTime Date { get; set; }
 
