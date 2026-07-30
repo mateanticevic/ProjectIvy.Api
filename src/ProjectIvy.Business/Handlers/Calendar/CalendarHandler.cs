@@ -92,12 +92,12 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                                                         .Select(x => new { Date = x.Key, Cities = x.Select(y => y.City) })
                                                         .ToListAsync();
 
-        IEnumerable<(int LocationId, DateTime EnterTime, DateTime ExitTime)> visits = null;
+        IEnumerable<(int LocationId, DateTime EnterTime, DateTime? ExitTime)> visits = null;
         Dictionary<int, Model.Database.Main.Tracking.Location> locationsById = null;
         if (!rangeInFuture)
         {
             using var sql = GetSqlConnection();
-            visits = (await sql.QueryAsync<(int LocationId, DateTime EnterTime, DateTime ExitTime)>(
+            visits = (await sql.QueryAsync<(int LocationId, DateTime EnterTime, DateTime? ExitTime)>(
                 SqlLoader.Load(SqlScripts.GetVisitedLocations),
                 new { From = from, To = to.Date.AddDays(1), UserId })).ToList();
 
@@ -133,7 +133,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                 ExternalEvents = icsEvents?.Where(x => x.Start.Date == day.Date),
                 IsHoliday = holidays.Contains(day),
-                Locations = visits?.Where(x => x.EnterTime < day.AddDays(1) && x.ExitTime > day)
+                Locations = visits?.Where(x => x.EnterTime < day.AddDays(1) && (x.ExitTime is null || x.ExitTime > day))
                                    .OrderBy(x => x.EnterTime)
                                    .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId], x.EnterTime, x.ExitTime)),
             };
