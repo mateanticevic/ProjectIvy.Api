@@ -2,6 +2,7 @@
 --DECLARE @To DATETIME2(3) = '2026-08-01';
 --DECLARE @UserId INT = 1;
   DECLARE @MergeGapMinutes INT = 10;
+    DECLARE @MinStayMinutes INT = 3;
     WITH Points AS
     (
         SELECT  t.[Timestamp],
@@ -77,4 +78,5 @@
             ExitTime   = MAX(ExitTime)
     FROM    Merged
     GROUP BY StayId
+    HAVING  DATEDIFF(SECOND, MIN(EnterTime), MAX(ExitTime)) >= @MinStayMinutes * 60
     ORDER BY MIN(EnterTime);
