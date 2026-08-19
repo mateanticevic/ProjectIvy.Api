@@ -133,9 +133,11 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                 ExternalEvents = icsEvents?.Where(x => x.Start.Date == day.Date),
                 IsHoliday = holidays.Contains(day),
-                Locations = visits?.Where(x => x.EnterTime < day.AddDays(1) && (x.ExitTime is null || x.ExitTime > day))
-                                   .OrderBy(x => x.EnterTime)
-                                   .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId], x.EnterTime, x.ExitTime)),
+                Locations = day.Date > DateTime.Today
+                    ? null
+                    : visits?.Where(x => x.EnterTime < day.AddDays(1) && (x.ExitTime is null || x.ExitTime > day))
+                             .OrderBy(x => x.EnterTime)
+                             .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId], x.EnterTime, x.ExitTime)),
             };
 
             if (workDays.Any(x => x.Date == day))
