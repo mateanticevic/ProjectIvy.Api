@@ -92,19 +92,31 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                                                         .Select(x => new { Date = x.Key, Cities = x.Select(y => y.City) })
                                                         .ToListAsync();
 
-        IEnumerable<(int LocationId, DateTime EnterTime, DateTime? ExitTime)> visits = null;
+        IEnumerable<(int? LocationId, int? CityId, DateTime? EnterTime, DateTime? ExitTime)> visits = null;
         Dictionary<int, Model.Database.Main.Tracking.Location> locationsById = null;
+        Dictionary<int, Model.Database.Main.Common.City> citiesById = null;
         if (!rangeInFuture)
         {
             using var sql = GetSqlConnection();
-            visits = (await sql.QueryAsync<(int LocationId, DateTime EnterTime, DateTime? ExitTime)>(
+            visits = (await sql.QueryAsync<(int? LocationId, int? CityId, DateTime? EnterTime, DateTime? ExitTime)>(
                 SqlLoader.Load(SqlScripts.GetVisitedLocations),
                 new { From = from, To = to.Date.AddDays(1), UserId })).ToList();
 
-            var locationIds = visits.Select(x => x.LocationId).Distinct().ToList();
+            var locationIds = visits.Where(x => x.LocationId.HasValue)
+                                    .Select(x => x.LocationId.Value)
+                                    .Distinct()
+                                    .ToList();
             locationsById = await context.Locations.Include(x => x.LocationType)
                                                    .Where(x => locationIds.Contains(x.Id))
                                                    .ToDictionaryAsync(x => x.Id);
+
+            var cityIds = visits.Where(x => x.CityId.HasValue)
+                                .Select(x => x.CityId.Value)
+                                .Distinct()
+                                .ToList();
+            citiesById = await context.Cities.Include(x => x.Country)
+                                             .Where(x => cityIds.Contains(x.Id))
+                                             .ToDictionaryAsync(x => x.Id);
         }
 
         var events = await context.Events.WhereUser(UserId)
@@ -125,6 +137,19 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
             var workDay = await context.WorkDays.WhereUser(UserId)
                                                 .FirstOrDefaultAsync(x => x.Date == day);
 
+            var locations = day.Date > DateTime.Today
+                ? null
+                : visits?.Where(x => x.LocationId.HasValue && x.EnterTime < day.AddDays(1) && (x.ExitTime is null || x.ExitTime > day))
+                         .OrderBy(x => x.EnterTime)
+                         .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId.Value], x.EnterTime.Value, x.ExitTime))
+                         .ToList();
+            var cityVisits = day.Date > DateTime.Today
+                ? null
+                : visits?.Where(x => x.CityId.HasValue && (x.EnterTime ?? x.ExitTime) >= day && (x.EnterTime ?? x.ExitTime) < day.AddDays(1))
+                         .OrderBy(x => x.EnterTime ?? x.ExitTime)
+                         .Select(x => new Model.View.City.CityVisited(citiesById[x.CityId.Value], x.EnterTime, x.ExitTime))
+                         .ToList();
+
             var calendarDay = new CalendarDay()
             {
                 Cities = citiesPerDay?.SingleOrDefault(x => x.Date == day)?.Cities.Select(x => new Model.View.City.City(x)),
@@ -133,11 +158,24 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Events = events.Where(x => x.Date == day).Select(x => new Event(x)),
                 ExternalEvents = icsEvents?.Where(x => x.Start.Date == day.Date),
                 IsHoliday = holidays.Contains(day),
-                Locations = day.Date > DateTime.Today
+                Locations = locations,
+                CityVisits = cityVisits,
+                Timeline = locations is null && cityVisits is null
                     ? null
-                    : visits?.Where(x => x.EnterTime < day.AddDays(1) && (x.ExitTime is null || x.ExitTime > day))
-                             .OrderBy(x => x.EnterTime)
-                             .Select(x => new Model.View.Location.LocationVisited(locationsById[x.LocationId], x.EnterTime, x.ExitTime)),
+                    : (locations ?? Enumerable.Empty<Model.View.Location.LocationVisited>())
+                        .SelectMany(x =>
+                        {
+                            var items = new List<TimelineItem>();
+                            if (x.EnterTime >= day && x.EnterTime < day.AddDays(1))
+                                items.Add(new TimelineItem { Location = x, EnterTime = x.EnterTime });
+                            if (x.ExitTime is DateTime exitTime && exitTime >= day && exitTime < day.AddDays(1))
+                                items.Add(new TimelineItem { Location = x, ExitTime = exitTime });
+                            return items;
+                        })
+                        .Concat((cityVisits ?? Enumerable.Empty<Model.View.City.CityVisited>())
+                            .Select(x => new TimelineItem { City = x, EnterTime = x.EnterTime, ExitTime = x.ExitTime }))
+                        .OrderBy(x => x.EnterTime ?? x.ExitTime)
+                        .ToList(),
             };
 
             if (workDays.Any(x => x.Date == day))
