@@ -163,15 +163,7 @@ public class CalendarHandler : Handler<CalendarHandler>, ICalendarHandler
                 Timeline = locations is null && cityVisits is null
                     ? null
                     : (locations ?? Enumerable.Empty<Model.View.Location.LocationVisited>())
-                        .SelectMany(x =>
-                        {
-                            var items = new List<TimelineItem>();
-                            if (x.EnterTime >= day && x.EnterTime < day.AddDays(1))
-                                items.Add(new TimelineItem { Location = x, EnterTime = x.EnterTime });
-                            if (x.ExitTime is DateTime exitTime && exitTime >= day && exitTime < day.AddDays(1))
-                                items.Add(new TimelineItem { Location = x, ExitTime = exitTime });
-                            return items;
-                        })
+                        .Select(x => new TimelineItem { Location = x, EnterTime = x.EnterTime, ExitTime = x.ExitTime })
                         .Concat((cityVisits ?? Enumerable.Empty<Model.View.City.CityVisited>())
                             .Select(x => new TimelineItem { City = x, EnterTime = x.EnterTime, ExitTime = x.ExitTime }))
                         .OrderBy(x => x.EnterTime ?? x.ExitTime)
