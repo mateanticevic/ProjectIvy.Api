@@ -16,19 +16,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.73.0.3989" />
-    <PackageReference Include="Keycloak.AuthServices.Authentication" Version="2.8.0" />
-    <PackageReference Include="Keycloak.AuthServices.Authorization" Version="2.8.0" />
-    <PackageReference Include="Keycloak.AuthServices.Sdk" Version="2.8.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.1" />
-    <PackageReference Include="ModelContextProtocol" Version="1.2.0" />
-    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="1.2.0" />
-    <PackageReference Include="Serilog" Version="4.3.0" />
+    <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.76.0.4254" />
+    <PackageReference Include="Keycloak.AuthServices.Authentication" Version="3.0.0" />
+    <PackageReference Include="Keycloak.AuthServices.Authorization" Version="3.0.0" />
+    <PackageReference Include="Keycloak.AuthServices.Sdk" Version="3.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.12" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="10.0.2" />
+    <PackageReference Include="ModelContextProtocol" Version="2.2.0" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="2.2.0" />
+    <PackageReference Include="Serilog" Version="4.4.0" />
     <PackageReference Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageReference Include="Serilog.Sinks.Graylog" Version="3.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
     <PackageReference Include="UAParser" Version="3.1.47" />
     <PackageReference Include="prometheus-net" Version="8.2.1" />
     <PackageReference Include="prometheus-net.AspNetCore" Version="8.2.1" />

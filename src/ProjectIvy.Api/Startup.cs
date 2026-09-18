@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using ModelContextProtocol.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -308,7 +309,10 @@ public class Startup
         });
 
         services.AddMcpServer()
-                .WithHttpTransport()
+                .WithHttpTransport(options =>
+                {
+                    options.SessionMode = HttpServerSessionMode.StatefulForInitializeClients;
+                })
                 .WithToolsFromAssembly();
     }
 
