@@ -194,9 +194,9 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
                 string[] parts = ParseCsvLine(item, ';').ToArray();
 
-                decimal amountIn = Convert.ToDecimal(parts[7].Replace(",", "."));
-                decimal amountOut = Convert.ToDecimal(parts[8].Replace(",", "."));
-                decimal balance = Convert.ToDecimal(parts[9].Replace(",", ".").Replace(" ", string.Empty));
+                decimal amountIn = Convert.ToDecimal(parts[9].Replace(",", "."));
+                decimal amountOut = Convert.ToDecimal(parts[10].Replace(",", "."));
+                decimal balance = Convert.ToDecimal(parts[11].Replace(",", ".").Replace(" ", string.Empty));
 
                 decimal amount = amountIn > 0 ? amountIn : amountOut * -1;
 
@@ -207,13 +207,13 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                     AccountId = accountId,
                     Amount = amount,
                     Balance = balance,
-                    Created = amount < 0 ? DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[2], dateTimeFormat, CultureInfo.InvariantCulture)
+                    Created = amount < 0 ? DateTime.ParseExact(parts[4], dateTimeFormat, CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture)
                 };
 
                 if (amount < 0)
                 {
-                    transaction.Completed = DateTime.ParseExact(parts[2], dateTimeFormat, CultureInfo.InvariantCulture);
-                    transaction.Description = $"{parts[0]} [{parts[6]}]";
+                    transaction.Completed = DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture);
+                    transaction.Description = $"{parts[1]} [{parts[7]}]";
                 }
 
                 transactions.Add(transaction);
