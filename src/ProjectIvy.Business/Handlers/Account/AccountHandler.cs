@@ -181,55 +181,53 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
     public async Task ProcessHacTransactions(string accountKey, string csv)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountKey).Value;
+
+        var transactions = new List<Transaction>();
+        foreach (string item in csv.Split("\r\n").Skip(1).Reverse().Skip(1))
         {
-            int accountId = context.Accounts.WhereUser(UserId)
-                                            .GetId(accountKey).Value;
+            if (string.IsNullOrWhiteSpace(item))
+                continue;
 
-            var transactions = new List<Transaction>();
-            foreach (string item in csv.Split("\r\n").Skip(1).Reverse().Skip(1))
+            string[] parts = ParseCsvLine(item, ';').ToArray();
+
+            decimal amountIn = Convert.ToDecimal(parts[9].Replace(",", "."));
+            decimal amountOut = Convert.ToDecimal(parts[10].Replace(",", "."));
+            decimal balance = Convert.ToDecimal(parts[11].Replace(",", ".").Replace(" ", string.Empty));
+
+            decimal amount = amountIn > 0 ? amountIn : amountOut * -1;
+
+            string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
+
+            var transaction = new Transaction()
             {
-                if (string.IsNullOrWhiteSpace(item))
-                    continue;
+                AccountId = accountId,
+                Amount = amount,
+                Balance = balance,
+                Created = amount < 0 ? DateTime.ParseExact(parts[4], dateTimeFormat, CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture)
+            };
 
-                string[] parts = ParseCsvLine(item, ';').ToArray();
-
-                decimal amountIn = Convert.ToDecimal(parts[9].Replace(",", "."));
-                decimal amountOut = Convert.ToDecimal(parts[10].Replace(",", "."));
-                decimal balance = Convert.ToDecimal(parts[11].Replace(",", ".").Replace(" ", string.Empty));
-
-                decimal amount = amountIn > 0 ? amountIn : amountOut * -1;
-
-                string dateTimeFormat = "dd.MM.yyyy HH:mm:ss";
-
-                var transaction = new Transaction()
-                {
-                    AccountId = accountId,
-                    Amount = amount,
-                    Balance = balance,
-                    Created = amount < 0 ? DateTime.ParseExact(parts[4], dateTimeFormat, CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture)
-                };
-
-                if (amount < 0)
-                {
-                    transaction.Completed = DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture);
-                    transaction.Description = $"{parts[1]} [{parts[7]}]";
-                }
-
-                transactions.Add(transaction);
+            if (amount < 0)
+            {
+                transaction.Completed = DateTime.ParseExact(parts[3], dateTimeFormat, CultureInfo.InvariantCulture);
+                transaction.Description = $"{parts[1]} [{parts[7]}]";
             }
 
-            foreach (var transaction in transactions)
-            {
-                if (context.Transactions.Any(x => x.Created == transaction.Created
-                                                && x.Amount == transaction.Amount
-                                                && x.AccountId == accountId))
-                    continue;
-                await context.Transactions.AddAsync(transaction);
-            }
-
-            await context.SaveChangesAsync();
+            transactions.Add(transaction);
         }
+
+        foreach (var transaction in transactions)
+        {
+            if (context.Transactions.Any(x => x.Created == transaction.Created
+                                            && x.Amount == transaction.Amount
+                                            && x.AccountId == accountId))
+                continue;
+            await context.Transactions.AddAsync(transaction);
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public async Task ProcessRevolutTransactions(string accountKey, string csv)
@@ -278,55 +276,53 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
     public async Task ProcessOtpBankTransactions(string accountKey, string csv)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountKey).Value;
+
+        var transactions = new List<Transaction>();
+        foreach (string item in csv.Split("\r\n").Skip(1))
         {
-            int accountId = context.Accounts.WhereUser(UserId)
-                                            .GetId(accountKey).Value;
+            if (string.IsNullOrWhiteSpace(item))
+                continue;
 
-            var transactions = new List<Transaction>();
-            foreach (string item in csv.Split("\r\n").Skip(1))
+            string[] parts = ParseCsvLine(item, ',').ToArray();
+
+            string descritpion = parts[2];
+            var dateTimeRe = new Regex("[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}");
+            var match = dateTimeRe.Match(descritpion);
+
+            decimal amount = Convert.ToDecimal(parts[3].Replace(",", string.Empty));
+            if (amount == 0)
+                continue;
+
+            var transaction = new Transaction()
             {
-                if (string.IsNullOrWhiteSpace(item))
-                    continue;
+                AccountId = accountId,
+                Amount = amount,
+                Description = descritpion,
+                Created = match.Success ? DateTime.ParseExact(match.Value, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture)
+            };
 
-                string[] parts = ParseCsvLine(item, ';').ToArray();
+            if (decimal.TryParse(parts[4].Replace(",", string.Empty), out decimal balance))
+                transaction.Balance = balance;
 
-                string descritpion = parts[2];
-                var dateTimeRe = new Regex("[0-9]{2}/[0-9]{2}/[0-9]{4} [0-9]{2}:[0-9]{2}");
-                var match = dateTimeRe.Match(descritpion);
+            if (match.Success)
+                transaction.Completed = DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
-                decimal amount = Convert.ToDecimal(parts[3].Replace(".", string.Empty));
-                if (amount == 0)
-                    continue;
-
-                var transaction = new Transaction()
-                {
-                    AccountId = accountId,
-                    Amount = amount,
-                    Description = descritpion,
-                    Created = match.Success ? DateTime.ParseExact(match.Value, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture) : DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture)
-                };
-
-                if (decimal.TryParse(parts[4].Replace(".", string.Empty), out decimal balance))
-                    transaction.Balance = balance;
-
-                if (match.Success)
-                    transaction.Completed = DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
-
-                transactions.Add(transaction);
-            }
-
-            foreach (var transaction in transactions)
-            {
-                if (context.Transactions.Any(x => x.Created == transaction.Created
-                                                && x.Description == transaction.Description
-                                                && x.AccountId == accountId))
-                    continue;
-                await context.Transactions.AddAsync(transaction);
-            }
-
-            await context.SaveChangesAsync();
+            transactions.Add(transaction);
         }
+
+        foreach (var transaction in transactions)
+        {
+            if (context.Transactions.Any(x => x.Created == transaction.Created
+                                            && x.Description == transaction.Description
+                                            && x.AccountId == accountId))
+                continue;
+            await context.Transactions.AddAsync(transaction);
+        }
+
+        await context.SaveChangesAsync();
     }
 
     public async Task Update(string accountValueId, AccountBinding binding)
