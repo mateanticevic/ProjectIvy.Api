@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Beer;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Binding.Geohash;
 
 namespace ProjectIvy.Business.Caching;
 
@@ -30,6 +31,8 @@ public static class CacheKeyGenerator
 	public static string ExpensesGet(ExpenseGetBinding b) => $"{nameof(ExpenseGetBinding)}_{GetHash(b)}";
 
 	public static string ExpensesSumAmount(ExpenseSumGetBinding b) => $"{nameof(ExpensesSumAmount)}_{GetHash(b)}";
+
+	public static string GeohashCountUnique(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUnique)}_{GetHash(b)}";
 
 	public static string LocationDays(string locationId) => $"{nameof(LocationDays)}_{locationId}";
 

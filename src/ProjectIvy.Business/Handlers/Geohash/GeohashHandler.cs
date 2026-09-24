@@ -3,7 +3,9 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Geohash;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
+using ProjectIvy.Business.Caching;
 using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
@@ -17,7 +19,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     private const string GeohashChars = "0123456789bcdefghjkmnpqrstuvwxyz";
     private readonly ILogger _logger;
 
-    public GeohashHandler(IHandlerContext<GeohashHandler> context, ILogger<GeohashHandler> logger) : base(context)
+    public GeohashHandler(IHandlerContext<GeohashHandler> context, ILogger<GeohashHandler> logger, IMemoryCache memoryCache) : base(context, memoryCache, nameof(GeohashHandler))
     {
         _logger = logger;
     }
@@ -67,24 +69,13 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
     public async Task<int> CountUnique(GeohashUniqueGetBinding binding)
     {
-        using var context = GetMainContext();
-
-        if (binding.OnlyNew)
+        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.GeohashCountUnique(binding));
+        return await MemoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
         {
-            return await context.Trackings.WhereUser(UserId)
-                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
-                                          .CountAsync();
-        }
-
-        return await context.Trackings.WhereUser(UserId)
-                                      .WhereTimestampInclusive(binding)
-                                      .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                                      .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                                      .CountAsync();
+            AddCacheKey(cacheKey);
+            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6);
+            return await CountUniqueNonCached(binding);
+        });
     }
 
     public async Task DeleteTrackings(string geohash)
@@ -361,6 +352,28 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
                                .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, (int?)null));
         await context.SaveChangesAsync();
+    }
+
+    private async Task<int> CountUniqueNonCached(GeohashUniqueGetBinding binding)
+    {
+        using var context = GetMainContext();
+
+        if (binding.OnlyNew)
+        {
+            return await context.Trackings.WhereUser(UserId)
+                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+                                          .CountAsync();
+        }
+
+        return await context.Trackings.WhereUser(UserId)
+                                      .WhereTimestampInclusive(binding)
+                                      .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                      .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                      .CountAsync();
     }
 
     private async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
