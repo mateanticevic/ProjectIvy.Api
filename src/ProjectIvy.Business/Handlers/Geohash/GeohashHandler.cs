@@ -78,6 +78,17 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         });
     }
 
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountUniqueByYear(GeohashUniqueGetBinding binding)
+    {
+        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.GeohashCountUniqueByYear(binding));
+        return await MemoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
+        {
+            AddCacheKey(cacheKey);
+            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(6);
+            return await CountUniqueByYearNonCached(binding);
+        });
+    }
+
     public async Task DeleteTrackings(string geohash)
     {
         using var context = GetMainContext();
@@ -352,6 +363,36 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
                                .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
                                .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, (int?)null));
         await context.SaveChangesAsync();
+    }
+
+    private async Task<IEnumerable<KeyValuePair<int, int>>> CountUniqueByYearNonCached(GeohashUniqueGetBinding binding)
+    {
+        using var context = GetMainContext();
+
+        if (binding.OnlyNew)
+        {
+            var counts = await context.Trackings.WhereUser(UserId)
+                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+                                          .GroupBy(x => x.Timestamp.Year)
+                                          .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                          .ToListAsync();
+
+            return counts.OrderBy(x => x.Key).ToList();
+        }
+
+        var byYear = await context.Trackings.WhereUser(UserId)
+                                      .WhereTimestampInclusive(binding)
+                                      .Select(x => new { Year = x.Timestamp.Year, Geohash = x.Geohash.Substring(0, binding.Precision) })
+                                      .Distinct()
+                                      .GroupBy(x => x.Year)
+                                      .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                      .ToListAsync();
+
+        return byYear.OrderBy(x => x.Key).ToList();
     }
 
     private async Task<int> CountUniqueNonCached(GeohashUniqueGetBinding binding)

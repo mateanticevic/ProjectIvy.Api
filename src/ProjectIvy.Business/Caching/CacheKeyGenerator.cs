@@ -34,6 +34,8 @@ public static class CacheKeyGenerator
 
 	public static string GeohashCountUnique(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUnique)}_{GetHash(b)}";
 
+	public static string GeohashCountUniqueByYear(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUniqueByYear)}_{GetHash(b)}";
+
 	public static string LocationDays(string locationId) => $"{nameof(LocationDays)}_{locationId}";
 
 	public static string LocationGeohashes() => nameof(LocationGeohashes);

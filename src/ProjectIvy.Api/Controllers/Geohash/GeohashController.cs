@@ -24,6 +24,9 @@ public class GeohashController : BaseController<GeohashController>
     [HttpGet("Unique/Count")]
     public async Task<int> GetUniqueCount(GeohashUniqueGetBinding binding) => await _geohashHandler.CountUnique(binding);
 
+    [HttpGet("Unique/Count/ByYear")]
+    public async Task<IEnumerable<KeyValuePair<int, int>>> GetUniqueCountByYear(GeohashUniqueGetBinding binding) => await _geohashHandler.CountUniqueByYear(binding);
+
     [HttpGet("{geohash}")]
     public async Task<IActionResult> GetGeohash(string geohash)
     {

@@ -13,6 +13,8 @@ public interface IGeohashHandler
 
     Task<int> CountUnique(GeohashUniqueGetBinding binding);
 
+    Task<IEnumerable<KeyValuePair<int, int>>> CountUniqueByYear(GeohashUniqueGetBinding binding);
+
     Task DeleteTrackings(string geohash);
 
     Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
