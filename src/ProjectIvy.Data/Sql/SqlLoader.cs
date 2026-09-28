@@ -10,9 +10,7 @@ public static class SqlLoader
     {
         var stream = typeof(SqlLoader).GetTypeInfo().Assembly.GetManifestResourceStream(resourceName);
 
-        using (var reader = new StreamReader(stream, Encoding.UTF8))
-        {
-            return reader.ReadToEnd();
-        }
+        using var reader = new StreamReader(stream, Encoding.UTF8);
+        return reader.ReadToEnd();
     }
 }

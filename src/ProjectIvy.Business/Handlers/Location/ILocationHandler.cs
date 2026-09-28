@@ -23,7 +23,7 @@ public interface ILocationHandler
 
     Task<IEnumerable<LocationType>> GetLocationTypes();
 
-    Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort);
+    Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow);
 
     Task UpdateTrackings(string locationId);
 }

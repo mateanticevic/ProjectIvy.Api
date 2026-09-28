@@ -6,9 +6,11 @@ using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Caching;
 using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.Handlers.Geohash;
+using Dapper;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
-using ProjectIvy.Data.Extensions.Entities;
+using ProjectIvy.Data.Sql;
+using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Common;
 using ProjectIvy.Model.Binding.Geohash;
@@ -122,13 +124,40 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
                                           .ToListAsync();
     }
 
-    public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort)
+    public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow)
     {
         using var context = GetMainContext();
-        var fromGeohashes = await context.Locations.ToGeohashes(UserId, fromLocationValueId);
-        var toGeohashes = await context.Locations.ToGeohashes(UserId, toLocationValueId);
 
-        return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
+        var locations = await context.Locations.WhereUser(UserId)
+                                              .Where(x => x.ValueId == fromLocationValueId || x.ValueId == toLocationValueId)
+                                              .Select(x => new { x.Id, x.ValueId })
+                                              .ToListAsync();
+
+        var fromLocationId = locations.FirstOrDefault(x => x.ValueId == fromLocationValueId)?.Id;
+        var toLocationId = locations.FirstOrDefault(x => x.ValueId == toLocationValueId)?.Id;
+
+        if (fromLocationId is null || toLocationId is null)
+            return [];
+
+        using var sql = GetSqlConnection();
+        var routes = await sql.QueryAsync<(DateTime Exit, DateTime Entry, int Duration)>(
+            SqlLoader.Load(SqlScripts.GetLocationRoutes),
+            new
+            {
+                UserId,
+                FromLocationId = fromLocationId,
+                ToLocationId = toLocationId,
+                IgnoreLocationsBelow = ignoreLocationsBelow,
+                OrderBy = sort.ToString()
+            },
+            commandTimeout: 120);
+
+        return routes.Select(x => new RouteTime
+        {
+            From = x.Exit,
+            To = x.Entry,
+            Duration = TimeSpan.FromSeconds(x.Duration)
+        }).ToList();
     }
 
     public async Task UpdateTrackings(string locationId)
