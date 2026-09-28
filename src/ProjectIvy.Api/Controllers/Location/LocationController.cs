@@ -54,7 +54,7 @@ public class LocationController : BaseController<LocationController>
         => await _geohashHandler.RemoveGeohashFromLocation(locationId, ids);
 
     [HttpGet("{fromLocationId}/To/{toLocationId}")]
-    public async Task GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy)
+    public async Task<IActionResult> GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy)
         => Ok(await _locationHandler.FromLocationToLocation(fromLocationId, toLocationId, orderBy));
 
     [HttpPost("{locationId}/Scan")]
