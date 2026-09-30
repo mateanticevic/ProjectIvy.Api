@@ -17,11 +17,11 @@ public static class CarLogExtensions
                                 .OrderBy(x => x.Timestamp)
                                 .FirstOrDefault();
 
-        if (lastLogBefore.Timestamp.Date == dateTime.Date)
-            return lastLogBefore.Odometer;
-
         if (lastLogBefore == null)
             return null;
+
+        if (lastLogBefore.Timestamp.Date == dateTime.Date)
+            return lastLogBefore.Odometer;
 
         if (firstLogAfter == null)
             return lastLogBefore.Odometer;
