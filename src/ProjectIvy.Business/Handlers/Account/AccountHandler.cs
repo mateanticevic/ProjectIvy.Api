@@ -149,22 +149,20 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
     public async Task<View.AccountOverview> GetOverview(string accountValueId)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountValueId).Value;
+        decimal sumIn = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount > 0)
+                                                  .SumAsync(x => x.Amount);
+
+        decimal sumOut = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount < 0)
+                                                   .SumAsync(x => x.Amount);
+
+        return new View.AccountOverview()
         {
-            int accountId = context.Accounts.WhereUser(UserId)
-                                            .GetId(accountValueId).Value;
-            decimal sumIn = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount > 0)
-                                                      .SumAsync(x => x.Amount);
-
-            decimal sumOut = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount < 0)
-                                                       .SumAsync(x => x.Amount);
-
-            return new View.AccountOverview()
-            {
-                SumIn = sumIn,
-                SumOut = sumOut
-            };
-        }
+            SumIn = sumIn,
+            SumOut = sumOut
+        };
     }
 
     public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
@@ -315,46 +313,44 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
     public async Task ProcessRevolutTransactions(string accountKey, string csv)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountKey).Value;
+
+        var transactions = new List<Transaction>();
+        var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
+                                                           .Select(x => x.Created)
+                                                           .ToListAsync();
+
+        foreach (string item in csv.Split("\n").Skip(1))
         {
-            int accountId = context.Accounts.WhereUser(UserId)
-                                            .GetId(accountKey).Value;
+            if (string.IsNullOrWhiteSpace(item))
+                continue;
 
-            var transactions = new List<Transaction>();
-            var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
-                                                               .Select(x => x.Created)
-                                                               .ToListAsync();
-
-            foreach (string item in csv.Split("\n").Skip(1))
+            string[] parts = ParseCsvLine(item, ';').ToArray();
+            var transaction = new Transaction()
             {
-                if (string.IsNullOrWhiteSpace(item))
-                    continue;
+                AccountId = accountId,
+                Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
+                Description = parts[4],
+                Created = DateTime.Parse(parts[2]),
+                Type = parts[0]
+            };
 
-                string[] parts = ParseCsvLine(item, ';').ToArray();
-                var transaction = new Transaction()
-                {
-                    AccountId = accountId,
-                    Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
-                    Description = parts[4],
-                    Created = DateTime.Parse(parts[2]),
-                    Type = parts[0]
-                };
+            if (existingTimestamps.Contains(transaction.Created))
+                continue;
 
-                if (existingTimestamps.Contains(transaction.Created))
-                    continue;
+            if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
+                transaction.Balance = balance;
 
-                if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
-                    transaction.Balance = balance;
+            if (DateTime.TryParse(parts[3], out DateTime completed))
+                transaction.Completed = completed;
 
-                if (DateTime.TryParse(parts[3], out DateTime completed))
-                    transaction.Completed = completed;
-
-                transactions.Add(transaction);
-            }
-
-            await context.Transactions.AddRangeAsync(transactions);
-            await context.SaveChangesAsync();
+            transactions.Add(transaction);
         }
+
+        await context.Transactions.AddRangeAsync(transactions);
+        await context.SaveChangesAsync();
     }
 
     public async Task Update(string accountValueId, AccountBinding binding)

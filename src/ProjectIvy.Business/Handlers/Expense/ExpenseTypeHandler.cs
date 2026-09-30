@@ -34,7 +34,7 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
         {
             Name = binding.Name,
             ParentTypeId = parentTypeId,
-            ValueId = Guid.NewGuid().ToString()
+            ValueId = binding.Name.ToValueId()
         };
 
         context.ExpenseTypes.Add(expenseType);
@@ -45,36 +45,34 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
 
     public IEnumerable<ExpenseType> Get(ExpenseTypeGetBinding binding)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int? parentId = context.ExpenseTypes.GetId(binding.ParentId);
+
+        var query = context.ExpenseTypes.Include(x => x.Children)
+                                        .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
+                                        .WhereIf(binding.HasParent.HasValue, x => binding.HasParent.Value ? x.ParentTypeId != null : x.ParentTypeId == null)
+                                        .WhereIf(parentId.HasValue, x => x.ParentTypeId == parentId.Value);
+
+        switch (binding.OrderBy)
         {
-            int? parentId = context.ExpenseTypes.GetId(binding.ParentId);
+            case ExpenseTypeSort.Top10:
+                var top10Types = context.Expenses.OrderByDescending(x => x.Created)
+                                                 .Take(1000)
+                                                 .GroupBy(x => x.ExpenseTypeId)
+                                                 .Select(x => new { x.Key, Count = x.Count() })
+                                                 .OrderByDescending(x => x.Count)
+                                                 .Take(10);
 
-            var query = context.ExpenseTypes.Include(x => x.Children)
-                                            .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
-                                            .WhereIf(binding.HasParent.HasValue, x => binding.HasParent.Value ? x.ParentTypeId != null : x.ParentTypeId == null)
-                                            .WhereIf(parentId.HasValue, x => x.ParentTypeId == parentId.Value);
+                query = query.OrderBy(x => !top10Types.Any(y => y.Key == x.Id))
+                             .ThenBy(x => x.Name);
 
-            switch (binding.OrderBy)
-            {
-                case ExpenseTypeSort.Top10:
-                    var top10Types = context.Expenses.OrderByDescending(x => x.Created)
-                                                     .Take(1000)
-                                                     .GroupBy(x => x.ExpenseTypeId)
-                                                     .Select(x => new { x.Key, Count = x.Count() })
-                                                     .OrderByDescending(x => x.Count)
-                                                     .Take(10);
-
-                    query = query.OrderBy(x => !top10Types.Any(y => y.Key == x.Id))
-                                 .ThenBy(x => x.Name);
-
-                    break;
-                default:
-                    query = query.OrderBy(x => x.Name);
-                    break;
-            }
-
-            return query.Select(x => new ExpenseType(x)).ToList();
+                break;
+            default:
+                query = query.OrderBy(x => x.Name);
+                break;
         }
+
+        return query.Select(x => new ExpenseType(x)).ToList();
     }
 
     private IEnumerable<Node<ExpenseType>> GetChildrenNodes(IEnumerable<Database.ExpenseType> entities, int parentId)
@@ -86,26 +84,22 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
 
     public IEnumerable<ExpenseFileType> GetFileTypes()
     {
-        using (var context = GetMainContext())
-        {
-            return context.ExpenseFileTypes.Select(x => new ExpenseFileType(x))
-                                           .ToList();
-        }
+        using var context = GetMainContext();
+        return context.ExpenseFileTypes.Select(x => new ExpenseFileType(x))
+                                       .ToList();
     }
 
     public IEnumerable<Node<ExpenseType>> GetTree()
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var typeEntities = context.ExpenseTypes.ToList();
+
+        var rootTypes = typeEntities.Where(x => !x.ParentTypeId.HasValue)
+                                    .ToList();
+
+        foreach (var type in rootTypes)
         {
-            var typeEntities = context.ExpenseTypes.ToList();
-
-            var rootTypes = typeEntities.Where(x => !x.ParentTypeId.HasValue)
-                                        .ToList();
-
-            foreach (var type in rootTypes)
-            {
-                yield return new Node<ExpenseType>() { This = new ExpenseType(type), Children = GetChildrenNodes(typeEntities, type.Id) };
-            }
+            yield return new Node<ExpenseType>() { This = new ExpenseType(type), Children = GetChildrenNodes(typeEntities, type.Id) };
         }
     }
 

@@ -138,12 +138,10 @@ public class ExpenseController : BaseController<ExpenseController>
     {
         var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
-        using (var ms = new System.IO.MemoryStream(bytes.Length))
-        {
-            await HttpContext.Request.Body.CopyToAsync(ms);
-            bytes = ms.ToArray();
-            await _expenseHandler.CreateFromFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
-        }
+        using var ms = new System.IO.MemoryStream(bytes.Length);
+        await HttpContext.Request.Body.CopyToAsync(ms);
+        bytes = ms.ToArray();
+        await _expenseHandler.CreateFromFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType });
     }
 
     [HttpPut("{id}")]

@@ -25,33 +25,29 @@ public class CityHandler : Handler<CityHandler>, ICityHandler
 
     public async Task AddVisitedCity(string cityValueId)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        var entity = new Model.Database.Main.Travel.CityVisited()
         {
-            int cityId = context.Cities.GetId(cityValueId).Value;
-            var entity = new Model.Database.Main.Travel.CityVisited()
-            {
-                CityId = cityId,
-                UserId = UserId
-            };
+            CityId = cityId,
+            UserId = UserId
+        };
 
-            await context.CitiesVisited.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
+        await context.CitiesVisited.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task<PagedView<View.City>> Get(CityGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var query = context.Cities.Include(x => x.Country)
-                                      .WhereSearch(binding)
-                                      .WhereIf(!string.IsNullOrEmpty(binding.CountryId), city => city.Country.ValueId == binding.CountryId)
-                                      .OrderByDescending(x => x.ValueId == binding.Search)
-                                      .ThenBy(x => x.Name)
-                                      .Select(x => new View.City(x));
+        using var context = GetMainContext();
+        var query = context.Cities.Include(x => x.Country)
+                                  .WhereSearch(binding)
+                                  .WhereIf(!string.IsNullOrEmpty(binding.CountryId), city => city.Country.ValueId == binding.CountryId)
+                                  .OrderByDescending(x => x.ValueId == binding.Search)
+                                  .ThenBy(x => x.Name)
+                                  .Select(x => new View.City(x));
 
-            return await query.ToPagedViewAsync(binding);
-        }
+        return await query.ToPagedViewAsync(binding);
     }
 
     public async Task<IEnumerable<DateTime>> GetDays(string cityValueId, FilteredBinding binding)
@@ -98,18 +94,16 @@ public class CityHandler : Handler<CityHandler>, ICityHandler
 
     public IEnumerable<View.City> GetVisited()
     {
-        using (var context = GetMainContext())
-        {
-            var cities = context.Trackings
-                                .Include(x => x.City)
-                                .WhereUser(UserId)
-                                .Where(x => x.CityId.HasValue)
-                                .Select(x => x.City)
-                                .Distinct()
-                                .Select(x => new View.City(x))
-                                .ToList();
+        using var context = GetMainContext();
+        var cities = context.Trackings
+                            .Include(x => x.City)
+                            .WhereUser(UserId)
+                            .Where(x => x.CityId.HasValue)
+                            .Select(x => x.City)
+                            .Distinct()
+                            .Select(x => new View.City(x))
+                            .ToList();
 
-            return cities.Distinct(new View.CityComparer());
-        }
+        return cities.Distinct(new View.CityComparer());
     }
 }

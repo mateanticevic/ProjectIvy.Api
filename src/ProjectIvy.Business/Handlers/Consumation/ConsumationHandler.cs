@@ -78,12 +78,10 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
 
     public int Count(ConsumationGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Consumations.WhereUser(UserId)
-                          .Where(binding, context)
-                          .Count();
-        }
+        using var context = GetMainContext();
+        return context.Consumations.WhereUser(UserId)
+                      .Where(binding, context)
+                      .Count();
     }
 
     public int CountBeers(ConsumationGetBinding binding)

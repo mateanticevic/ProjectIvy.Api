@@ -215,19 +215,17 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
     public async Task<Model.View.City.City> GetCity(string geohash)
     {
-        using (var context = GetMainContext())
-        {
-            var geohashes = Enumerable.Range(0, geohash.Length)
-                                      .Select(x => geohash.Substring(0, geohash.Length - x))
-                                      .ToList();
+        using var context = GetMainContext();
+        var geohashes = Enumerable.Range(0, geohash.Length)
+                                  .Select(x => geohash.Substring(0, geohash.Length - x))
+                                  .ToList();
 
-            return await context.CityGeohashes.Include(x => x.City)
-                                              .ThenInclude(x => x.Country)
-                                              .Where(x => geohashes.Contains(x.Geohash))
-                                              .OrderByDescending(x => x.Geohash.Length)
-                                              .Select(x => new Model.View.City.City(x.City))
-                                              .FirstOrDefaultAsync();
-        }
+        return await context.CityGeohashes.Include(x => x.City)
+                                          .ThenInclude(x => x.Country)
+                                          .Where(x => geohashes.Contains(x.Geohash))
+                                          .OrderByDescending(x => x.Geohash.Length)
+                                          .Select(x => new Model.View.City.City(x.City))
+                                          .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
@@ -258,18 +256,16 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
     public async Task<Model.View.Country.Country> GetCountry(string geohash)
     {
-        using (var context = GetMainContext())
-        {
-            var geohashes = Enumerable.Range(0, geohash.Length)
-                                      .Select(x => geohash.Substring(0, geohash.Length - x))
-                                      .ToList();
+        using var context = GetMainContext();
+        var geohashes = Enumerable.Range(0, geohash.Length)
+                                  .Select(x => geohash.Substring(0, geohash.Length - x))
+                                  .ToList();
 
-            return await context.CountryGeohashes.Include(x => x.Country)
-                                                 .Where(x => geohashes.Contains(x.Geohash))
-                                                 .OrderByDescending(x => x.Geohash.Length)
-                                                 .Select(x => new Model.View.Country.Country(x.Country))
-                                                 .FirstOrDefaultAsync();
-        }
+        return await context.CountryGeohashes.Include(x => x.Country)
+                                             .Where(x => geohashes.Contains(x.Geohash))
+                                             .OrderByDescending(x => x.Geohash.Length)
+                                             .Select(x => new Model.View.Country.Country(x.Country))
+                                             .FirstOrDefaultAsync();
     }
 
     public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
@@ -314,59 +310,55 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
     public async Task<Model.View.Geohash.Geohash> GetGeohash(string geohashId)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var query = context.Trackings.WhereUser(UserId)
+                                              .Where(x => x.Geohash.StartsWith(geohashId));
+
+        var firstIn = (await query.OrderBy(x => x.Timestamp)
+                                  .FirstOrDefaultAsync())?.Timestamp;
+
+        if (firstIn is null)
+            return null;
+
+        int totalCount = await query.CountAsync();
+
+        var lastIn = totalCount == 1 ? null : (await query.OrderBy(x => x.Timestamp)
+              .OrderByDescending(x => x.Timestamp)
+              .FirstOrDefaultAsync())?.Timestamp;
+
+        int dayCount = await query.GroupBy(x => x.Timestamp.Date)
+                                   .CountAsync();
+
+        return new Model.View.Geohash.Geohash()
         {
-            var query = context.Trackings.WhereUser(UserId)
-                                                  .Where(x => x.Geohash.StartsWith(geohashId));
-
-            var firstIn = (await query.OrderBy(x => x.Timestamp)
-                                      .FirstOrDefaultAsync())?.Timestamp;
-
-            if (firstIn is null)
-                return null;
-
-            int totalCount = await query.CountAsync();
-
-            var lastIn = totalCount == 1 ? null : (await query.OrderBy(x => x.Timestamp)
-                  .OrderByDescending(x => x.Timestamp)
-                  .FirstOrDefaultAsync())?.Timestamp;
-
-            int dayCount = await query.GroupBy(x => x.Timestamp.Date)
-                                       .CountAsync();
-
-            return new Model.View.Geohash.Geohash()
-            {
-                DayCount = dayCount,
-                FirstIn = firstIn.Value,
-                LastIn = lastIn.HasValue ? lastIn.Value : firstIn.Value,
-                TotalCount = totalCount
-            };
-        }
+            DayCount = dayCount,
+            FirstIn = firstIn.Value,
+            LastIn = lastIn.HasValue ? lastIn.Value : firstIn.Value,
+            TotalCount = totalCount
+        };
     }
 
     public async Task<IEnumerable<string>> GetGeohashes(GeohashGetBinding binding)
     {
         var geohasher = new Geohasher();
 
-        using (var context = GetMainContext())
-        {
-            var neighbours = binding.Geohash is null ? null : geohasher.GetNeighbors(binding.Geohash);
+        using var context = GetMainContext();
+        var neighbours = binding.Geohash is null ? null : geohasher.GetNeighbors(binding.Geohash);
 
-            return await context.Trackings.WhereUser(UserId)
-                                          .WhereTimestampInclusive(binding)
-                                          .WhereIf(neighbours is not null, x => x.Geohash.StartsWith(binding.Geohash)
-                                                 || x.Geohash.StartsWith(neighbours[Direction.North])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.South])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.East])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.West])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.NorthEast])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.NorthWest])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.SouthEast])
-                                                 || x.Geohash.StartsWith(neighbours[Direction.SouthWest]))
-                                          .Select(x => x.Geohash.Substring(0, binding.Precision))
-                                          .Distinct()
-                                          .ToListAsync();
-        }
+        return await context.Trackings.WhereUser(UserId)
+                                      .WhereTimestampInclusive(binding)
+                                      .WhereIf(neighbours is not null, x => x.Geohash.StartsWith(binding.Geohash)
+                                             || x.Geohash.StartsWith(neighbours[Direction.North])
+                                             || x.Geohash.StartsWith(neighbours[Direction.South])
+                                             || x.Geohash.StartsWith(neighbours[Direction.East])
+                                             || x.Geohash.StartsWith(neighbours[Direction.West])
+                                             || x.Geohash.StartsWith(neighbours[Direction.NorthEast])
+                                             || x.Geohash.StartsWith(neighbours[Direction.NorthWest])
+                                             || x.Geohash.StartsWith(neighbours[Direction.SouthEast])
+                                             || x.Geohash.StartsWith(neighbours[Direction.SouthWest]))
+                                      .Select(x => x.Geohash.Substring(0, binding.Precision))
+                                      .Distinct()
+                                      .ToListAsync();
     }
 
     public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding)

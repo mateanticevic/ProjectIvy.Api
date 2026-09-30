@@ -127,30 +127,28 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
 
     public async Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var query = context.Trips.WhereUser(UserId)
-                                     .Where(binding)
-                                     .Where(x => x.TimestampEnd < DateTime.Now);
+        using var context = GetMainContext();
+        var query = context.Trips.WhereUser(UserId)
+                                 .Where(binding)
+                                 .Where(x => x.TimestampEnd < DateTime.Now);
 
-            var left = await query.Where(x => x.TimestampEnd.Year != x.TimestampStart.Year)
-                                  .Select(x => new Tuple<DateTime, DateTime>(x.TimestampStart, new DateTime(x.TimestampStart.Year, 12, 31, 23, 59, 59)))
-                                  .ToListAsync();
+        var left = await query.Where(x => x.TimestampEnd.Year != x.TimestampStart.Year)
+                              .Select(x => new Tuple<DateTime, DateTime>(x.TimestampStart, new DateTime(x.TimestampStart.Year, 12, 31, 23, 59, 59)))
+                              .ToListAsync();
 
-            var right = await query.Where(x => x.TimestampEnd.Year != x.TimestampStart.Year)
-                                   .Select(x => new Tuple<DateTime, DateTime>(new DateTime(x.TimestampEnd.Year, 1, 1, 0, 0, 0), x.TimestampEnd))
-                                   .ToListAsync();
+        var right = await query.Where(x => x.TimestampEnd.Year != x.TimestampStart.Year)
+                               .Select(x => new Tuple<DateTime, DateTime>(new DateTime(x.TimestampEnd.Year, 1, 1, 0, 0, 0), x.TimestampEnd))
+                               .ToListAsync();
 
-            var center = await query.Where(x => x.TimestampEnd.Year == x.TimestampStart.Year)
-                                    .Select(x => new Tuple<DateTime, DateTime>(x.TimestampStart, x.TimestampEnd))
-                                    .ToListAsync();
+        var center = await query.Where(x => x.TimestampEnd.Year == x.TimestampStart.Year)
+                                .Select(x => new Tuple<DateTime, DateTime>(x.TimestampStart, x.TimestampEnd))
+                                .ToListAsync();
 
-            return left.Concat(right)
-                       .Concat(center)
-                       .GroupBy(x => x.Item1.Year)
-                       .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Item2.Date.Subtract(y.Item1.Date).Days + (y.Item2.Hour > 6 ? 1 : 0))))
-                       .OrderBy(x => x.Key);
-        }
+        return left.Concat(right)
+                   .Concat(center)
+                   .GroupBy(x => x.Item1.Year)
+                   .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Item2.Date.Subtract(y.Item1.Date).Days + (y.Item2.Hour > 6 ? 1 : 0))))
+                   .OrderBy(x => x.Key);
     }
 
     public async Task Delete(string valueId)

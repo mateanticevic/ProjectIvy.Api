@@ -25,21 +25,17 @@ public class CurrencyHandler : Handler<CurrencyHandler>, ICurrencyHandler
 
     public View.Currency Get(string code)
     {
-        using (var context = GetMainContext())
-        {
-            var entity = context.Currencies.SingleOrDefault(x => x.Code == code);
+        using var context = GetMainContext();
+        var entity = context.Currencies.SingleOrDefault(x => x.Code == code);
 
-            return new View.Currency(entity);
-        }
+        return new View.Currency(entity);
     }
 
     private IEnumerable<View.Currency> GetNonCached()
     {
-        using (var context = GetMainContext())
-        {
-            return context.Currencies.OrderBy(x => x.Name)
-                                     .ToList()
-                                     .Select(x => new View.Currency(x));
-        }
+        using var context = GetMainContext();
+        return context.Currencies.OrderBy(x => x.Name)
+                                 .ToList()
+                                 .Select(x => new View.Currency(x));
     }
 }

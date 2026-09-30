@@ -16,48 +16,42 @@ public class PoiHandler : Handler<PoiHandler>, IPoiHandler
 
     public void Create(PoiBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var entity = binding.ToEntity(context);
+        using var context = GetMainContext();
+        var entity = binding.ToEntity(context);
 
-            context.Pois.Add(entity);
-            context.SaveChanges();
-        }
+        context.Pois.Add(entity);
+        context.SaveChanges();
     }
 
     public PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            int? categoryId = context.PoiCategories.GetId(binding.CategoryId);
-            int? vendorId = context.Vendors.GetId(binding.VendorId);
+        using var context = GetMainContext();
+        int? categoryId = context.PoiCategories.GetId(binding.CategoryId);
+        int? vendorId = context.Vendors.GetId(binding.VendorId);
 
-            var pois = context.Pois.Include(x => x.PoiCategory)
-                                   .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
-                                   .WhereIf(!string.IsNullOrWhiteSpace(binding.Name), x => x.Name.Contains(binding.Name))
-                                   .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId))
-                                   .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
-                                   .InsideRectangle(binding.X, binding.Y);
+        var pois = context.Pois.Include(x => x.PoiCategory)
+                               .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
+                               .WhereIf(!string.IsNullOrWhiteSpace(binding.Name), x => x.Name.Contains(binding.Name))
+                               .WhereIf(vendorId.HasValue, x => x.VendorPois.Any(y => y.VendorId == vendorId && x.Id == y.PoiId))
+                               .WhereIf(binding.Search, x => x.Name.ToLower().Contains(binding.Search.ToLower()))
+                               .InsideRectangle(binding.X, binding.Y);
 
-            var result = new PagedView<Model.View.Poi.Poi>();
-            result.Count = pois.Count();
-            result.Items = pois.OrderByDescending(x => x.Id)
-                               .Page(binding)
-                               .ToList()
-                               .Select(x => new Model.View.Poi.Poi(x));
+        var result = new PagedView<Model.View.Poi.Poi>();
+        result.Count = pois.Count();
+        result.Items = pois.OrderByDescending(x => x.Id)
+                           .Page(binding)
+                           .ToList()
+                           .Select(x => new Model.View.Poi.Poi(x));
 
-            return result;
-        }
+        return result;
     }
 
     public IEnumerable<Model.View.Poi.PoiCategory> GetCategories()
     {
-        using (var context = GetMainContext())
-        {
-            return context.PoiCategories.OrderBy(x => x.Name)
-                                        .ToList()
-                                        .Select(x => new Model.View.Poi.PoiCategory(x));
-        }
+        using var context = GetMainContext();
+        return context.PoiCategories.OrderBy(x => x.Name)
+                                    .ToList()
+                                    .Select(x => new Model.View.Poi.PoiCategory(x));
     }
 }
  

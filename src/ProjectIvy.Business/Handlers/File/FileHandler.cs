@@ -26,32 +26,28 @@ public class FileHandler : Handler<FileHandler>, IFileHandler
 
     public async Task DeleteFile(string id)
     {
-        using (var context = GetMainContext())
-        {
-            var file = context.Files.Include(x => x.FileType)
-                                    .SingleOrDefault(x => x.ValueId == id);
+        using var context = GetMainContext();
+        var file = context.Files.Include(x => x.FileType)
+                                .SingleOrDefault(x => x.ValueId == id);
 
-            if (file.UserId != UserId)
-                throw new UnauthorizedException();
+        if (file.UserId != UserId)
+            throw new UnauthorizedException();
 
-            await _azureStorageHelper.DeleteFile($"{ShareName}/{file.Uri}");
-        }
+        await _azureStorageHelper.DeleteFile($"{ShareName}/{file.Uri}");
     }
 
     public async Task<FileWithData> GetFile(string id)
     {
-        using (var context = GetMainContext())
-        {
-            var file = context.Files.Include(x => x.FileType)
-                                    .SingleOrDefault(x => x.ValueId == id);
+        using var context = GetMainContext();
+        var file = context.Files.Include(x => x.FileType)
+                                .SingleOrDefault(x => x.ValueId == id);
 
-            var data = await _azureStorageHelper.GetFile($"{ShareName}/{file.Uri}");
+        var data = await _azureStorageHelper.GetFile($"{ShareName}/{file.Uri}");
 
-            if (data == null)
-                throw new ResourceNotFoundException();
+        if (data == null)
+            throw new ResourceNotFoundException();
 
-            return new FileWithData(file) { Data = data };
-        }
+        return new FileWithData(file) { Data = data };
     }
 
     private async Task<byte[]> ProcessImageFile(FileBinding file)
@@ -61,11 +57,9 @@ public class FileHandler : Handler<FileHandler>, IFileHandler
             var image = Image.Load(file.Data);
             image.Mutate(x => x.Resize((int)(image.Width * file.ImageResize.Value), 0));
 
-            using (var ms = new MemoryStream())
-            {
-                await image.SaveAsJpegAsync(ms);
-                return ms.ToArray();
-            }
+            using var ms = new MemoryStream();
+            await image.SaveAsJpegAsync(ms);
+            return ms.ToArray();
         }
         else
             return file.Data;

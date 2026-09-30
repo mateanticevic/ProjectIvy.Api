@@ -20,91 +20,81 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
 
     public long Count(CountryGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var countries = context.Countries;
+        using var context = GetMainContext();
+        var countries = context.Countries;
 
-            return countries.Count();
-        }
+        return countries.Count();
     }
 
     public long CountVisited()
     {
-        using (var context = GetMainContext())
-        {
-            return context.Trips.WhereUser(UserId)
-                                .Where(x => x.TimestampEnd < DateTime.Now)
-                                .Include(x => x.Cities)
-                                .SelectMany(x => x.Cities)
-                                .Select(x => x.Country)
-                                .Distinct()
-                                .Select(x => x)
-                                .LongCount();
-        }
+        using var context = GetMainContext();
+        return context.Trips.WhereUser(UserId)
+                            .Where(x => x.TimestampEnd < DateTime.Now)
+                            .Include(x => x.Cities)
+                            .SelectMany(x => x.Cities)
+                            .Select(x => x.Country)
+                            .Distinct()
+                            .Select(x => x)
+                            .LongCount();
     }
 
     public View.Country Get(string id)
     {
-        using (var context = GetMainContext())
-        {
-            var country = context.Countries.SingleOrDefault(x => x.ValueId == id);
+        using var context = GetMainContext();
+        var country = context.Countries.SingleOrDefault(x => x.ValueId == id);
 
-            return new View.Country(country);
-        }
+        return new View.Country(country);
     }
 
     public PagedView<View.Country> Get(CountryGetBinding binding)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var countries = context.Countries;
+
+        long count = countries.Count();
+
+        var items = countries.OrderBy(x => x.Name)
+                             .WhereSearch(binding)
+                             .Page(binding)
+                             .ToList()
+                             .Select(x => new View.Country(x))
+                             .ToList();
+
+        return new PagedView<View.Country>()
         {
-            var countries = context.Countries;
-
-            long count = countries.Count();
-
-            var items = countries.OrderBy(x => x.Name)
-                                 .WhereSearch(binding)
-                                 .Page(binding)
-                                 .ToList()
-                                 .Select(x => new View.Country(x))
-                                 .ToList();
-
-            return new PagedView<View.Country>()
-            {
-                Count = count,
-                Items = items
-            };
-        }
+            Count = count,
+            Items = items
+        };
     }
 
     public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
     {
-        using (var context = GetMainContext())
+        using var context = GetMainContext();
+        var countryValueIds = countries.Select(x => x.Id);
+        var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
+                                              .Include(x => x.Country)
+                                              .ToList();
+
+        foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
         {
-            var countryValueIds = countries.Select(x => x.Id);
-            var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
-                                                  .Include(x => x.Country)
-                                                  .ToList();
+            var paths = new List<IEnumerable<Model.View.LatLng>>();
 
-            foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
+            foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
             {
-                var paths = new List<IEnumerable<Model.View.LatLng>>();
-
-                foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
-                {
-                    var path = countryPolygon.OrderBy(x => x.Index)
-                                             .Select(x => new Model.View.LatLng(x.Latitude, x.Longitude))
-                                             .ToList();
-                    paths.Add(path);
-                }
-
-                var countryBoundaries = new View.CountryBoundaries()
-                {
-                    Country = countries.SingleOrDefault(x => x.Id == countryPolygons.Key.ValueId),
-                    Polygons = paths
-                };
-
-                yield return countryBoundaries;
+                var path = countryPolygon.OrderBy(x => x.Index)
+                                         .Select(x => new Model.View.LatLng(x.Latitude, x.Longitude))
+                                         .ToList();
+                paths.Add(path);
             }
+
+            var countryBoundaries = new View.CountryBoundaries()
+            {
+                Country = countries.SingleOrDefault(x => x.Id == countryPolygons.Key.ValueId),
+                Polygons = paths
+            };
+
+            yield return countryBoundaries;
         }
     }
 
@@ -156,14 +146,12 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
 
     public async Task<IEnumerable<View.CountryList>> GetLists()
     {
-        using (var context = GetMainContext())
-        {
-            return await context.CountryLists.Include(x => x.Countries)
-                                             .ThenInclude(x => x.Country)
-                                             .Where(x => !x.UserId.HasValue || x.UserId == UserId)
-                                             .Select(x => new View.CountryList(x))
-                                             .ToListAsync();
-        }
+        using var context = GetMainContext();
+        return await context.CountryLists.Include(x => x.Countries)
+                                         .ThenInclude(x => x.Country)
+                                         .Where(x => !x.UserId.HasValue || x.UserId == UserId)
+                                         .Select(x => new View.CountryList(x))
+                                         .ToListAsync();
     }
 
     public async Task<IEnumerable<View.CountryListVisited>> GetListsVisited()

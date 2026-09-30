@@ -33,40 +33,34 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
 
     public int Count(FilteredBinding binding)
     {
-        using (var db = GetMainContext())
-        {
-            var userTrackings = db.Trackings.WhereUser(UserId)
-                                            .WhereTimestampInclusive(binding);
+        using var db = GetMainContext();
+        var userTrackings = db.Trackings.WhereUser(UserId)
+                                        .WhereTimestampInclusive(binding);
 
-            return userTrackings.Count();
-        }
+        return userTrackings.Count();
     }
 
     public IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Trackings.WhereUser(UserId)
-                          .WhereTimestampInclusive(binding.From, binding.To)
-                          .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
-                          .OrderByDescending(x => x.Key.Year)
-                          .ThenByDescending(x => x.Key.Month)
-                          .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                          .ToList();
-        }
+        using var context = GetMainContext();
+        return context.Trackings.WhereUser(UserId)
+                      .WhereTimestampInclusive(binding.From, binding.To)
+                      .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
+                      .OrderByDescending(x => x.Key.Year)
+                      .ThenByDescending(x => x.Key.Month)
+                      .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
+                      .ToList();
     }
 
     public IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Trackings.WhereUser(UserId)
-                                    .WhereTimestampInclusive(binding.From, binding.To)
-                                    .GroupBy(x => x.Timestamp.Year)
-                                    .OrderByDescending(x => x.Key)
-                                    .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
-                                    .ToList();
-        }
+        using var context = GetMainContext();
+        return context.Trackings.WhereUser(UserId)
+                                .WhereTimestampInclusive(binding.From, binding.To)
+                                .GroupBy(x => x.Timestamp.Year)
+                                .OrderByDescending(x => x.Key)
+                                .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
+                                .ToList();
     }
 
     public int CountUnique(FilteredBinding binding)
@@ -76,17 +70,15 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
 
     public async Task Create(TrackingBinding binding)
     {
-        using (var db = GetMainContext())
-        {
-            var geohasher = new Geohasher();
+        using var db = GetMainContext();
+        var geohasher = new Geohasher();
 
-            var tracking = binding.ToEntity();
-            tracking.Geohash = geohasher.Encode((double)binding.Latitude, (double)binding.Longitude, 9);
-            tracking.UserId = UserId;
+        var tracking = binding.ToEntity();
+        tracking.Geohash = geohasher.Encode((double)binding.Latitude, (double)binding.Longitude, 9);
+        tracking.UserId = UserId;
 
-            await db.Trackings.AddAsync(tracking);
-            await db.SaveChangesAsync();
-        }
+        await db.Trackings.AddAsync(tracking);
+        await db.SaveChangesAsync();
     }
 
     public async Task Create(IEnumerable<TrackingBinding> binding)
@@ -95,38 +87,36 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         {
             var geohasher = new Geohasher();
 
-            using (var db = GetMainContext())
+            using var db = GetMainContext();
+            foreach (var b in binding)
             {
-                foreach (var b in binding)
-                {
-                    b.Timestamp = new DateTime(b.Timestamp.Year, b.Timestamp.Month, b.Timestamp.Day, b.Timestamp.Hour, b.Timestamp.Minute, b.Timestamp.Second, b.Timestamp.Millisecond);
-                }
-
-                var timestamps = binding.Select(x => x.Timestamp).ToList();
-                Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
-
-                var existingTimestamps = await db.Trackings.WhereUser(UserId)
-                                                           .Where(x => timestamps.Contains(x.Timestamp))
-                                                           .Select(x => x.Timestamp)
-                                                           .ToListAsync();
-
-                Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
-
-                var trackings = binding.GroupBy(x => x.Timestamp)
-                                       .Select(x => x.First())
-                                       .Where(x => !existingTimestamps.Contains(x.Timestamp))
-                                       .Select(x =>
-                {
-                    var entity = x.ToEntity();
-                    entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
-                    entity.UserId = UserId;
-                    return entity;
-                }).ToList();
-                await db.Trackings.AddRangeAsync(trackings);
-
-                int count = await db.SaveChangesAsync();
-                Logger.LogInformation("Inserted {TrackingCount} trackings", count);
+                b.Timestamp = new DateTime(b.Timestamp.Year, b.Timestamp.Month, b.Timestamp.Day, b.Timestamp.Hour, b.Timestamp.Minute, b.Timestamp.Second, b.Timestamp.Millisecond);
             }
+
+            var timestamps = binding.Select(x => x.Timestamp).ToList();
+            Logger.LogInformation("Trying to save {TrackingCount} trackings", timestamps.Count);
+
+            var existingTimestamps = await db.Trackings.WhereUser(UserId)
+                                                       .Where(x => timestamps.Contains(x.Timestamp))
+                                                       .Select(x => x.Timestamp)
+                                                       .ToListAsync();
+
+            Logger.LogInformation("Found {TrackingCount} duplicate trackings", existingTimestamps.Count);
+
+            var trackings = binding.GroupBy(x => x.Timestamp)
+                                   .Select(x => x.First())
+                                   .Where(x => !existingTimestamps.Contains(x.Timestamp))
+                                   .Select(x =>
+            {
+                var entity = x.ToEntity();
+                entity.Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9);
+                entity.UserId = UserId;
+                return entity;
+            }).ToList();
+            await db.Trackings.AddRangeAsync(trackings);
+
+            int count = await db.SaveChangesAsync();
+            Logger.LogInformation("Inserted {TrackingCount} trackings", count);
         }
         catch (Exception e)
         {
@@ -138,55 +128,47 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
     public async Task Delete(IEnumerable<long> timestamps)
     {
         var dateTimes = timestamps.Select(x => DateTimeOffset.FromUnixTimeMilliseconds(x).UtcDateTime);
-        using (var context = GetMainContext())
-        {
-            var trackings = await context.Trackings.WhereUser(UserId)
-                                                   .Where(x => dateTimes.Contains(x.Timestamp))
-                                                   .ToListAsync();
+        using var context = GetMainContext();
+        var trackings = await context.Trackings.WhereUser(UserId)
+                                               .Where(x => dateTimes.Contains(x.Timestamp))
+                                               .ToListAsync();
 
-            context.Trackings.RemoveRange(trackings);
-            Logger.LogInformation("Removed {TrackingCount} trackings", trackings.Count);
+        context.Trackings.RemoveRange(trackings);
+        Logger.LogInformation("Removed {TrackingCount} trackings", trackings.Count);
 
-            await context.SaveChangesAsync();
-        }
+        await context.SaveChangesAsync();
     }
 
     public IEnumerable<View.Tracking> Get(TrackingGetBinding binding)
     {
-        using (var db = GetMainContext())
-        {
-            return db.Trackings.WhereUser(UserId)
-                               .WhereTimestampInclusive(binding)
-                               .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
-                               .OrderBy(x => x.Timestamp)
-                               .ToList()
-                               .Select(x => new View.Tracking(x));
-        }
+        using var db = GetMainContext();
+        return db.Trackings.WhereUser(UserId)
+                           .WhereTimestampInclusive(binding)
+                           .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
+                           .OrderBy(x => x.Timestamp)
+                           .ToList()
+                           .Select(x => new View.Tracking(x));
     }
 
     public double GetAverageSpeed(FilteredBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var averageSpeed = context.Trackings.WhereUser(UserId)
-                                                .WhereTimestampInclusive(binding)
-                                                .Average(x => x.Speed);
+        using var context = GetMainContext();
+        var averageSpeed = context.Trackings.WhereUser(UserId)
+                                            .WhereTimestampInclusive(binding)
+                                            .Average(x => x.Speed);
 
-            return averageSpeed ?? 0;
-        }
+        return averageSpeed ?? 0;
     }
 
     public async Task<IEnumerable<string>> GetDays(TrackingGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return (await context.Trackings.WhereUser(UserId)
-                                          .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
-                                          .Select(x => x.Timestamp.Date)
-                                          .Distinct()
-                                          .OrderByDescending(x => x)
-                                          .ToListAsync()).Select(x => x.ToString("yyyy-MM-dd"));
-        }
+        using var context = GetMainContext();
+        return (await context.Trackings.WhereUser(UserId)
+                                      .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
+                                      .Select(x => x.Timestamp.Date)
+                                      .Distinct()
+                                      .OrderByDescending(x => x)
+                                      .ToListAsync()).Select(x => x.ToString("yyyy-MM-dd"));
     }
 
     public async Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null)
@@ -258,52 +240,50 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         binding.From = binding.From ?? DateTime.MinValue;
         binding.To = binding.To ?? DateTime.MaxValue;
 
-        using (var db = GetMainContext())
+        using var db = GetMainContext();
+        var total = 0;
+
+        // Already calculated distance. By day.
         {
-            var total = 0;
+            var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
+            var to = binding.To.Value.Date;
 
-            // Already calculated distance. By day.
-            {
-                var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
-                var to = binding.To.Value.Date;
-
-                total = db.TrackingDistances.WhereUser(UserId)
-                                                .WhereTimestampFromInclusive(from, to)
-                                                .Sum(x => x.DistanceInMeters);
-            }
-
-            var lastDate = db.TrackingDistances.WhereUser(UserId)
-                                               .OrderByDescending(x => x.Timestamp)
-                                               .FirstOrDefault()
-                                               .Timestamp;
-
-            if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
-            {
-                var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
-
-                total += db.Trackings.WhereUser(UserId)
-                                     .Distance(binding.From.Value, to);
-            }
-
-            if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
-            {
-                total += db.Trackings.WhereUser(UserId)
-                                     .Distance(binding.To.Value.Date, binding.To.Value);
-            }
-
-            binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
-
-            if (lastDate < binding.To.Value.Date)
-            {
-                var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
-
-                // TODO: Include last tracking from previous date
-                total += db.Trackings.WhereUser(UserId)
-                                     .Distance(from.Value, binding.To.Value);
-            }
-
-            return total;
+            total = db.TrackingDistances.WhereUser(UserId)
+                                            .WhereTimestampFromInclusive(from, to)
+                                            .Sum(x => x.DistanceInMeters);
         }
+
+        var lastDate = db.TrackingDistances.WhereUser(UserId)
+                                           .OrderByDescending(x => x.Timestamp)
+                                           .FirstOrDefault()
+                                           .Timestamp;
+
+        if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
+        {
+            var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
+
+            total += db.Trackings.WhereUser(UserId)
+                                 .Distance(binding.From.Value, to);
+        }
+
+        if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
+        {
+            total += db.Trackings.WhereUser(UserId)
+                                 .Distance(binding.To.Value.Date, binding.To.Value);
+        }
+
+        binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
+
+        if (lastDate < binding.To.Value.Date)
+        {
+            var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
+
+            // TODO: Include last tracking from previous date
+            total += db.Trackings.WhereUser(UserId)
+                                 .Distance(from.Value, binding.To.Value);
+        }
+
+        return total;
     }
 
     public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
@@ -352,25 +332,21 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
 
     public async Task<Model.Database.Main.Tracking.Tracking> GetLastTracking(DateTime? at = null)
     {
-        using (var db = GetMainContext())
-        {
-            return await db.Trackings.WhereUser(UserId)
-                                     .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
-                                     .OrderByDescending(x => x.Timestamp)
-                                     .FirstOrDefaultAsync();
-        }
+        using var db = GetMainContext();
+        return await db.Trackings.WhereUser(UserId)
+                                 .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                 .OrderByDescending(x => x.Timestamp)
+                                 .FirstOrDefaultAsync();
     }
 
     public double GetMaxSpeed(FilteredBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var maxSpeed = context.Trackings.WhereUser(UserId)
-                                            .WhereTimestampInclusive(binding)
-                                            .Max(x => x.Speed);
+        using var context = GetMainContext();
+        var maxSpeed = context.Trackings.WhereUser(UserId)
+                                        .WhereTimestampInclusive(binding)
+                                        .Max(x => x.Speed);
 
-            return maxSpeed ?? 0;
-        }
+        return maxSpeed ?? 0;
     }
 
     public async Task ImportFromGpx(XDocument xml)
@@ -378,20 +354,18 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         var trackings = GpxHandler.FromGpx(xml);
         var geohasher = new Geohasher();
 
-        using (var db = GetMainContext())
+        using var db = GetMainContext();
+        var entities = trackings.Select(x => new Model.Database.Main.Tracking.Tracking()
         {
-            var entities = trackings.Select(x => new Model.Database.Main.Tracking.Tracking()
-            {
-                Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9),
-                Longitude = x.Longitude,
-                Latitude = x.Latitude,
-                Timestamp = x.Timestamp,
-                UserId = UserId
-            }).ToList();
+            Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9),
+            Longitude = x.Longitude,
+            Latitude = x.Latitude,
+            Timestamp = x.Timestamp,
+            UserId = UserId
+        }).ToList();
 
-            await db.Trackings.AddRangeAsync(entities);
-            await db.SaveChangesAsync();
-        }
+        await db.Trackings.AddRangeAsync(entities);
+        await db.SaveChangesAsync();
     }
 
     public bool ImportFromKml(XDocument kml)
@@ -399,17 +373,15 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         var trackings = KmlHandler.ParseKml(kml)
                                   .Select(x => (Model.Database.Main.Tracking.Tracking)x);
 
-        using (var db = GetMainContext())
+        using var db = GetMainContext();
+        foreach (var t in trackings)
         {
-            foreach (var t in trackings)
-            {
-                t.UserId = UserId;
-            }
-
-            db.Trackings.AddRange(trackings);
-            db.SaveChanges();
-
-            return true;
+            t.UserId = UserId;
         }
+
+        db.Trackings.AddRange(trackings);
+        db.SaveChanges();
+
+        return true;
     }
 }

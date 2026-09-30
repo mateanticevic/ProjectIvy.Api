@@ -21,90 +21,80 @@ public class UserHelper : IUserHelper
 
     public async Task<IEnumerable<Track>> GetLovedTracks(string username)
     {
-        using (var client = new HttpClient())
+        using var client = new HttpClient();
+        var request = new UserGetLovedTracks(_url, _key, username)
         {
-            var request = new UserGetLovedTracks(_url, _key, username)
-            {
-            };
+        };
 
-            var json = await client.GetStringAsync(request.ToUrl());
+        var json = await client.GetStringAsync(request.ToUrl());
 
-            var tracks = JObject.Parse(json).SelectToken("lovedtracks")
-                                            .SelectToken("track");
+        var tracks = JObject.Parse(json).SelectToken("lovedtracks")
+                                        .SelectToken("track");
 
-            return tracks.ToObject<IEnumerable<Track>>();
-        }
+        return tracks.ToObject<IEnumerable<Track>>();
     }
 
     public async Task<IEnumerable<Artist>> GetTopArtists(string username)
     {
-        using (var client = new HttpClient())
+        using var client = new HttpClient();
+        var request = new UserGetTopArtists(_url, _key, username)
         {
-            var request = new UserGetTopArtists(_url, _key, username)
-            {
-            };
+        };
 
-            var json = await client.GetStringAsync(request.ToUrl());
+        var json = await client.GetStringAsync(request.ToUrl());
 
-            var tracks = JObject.Parse(json).SelectToken("topartists")
-                                            .SelectToken("artist");
+        var tracks = JObject.Parse(json).SelectToken("topartists")
+                                        .SelectToken("artist");
 
-            return tracks.ToObject<IEnumerable<Artist>>();
-        }
+        return tracks.ToObject<IEnumerable<Artist>>();
     }
 
     public async Task<IEnumerable<Track>> GetTopTracks(string username)
     {
-        using (var client = new HttpClient())
+        using var client = new HttpClient();
+        var request = new UserGetTopTracks(_url, _key, username)
         {
-            var request = new UserGetTopTracks(_url, _key, username)
-            {
-                Api_Key = _key,
-                Period = Period.Overall,
-                User = username
-            };
+            Api_Key = _key,
+            Period = Period.Overall,
+            User = username
+        };
 
-            var json = await client.GetStringAsync(request.ToUrl());
+        var json = await client.GetStringAsync(request.ToUrl());
 
-            var tracks = JObject.Parse(json).SelectToken("toptracks")
-                                .SelectToken("track");
+        var tracks = JObject.Parse(json).SelectToken("toptracks")
+                            .SelectToken("track");
 
-            return tracks.ToObject<IEnumerable<Track>>();
-        }
+        return tracks.ToObject<IEnumerable<Track>>();
     }
 
     public async Task<Info> GetTotalCount(string username)
     {
-        using (var client = new HttpClient())
-        {
-            var request = new UserGetInfo(_url, _key, username);
+        using var client = new HttpClient();
+        var request = new UserGetInfo(_url, _key, username);
 
-            var json = await client.GetStringAsync(request.ToUrl());
+        var json = await client.GetStringAsync(request.ToUrl());
 
-            var infoObject = JObject.Parse(json).SelectToken("user");
+        var infoObject = JObject.Parse(json).SelectToken("user");
 
-            return infoObject.ToObject<Info>();
-        }
+        return infoObject.ToObject<Info>();
     }
 
     public async Task<IEnumerable<Track>> GetTracks(string username, FilteredPagedBinding filter)
     {
-        using (var client = new HttpClient())
+        using var client = new HttpClient();
+        var request = new UserGetRecentTracks(_url, _key, username)
         {
-            var request = new UserGetRecentTracks(_url, _key, username)
-            {
-                Api_Key = _key,
-                From = filter.From?.ToUnix().ToString(),
-                User = username,
-                To = filter.To?.ToUnix().ToString()
-            };
+            Api_Key = _key,
+            From = filter.From?.ToUnix().ToString(),
+            User = username,
+            To = filter.To?.ToUnix().ToString()
+        };
 
-            var json = await client.GetStringAsync(request.ToUrl());
+        var json = await client.GetStringAsync(request.ToUrl());
 
-            var tracks = JObject.Parse(json).SelectToken("recenttracks")
-                                            .SelectToken("track");
+        var tracks = JObject.Parse(json).SelectToken("recenttracks")
+                                        .SelectToken("track");
 
-            return tracks.ToObject<IEnumerable<Track>>();
-        }
+        return tracks.ToObject<IEnumerable<Track>>();
     }
 }

@@ -12,10 +12,8 @@ public class PaymentTypeHandler : Handler<PaymentTypeHandler>, IPaymentTypeHandl
 
     public IEnumerable<View.PaymentType> GetPaymentTypes()
     {
-        using (var context = GetMainContext())
-        {
-            return context.PaymentTypes.Select(x => new View.PaymentType(x))
-                                       .ToList();
-        }
+        using var context = GetMainContext();
+        return context.PaymentTypes.Select(x => new View.PaymentType(x))
+                                   .ToList();
     }
 }

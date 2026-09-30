@@ -37,11 +37,9 @@ public class AzureStorageHelper : IAzureStorageHelper
 
         var file = directory.GetFileReference(parts[1]);
 
-        using (var stream = new MemoryStream())
-        {
-            await file.DownloadToStreamAsync(stream);
-            return stream.ToArray();
-        }
+        using var stream = new MemoryStream();
+        await file.DownloadToStreamAsync(stream);
+        return stream.ToArray();
     }
 
     public async Task UploadFile(string fileName, byte[] fileData)

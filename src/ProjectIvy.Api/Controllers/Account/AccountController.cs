@@ -55,23 +55,20 @@ public class AccountController : BaseController<AccountController>
             await HttpContext.Request.Body.CopyToAsync(ms);
             ms.Seek(0, SeekOrigin.Begin);
 
-            using (var sr = new StreamReader(ms))
+            using var sr = new StreamReader(ms);
+            switch (transactionSource)
             {
-                switch (transactionSource)
-                {
-                    case TransactionSource.Hac:
-                        await _accountHandler.ProcessHacTransactions(accountId, await sr.ReadToEndAsync());
-                        break;
-                    case TransactionSource.OtpBank:
-                        await _accountHandler.ProcessOtpBankTransactions(accountId, await sr.ReadToEndAsync());
-                        break;
-                    case TransactionSource.Revolut:
-                        await _accountHandler.ProcessRevolutTransactions(accountId, await sr.ReadToEndAsync());
-                        break;
-                    default:
-                        throw new System.Exception();
-                }
-
+                case TransactionSource.Hac:
+                    await _accountHandler.ProcessHacTransactions(accountId, await sr.ReadToEndAsync());
+                    break;
+                case TransactionSource.OtpBank:
+                    await _accountHandler.ProcessOtpBankTransactions(accountId, await sr.ReadToEndAsync());
+                    break;
+                case TransactionSource.Revolut:
+                    await _accountHandler.ProcessRevolutTransactions(accountId, await sr.ReadToEndAsync());
+                    break;
+                default:
+                    throw new System.Exception();
             }
         }
 

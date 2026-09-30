@@ -28,13 +28,11 @@ public class FileController : BaseController<FileController>
     {
         var bytes = new byte[HttpContext.Request.ContentLength.Value];
 
-        using (var ms = new System.IO.MemoryStream(bytes.Length))
-        {
-            await HttpContext.Request.Body.CopyToAsync(ms);
-            bytes = ms.ToArray();
-            string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType, ImageResize = imageResize });
+        using var ms = new System.IO.MemoryStream(bytes.Length);
+        await HttpContext.Request.Body.CopyToAsync(ms);
+        bytes = ms.ToArray();
+        string fileName = await _fileHandler.UploadFile(new FileBinding() { Data = bytes, MimeType = HttpContext.Request.ContentType, ImageResize = imageResize });
 
-            return Ok(fileName);
-        }
+        return Ok(fileName);
     }
 }

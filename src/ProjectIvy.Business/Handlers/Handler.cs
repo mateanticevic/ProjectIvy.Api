@@ -73,11 +73,9 @@ public abstract class Handler<THandler> : IHandler
     {
         if (_identifierUserMapping is null || !_identifierUserMapping.ContainsKey(email))
         {
-            using (var db = GetMainContext())
-            {
-                _identifierUserMapping = db.Users.Where(x => x.Email != null)
-                                                 .ToDictionary(x => x.Email, x => x.Id);
-            }
+            using var db = GetMainContext();
+            _identifierUserMapping = db.Users.Where(x => x.Email != null)
+                                             .ToDictionary(x => x.Email, x => x.Id);
         }
 
         return _identifierUserMapping[email];

@@ -15,9 +15,7 @@ public class ResourcesUtility
 
         var x = assembly.GetManifestResourceNames();
 
-        using (var reader = new StreamReader(resourceStream, Encoding.UTF8))
-        {
-            return reader.ReadToEnd();
-        }
+        using var reader = new StreamReader(resourceStream, Encoding.UTF8);
+        return reader.ReadToEnd();
     }
 }

@@ -17,28 +17,24 @@ public class RideHandler : Handler<RideHandler>, IRideHandler
 
     public async Task Create(RideBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var entity = binding.ToEntity(context);
-            entity.UserId = UserId;
+        using var context = GetMainContext();
+        var entity = binding.ToEntity(context);
+        entity.UserId = UserId;
 
-            await context.Rides.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
+        await context.Rides.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<View.Ride.Ride>> GetRides(RideGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return await context.Rides
-                                .WhereUser(UserId)
-                                .Where(binding)
-                                .Include(x => x.DestinationCity)
-                                .Include(x => x.OriginCity)
-                                .OrderBy(x => x.DateOfDeparture)
-                                .Select(x => new View.Ride.Ride(x))
-                                .ToListAsync();
-        }
+        using var context = GetMainContext();
+        return await context.Rides
+                            .WhereUser(UserId)
+                            .Where(binding)
+                            .Include(x => x.DestinationCity)
+                            .Include(x => x.OriginCity)
+                            .OrderBy(x => x.DateOfDeparture)
+                            .Select(x => new View.Ride.Ride(x))
+                            .ToListAsync();
     }
 }

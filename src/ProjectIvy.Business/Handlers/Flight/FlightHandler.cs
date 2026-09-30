@@ -18,12 +18,10 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
 
     public int Count(FlightGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Flights.WhereUser(UserId)
-                                  .Where(binding)
-                                  .Count();
-        }
+        using var context = GetMainContext();
+        return context.Flights.WhereUser(UserId)
+                              .Where(binding)
+                              .Count();
     }
 
     public async Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding)
@@ -41,83 +39,75 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
 
     public IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var userAirports = context.Flights.WhereUser(UserId)
-                                              .Where(binding)
-                                              .Include(x => x.DestinationAirport)
-                                              .ThenInclude(x => x.Poi)
-                                              .Include(x => x.OriginAirport)
-                                              .ThenInclude(x => x.Poi);
+        using var context = GetMainContext();
+        var userAirports = context.Flights.WhereUser(UserId)
+                                          .Where(binding)
+                                          .Include(x => x.DestinationAirport)
+                                          .ThenInclude(x => x.Poi)
+                                          .Include(x => x.OriginAirport)
+                                          .ThenInclude(x => x.Poi);
 
-            return userAirports.Select(x => x.DestinationAirport)
-                               .Concat(userAirports.Select(x => x.OriginAirport))
-                               .GroupBy(x => new
+        return userAirports.Select(x => x.DestinationAirport)
+                           .Concat(userAirports.Select(x => x.OriginAirport))
+                           .GroupBy(x => new
+                           {
+                               x.Iata,
+                               x.Name,
+                               x.Poi.Latitude,
+                               x.Poi.Longitude
+                           })
+                           .OrderByDescending(x => x.Count())
+                           .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
+                           {
+                               Iata = x.Key.Iata,
+                               Name = x.Key.Name,
+                               Poi = new Views.Poi.Poi()
                                {
-                                   x.Iata,
-                                   x.Name,
-                                   x.Poi.Latitude,
-                                   x.Poi.Longitude
-                               })
-                               .OrderByDescending(x => x.Count())
-                               .Select(x => new KeyValuePair<Views.Airport.Airport, int>(new()
-                               {
-                                   Iata = x.Key.Iata,
-                                   Name = x.Key.Name,
-                                   Poi = new Views.Poi.Poi()
-                                   {
-                                       Location = new Model.View.LatLng(x.Key.Latitude, x.Key.Longitude)
-                                   }
-                               }, x.Count()))
-                               .ToList();
-        }
+                                   Location = new Model.View.LatLng(x.Key.Latitude, x.Key.Longitude)
+                               }
+                           }, x.Count()))
+                           .ToList();
     }
 
     public IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            return context.Flights.WhereUser(UserId)
-                                  .Where(binding)
-                                  .GroupBy(x => x.DateOfDepartureLocal.Year)
-                                  .OrderByDescending(x => x.Key)
-                                  .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                                  .ToList();
-        }
+        using var context = GetMainContext();
+        return context.Flights.WhereUser(UserId)
+                              .Where(binding)
+                              .GroupBy(x => x.DateOfDepartureLocal.Year)
+                              .OrderByDescending(x => x.Key)
+                              .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                              .ToList();
     }
 
     public async Task Create(FlightBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            var entity = binding.ToEntity(context);
-            entity.UserId = UserId;
+        using var context = GetMainContext();
+        var entity = binding.ToEntity(context);
+        entity.UserId = UserId;
 
-            await context.Flights.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
+        await context.Flights.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
     public PagedView<Views.Flight.Flight> Get(FlightGetBinding binding)
     {
-        using (var context = GetMainContext())
-        {
-            int? destinationAirportId = binding.DestinationId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.DestinationId)?.Id;
-            int? originAirportId = binding.OriginId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.OriginId)?.Id;
+        using var context = GetMainContext();
+        int? destinationAirportId = binding.DestinationId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.DestinationId)?.Id;
+        int? originAirportId = binding.OriginId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.OriginId)?.Id;
 
-            return context.Flights.WhereUser(UserId)
-                                  .Where(binding)
-                                  .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
-                                  .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)
-                                  .Include(x => x.Airline)
-                                  .Include(x => x.DestinationAirport)
-                                  .ThenInclude(x => x.Poi)
-                                  .Include(x => x.OriginAirport)
-                                  .ThenInclude(x => x.Poi)
-                                  .OrderByDescending(x => x.DateOfArrivalLocal)
-                                  .Select(x => new Views.Flight.Flight(x))
-                                  .ToPagedView(binding);
-        }
+        return context.Flights.WhereUser(UserId)
+                              .Where(binding)
+                              .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
+                              .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)
+                              .Include(x => x.Airline)
+                              .Include(x => x.DestinationAirport)
+                              .ThenInclude(x => x.Poi)
+                              .Include(x => x.OriginAirport)
+                              .ThenInclude(x => x.Poi)
+                              .OrderByDescending(x => x.DateOfArrivalLocal)
+                              .Select(x => new Views.Flight.Flight(x))
+                              .ToPagedView(binding);
     }
 
     public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear()

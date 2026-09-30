@@ -35,12 +35,10 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
 
     public View.User Get(string username)
     {
-        using (var db = GetMainContext())
-        {
-            var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
+        using var db = GetMainContext();
+        var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
 
-            return new View.User(userEntity);
-        }
+        return new View.User(userEntity);
     }
 
     public View.User Get(int? id = null)
@@ -55,15 +53,13 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
     {
         id = id.HasValue ? id : UserId;
 
-        using (var db = GetMainContext())
-        {
-            var userEntity = db.Users.Include(x => x.DefaultCar)
-                                     .Include(x => x.DefaultCurrency)
-                                     .Include(x => x.DefaultCar.CarModel)
-                                     .SingleOrDefault(x => x.Id == id);
+        using var db = GetMainContext();
+        var userEntity = db.Users.Include(x => x.DefaultCar)
+                                 .Include(x => x.DefaultCurrency)
+                                 .Include(x => x.DefaultCar.CarModel)
+                                 .SingleOrDefault(x => x.Id == id);
 
-            return new View.User(userEntity);
-        }
+        return new View.User(userEntity);
     }
 
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b)
