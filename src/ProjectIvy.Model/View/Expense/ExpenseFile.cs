@@ -12,9 +12,9 @@ public class ExpenseFile
         Type = entity.ExpenseFileType.ConvertTo(x => new ExpenseFileType(x));
     }
 
-    public string Name { get; set; }
-
     public File.File File { get; set; }
+
+    public string Name { get; set; }
 
     public ExpenseFileType Type { get; set; }
 }

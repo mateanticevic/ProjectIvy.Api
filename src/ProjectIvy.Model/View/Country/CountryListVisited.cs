@@ -10,11 +10,11 @@ public class CountryListVisited
         Name = x.Name;
     }
 
-    public string Id { get; set; }
-
-    public string Name { get; set; }
-
     public IEnumerable<Country> CountriesNotVisited { get; set; }
 
     public IEnumerable<Country> CountriesVisited { get; set; }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 }

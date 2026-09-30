@@ -26,6 +26,23 @@ public static class ExpenseExtensions
                     .ThenInclude(x => x.FileType);
     }
 
+    public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
+    {
+        switch (binding.OrderBy)
+        {
+            case ExpenseSort.Date:
+                return query.OrderBy(binding.OrderAscending, x => x.Date);
+            case ExpenseSort.Created:
+                return query.OrderBy(binding.OrderAscending, x => x.Created);
+            case ExpenseSort.Modified:
+                return query.OrderBy(binding.OrderAscending, x => x.Modified);
+            case ExpenseSort.Amount:
+                return query.OrderBy(binding.OrderAscending, x => x.Amount);
+            default:
+                return query.OrderBy(binding.OrderAscending, x => x.Date);
+        }
+    }
+
     public static IQueryable<Expense> Where(this IQueryable<Expense> query, ExpenseGetBinding b, MainContext context)
     {
         var cardIds = context.Cards.GetIds(b.CardId);
@@ -70,22 +87,5 @@ public static class ExpenseExtensions
                     .WhereIf(b.ExcludeId != null, x => !b.ExcludeId.Contains(x.ValueId))
                     .WhereIf(b.AmountTo.HasValue, x => x.Amount <= b.AmountTo)
                     .WhereIf(!string.IsNullOrEmpty(b.Search), x => x.Comment.ToLower().Contains(b.Search.ToLower()));
-    }
-
-    public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
-    {
-        switch (binding.OrderBy)
-        {
-            case ExpenseSort.Date:
-                return query.OrderBy(binding.OrderAscending, x => x.Date);
-            case ExpenseSort.Created:
-                return query.OrderBy(binding.OrderAscending, x => x.Created);
-            case ExpenseSort.Modified:
-                return query.OrderBy(binding.OrderAscending, x => x.Modified);
-            case ExpenseSort.Amount:
-                return query.OrderBy(binding.OrderAscending, x => x.Amount);
-            default:
-                return query.OrderBy(binding.OrderAscending, x => x.Date);
-        }
     }
 }

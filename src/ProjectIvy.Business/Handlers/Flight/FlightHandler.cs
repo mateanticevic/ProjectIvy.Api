@@ -73,18 +73,6 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
         }
     }
 
-    public async Task Create(FlightBinding binding)
-    {
-        using (var context = GetMainContext())
-        {
-            var entity = binding.ToEntity(context);
-            entity.UserId = UserId;
-
-            await context.Flights.AddAsync(entity);
-            await context.SaveChangesAsync();
-        }
-    }
-
     public IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding)
     {
         using (var context = GetMainContext())
@@ -95,6 +83,18 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                                   .OrderByDescending(x => x.Key)
                                   .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                                   .ToList();
+        }
+    }
+
+    public async Task Create(FlightBinding binding)
+    {
+        using (var context = GetMainContext())
+        {
+            var entity = binding.ToEntity(context);
+            entity.UserId = UserId;
+
+            await context.Flights.AddAsync(entity);
+            await context.SaveChangesAsync();
         }
     }
 

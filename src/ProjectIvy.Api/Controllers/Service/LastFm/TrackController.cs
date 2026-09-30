@@ -15,9 +15,6 @@ public class TrackController : BaseController<TrackController>
 
     public TrackController(ILogger<TrackController> logger, ILastFmHandler lastFmHandler) : base(logger) => _lastFmHandler = lastFmHandler;
 
-    [HttpGet]
-    public async Task<IEnumerable<Track>> GetTracks([FromQuery] FilteredPagedBinding binding) => await _lastFmHandler.GetTracks(binding);
-
     [HttpGet("Count")]
     public async Task<int> GetCount() => await _lastFmHandler.GetTotalCount();
 
@@ -26,4 +23,7 @@ public class TrackController : BaseController<TrackController>
 
     [HttpGet("Top")]
     public async Task<IEnumerable<Track>> GetTopTracks() => await _lastFmHandler.GetTopTracks();
+
+    [HttpGet]
+    public async Task<IEnumerable<Track>> GetTracks([FromQuery] FilteredPagedBinding binding) => await _lastFmHandler.GetTracks(binding);
 }

@@ -10,6 +10,24 @@ namespace ProjectIvy.Business.MapExtensions;
 
 public static class ExpenseExtensions
 {
+    public static string LastValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
+    {
+        return set.WhereUser(userId)
+                  .OrderByDescending(x => EF.Functions.DataLength(x.ValueId))
+                  .ThenByDescending(x => x.ValueId)
+                  .FirstOrDefault()
+                  ?.ValueId;
+    }
+
+    public static int NextValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
+    {
+        string lastValueId = set.LastValueId(userId);
+
+        lastValueId = string.IsNullOrEmpty(lastValueId) ? 0.ToString() : lastValueId;
+
+        return Convert.ToInt32(lastValueId) + 1;
+    }
+
     public static Expense ToEntity(this ExpenseBinding binding, MainContext context, Expense entity = null)
     {
         if (entity == null)
@@ -35,23 +53,5 @@ public static class ExpenseExtensions
         entity.InstallmentRef = binding.InstallmentRef;
 
         return entity;
-    }
-
-    public static string LastValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
-    {
-        return set.WhereUser(userId)
-                  .OrderByDescending(x => EF.Functions.DataLength(x.ValueId))
-                  .ThenByDescending(x => x.ValueId)
-                  .FirstOrDefault()
-                  ?.ValueId;
-    }
-
-    public static int NextValueId<T>(this DbSet<T> set, int userId) where T : UserEntity, IHasValueId
-    {
-        string lastValueId = set.LastValueId(userId);
-
-        lastValueId = string.IsNullOrEmpty(lastValueId) ? 0.ToString() : lastValueId;
-
-        return Convert.ToInt32(lastValueId) + 1;
     }
 }

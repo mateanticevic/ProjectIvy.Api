@@ -21,8 +21,6 @@ public class Flight
                                                 .GetDistanceTo(Destination.Poi.Location.ToGeoCoordinate()) / 1000);
     }
 
-    public string Id { get; set; }
-
     public Airline.Airline Airline { get; set; }
 
     public DateTime? Arrival { get; set; }
@@ -36,6 +34,8 @@ public class Flight
     public Airport.Airport Destination { get; set; }
 
     public int? DistanceInKm { get; set; }
+
+    public string Id { get; set; }
 
     public string Number { get; set; }
 

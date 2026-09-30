@@ -5,19 +5,19 @@ namespace ProjectIvy.Model.Database.Main.Travel;
 [Table(nameof(Stay), Schema = nameof(Travel))]
 public class Stay : UserEntity
 {
+    public Common.City City { get; set; }
+
+    public int? CityId { get; set; }
+
+    public Common.Country Country { get; set; }
+
+    public int CountryId { get; set; }
+
+    public DateTime From { get; set; }
+
     public int Id { get; set; }
 
     public bool IsBooked { get; set; }
 
-    public DateTime From { get; set; }
-
     public DateTime To { get; set; }
-
-    public int? CityId { get; set; }
-
-    public int CountryId { get; set; }
-
-    public Common.City City { get; set; }
-
-    public Common.Country Country { get; set; }
 }

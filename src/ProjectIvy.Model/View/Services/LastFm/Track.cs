@@ -18,7 +18,7 @@ public class Track
 
     public Images Images { get; set; }
 
-    public string Title { get; set; }
-
     public DateTime? Timestamp { get; set; }
+
+    public string Title { get; set; }
 }

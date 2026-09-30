@@ -2,9 +2,9 @@
 
 public interface IPagedBinding
 {
-    bool PageAll { get; set; }
-
     int Page { get; set; }
+
+    bool PageAll { get; set; }
 
     int PageSize { get; set; }
 }

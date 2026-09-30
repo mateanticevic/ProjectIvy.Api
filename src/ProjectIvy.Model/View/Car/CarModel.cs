@@ -16,13 +16,13 @@ public class CarModel
 
     public short EngineDisplacement { get; set; }
 
-    public short ModelYear { get; set; }
-
     public string Id { get; set; }
+
+    public Manufacturer Manufacturer { get; set; }
+
+    public short ModelYear { get; set; }
 
     public string Name { get; set; }
 
     public short Power { get; set; }
-
-    public Manufacturer Manufacturer { get; set; }
 }

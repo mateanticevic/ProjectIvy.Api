@@ -76,6 +76,38 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
         }
     }
 
+    public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
+    {
+        using (var context = GetMainContext())
+        {
+            var countryValueIds = countries.Select(x => x.Id);
+            var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
+                                                  .Include(x => x.Country)
+                                                  .ToList();
+
+            foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
+            {
+                var paths = new List<IEnumerable<Model.View.LatLng>>();
+
+                foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
+                {
+                    var path = countryPolygon.OrderBy(x => x.Index)
+                                             .Select(x => new Model.View.LatLng(x.Latitude, x.Longitude))
+                                             .ToList();
+                    paths.Add(path);
+                }
+
+                var countryBoundaries = new View.CountryBoundaries()
+                {
+                    Country = countries.SingleOrDefault(x => x.Id == countryPolygons.Key.ValueId),
+                    Polygons = paths
+                };
+
+                yield return countryBoundaries;
+            }
+        }
+    }
+
     public async Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding)
     {
         using var context = GetMainContext();
@@ -84,6 +116,42 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
                                    .OrderByDescending(x => x.Population)
                                    .Select(x => new Model.View.City.City(x))
                                    .ToPagedViewAsync(binding);
+    }
+
+    public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<string>>>> GetCountriesByDay(FilteredBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var countryDays = await context.Trackings
+                          .WhereUser(UserId)
+                          .Where(x => x.CountryId.HasValue)
+                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From.Value)
+                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To.Value)
+                          .Include(x => x.Country)
+                          .Select(x => new KeyValuePair<DateTime, string>(x.Timestamp.Date, x.Country.ValueId))
+                          .Distinct()
+                          .ToListAsync();
+
+        return countryDays.GroupBy(x => x.Key)
+                          .Select(x => new KeyValuePair<DateTime, IEnumerable<string>>(x.Key, x.Select(y => y.Value)))
+                          .OrderByDescending(x => x.Key);
+    }
+
+    public async Task<IEnumerable<KeyValuePair<View.Country, int>>> GetDaysInCountry()
+    {
+        using var context = GetMainContext();
+
+        var countries = await context.Trackings.WhereUser(UserId)
+                                      .Include(x => x.Country)
+                                      .Where(x => x.CountryId.HasValue)
+                                      .GroupBy(x => x.Country)
+                                      .Select(x => new KeyValuePair<View.Country, int>(
+                                          new View.Country(x.Key),
+                                          x.Select(x => x.Timestamp.Date).Distinct().Count()
+                                       ))
+                                      .ToListAsync();
+
+        return countries.OrderByDescending(x => x.Value);
     }
 
     public async Task<IEnumerable<View.CountryList>> GetLists()
@@ -160,73 +228,5 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
                                       .ToListAsync();
 
         return list.OrderBy(x => x.Key);
-    }
-
-    public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
-    {
-        using (var context = GetMainContext())
-        {
-            var countryValueIds = countries.Select(x => x.Id);
-            var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
-                                                  .Include(x => x.Country)
-                                                  .ToList();
-
-            foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
-            {
-                var paths = new List<IEnumerable<Model.View.LatLng>>();
-
-                foreach (var countryPolygon in countryPolygons.GroupBy(x => x.GroupId))
-                {
-                    var path = countryPolygon.OrderBy(x => x.Index)
-                                             .Select(x => new Model.View.LatLng(x.Latitude, x.Longitude))
-                                             .ToList();
-                    paths.Add(path);
-                }
-
-                var countryBoundaries = new View.CountryBoundaries()
-                {
-                    Country = countries.SingleOrDefault(x => x.Id == countryPolygons.Key.ValueId),
-                    Polygons = paths
-                };
-
-                yield return countryBoundaries;
-            }
-        }
-    }
-
-    public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<string>>>> GetCountriesByDay(FilteredBinding binding)
-    {
-        using var context = GetMainContext();
-
-        var countryDays = await context.Trackings
-                          .WhereUser(UserId)
-                          .Where(x => x.CountryId.HasValue)
-                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From.Value)
-                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To.Value)
-                          .Include(x => x.Country)
-                          .Select(x => new KeyValuePair<DateTime, string>(x.Timestamp.Date, x.Country.ValueId))
-                          .Distinct()
-                          .ToListAsync();
-
-        return countryDays.GroupBy(x => x.Key)
-                          .Select(x => new KeyValuePair<DateTime, IEnumerable<string>>(x.Key, x.Select(y => y.Value)))
-                          .OrderByDescending(x => x.Key);
-    }
-
-    public async Task<IEnumerable<KeyValuePair<View.Country, int>>> GetDaysInCountry()
-    {
-        using var context = GetMainContext();
-
-        var countries = await context.Trackings.WhereUser(UserId)
-                                      .Include(x => x.Country)
-                                      .Where(x => x.CountryId.HasValue)
-                                      .GroupBy(x => x.Country)
-                                      .Select(x => new KeyValuePair<View.Country, int>(
-                                          new View.Country(x.Key),
-                                          x.Select(x => x.Timestamp.Date).Distinct().Count()
-                                       ))
-                                      .ToListAsync();
-
-        return countries.OrderByDescending(x => x.Value);
     }
 }

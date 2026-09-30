@@ -15,15 +15,15 @@ public class Call
         Id = c.ValueId;
     }
 
-    public string Id { get; set; }
-
-    public DateTime Timestamp { get; set; }
-
-    public string Number { get; set; }
-
     public int Duration { get; set; }
 
     public File.File File { get; set; }
 
+    public string Id { get; set; }
+
+    public string Number { get; set; }
+
     public Person.Person Person { get; set; }
+
+    public DateTime Timestamp { get; set; }
 }

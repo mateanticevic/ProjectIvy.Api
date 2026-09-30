@@ -6,12 +6,12 @@ namespace ProjectIvy.Model.Database.Main.Common;
 [Table(nameof(Holiday), Schema = nameof(Common))]
 public class Holiday
 {
-    [Key]
-    public int Id { get; set; }
+    public Country Country { get; set; }
 
     public int CountryId { get; set; }
 
     public DateTime Date { get; set; }
 
-    public Country Country { get; set; }
+    [Key]
+    public int Id { get; set; }
 }

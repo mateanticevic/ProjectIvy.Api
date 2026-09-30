@@ -13,21 +13,21 @@ public class ToDo
         Name = x.Name;
     }
 
-    public string Id { get; set; }
-
     public DateTime Created { get; set; }
 
-    public string Name { get; set; }
+    public Currency.Currency Currency { get; set; }
 
     public string Description { get; set; }
-
-    public bool IsCompleted { get; set; }
 
     public DateTime? DueDate { get; set; }
 
     public int? EstimatedPrice { get; set; }
 
-    public Currency.Currency Currency { get; set; }
+    public string Id { get; set; }
+
+    public bool IsCompleted { get; set; }
+
+    public string Name { get; set; }
 
     public IEnumerable<Tag.Tag> Tags { get; set; }
 

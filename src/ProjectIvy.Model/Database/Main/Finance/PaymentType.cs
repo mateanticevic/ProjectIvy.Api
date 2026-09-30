@@ -6,12 +6,12 @@ namespace ProjectIvy.Model.Database.Main.Finance;
 [Table(nameof(PaymentType), Schema = nameof(Finance))]
 public class PaymentType : IHasValueId, IHasName
 {
+    public string Description { get; set; }
+
     [Key]
     public int Id { get; set; }
 
-    public string ValueId { get; set; }
-
     public string Name { get; set; }
 
-    public string Description { get; set; }
+    public string ValueId { get; set; }
 }

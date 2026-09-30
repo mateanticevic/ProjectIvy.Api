@@ -13,11 +13,11 @@ public class File
         Type = entity.FileType.ConvertTo(x => new FileType.FileType(x));
     }
 
+    public DateTime Created { get; set; }
+
     public string Id { get; set; }
 
     public int Size { get; set; }
-
-    public DateTime Created { get; set; }
 
     public FileType.FileType Type { get; set; }
 }

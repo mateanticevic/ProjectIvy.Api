@@ -6,10 +6,10 @@ namespace ProjectIvy.Model.Database.Main.Common;
 [Table(nameof(Country), Schema = nameof(Common))]
 public class Country : IHasValueId, IHasName
 {
+    public ICollection<City> Cities { get; set; }
+
     [Key]
     public int Id { get; set; }
-
-    public string ValueId { get; set; }
 
     public string Name { get; set; }
 
@@ -17,5 +17,5 @@ public class Country : IHasValueId, IHasName
 
     public string Timezone { get; set; }
 
-    public ICollection<City> Cities { get; set; }
+    public string ValueId { get; set; }
 }

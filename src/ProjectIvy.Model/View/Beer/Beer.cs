@@ -16,13 +16,13 @@ public class Beer
         Style = b.BeerStyle.ConvertTo(x => new BeerStyle(x));
     }
 
-    public string Id { get; set; }
-
-    public string Name { get; set; }
-
     public decimal Abv { get; set; }
 
     public BeerBrand Brand { get; set; }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 
     public BeerStyle Style { get; set; }
 }

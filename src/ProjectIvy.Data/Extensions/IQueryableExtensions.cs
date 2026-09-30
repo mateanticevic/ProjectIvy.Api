@@ -55,6 +55,9 @@ public static class IQueryableExtensions
                     .Take(binding.PageSize);
     }
 
+    public static T SingleOrDefault<T>(this IQueryable<T> query, string valueId) where T : IHasValueId
+        => query.SingleOrDefault(x => x.ValueId == valueId);
+
     public static PagedView<T> ToPagedView<T>(this IQueryable<T> query, IPagedBinding binding, long? count = null)
     {
         return new PagedView<T>()
@@ -86,30 +89,6 @@ public static class IQueryableExtensions
         return query;
     }
 
-    public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, IFilteredBinding binding) where T : IHasTimestamp
-    {
-        return query.WhereTimestampInclusive(binding.From, binding.To);
-    }
-
-    public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
-    {
-        query = from == null ? query : query.Where(x => x.Timestamp >= from);
-        query = to == null ? query : query.Where(x => x.Timestamp <= to);
-
-        return query;
-    }
-
-    public static IQueryable<T> WhereTimestampFromInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
-    {
-        query = from == null ? query : query.Where(x => x.Timestamp >= from);
-        query = to == null ? query : query.Where(x => x.Timestamp < to);
-
-        return query;
-    }
-
-    public static T SingleOrDefault<T>(this IQueryable<T> query, string valueId) where T : IHasValueId
-        => query.SingleOrDefault(x => x.ValueId == valueId);
-
     public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> queryable, bool ifTrue, Func<T, bool> condition)
         => ifTrue ? queryable.Where(condition) : queryable;
 
@@ -124,4 +103,25 @@ public static class IQueryableExtensions
 
     public static IQueryable<TItem> WhereSearch<TBinding, TItem>(this IQueryable<TItem> query, TBinding binding) where TBinding : ISearchable where TItem : IHasName, IHasValueId
         => query.WhereIf(!string.IsNullOrEmpty(binding.Search), x => x.Name.ToLower().Contains(binding.Search.ToLower()) || x.ValueId.ToLower().Contains(binding.Search.ToLower()));
+
+    public static IQueryable<T> WhereTimestampFromInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
+    {
+        query = from == null ? query : query.Where(x => x.Timestamp >= from);
+        query = to == null ? query : query.Where(x => x.Timestamp < to);
+
+        return query;
+    }
+
+    public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, IFilteredBinding binding) where T : IHasTimestamp
+    {
+        return query.WhereTimestampInclusive(binding.From, binding.To);
+    }
+
+    public static IQueryable<T> WhereTimestampInclusive<T>(this IQueryable<T> query, DateTime? from, DateTime? to) where T : IHasTimestamp
+    {
+        query = from == null ? query : query.Where(x => x.Timestamp >= from);
+        query = to == null ? query : query.Where(x => x.Timestamp <= to);
+
+        return query;
+    }
 }

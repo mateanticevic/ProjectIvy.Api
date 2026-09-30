@@ -14,9 +14,9 @@ public class Airport
         Poi = x.Poi?.ConvertTo(y => new Poi.Poi(y));
     }
 
-    public Poi.Poi Poi { get; set; }
-
     public string Iata { get; set; }
 
     public string Name { get; set; }
+
+    public Poi.Poi Poi { get; set; }
 }

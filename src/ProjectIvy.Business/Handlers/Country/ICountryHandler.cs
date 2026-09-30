@@ -21,6 +21,8 @@ public interface ICountryHandler
 
     Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding);
 
+    Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<string>>>> GetCountriesByDay(FilteredBinding binding);
+
     Task<IEnumerable<KeyValuePair<View.Country, int>>> GetDaysInCountry();
 
     Task<IEnumerable<View.CountryList>> GetLists();
@@ -32,6 +34,4 @@ public interface ICountryHandler
     Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear();
 
     Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedCountByYear();
-
-    Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<string>>>> GetCountriesByDay(FilteredBinding binding);
 }

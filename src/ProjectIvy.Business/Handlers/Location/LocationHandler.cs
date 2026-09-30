@@ -24,6 +24,7 @@ namespace ProjectIvy.Business.Handlers.Location;
 public class LocationHandler : Handler<LocationHandler>, ILocationHandler
 {
     private readonly IGeohashHandler _geohashHandler;
+
     private readonly ILogger<LocationHandler> _logger;
 
     public LocationHandler(IHandlerContext<LocationHandler> context,
@@ -46,6 +47,42 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
         await context.SaveChangesAsync();
     }
 
+    public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow)
+    {
+        using var context = GetMainContext();
+
+        var locations = await context.Locations.WhereUser(UserId)
+                                              .Where(x => x.ValueId == fromLocationValueId || x.ValueId == toLocationValueId)
+                                              .Select(x => new { x.Id, x.ValueId })
+                                              .ToListAsync();
+
+        var fromLocationId = locations.FirstOrDefault(x => x.ValueId == fromLocationValueId)?.Id;
+        var toLocationId = locations.FirstOrDefault(x => x.ValueId == toLocationValueId)?.Id;
+
+        if (fromLocationId is null || toLocationId is null)
+            return [];
+
+        using var sql = GetSqlConnection();
+        var routes = await sql.QueryAsync<(DateTime Exit, DateTime Entry, int Duration)>(
+            SqlLoader.Load(SqlScripts.GetLocationRoutes),
+            new
+            {
+                UserId,
+                FromLocationId = fromLocationId,
+                ToLocationId = toLocationId,
+                IgnoreLocationsBelow = ignoreLocationsBelow,
+                OrderBy = sort.ToString()
+            },
+            commandTimeout: 120);
+
+        return routes.Select(x => new RouteTime
+        {
+            From = x.Exit,
+            To = x.Entry,
+            Duration = TimeSpan.FromSeconds(x.Duration)
+        }).ToList();
+    }
+
     public async Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b)
     {
         using var context = GetMainContext();
@@ -57,17 +94,6 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
                                       .OrderBy(x => x.Name)
                                       .Select(x => new Model.View.Location.Location(x))
                                       .ToPagedViewAsync(b);
-    }
-
-    public async Task<IEnumerable<string>> GetGeohashes(string valueId)
-    {
-        using var context = GetMainContext();
-
-        return (await context.Locations.WhereUser(UserId)
-                                              .Include(x => x.Geohashes)
-                                              .FirstOrDefaultAsync(x => x.ValueId == valueId))
-                                              ?.Geohashes
-                                              .Select(x => x.Geohash);
     }
 
     public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay(FilteredBinding b)
@@ -115,6 +141,17 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
         );
     }
 
+    public async Task<IEnumerable<string>> GetGeohashes(string valueId)
+    {
+        using var context = GetMainContext();
+
+        return (await context.Locations.WhereUser(UserId)
+                                              .Include(x => x.Geohashes)
+                                              .FirstOrDefaultAsync(x => x.ValueId == valueId))
+                                              ?.Geohashes
+                                              .Select(x => x.Geohash);
+    }
+
     public async Task<IEnumerable<LocationType>> GetLocationTypes()
     {
         using var context = GetMainContext();
@@ -122,42 +159,6 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
         return await context.LocationTypes.OrderBy(x => x.Name)
                                           .Select(x => new LocationType(x))
                                           .ToListAsync();
-    }
-
-    public async Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow)
-    {
-        using var context = GetMainContext();
-
-        var locations = await context.Locations.WhereUser(UserId)
-                                              .Where(x => x.ValueId == fromLocationValueId || x.ValueId == toLocationValueId)
-                                              .Select(x => new { x.Id, x.ValueId })
-                                              .ToListAsync();
-
-        var fromLocationId = locations.FirstOrDefault(x => x.ValueId == fromLocationValueId)?.Id;
-        var toLocationId = locations.FirstOrDefault(x => x.ValueId == toLocationValueId)?.Id;
-
-        if (fromLocationId is null || toLocationId is null)
-            return [];
-
-        using var sql = GetSqlConnection();
-        var routes = await sql.QueryAsync<(DateTime Exit, DateTime Entry, int Duration)>(
-            SqlLoader.Load(SqlScripts.GetLocationRoutes),
-            new
-            {
-                UserId,
-                FromLocationId = fromLocationId,
-                ToLocationId = toLocationId,
-                IgnoreLocationsBelow = ignoreLocationsBelow,
-                OrderBy = sort.ToString()
-            },
-            commandTimeout: 120);
-
-        return routes.Select(x => new RouteTime
-        {
-            From = x.Exit,
-            To = x.Entry,
-            Duration = TimeSpan.FromSeconds(x.Duration)
-        }).ToList();
     }
 
     public async Task UpdateTrackings(string locationId)

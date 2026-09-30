@@ -9,13 +9,13 @@ public class PaymentProviderAccount : UserEntity, IHasValueId, IHasName
     [Key]
     public int Id { get; set; }
 
-    public string ValueId { get; set; }
-
     public string Name { get; set; }
-
-    public int PaymentProviderId { get; set; }
 
     public PaymentProvider PaymentProvider { get; set; }
 
+    public int PaymentProviderId { get; set; }
+
     public string Token { get; set; }
+
+    public string ValueId { get; set; }
 }

@@ -19,11 +19,11 @@ public class ExpenseTypeController : BaseController<ExpenseTypeController>
     [HttpGet]
     public IEnumerable<View.ExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding) => _expenseTypeHandler.Get(binding);
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] ExpenseTypeBinding binding) => Ok(await _expenseTypeHandler.Create(binding));
-
     [HttpGet("Tree")]
     public IEnumerable<View.Node<View.ExpenseType.ExpenseType>> GetTree() => _expenseTypeHandler.GetTree();
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] ExpenseTypeBinding binding) => Ok(await _expenseTypeHandler.Create(binding));
 
     [HttpPost("{parentValueId}/ExpenseType/{childValueId}")]
     public async Task<IActionResult> SetParent(string parentValueId, string childValueId)

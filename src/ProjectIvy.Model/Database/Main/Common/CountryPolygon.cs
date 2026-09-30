@@ -5,6 +5,8 @@ namespace ProjectIvy.Model.Database.Main.Common;
 [Table(nameof(CountryPolygon), Schema = nameof(Common))]
 public class CountryPolygon
 {
+    public Country Country { get; set; }
+
     public int CountryId { get; set; }
 
     public int GroupId { get; set; }
@@ -14,6 +16,4 @@ public class CountryPolygon
     public decimal Latitude { get; set; }
 
     public decimal Longitude { get; set; }
-
-    public Country Country { get; set; }
 }

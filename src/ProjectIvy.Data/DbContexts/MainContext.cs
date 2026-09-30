@@ -28,29 +28,19 @@ public class MainContext : DbContext
 
     public DbSet<Bank> Banks { get; set; }
 
-    public DbSet<Brand> Brands { get; set; }
+    public DbSet<BeerBrand> BeerBrands { get; set; }
 
     public DbSet<Beer> Beers { get; set; }
-
-    public DbSet<BeerBrand> BeerBrands { get; set; }
 
     public DbSet<BeerServing> BeerServings { get; set; }
 
     public DbSet<BeerStyle> BeerStyles { get; set; }
 
-    public DbSet<Call> Calls { get; set; }
+    public DbSet<Brand> Brands { get; set; }
 
     public DbSet<CallBlacklist> CallBlacklist { get; set; }
 
-    public DbSet<Car> Cars { get; set; }
-
-    public DbSet<CarModel> CarModels { get; set; }
-
-    public DbSet<CarService> CarServices { get; set; }
-
-    public DbSet<CarServiceInterval> CarServiceIntervals { get; set; }
-
-    public DbSet<CarServiceType> CarServiceTypes { get; set; }
+    public DbSet<Call> Calls { get; set; }
 
     public DbSet<Card> Cards { get; set; }
 
@@ -58,13 +48,25 @@ public class MainContext : DbContext
 
     public DbSet<CarLog> CarLogs { get; set; }
 
-    public DbSet<City> Cities { get; set; }
+    public DbSet<CarModel> CarModels { get; set; }
 
-    public DbSet<CityAccessGeohash> CityAccessGeohashes { get; set; }
+    public DbSet<Car> Cars { get; set; }
+
+    public DbSet<CarServiceInterval> CarServiceIntervals { get; set; }
+
+    public DbSet<CarService> CarServices { get; set; }
+
+    public DbSet<CarServiceType> CarServiceTypes { get; set; }
+
+    public DbSet<City> Cities { get; set; }
 
     public DbSet<CityVisited> CitiesVisited { get; set; }
 
+    public DbSet<CityAccessGeohash> CityAccessGeohashes { get; set; }
+
     public DbSet<CityGeohash> CityGeohashes { get; set; }
+
+    public string ConnectionString { get; private set; }
 
     public DbSet<Consumation> Consumations { get; set; }
 
@@ -90,13 +92,13 @@ public class MainContext : DbContext
 
     public DbSet<Event> Events { get; set; }
 
-    public DbSet<Expense> Expenses { get; set; }
-
     public DbSet<ExpenseFile> ExpenseFiles { get; set; }
+
+    public DbSet<ExpenseFileTemplate> ExpenseFileTemplates { get; set; }
 
     public DbSet<ExpenseFileType> ExpenseFileTypes { get; set; }
 
-    public DbSet<ExpenseFileTemplate> ExpenseFileTemplates { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
 
     public DbSet<ExpenseType> ExpenseTypes { get; set; }
 
@@ -110,27 +112,27 @@ public class MainContext : DbContext
 
     public DbSet<Income> Incomes { get; set; }
 
-    public DbSet<JournalEntry> JournalEntries { get; set; }
-
     public DbSet<IncomeSource> IncomeSources { get; set; }
 
     public DbSet<IncomeType> IncomeTypes { get; set; }
-
-    public DbSet<Loan> Loans { get; set; }
-
-    public DbSet<LoanPayment> LoanPayments { get; set; }
-
-    public DbSet<InventoryItem> InventoryItems { get; set; }
 
     public DbSet<InventoryItemExpense> InventoryItemExpenses { get; set; }
 
     public DbSet<InventoryItemOwnership> InventoryItemOwnerships { get; set; }
 
+    public DbSet<InventoryItem> InventoryItems { get; set; }
+
+    public DbSet<JournalEntry> JournalEntries { get; set; }
+
+    public DbSet<LoanPayment> LoanPayments { get; set; }
+
+    public DbSet<Loan> Loans { get; set; }
+
+    public DbSet<LocationGeohash> LocationGeohashes { get; set; }
+
     public DbSet<Location> Locations { get; set; }
 
     public DbSet<LocationType> LocationTypes { get; set; }
-
-    public DbSet<LocationGeohash> LocationGeohashes { get; set; }
 
     public DbSet<Manufacturer> Manufacturers { get; set; }
 
@@ -138,63 +140,61 @@ public class MainContext : DbContext
 
     public DbSet<Ownership> Ownerships { get; set; }
 
-    public DbSet<PaymentProvider> PaymentProviders { get; set; }
-
     public DbSet<PaymentProviderAccount> PaymentProviderAccounts { get; set; }
+
+    public DbSet<PaymentProvider> PaymentProviders { get; set; }
 
     public DbSet<PaymentType> PaymentTypes { get; set; }
 
     public DbSet<Person> People { get; set; }
 
-    public DbSet<Poi> Pois { get; set; }
-
     public DbSet<PoiCategory> PoiCategories { get; set; }
+
+    public DbSet<Poi> Pois { get; set; }
 
     public DbSet<Ride> Rides { get; set; }
 
-    public DbSet<Route> Routes { get; set; }
+    public DbSet<RideType> RideTypes { get; set; }
 
     public DbSet<RoutePoint> RoutePoints { get; set; }
 
-    public DbSet<RideType> RideTypes { get; set; }
+    public DbSet<Route> Routes { get; set; }
 
     public DbSet<Stay> Stays { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
 
-    public DbSet<Tracking> Trackings { get; set; }
-
-    public DbSet<Transaction> Transactions { get; set; }
-
-    public DbSet<Trip> Trips { get; set; }
-
     public DbSet<ToDo> ToDos { get; set; }
 
     public DbSet<ToDoTag> ToDoTags { get; set; }
 
-    public DbSet<TripPoi> TripPois { get; set; }
+    public DbSet<TrackingDistance> TrackingDistances { get; set; }
+
+    public DbSet<Tracking> Trackings { get; set; }
+
+    public DbSet<Transaction> Transactions { get; set; }
 
     public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }
 
     public DbSet<TripExpenseInclude> TripExpensesIncluded { get; set; }
 
+    public DbSet<TripPoi> TripPois { get; set; }
+
+    public DbSet<Trip> Trips { get; set; }
+
     public DbSet<TripTodo> TripToDos { get; set; }
 
-    public DbSet<TrackingDistance> TrackingDistances { get; set; }
-
     public DbSet<User> Users { get; set; }
+
+    public DbSet<VendorPoi> VendorPois { get; set; }
+
+    public DbSet<Vendor> Vendors { get; set; }
+
+    public DbSet<Weight> Weights { get; set; }
 
     public DbSet<WorkDay> WorkDays { get; set; }
 
     public DbSet<WorkDayType> WorkDayTypes { get; set; }
-
-    public DbSet<Vendor> Vendors { get; set; }
-
-    public DbSet<VendorPoi> VendorPois { get; set; }
-
-    public DbSet<Weight> Weights { get; set; }
-
-    public string ConnectionString { get; private set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

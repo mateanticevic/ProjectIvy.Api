@@ -38,12 +38,6 @@ public abstract class Handler<THandler> : IHandler
 
     protected int UserId { get; private set; }
 
-    protected MainContext GetMainContext() => new MainContext(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
-
-    protected SqlConnection GetSqlConnection() => new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
-
-    protected string BuildUserCacheKey(string resourceKey) => $"{UserId}_{resourceKey}";
-
     protected void AddCacheKey(string newCacheKey)
     {
         string cacheKey = BuildUserCacheKey(_resourceCacheKey);
@@ -53,6 +47,8 @@ public abstract class Handler<THandler> : IHandler
 
         MemoryCache.Set(cacheKey, updatedCacheKeys.Distinct().AsEnumerable());
     }
+
+    protected string BuildUserCacheKey(string resourceKey) => $"{UserId}_{resourceKey}";
 
     protected void ClearCache()
     {
@@ -68,6 +64,10 @@ public abstract class Handler<THandler> : IHandler
             MemoryCache.Remove(cacheKey);
         }
     }
+
+    protected MainContext GetMainContext() => new MainContext(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
+
+    protected SqlConnection GetSqlConnection() => new SqlConnection(Environment.GetEnvironmentVariable("CONNECTION_STRING_MAIN"));
 
     private int ResolveUserId(string email)
     {

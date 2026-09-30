@@ -14,15 +14,15 @@ public class Stay
         To = x.To;
     }
 
+    public City.City City { get; set; }
+
+    public Country.Country Country { get; set; }
+
+    public DateTime From { get; set; }
+
     public int Id { get; set; }
 
     public bool IsBooked { get; set; }
 
-    public DateTime From { get; set; }
-
     public DateTime To { get; set; }
-
-    public City.City City { get; set; }
-
-    public Country.Country Country { get; set; }
 }

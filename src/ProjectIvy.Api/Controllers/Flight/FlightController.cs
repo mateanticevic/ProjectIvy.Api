@@ -19,6 +19,9 @@ public class FlightController : BaseController<FlightController>
         _flightHandler = flightHandler;
     }
 
+    [HttpGet]
+    public PagedView<Model.View.Flight.Flight> Get([FromQuery] FlightGetBinding binding) => _flightHandler.Get(binding);
+
     [HttpGet("Count")]
     public IActionResult GetCount(FlightGetBinding binding) => Ok(_flightHandler.Count(binding));
 
@@ -31,9 +34,6 @@ public class FlightController : BaseController<FlightController>
 
     [HttpGet("Count/ByYear")]
     public IActionResult GetCountByYear(FlightGetBinding binding) => Ok(_flightHandler.CountByYear(binding));
-
-    [HttpGet]
-    public PagedView<Model.View.Flight.Flight> Get([FromQuery] FlightGetBinding binding) => _flightHandler.Get(binding);
 
     [HttpGet("Distance/ByYear")]
     public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear() => _flightHandler.GetDistanceByYear();

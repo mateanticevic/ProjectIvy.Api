@@ -175,19 +175,6 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
         return fuelByYear.Join(kilometersByYear, x => x.Key, x => x.Key, (x, y) => new KeyValuePair<int, decimal>(x.Key, Math.Round(x.Value / (y.Value / 100), 2)));
     }
 
-    public async Task<IEnumerable<CarFueling>> GetFuelings(string carValueId)
-    {
-        using var context = GetMainContext();
-
-        return context.Cars.WhereUser(UserId)
-                           .Include(x => x.CarFuelings)
-                           .Single(x => x.ValueId == carValueId)
-                           .CarFuelings
-                           .OrderByDescending(x => x.Timestamp)
-                           .Select(x => new CarFueling(x))
-                           .ToList();
-    }
-
     public IEnumerable<KeyValuePair<int, decimal>> GetFuelByMonth(string carValueId)
     {
         using (var context = GetMainContext())
@@ -218,6 +205,19 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
         }
     }
 
+    public async Task<IEnumerable<CarFueling>> GetFuelings(string carValueId)
+    {
+        using var context = GetMainContext();
+
+        return context.Cars.WhereUser(UserId)
+                           .Include(x => x.CarFuelings)
+                           .Single(x => x.ValueId == carValueId)
+                           .CarFuelings
+                           .OrderByDescending(x => x.Timestamp)
+                           .Select(x => new CarFueling(x))
+                           .ToList();
+    }
+
     public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carValueId)
     {
         using var context = GetMainContext();
@@ -236,6 +236,31 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
         }
 
         return kilometersByYear.OrderBy(x => x.Key);
+    }
+
+    public View.CarLog GetLatestLog(CarLogGetBinding binding)
+    {
+        using (var context = GetMainContext())
+        {
+            string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId).DefaultCar.ValueId;
+            return GetLatestLog(carValueId, binding);
+        }
+    }
+
+    public View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding)
+    {
+        using (var db = GetMainContext())
+        {
+            int? carId = db.Cars.WhereUser(UserId).GetId(carValueId);
+
+            var carLog = db.CarLogs
+                           .Where(x => x.CarId == carId)
+                           .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
+                           .OrderByDescending(x => x.Timestamp)
+                           .FirstOrDefault();
+
+            return carLog == null ? null : new View.CarLog(carLog);
+        }
     }
 
     public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
@@ -290,31 +315,6 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
                                 .OrderBy(x => x.Timestamp)
                                 .Select(x => new View.CarLog(x))
                                 .ToListAsync();
-        }
-    }
-
-    public View.CarLog GetLatestLog(CarLogGetBinding binding)
-    {
-        using (var context = GetMainContext())
-        {
-            string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId).DefaultCar.ValueId;
-            return GetLatestLog(carValueId, binding);
-        }
-    }
-
-    public View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding)
-    {
-        using (var db = GetMainContext())
-        {
-            int? carId = db.Cars.WhereUser(UserId).GetId(carValueId);
-
-            var carLog = db.CarLogs
-                           .Where(x => x.CarId == carId)
-                           .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
-                           .OrderByDescending(x => x.Timestamp)
-                           .FirstOrDefault();
-
-            return carLog == null ? null : new View.CarLog(carLog);
         }
     }
 

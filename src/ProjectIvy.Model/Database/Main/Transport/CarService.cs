@@ -7,12 +7,11 @@ namespace ProjectIvy.Model.Database.Main.Transport;
 [Table(nameof(CarService), Schema = nameof(Transport))]
 public class CarService
 {
-    [Key]
-    public int Id { get; set; }
-
-    public string ValueId { get; set; }
+    public Car Car { get; set; }
 
     public int CarId { get; set; }
+
+    public CarServiceType CarServiceType { get; set; }
 
     public int CarServiceTypeId { get; set; }
 
@@ -20,7 +19,8 @@ public class CarService
 
     public string Description { get; set; }
 
-    public Car Car { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-    public CarServiceType CarServiceType { get; set; }
+    public string ValueId { get; set; }
 }

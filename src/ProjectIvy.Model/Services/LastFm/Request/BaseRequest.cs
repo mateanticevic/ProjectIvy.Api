@@ -16,17 +16,15 @@ public abstract class BaseRequest
 
     public string Api_Key { get; set; }
 
-    public string User { get; set; }
-
     public string Format => "json";
 
     public int? Limit { get; set; }
 
-    public int? Page { get; set; }
-
     public abstract string Method { get; }
 
-    public string ToUrl() => $"{_url}?{ToQueryString()}";
+    public int? Page { get; set; }
+
+    public string User { get; set; }
 
     public string ToQueryString()
     {
@@ -36,4 +34,6 @@ public abstract class BaseRequest
 
         return string.Join("&", properties.ToArray());
     }
+
+    public string ToUrl() => $"{_url}?{ToQueryString()}";
 }

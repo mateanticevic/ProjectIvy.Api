@@ -17,18 +17,6 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
         _userHelper = userHelper;
     }
 
-    public async Task<int> GetTotalCount()
-    {
-        using (var db = GetMainContext())
-        {
-            string username = db.Users.SingleOrDefault(x => x.Id == UserId)
-                                      .LastFmUsername;
-
-            var info = await _userHelper.GetTotalCount(username);
-            return info.PlayCount;
-        }
-    }
-
     public async Task<IEnumerable<Track>> GetLovedTracks()
     {
         using (var db = GetMainContext())
@@ -60,6 +48,18 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
 
             var info = await _userHelper.GetTopTracks(username);
             return info.Select(x => new Track(x));
+        }
+    }
+
+    public async Task<int> GetTotalCount()
+    {
+        using (var db = GetMainContext())
+        {
+            string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+                                      .LastFmUsername;
+
+            var info = await _userHelper.GetTotalCount(username);
+            return info.PlayCount;
         }
     }
 

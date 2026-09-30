@@ -31,15 +31,15 @@ public interface ICarHandler : IHandler
 
     Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carValueId);
 
+    CarLog GetLatestLog(CarLogGetBinding binding);
+
+    CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
+
     IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding);
 
     int GetLogCount(string carValueId);
 
     Task<IEnumerable<View.CarLog>> GetLogs(string carValueId, CarLogGetBinding binding);
-
-    CarLog GetLatestLog(CarLogGetBinding binding);
-
-    CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
 
     Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId);
 

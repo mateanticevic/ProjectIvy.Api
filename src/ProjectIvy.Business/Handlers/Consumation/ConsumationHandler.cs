@@ -86,6 +86,27 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         }
     }
 
+    public int CountBeers(ConsumationGetBinding binding)
+    {
+        using var context = GetMainContext();
+        return context.Consumations.WhereUser(UserId)
+                      .Where(binding, context)
+                      .Select(x => x.BeerId)
+                      .Distinct()
+                      .Count();
+    }
+
+    public int CountBrands(ConsumationGetBinding binding)
+    {
+        using var context = GetMainContext();
+        return context.Consumations.WhereUser(UserId)
+                                   .Where(binding, context)
+                                   .Include(x => x.Beer)
+                                   .Select(x => x.Beer.BeerBrandId)
+                                   .Distinct()
+                                   .Count();
+    }
+
     public PagedView<KeyValuePair<View.Beer.Beer, int>> CountByBeer(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
@@ -145,27 +166,6 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                    .FillMissingYears(year => new KeyValuePair<int, int>(0, year), binding.From?.Year, to.Year);
     }
 
-    public int CountBeers(ConsumationGetBinding binding)
-    {
-        using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
-                      .Where(binding, context)
-                      .Select(x => x.BeerId)
-                      .Distinct()
-                      .Count();
-    }
-
-    public int CountBrands(ConsumationGetBinding binding)
-    {
-        using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
-                                   .Where(binding, context)
-                                   .Include(x => x.Beer)
-                                   .Select(x => x.Beer.BeerBrandId)
-                                   .Distinct()
-                                   .Count();
-    }
-
     public PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
@@ -177,6 +177,28 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                    .ThenInclude(x => x.BeerBrand)
                                    .OrderByDescending(x => x.Date)
                                    .Select(x => new View.Consumation.Consumation(x))
+                                   .ToPagedView(binding);
+    }
+
+    public PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding)
+    {
+        using var context = GetMainContext();
+        return context.Consumations.WhereUser(UserId)
+                                   .Where(binding)
+                                   .Select(x => x.Beer)
+                                   .Distinct()
+                                   .Select(x => new View.Beer.Beer(x))
+                                   .ToPagedView(binding);
+    }
+
+    public PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding)
+    {
+        using var context = GetMainContext();
+        return context.Consumations.WhereUser(UserId)
+                                   .Where(binding)
+                                   .Select(x => x.Beer.BeerBrand)
+                                   .Distinct()
+                                   .Select(x => new View.Beer.BeerBrand(x))
                                    .ToPagedView(binding);
     }
 
@@ -252,26 +274,12 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         };
     }
 
-    public PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding)
+    public int SumVolume(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         return context.Consumations.WhereUser(UserId)
-                                   .Where(binding)
-                                   .Select(x => x.Beer)
-                                   .Distinct()
-                                   .Select(x => new View.Beer.Beer(x))
-                                   .ToPagedView(binding);
-    }
-
-    public PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding)
-    {
-        using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
-                                   .Where(binding)
-                                   .Select(x => x.Beer.BeerBrand)
-                                   .Distinct()
-                                   .Select(x => new View.Beer.BeerBrand(x))
-                                   .ToPagedView(binding);
+                                   .Where(binding, context)
+                                   .Sum(x => x.Volume);
     }
 
     public PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding)
@@ -395,17 +403,6 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                    .OrderBy(x => x.Key);
     }
 
-    public IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding)
-    {
-        using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
-                                   .Where(binding, context)
-                                   .GroupBy(x => x.Date.Year)
-                                   .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
-                                   .ToList()
-                                   .OrderBy(x => x.Key);
-    }
-
     public IEnumerable<KeyValuePair<View.Beer.BeerServing, int>> SumVolumeByServing(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
@@ -451,11 +448,14 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                       .ToPagedView(binding, grouped.Count());
     }
 
-    public int SumVolume(ConsumationGetBinding binding)
+    public IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         return context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
-                                   .Sum(x => x.Volume);
+                                   .GroupBy(x => x.Date.Year)
+                                   .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
+                                   .ToList()
+                                   .OrderBy(x => x.Key);
     }
 }

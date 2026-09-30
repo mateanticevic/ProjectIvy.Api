@@ -10,9 +10,9 @@ public class PoiCategory : IHasValueId, IHasName
     [Key]
     public int Id { get; set; }
 
-    public string ValueId { get; set; }
-
     public string Name { get; set; }
 
     public ICollection<Poi> Pois { get; set; }
+
+    public string ValueId { get; set; }
 }

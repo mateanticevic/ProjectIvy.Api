@@ -16,6 +16,8 @@ public interface ITrackingHandler : IHandler
 
     IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
 
+    int CountUnique(FilteredBinding binding);
+
     Task Create(TrackingBinding binding);
 
     Task Create(IEnumerable<TrackingBinding> binding);
@@ -24,21 +26,19 @@ public interface ITrackingHandler : IHandler
 
     IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
 
-    Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null);
-
-    Task<TrackingDetails> GetDetails(FilteredBinding binding);
-
-    Task<View.Tracking> GetLast(DateTime? at = null);
-
-    Task<View.TrackingLocation> GetLastLocation();
-
-    int CountUnique(FilteredBinding binding);
-
     double GetAverageSpeed(FilteredBinding binding);
 
     Task<IEnumerable<string>> GetDays(TrackingGetBinding binding);
 
+    Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null);
+
+    Task<TrackingDetails> GetDetails(FilteredBinding binding);
+
     int GetDistance(FilteredBinding binding);
+
+    Task<View.Tracking> GetLast(DateTime? at = null);
+
+    Task<View.TrackingLocation> GetLastLocation();
 
     double GetMaxSpeed(FilteredBinding binding);
 

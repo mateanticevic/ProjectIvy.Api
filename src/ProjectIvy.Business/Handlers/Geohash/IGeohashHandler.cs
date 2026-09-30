@@ -19,25 +19,25 @@ public interface IGeohashHandler
 
     Task<IEnumerable<Model.View.Geohash.RouteTime>> FromGeohashToGeohash(IEnumerable<string> fromGeohashes, IEnumerable<string> toGeohashes, RouteTimeSort sort);
 
-    Task<IEnumerable<DateOnly>> GetDays(string geohash);
-
     Task<IEnumerable<string>> GetChildren(string geohash, GeohashChildrenGetBinding b);
 
     Task<Model.View.City.City> GetCity(string geohash);
-
-    Task<Model.View.Country.Country> GetCountry(string geohash);
-
-    Task<Model.View.Geohash.Geohash> GetGeohash(string geohashId);
-
-    Task<IEnumerable<string>> GetGeohashes(GeohashGetBinding binding);
 
     Task<IEnumerable<string>> GetCityGeohashes(string cityValueId);
 
     Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding);
 
+    Task<Model.View.Country.Country> GetCountry(string geohash);
+
     Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId);
 
     Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding);
+
+    Task<IEnumerable<DateOnly>> GetDays(string geohash);
+
+    Task<Model.View.Geohash.Geohash> GetGeohash(string geohashId);
+
+    Task<IEnumerable<string>> GetGeohashes(GeohashGetBinding binding);
 
     Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding);
 

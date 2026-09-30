@@ -9,6 +9,7 @@ namespace ProjectIvy.Business.Handlers.Consumation;
 public interface IConsumationHandler : IHandler
 {
     void Add(ConsumationBinding binding);
+
     Task<IEnumerable<KeyValuePair<int, decimal>>> AlcoholByYear(ConsumationGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<int, int>>> AverageByYear(ConsumationGetBinding binding);
@@ -16,6 +17,10 @@ public interface IConsumationHandler : IHandler
     IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding);
 
     int Count(ConsumationGetBinding binding);
+
+    int CountBeers(ConsumationGetBinding binding);
+
+    int CountBrands(ConsumationGetBinding binding);
 
     PagedView<KeyValuePair<View.Beer.Beer, int>> CountByBeer(ConsumationGetBinding binding);
 
@@ -25,19 +30,17 @@ public interface IConsumationHandler : IHandler
 
     IEnumerable<KeyValuePair<int, int>> CountByYear(ConsumationGetBinding binding);
 
-    int CountBeers(ConsumationGetBinding binding);
-
-    int CountBrands(ConsumationGetBinding binding);
-
     PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding);
-
-    Task<IEnumerable<View.Country.Country>> GetCountries(ConsumationGetBinding binding);
 
     PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding);
 
     PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding);
 
+    Task<IEnumerable<View.Country.Country>> GetCountries(ConsumationGetBinding binding);
+
     PagedView<View.Beer.Beer> GetNewBeers(ConsumationGetBinding binding);
+
+    int SumVolume(ConsumationGetBinding binding);
 
     PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding);
 
@@ -53,11 +56,9 @@ public interface IConsumationHandler : IHandler
 
     IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
-
     IEnumerable<KeyValuePair<View.Beer.BeerServing, int>> SumVolumeByServing(ConsumationGetBinding binding);
 
     PagedView<KeyValuePair<View.Beer.BeerStyle, int>> SumVolumeByStyle(ConsumationGetBinding binding);
 
-    int SumVolume(ConsumationGetBinding binding);
+    IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding);
 }

@@ -19,11 +19,17 @@ namespace ProjectIvy.Api.Controllers.Common;
 public class CommonController : BaseController<CommonController>
 {
     private readonly IAirlineHandler _airlineHandler;
-    private readonly ICurrencyHandler _currencyHandler;
+
     private readonly IBeerHandler _beerHandler;
+
+    private readonly ICurrencyHandler _currencyHandler;
+
     private readonly IExpenseTypeHandler _expenseTypeHandler;
+
     private readonly IIncomeHandler _incomeHandler;
+
     private readonly IPaymentTypeHandler _paymentHandler;
+
     private readonly IPoiHandler _poiHandler;
 
     public CommonController(ILogger<CommonController> logger,
@@ -47,24 +53,24 @@ public class CommonController : BaseController<CommonController>
     [HttpGet("Airline")]
     public async Task<IActionResult> GetAirlines(AirlineGetBinding binding) => Ok(await _airlineHandler.Get(binding));
 
-    [HttpGet("Currency")]
-    public IEnumerable<View.Currency.Currency> GetCurrencies() => _currencyHandler.Get();
-
     [HttpGet("BeerServing")]
     public async Task<IActionResult> GetBeerServings() => Ok(await _beerHandler.GetServings());
 
     [HttpGet("BeerStyle")]
     public async Task<IActionResult> GetBeerStyles() => Ok(await _beerHandler.GetStyles());
 
+    [HttpGet("Currency")]
+    public IEnumerable<View.Currency.Currency> GetCurrencies() => _currencyHandler.Get();
+
     [HttpGet("ExpenseFileType")]
     public IEnumerable<View.Expense.ExpenseFileType> GetExpenseFileTypes() => _expenseTypeHandler.GetFileTypes();
+
+    [HttpGet("IncomeType")]
+    public async Task<IActionResult> GetIncomeTypes() => Ok(await _incomeHandler.GetTypes());
 
     [HttpGet("PaymentType")]
     public IActionResult GetPaymentTypes() => Ok(_paymentHandler.GetPaymentTypes());
 
     [HttpGet("PoiCategory")]
     public IEnumerable<View.Poi.PoiCategory> GetPoiCategories() => _poiHandler.GetCategories();
-
-    [HttpGet("IncomeType")]
-    public async Task<IActionResult> GetIncomeTypes() => Ok(await _incomeHandler.GetTypes());
 }

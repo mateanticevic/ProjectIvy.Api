@@ -16,12 +16,20 @@ namespace ProjectIvy.Api.Controllers.City;
 public class CityController : BaseController<CityController>
 {
     private readonly ICityHandler _cityHandler;
+
     private readonly IGeohashHandler _geohashHandler;
 
     public CityController(ILogger<CityController> logger, ICityHandler cityHandler, IGeohashHandler geohashHandler) : base(logger)
     {
         _cityHandler = cityHandler;
         _geohashHandler = geohashHandler;
+    }
+
+    [HttpDelete("{cityId}/Geohash")]
+    public async Task<IActionResult> DeleteGeohashes(string cityId, [FromQuery] IEnumerable<string> ids)
+    {
+        await _geohashHandler.RemoveGeohashFromCity(cityId, ids);
+        return Ok();
     }
 
     [HttpGet]
@@ -38,13 +46,6 @@ public class CityController : BaseController<CityController>
     [HttpGet("{cityId}/Geohash/Visited")]
     public async Task<IActionResult> GetGeohashesVisited(string cityId, [FromQuery] GeohashCityVisitedGetBinding binding)
         => Ok(await _geohashHandler.GetCityGeohashesVisited(cityId, binding));
-
-    [HttpDelete("{cityId}/Geohash")]
-    public async Task<IActionResult> DeleteGeohashes(string cityId, [FromQuery] IEnumerable<string> ids)
-    {
-        await _geohashHandler.RemoveGeohashFromCity(cityId, ids);
-        return Ok();
-    }
 
     [HttpGet("{fromCityId}/To/{toCityId}/Route")]
     public async Task<IActionResult> GetRoutes(string fromCityId, string toCityId, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date)

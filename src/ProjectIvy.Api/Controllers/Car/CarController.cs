@@ -41,13 +41,6 @@ public class CarController : BaseController<CarController>
     [HttpGet("{carId}/Kilometers/ByYear")]
     public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carId) => await _carHandler.GetKilometersByYear(carId);
 
-    [HttpPost("{carId}/Fuel")]
-    public async Task<IActionResult> PostFuel(string carId, [FromBody] CarFuelingBinding b)
-    {
-        await _carHandler.NewFueling(carId, b);
-        return Ok();
-    }
-
     [HttpGet("{carId}/Log/BySession")]
     public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
 
@@ -66,6 +59,13 @@ public class CarController : BaseController<CarController>
     {
         _carHandler.CreateTorqueLog(carId, binding);
         return "OK!";
+    }
+
+    [HttpPost("{carId}/Fuel")]
+    public async Task<IActionResult> PostFuel(string carId, [FromBody] CarFuelingBinding b)
+    {
+        await _carHandler.NewFueling(carId, b);
+        return Ok();
     }
 
     [HttpPost("{id}/Log")]

@@ -6,12 +6,12 @@ namespace ProjectIvy.Api.Attributes;
 
 public class ScopeRequirement : IAuthorizationRequirement
 {
-    public string RequiredScope { get; }
-
     public ScopeRequirement(string requiredScope)
     {
         RequiredScope = requiredScope;
     }
+
+    public string RequiredScope { get; }
 }
 
 public class ScopeRequirementHandler : AuthorizationHandler<ScopeRequirement>

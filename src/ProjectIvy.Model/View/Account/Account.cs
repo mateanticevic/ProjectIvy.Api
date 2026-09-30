@@ -14,17 +14,17 @@ public class Account
 
     public bool Active { get; set; }
 
-    public string Id { get; set; }
-
-    public string Name { get; set; }
-
-    public string Iban { get; set; }
-
-    public Bank.Bank Bank { get; set; }
-
     public decimal Balance { get; set; }
 
     public decimal BalanceInDefaultCurrency { get; set; }
 
+    public Bank.Bank Bank { get; set; }
+
     public Currency.Currency Currency { get; set; }
+
+    public string Iban { get; set; }
+
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 }

@@ -8,23 +8,23 @@ namespace ProjectIvy.Data.Databases.Main.Queries;
 
 public class GetExpenseSumQuery : IDynamicParameters
 {
-    public DateTime? From { get; set; }
-
-    public DateTime? To { get; set; }
-
-    public int? Month { get; set; }
-
-    public int UserId { get; set; }
-
-    public int TargetCurrencyId { get; set; }
-
-    public string ExpenseTypeValueId { get; set; }
-
-    public string VendorValueId { get; set; }
+    public bool ExcludeFromMonthlySums { get; set; }
 
     public IEnumerable<int> ExpenseIds { get; set; }
 
-    public bool ExcludeFromMonthlySums { get; set; }
+    public string ExpenseTypeValueId { get; set; }
+
+    public DateTime? From { get; set; }
+
+    public int? Month { get; set; }
+
+    public int TargetCurrencyId { get; set; }
+
+    public DateTime? To { get; set; }
+
+    public int UserId { get; set; }
+
+    public string VendorValueId { get; set; }
 
     public void AddParameters(IDbCommand command, Identity identity)
     {

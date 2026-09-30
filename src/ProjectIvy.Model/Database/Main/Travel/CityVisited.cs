@@ -6,16 +6,16 @@ namespace ProjectIvy.Model.Database.Main.Travel;
 [Table(nameof(CityVisited), Schema = nameof(Travel))]
 public class CityVisited : UserEntity
 {
-    [Key]
-    public int Id { get; set; }
+    public Common.City City { get; set; }
 
     public int CityId { get; set; }
 
-    public int? TripId { get; set; }
+    [Key]
+    public int Id { get; set; }
 
     public DateTime? Timestamp { get; set; }
 
-    public Common.City City { get; set; }
-
     public Trip Trip { get; set; }
+
+    public int? TripId { get; set; }
 }

@@ -16,7 +16,7 @@ public class Movie
         Year = x.Year;
     }
 
-    public DateTime Timestamp { get; set; }
+    public string ImdbId { get; set; }
 
     public int MyRating { get; set; }
 
@@ -24,9 +24,9 @@ public class Movie
 
     public int Runtime { get; set; }
 
-    public short Year { get; set; }
-
-    public string ImdbId { get; set; }
+    public DateTime Timestamp { get; set; }
 
     public string Title { get; set; }
+
+    public short Year { get; set; }
 }

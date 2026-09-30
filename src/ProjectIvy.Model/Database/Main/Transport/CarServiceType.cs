@@ -7,12 +7,12 @@ namespace ProjectIvy.Model.Database.Main.Transport;
 [Table(nameof(CarServiceType), Schema = nameof(Transport))]
 public class CarServiceType : IHasValueId
 {
+    public ICollection<CarService> CarServices { get; set; }
+
     [Key]
     public int Id { get; set; }
 
-    public string ValueId { get; set; }
-
     public string Name { get; set; }
 
-    public ICollection<CarService> CarServices { get; set; }
+    public string ValueId { get; set; }
 }

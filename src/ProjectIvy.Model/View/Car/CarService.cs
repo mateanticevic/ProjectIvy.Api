@@ -12,13 +12,13 @@ public class CarService
         ServiceType = c.ConvertTo(x => new CarServiceType(x.CarServiceType));
     }
 
-    public string Id { get; set; }
-
-    public CarServiceType ServiceType { get; set; }
-
     public DateTime Date { get; set; }
 
     public string Description { get; set; }
 
+    public string Id { get; set; }
+
     public int Odometer { get; set; }
+
+    public CarServiceType ServiceType { get; set; }
 }

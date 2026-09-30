@@ -12,13 +12,13 @@ public record Person
         LastName = p.LastName;
         DateOfBirth = p.DateOfBirth;
     }
-    
-    public string Id { get; set; }
-
-    public string FirstName { get; set; }
-
-    public string LastName { get; set; }
 
     [JsonConverter(typeof(DateFormatConverter))]
     public DateTime DateOfBirth { get; set; }
+
+    public string FirstName { get; set; }
+
+    public string Id { get; set; }
+
+    public string LastName { get; set; }
 }

@@ -5,7 +5,7 @@ namespace ProjectIvy.Model.Database.Main.User;
 [Table(nameof(ToDoTag), Schema = nameof(User))]
 public class ToDoTag
 {
-    public long ToDoId { get; set; }
-
     public int TagId { get; set; }
+
+    public long ToDoId { get; set; }
 }

@@ -7,18 +7,18 @@ namespace ProjectIvy.Model.Database.Main.Contacts;
 [Table(nameof(Call), Schema = nameof(Contacts))]
 public class Call : UserEntity, IHasTimestamp, IHasValueId
 {
-    [Key]
-    public int Id { get; set; }
-
-    public string ValueId { get; set; }
-
-    public DateTime Timestamp { get; set; }
-
-    public string Number { get; set; }
-
     public int Duration { get; set; }
+
+    public Storage.File File { get; set; }
 
     public int FileId { get; set; }
 
-    public Storage.File File { get; set; }
+    [Key]
+    public int Id { get; set; }
+
+    public string Number { get; set; }
+
+    public DateTime Timestamp { get; set; }
+
+    public string ValueId { get; set; }
 }

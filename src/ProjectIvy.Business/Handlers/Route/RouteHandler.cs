@@ -27,6 +27,18 @@ public class RouteHandler : Handler<RouteHandler>, IRouteHandler
         await context.SaveChangesAsync();
     }
 
+    public async Task<IEnumerable<decimal[]>> GetRoutePoints(string routeValueId)
+    {
+        using var context = GetMainContext();
+        var routeId = context.Routes.WhereUser(UserId)
+                                    .Single(x => x.ValueId == routeValueId).Id;
+
+        return await context.RoutePoints.Where(x => x.RouteId == routeId)
+                                        .OrderBy(x => x.Index)
+                                        .Select(x => new decimal[] { x.Lat, x.Lng })
+                                        .ToListAsync();
+    }
+
     public async Task<PagedView<Model.View.Route.Route>> GetRoutes(RouteGetBinding b)
     {
         using var context = GetMainContext();
@@ -38,18 +50,6 @@ public class RouteHandler : Handler<RouteHandler>, IRouteHandler
                                        Name = x.Name
                                    })
                                    .ToPagedViewAsync(b);
-    }
-
-    public async Task<IEnumerable<decimal[]>> GetRoutePoints(string routeValueId)
-    {
-        using var context = GetMainContext();
-        var routeId = context.Routes.WhereUser(UserId)
-                                    .Single(x => x.ValueId == routeValueId).Id;
-
-        return await context.RoutePoints.Where(x => x.RouteId == routeId)
-                                        .OrderBy(x => x.Index)
-                                        .Select(x => new decimal[] { x.Lat, x.Lng })
-                                        .ToListAsync();
     }
 
     public async Task SetPointsFromKml(string routeValueId, XDocument kml, string kmlName)

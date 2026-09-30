@@ -37,6 +37,9 @@ public class MovieController : BaseController<MovieController>
     [HttpGet("Count/ByMonth")]
     public IActionResult GetCountByMonth([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMonth(binding));
 
+    [HttpGet("Count/ByMonthOfYear")]
+    public IActionResult GetCountByMonthOfYear([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMonthOfYear(binding));
+
     [HttpGet("Count/ByMovieDecade")]
     public IActionResult GetCountByMovieDecade([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMovieDecade(binding));
 
@@ -45,9 +48,6 @@ public class MovieController : BaseController<MovieController>
 
     [HttpGet("Count/ByMyRating")]
     public IActionResult GetCountByMyRating([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMyRating(binding));
-
-    [HttpGet("Count/ByMonthOfYear")]
-    public IActionResult GetCountByMonthOfYear([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByMonthOfYear(binding));
 
     [HttpGet("Count/ByRuntime")]
     public IActionResult GetCountByRuntime([FromQuery] MovieGetBinding binding) => Ok(_movieHandler.CountByRuntime(binding));

@@ -13,9 +13,9 @@ public class CountryList
         Countries = x.Countries.Select(y => new Country(y.Country));
     }
 
+    public IEnumerable<Country> Countries { get; set; }
+
     public string Id { get; set; }
 
     public string Name { get; set; }
-
-    public IEnumerable<Country> Countries { get; set; }
 }

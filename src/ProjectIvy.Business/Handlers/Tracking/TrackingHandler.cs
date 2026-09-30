@@ -164,6 +164,18 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         }
     }
 
+    public double GetAverageSpeed(FilteredBinding binding)
+    {
+        using (var context = GetMainContext())
+        {
+            var averageSpeed = context.Trackings.WhereUser(UserId)
+                                                .WhereTimestampInclusive(binding)
+                                                .Average(x => x.Speed);
+
+            return averageSpeed ?? 0;
+        }
+    }
+
     public async Task<IEnumerable<string>> GetDays(TrackingGetBinding binding)
     {
         using (var context = GetMainContext())
@@ -177,27 +189,25 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         }
     }
 
-    public int GetDistance(FilteredBinding binding)
+    public async Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null)
     {
-        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingsGetDistance(binding.From, binding.To));
+        using var context = GetMainContext();
 
-        return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>
-        {
-            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-            return GetDistanceNonCached(binding);
-        });
-    }
+        var last = await context.Trackings.WhereUser(UserId)
+                                          .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                          .OrderByDescending(x => x.Timestamp)
+                                          .FirstOrDefaultAsync();
 
-    public double GetAverageSpeed(FilteredBinding binding)
-    {
-        using (var context = GetMainContext())
-        {
-            var averageSpeed = context.Trackings.WhereUser(UserId)
-                                                .WhereTimestampInclusive(binding)
-                                                .Average(x => x.Speed);
+        string parentGeohash = last.Geohash.Substring(0, 7);
 
-            return averageSpeed ?? 0;
-        }
+        return await context.Trackings.WhereUser(UserId)
+                                      .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                      .Where(x => x.Timestamp.Date != (at.HasValue ? at.Value.Date : DateTime.Now.Date))
+                                      .Where(x => x.Geohash.StartsWith(parentGeohash))
+                                      .Select(x => x.Timestamp.Date)
+                                      .Distinct()
+                                      .OrderByDescending(x => x)
+                                      .ToListAsync();
     }
 
     public async Task<TrackingDetails> GetDetails(FilteredBinding binding)
@@ -231,132 +241,15 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         };
     }
 
-    public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
-
-    public async Task<IEnumerable<DateTime>> GetDaysAtLast(DateTime? at = null)
+    public int GetDistance(FilteredBinding binding)
     {
-        using var context = GetMainContext();
+        string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingsGetDistance(binding.From, binding.To));
 
-        var last = await context.Trackings.WhereUser(UserId)
-                                          .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
-                                          .OrderByDescending(x => x.Timestamp)
-                                          .FirstOrDefaultAsync();
-
-        string parentGeohash = last.Geohash.Substring(0, 7);
-
-        return await context.Trackings.WhereUser(UserId)
-                                      .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
-                                      .Where(x => x.Timestamp.Date != (at.HasValue ? at.Value.Date : DateTime.Now.Date))
-                                      .Where(x => x.Geohash.StartsWith(parentGeohash))
-                                      .Select(x => x.Timestamp.Date)
-                                      .Distinct()
-                                      .OrderByDescending(x => x)
-                                      .ToListAsync();
-    }
-
-    public async Task<TrackingLocation> GetLastLocation()
-    {
-        var tracking = await GetLastTracking();
-        var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
-
-        var locationGeohashes = await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.LocationGeohashes()), async cacheKey =>
+        return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>
         {
-            cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
-            using var db = GetMainContext();
-
-            return await db.Locations.WhereUser(UserId)
-                                     .Include(x => x.Geohashes)
-                                     .Include(x => x.LocationType)
-                                     .ToListAsync();
+            cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
+            return GetDistanceNonCached(binding);
         });
-
-        var location = locationGeohashes.Where(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)))
-                                        .OrderBy(x => x.CanContainOtherLocations)
-                                        .FirstOrDefault();
-
-        using var context = GetMainContext();
-        var flight = await context.Flights.WhereUser(UserId)
-                                          .Include(x => x.Airline)
-                                          .Include(x => x.DestinationAirport)
-                                          .ThenInclude(x => x.Poi)
-                                          .Include(x => x.OriginAirport)
-                                          .ThenInclude(x => x.Poi)
-                                          .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
-                                          .FirstOrDefaultAsync();
-
-        var trackingLocation = new View.TrackingLocation
-        {
-            Country = await _geohashHandler.GetCountry(tracking.Geohash) ?? await _geohashHandler.GetCountry(tracking.Geohash),
-            Flight = flight is not null ? new Model.View.Flight.Flight(flight) : null,
-            Location = location is not null ? new View.KnownLocation(location) : null,
-            Tracking = new View.Tracking(tracking),
-            City = await _geohashHandler.GetCity(tracking.Geohash)
-        };
-
-        return trackingLocation;
-    }
-
-    public double GetMaxSpeed(FilteredBinding binding)
-    {
-        using (var context = GetMainContext())
-        {
-            var maxSpeed = context.Trackings.WhereUser(UserId)
-                                            .WhereTimestampInclusive(binding)
-                                            .Max(x => x.Speed);
-
-            return maxSpeed ?? 0;
-        }
-    }
-
-    public async Task ImportFromGpx(XDocument xml)
-    {
-        var trackings = GpxHandler.FromGpx(xml);
-        var geohasher = new Geohasher();
-
-        using (var db = GetMainContext())
-        {
-            var entities = trackings.Select(x => new Model.Database.Main.Tracking.Tracking()
-            {
-                Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9),
-                Longitude = x.Longitude,
-                Latitude = x.Latitude,
-                Timestamp = x.Timestamp,
-                UserId = UserId
-            }).ToList();
-
-            await db.Trackings.AddRangeAsync(entities);
-            await db.SaveChangesAsync();
-        }
-    }
-
-    public bool ImportFromKml(XDocument kml)
-    {
-        var trackings = KmlHandler.ParseKml(kml)
-                                  .Select(x => (Model.Database.Main.Tracking.Tracking)x);
-
-        using (var db = GetMainContext())
-        {
-            foreach (var t in trackings)
-            {
-                t.UserId = UserId;
-            }
-
-            db.Trackings.AddRange(trackings);
-            db.SaveChanges();
-
-            return true;
-        }
-    }
-
-    public async Task<Model.Database.Main.Tracking.Tracking> GetLastTracking(DateTime? at = null)
-    {
-        using (var db = GetMainContext())
-        {
-            return await db.Trackings.WhereUser(UserId)
-                                     .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
-                                     .OrderByDescending(x => x.Timestamp)
-                                     .FirstOrDefaultAsync();
-        }
     }
 
     private int GetDistanceNonCached(FilteredBinding binding)
@@ -410,6 +303,113 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
             }
 
             return total;
+        }
+    }
+
+    public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
+
+    public async Task<TrackingLocation> GetLastLocation()
+    {
+        var tracking = await GetLastTracking();
+        var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
+
+        var locationGeohashes = await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.LocationGeohashes()), async cacheKey =>
+        {
+            cacheKey.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+            using var db = GetMainContext();
+
+            return await db.Locations.WhereUser(UserId)
+                                     .Include(x => x.Geohashes)
+                                     .Include(x => x.LocationType)
+                                     .ToListAsync();
+        });
+
+        var location = locationGeohashes.Where(x => x.Geohashes.Any(y => tracking.Geohash.StartsWith(y.Geohash)))
+                                        .OrderBy(x => x.CanContainOtherLocations)
+                                        .FirstOrDefault();
+
+        using var context = GetMainContext();
+        var flight = await context.Flights.WhereUser(UserId)
+                                          .Include(x => x.Airline)
+                                          .Include(x => x.DestinationAirport)
+                                          .ThenInclude(x => x.Poi)
+                                          .Include(x => x.OriginAirport)
+                                          .ThenInclude(x => x.Poi)
+                                          .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
+                                          .FirstOrDefaultAsync();
+
+        var trackingLocation = new View.TrackingLocation
+        {
+            Country = await _geohashHandler.GetCountry(tracking.Geohash) ?? await _geohashHandler.GetCountry(tracking.Geohash),
+            Flight = flight is not null ? new Model.View.Flight.Flight(flight) : null,
+            Location = location is not null ? new View.KnownLocation(location) : null,
+            Tracking = new View.Tracking(tracking),
+            City = await _geohashHandler.GetCity(tracking.Geohash)
+        };
+
+        return trackingLocation;
+    }
+
+    public async Task<Model.Database.Main.Tracking.Tracking> GetLastTracking(DateTime? at = null)
+    {
+        using (var db = GetMainContext())
+        {
+            return await db.Trackings.WhereUser(UserId)
+                                     .WhereIf(at.HasValue, x => x.Timestamp < at.Value)
+                                     .OrderByDescending(x => x.Timestamp)
+                                     .FirstOrDefaultAsync();
+        }
+    }
+
+    public double GetMaxSpeed(FilteredBinding binding)
+    {
+        using (var context = GetMainContext())
+        {
+            var maxSpeed = context.Trackings.WhereUser(UserId)
+                                            .WhereTimestampInclusive(binding)
+                                            .Max(x => x.Speed);
+
+            return maxSpeed ?? 0;
+        }
+    }
+
+    public async Task ImportFromGpx(XDocument xml)
+    {
+        var trackings = GpxHandler.FromGpx(xml);
+        var geohasher = new Geohasher();
+
+        using (var db = GetMainContext())
+        {
+            var entities = trackings.Select(x => new Model.Database.Main.Tracking.Tracking()
+            {
+                Geohash = geohasher.Encode((double)x.Latitude, (double)x.Longitude, 9),
+                Longitude = x.Longitude,
+                Latitude = x.Latitude,
+                Timestamp = x.Timestamp,
+                UserId = UserId
+            }).ToList();
+
+            await db.Trackings.AddRangeAsync(entities);
+            await db.SaveChangesAsync();
+        }
+    }
+
+    public bool ImportFromKml(XDocument kml)
+    {
+        var trackings = KmlHandler.ParseKml(kml)
+                                  .Select(x => (Model.Database.Main.Tracking.Tracking)x);
+
+        using (var db = GetMainContext())
+        {
+            foreach (var t in trackings)
+            {
+                t.UserId = UserId;
+            }
+
+            db.Trackings.AddRange(trackings);
+            db.SaveChanges();
+
+            return true;
         }
     }
 }

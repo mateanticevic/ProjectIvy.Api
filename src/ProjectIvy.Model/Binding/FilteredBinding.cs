@@ -16,14 +16,14 @@ public class FilteredBinding : IFilteredBinding
 
     public DateTime? From { get; set; }
 
-    public DateTime? To { get; set; }
-
     public int? Last
     {
         set => From = DateTime.Now.AddDays(-1 * value.Value);
     }
 
     public bool OrderAscending { get; set; }
+
+    public DateTime? To { get; set; }
 
     public T OverrideFromTo<T>(DateTime? from, DateTime? to) where T : FilteredBinding
     {

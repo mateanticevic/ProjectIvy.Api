@@ -53,10 +53,6 @@ public class ExpenseController : BaseController<ExpenseController>
     public IEnumerable<KeyValuePair<string, int>> GetCountByMonthOfYear([FromQuery] ExpenseGetBinding binding)
         => _expenseHandler.CountByMonthOfYear(binding);
 
-    [HttpGet("Count/ByYear")]
-    public IEnumerable<KeyValuePair<int, int>> GetCountByYear([FromQuery] ExpenseGetBinding binding)
-        => _expenseHandler.CountByYear(binding);
-
     [HttpGet("Count/ByType")]
     public PagedView<KeyValuePair<Model.View.ExpenseType.ExpenseType, int>> GetCountByType([FromQuery] ExpenseGetBinding binding)
         => _expenseHandler.CountByType(binding);
@@ -65,9 +61,17 @@ public class ExpenseController : BaseController<ExpenseController>
     public PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> GetCountByVendor([FromQuery] ExpenseGetBinding binding)
         => _expenseHandler.CountByVendor(binding);
 
+    [HttpGet("Count/ByYear")]
+    public IEnumerable<KeyValuePair<int, int>> GetCountByYear([FromQuery] ExpenseGetBinding binding)
+        => _expenseHandler.CountByYear(binding);
+
     [HttpGet("{expenseId}/File")]
     public IEnumerable<View.ExpenseFile> GetFiles(string expenseId) =>
         _expenseHandler.GetFiles(expenseId);
+
+    [HttpGet("Sum/ByType")]
+    public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding)
+        => await _expenseHandler.SumByType(binding);
 
     [HttpGet("Sum")]
     public async Task<decimal> GetSum([FromQuery] ExpenseSumGetBinding binding) =>
@@ -85,6 +89,10 @@ public class ExpenseController : BaseController<ExpenseController>
     public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetSumByDayOfWeek([FromQuery] ExpenseSumGetBinding binding)
         => await _expenseHandler.SumAmountByDayOfWeek(binding);
 
+    [HttpGet("Sum/ByMonth")]
+    public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetSumByMonth([FromQuery] ExpenseSumGetBinding binding)
+        => await _expenseHandler.SumAmountByMonth(binding);
+
     [HttpGet("Sum/ByMonthOfYear")]
     public IEnumerable<KeyValuePair<string, decimal>> GetSumByMonthOfYear([FromQuery] ExpenseSumGetBinding binding)
         => _expenseHandler.SumAmountByMonthOfYear(binding);
@@ -101,36 +109,29 @@ public class ExpenseController : BaseController<ExpenseController>
     public async Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> GetSumByYearByType([FromQuery] ExpenseSumGetBinding binding)
         => await _expenseHandler.SumByYearByType(binding);
 
-    [HttpGet("Sum/ByMonth")]
-    public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetSumByMonth([FromQuery] ExpenseSumGetBinding binding)
-        => await _expenseHandler.SumAmountByMonth(binding);
-
-    [HttpGet("Sum/ByType")]
-    public async Task<IEnumerable<KeyValuePair<string, decimal>>> GetGroupedByTypeSum([FromQuery] ExpenseSumGetBinding binding)
-        => await _expenseHandler.SumByType(binding);
+    [HttpGet("Top/Description")]
+    public async Task<IEnumerable<string>> GetTopDescriptions([FromQuery] ExpenseGetBinding binding)
+        => await _expenseHandler.GetTopDescriptions(binding);
 
     [HttpGet("Type/Count")]
     public int GetTypesCount([FromQuery] ExpenseGetBinding binding)
         => _expenseHandler.CountTypes(binding);
 
-    [HttpGet("Top/Description")]
-    public async Task<IEnumerable<string>> GetTopDescriptions([FromQuery] ExpenseGetBinding binding)
-        => await _expenseHandler.GetTopDescriptions(binding);
-
     [HttpGet("Vendor/Count")]
     public int GetVendorsCount([FromQuery] ExpenseGetBinding binding)
         => _expenseHandler.CountVendors(binding);
 
-    [HttpPut("{id}")]
-    public bool Put(string id, [FromBody] ExpenseBinding binding)
-    {
-        binding.Id = id;
-        return _expenseHandler.Update(binding);
-    }
-
     [HttpPost]
     public async Task<string> Post([FromBody] ExpenseBinding binding)
         => await _expenseHandler.Create(binding);
+
+    [HttpPost("{expenseId}/File/{fileId}")]
+    public IActionResult PostExpenseFile(string expenseId, string fileId, [FromBody] ExpenseFileBinding binding)
+    {
+        _expenseHandler.AddFile(expenseId, fileId, binding);
+
+        return Ok();
+    }
 
     [HttpPost("FromFile")]
     public async Task PostFromFile()
@@ -145,11 +146,10 @@ public class ExpenseController : BaseController<ExpenseController>
         }
     }
 
-    [HttpPost("{expenseId}/File/{fileId}")]
-    public IActionResult PostExpenseFile(string expenseId, string fileId, [FromBody] ExpenseFileBinding binding)
+    [HttpPut("{id}")]
+    public bool Put(string id, [FromBody] ExpenseBinding binding)
     {
-        _expenseHandler.AddFile(expenseId, fileId, binding);
-
-        return Ok();
+        binding.Id = id;
+        return _expenseHandler.Update(binding);
     }
 }

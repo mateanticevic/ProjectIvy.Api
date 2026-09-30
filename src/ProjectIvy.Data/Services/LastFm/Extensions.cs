@@ -6,7 +6,9 @@ namespace ProjectIvy.Data.Services.LastFm;
 public static class Extensions
 {
     public const string Key = "{key}";
+
     public const string Method = "{method}";
+
     public const string Username = "{username}";
 
     public static string SetFrom(this string url, DateTime? from)
@@ -14,9 +16,14 @@ public static class Extensions
         return from.HasValue ? $"{url}&from={from.Value.ToUnix()}" : url;
     }
 
-    public static string SetTo(this string url, DateTime? to)
+    public static string SetKey(this string url, string key)
     {
-        return to.HasValue ? $"{url}&to={to.Value.ToUnix()}" : url;
+        return url.Replace(Key, key);
+    }
+
+    public static string SetMethod(this string url, string method)
+    {
+        return url.Replace(Method, method);
     }
 
     public static string SetPage(this string url, int? page)
@@ -31,18 +38,13 @@ public static class Extensions
 
     public static string SetPeriod(this string url, string period) => $"{url}&period={period}";
 
-    public static string SetKey(this string url, string key)
+    public static string SetTo(this string url, DateTime? to)
     {
-        return url.Replace(Key, key);
+        return to.HasValue ? $"{url}&to={to.Value.ToUnix()}" : url;
     }
 
     public static string SetUsername(this string url, string username)
     {
         return url.Replace(Username, username);
-    }
-
-    public static string SetMethod(this string url, string method)
-    {
-        return url.Replace(Method, method);
     }
 }

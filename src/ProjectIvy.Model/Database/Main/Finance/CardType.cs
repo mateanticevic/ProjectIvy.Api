@@ -10,7 +10,7 @@ public class CardType : IHasValueId, IHasName
 	[Key]
 	public int Id { get; set; }
 
-	public string ValueId { get; set; }
-
 	public string Name { get; set; }
+
+	public string ValueId { get; set; }
 }

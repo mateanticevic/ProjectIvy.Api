@@ -19,23 +19,23 @@ public class Loan
         Currency = l.Currency.ConvertTo(c => new Currency.Currency(c));
     }
 
-    public int Id { get; set; }
+    public Bank.Bank Bank { get; set; }
 
-    public decimal PrincipalAmount { get; set; }
-
-    public decimal InterestRate { get; set; }
-
-    public DateTime StartDate { get; set; }
-
-    public int NumberOfPayments { get; set; }
+    public Currency.Currency Currency { get; set; }
 
     public DateTime DisbursmentDate { get; set; }
 
     public DateTime FirstPaymentDate { get; set; }
 
+    public int Id { get; set; }
+
+    public decimal InterestRate { get; set; }
+
+    public int NumberOfPayments { get; set; }
+
+    public decimal PrincipalAmount { get; set; }
+
     public string RepaymentType { get; set; }
 
-    public Bank.Bank Bank { get; set; }
-
-    public Currency.Currency Currency { get; set; }
+    public DateTime StartDate { get; set; }
 }

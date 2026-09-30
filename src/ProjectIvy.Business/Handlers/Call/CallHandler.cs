@@ -17,6 +17,23 @@ public class CallHandler : Handler<CallHandler>, ICallHandler
     {
     }
 
+    public async Task<string> Create(CallBinding binding)
+    {
+        using (var context = GetMainContext())
+        {
+            if (context.CallBlacklist.WhereUser(UserId).Any(x => x.Number == binding.Number))
+                throw new ResourceForbiddenException();
+
+            var entity = binding.ToEntity(context);
+            entity.UserId = UserId;
+
+            await context.Calls.AddAsync(entity);
+            await context.SaveChangesAsync();
+
+            return entity.ValueId;
+        }
+    }
+
     public async Task<PagedView<View.Call>> Get(CallGetBinding binding)
     {
         using (var context = GetMainContext())
@@ -38,23 +55,6 @@ public class CallHandler : Handler<CallHandler>, ICallHandler
             }
 
             return calls;
-        }
-    }
-
-    public async Task<string> Create(CallBinding binding)
-    {
-        using (var context = GetMainContext())
-        {
-            if (context.CallBlacklist.WhereUser(UserId).Any(x => x.Number == binding.Number))
-                throw new ResourceForbiddenException();
-
-            var entity = binding.ToEntity(context);
-            entity.UserId = UserId;
-
-            await context.Calls.AddAsync(entity);
-            await context.SaveChangesAsync();
-
-            return entity.ValueId;
         }
     }
 

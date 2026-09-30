@@ -16,19 +16,19 @@ public class Card
         LastFourDigits = x.LastFourDigits;
     }
 
-    public string Id { get; set; }
-
     public Bank.Bank Bank { get; set; }
 
-    public CardType Type { get; set; }
-
-    public string Name { get; set; }
+    public DateTime Expires { get; set; }
 
     public bool HasExpired { get; set; }
 
-    public DateTime Expires { get; set; }
+    public string Id { get; set; }
 
     public DateTime Issued { get; set; }
 
     public string LastFourDigits { get; set; }
+
+    public string Name { get; set; }
+
+    public CardType Type { get; set; }
 }

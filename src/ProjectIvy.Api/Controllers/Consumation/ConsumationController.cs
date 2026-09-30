@@ -16,6 +16,7 @@ namespace ProjectIvy.Api.Controllers.Consumation;
 public class ConsumationController : BaseController<ConsumationController>
 {
     private readonly IConsumationHandler _consumationHandler;
+
     private readonly ICountryHandler _countryHandler;
 
     public ConsumationController(ILogger<ConsumationController> logger,
@@ -26,20 +27,28 @@ public class ConsumationController : BaseController<ConsumationController>
         _countryHandler = countryHandler;
     }
 
+    [HttpGet]
+    public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
+
     [HttpGet("Alcohol/ByYear")]
     public async Task<IActionResult> GetAlcoholByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AlcoholByYear(binding));
 
     [HttpGet("Average/ByYear")]
     public async Task<IActionResult> GetAverageByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AverageByYear(binding));
 
-    [HttpGet]
-    public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
-
     [HttpGet("Beer")]
     public IActionResult GetBeer(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBeers(binding));
 
+    [HttpGet("Count/Beer")]
+    [HttpGet("Beer/Count")]
+    public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);
+
     [HttpGet("Beer/New")]
     public IActionResult GetBeerNew(ConsumationGetBinding binding) => Ok(_consumationHandler.GetNewBeers(binding));
+
+    [HttpGet("Count/Brand")]
+    [HttpGet("Brand/Count")]
+    public int GetBrandCount(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
 
     [HttpGet("Brand")]
     public IActionResult GetBrands(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBrands(binding));
@@ -62,14 +71,6 @@ public class ConsumationController : BaseController<ConsumationController>
     [HttpGet("Count/ByYear")]
     public IActionResult GetCountByYear([FromQuery] ConsumationGetBinding binding) => Ok(_consumationHandler.CountByYear(binding));
 
-    [HttpGet("Count/Beer")]
-    [HttpGet("Beer/Count")]
-    public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);
-
-    [HttpGet("Count/Brand")]
-    [HttpGet("Brand/Count")]
-    public int GetBrandCount(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
-
     [HttpGet("Country")]
     public async Task<IActionResult> GetCountries(ConsumationGetBinding binding) => Ok(await _consumationHandler.GetCountries(binding));
 
@@ -83,15 +84,6 @@ public class ConsumationController : BaseController<ConsumationController>
     [HttpGet("Sum")]
     public int GetSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);
 
-    [HttpGet("Sum/ByBeer")]
-    public IActionResult GetSumVolumeByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBeer(binding));
-
-    [HttpGet("Sum/ByBrand")]
-    public IActionResult GetSumVolumeByBrand(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBrand(binding));
-
-    [HttpGet("Sum/ByCountry")]
-    public IActionResult GetSumVolumeByCountry(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByCountry(binding));
-
     [HttpGet("Sum/ByDay")]
     public IActionResult GetSumByDay(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByDay(binding));
 
@@ -104,11 +96,20 @@ public class ConsumationController : BaseController<ConsumationController>
     [HttpGet("Sum/ByMonthOfYear")]
     public IActionResult GetSumByMonthOfYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonthOfYear(binding));
 
+    [HttpGet("Sum/ByServing")]
+    public IActionResult GetSumByServing(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByServing(binding));
+
     [HttpGet("Sum/ByYear")]
     public IActionResult GetSumByYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByYear(binding));
 
-    [HttpGet("Sum/ByServing")]
-    public IActionResult GetSumByServing(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByServing(binding));
+    [HttpGet("Sum/ByBeer")]
+    public IActionResult GetSumVolumeByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBeer(binding));
+
+    [HttpGet("Sum/ByBrand")]
+    public IActionResult GetSumVolumeByBrand(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBrand(binding));
+
+    [HttpGet("Sum/ByCountry")]
+    public IActionResult GetSumVolumeByCountry(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByCountry(binding));
 
     [HttpGet("Sum/ByStyle")]
     public IActionResult GetSumVolumeByStyle(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByStyle(binding));

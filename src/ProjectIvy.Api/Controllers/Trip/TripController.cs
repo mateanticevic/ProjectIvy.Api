@@ -65,10 +65,10 @@ public class TripController : BaseController<TripController>
     [HttpGet("Days/ByYear")]
     public async Task<IActionResult> GetDaysByYear([FromQuery] TripGetBinding binding) => Ok(await _tripHandler.DaysByYear(binding));
 
-    [HttpPost("{tripId}/Poi/{poiId}")]
-    public async Task<StatusCodeResult> PostPoi(string tripId, string poiId)
+    [HttpPost]
+    public async Task<StatusCodeResult> Post([FromBody] TripBinding binding)
     {
-        await _tripHandler.AddPoi(tripId, poiId);
+        await _tripHandler.Create(binding);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
@@ -89,18 +89,18 @@ public class TripController : BaseController<TripController>
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpPost("{tripId}/ToDo/{toDoId}")]
-    public async Task<StatusCodeResult> PostToDo(string tripId, string toDoId)
+    [HttpPost("{tripId}/Poi/{poiId}")]
+    public async Task<StatusCodeResult> PostPoi(string tripId, string poiId)
     {
-        await _tripHandler.AddToDo(tripId, toDoId);
+        await _tripHandler.AddPoi(tripId, poiId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpPost]
-    public async Task<StatusCodeResult> Post([FromBody] TripBinding binding)
+    [HttpPost("{tripId}/ToDo/{toDoId}")]
+    public async Task<StatusCodeResult> PostToDo(string tripId, string toDoId)
     {
-        await _tripHandler.Create(binding);
+        await _tripHandler.AddToDo(tripId, toDoId);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }

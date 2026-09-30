@@ -16,13 +16,13 @@ public class Poi
         Location = new LatLng(x.Latitude, x.Longitude);
     }
 
-    public string Id { get; set; }
-
-    public string Name { get; set; }
-
     public string Address { get; set; }
 
     public PoiCategory Category { get; set; }
 
+    public string Id { get; set; }
+
     public LatLng Location { get; set; }
+
+    public string Name { get; set; }
 }

@@ -13,6 +13,8 @@ public interface ILocationHandler
 {
     Task Create(LocationBinding b);
 
+    Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow);
+
     Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b);
 
     Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<Model.View.Location.Location>>>> GetByDay(FilteredBinding b);
@@ -22,8 +24,6 @@ public interface ILocationHandler
     Task<IEnumerable<string>> GetGeohashes(string valueId);
 
     Task<IEnumerable<LocationType>> GetLocationTypes();
-
-    Task<IEnumerable<RouteTime>> FromLocationToLocation(string fromLocationValueId, string toLocationValueId, RouteTimeSort sort, int ignoreLocationsBelow);
 
     Task UpdateTrackings(string locationId);
 }

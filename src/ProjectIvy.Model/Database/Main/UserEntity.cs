@@ -2,7 +2,7 @@
 
 public abstract class UserEntity
 {
-    public int UserId { get; set; }
-
     public User.User User { get; set; }
+
+    public int UserId { get; set; }
 }

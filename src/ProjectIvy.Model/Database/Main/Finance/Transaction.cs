@@ -6,8 +6,7 @@ namespace ProjectIvy.Model.Database.Main.Finance;
 [Table(nameof(Transaction), Schema = nameof(Finance))]
 public class Transaction
 {
-    [Key]
-    public int Id { get; set; }
+    public Account Account { get; set; }
 
     public int AccountId { get; set; }
 
@@ -15,13 +14,14 @@ public class Transaction
 
     public decimal? Balance { get; set; }
 
-    public string Description { get; set; }
-
-    public string Type { get; set; }
+    public DateTime? Completed { get; set; }
 
     public DateTime Created { get; set; }
 
-    public DateTime? Completed { get; set; }
+    public string Description { get; set; }
 
-    public Account Account { get; set; }
+    [Key]
+    public int Id { get; set; }
+
+    public string Type { get; set; }
 }

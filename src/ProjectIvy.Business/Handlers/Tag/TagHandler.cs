@@ -13,19 +13,6 @@ public class TagHandler : Handler<TagHandler>, ITagHandler
     {
     }
 
-    public async Task<PagedView<View.Tag>> Get(TagGetBinding binding)
-    {
-        using var context = GetMainContext();
-        var query = context.Tags
-                           .WhereUser(UserId)
-                           .WhereSearch(binding)
-                           .OrderByDescending(x => x.ValueId == binding.Search)
-                           .ThenBy(x => x.Name)
-                           .Select(x => new View.Tag(x));
-
-        return await query.ToPagedViewAsync(binding);
-    }
-
     public async Task<View.Tag> Create(TagBinding binding)
     {
         using var context = GetMainContext();
@@ -41,5 +28,18 @@ public class TagHandler : Handler<TagHandler>, ITagHandler
         await context.SaveChangesAsync();
 
         return new View.Tag(entity);
+    }
+
+    public async Task<PagedView<View.Tag>> Get(TagGetBinding binding)
+    {
+        using var context = GetMainContext();
+        var query = context.Tags
+                           .WhereUser(UserId)
+                           .WhereSearch(binding)
+                           .OrderByDescending(x => x.ValueId == binding.Search)
+                           .ThenBy(x => x.Name)
+                           .Select(x => new View.Tag(x));
+
+        return await query.ToPagedViewAsync(binding);
     }
 }

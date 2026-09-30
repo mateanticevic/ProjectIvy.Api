@@ -77,6 +77,13 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
         }
     }
 
+    private IEnumerable<Node<ExpenseType>> GetChildrenNodes(IEnumerable<Database.ExpenseType> entities, int parentId)
+    {
+        var children = entities.Where(x => x.ParentTypeId == parentId).ToList();
+
+        return children.Any() ? children.Select(x => new Node<ExpenseType>() { This = new ExpenseType(x), Children = GetChildrenNodes(entities, x.Id) }).ToList() : null;
+    }
+
     public IEnumerable<ExpenseFileType> GetFileTypes()
     {
         using (var context = GetMainContext())
@@ -109,12 +116,5 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
         var childType = await context.ExpenseTypes.FirstOrDefaultAsync(x => x.ValueId == childValueId) ?? throw new ResourceNotFoundException();
         childType.ParentTypeId = parentType.Id;
         await context.SaveChangesAsync();
-    }
-
-    private IEnumerable<Node<ExpenseType>> GetChildrenNodes(IEnumerable<Database.ExpenseType> entities, int parentId)
-    {
-        var children = entities.Where(x => x.ParentTypeId == parentId).ToList();
-
-        return children.Any() ? children.Select(x => new Node<ExpenseType>() { This = new ExpenseType(x), Children = GetChildrenNodes(entities, x.Id) }).ToList() : null;
     }
 }

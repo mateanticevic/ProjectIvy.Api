@@ -2,11 +2,9 @@
 
 public class ExpenseBinding
 {
-    public string ExternalId { get; set; }
-
     public decimal Amount { get; set; }
 
-    public decimal? ParentCurrencyExchangeRate { get; set; }
+    public string CardId { get; set; }
 
     public string Comment { get; set; }
 
@@ -18,21 +16,23 @@ public class ExpenseBinding
 
     public string ExpenseTypeId { get; set; }
 
-    public bool NeedsReview { get; set; }
-
-    public string PaymentTypeId { get; set; }
-
-    public decimal? ParentAmount { get; set; }
-
-    public string ParentCurrencyId { get; set; }
-
-    public string CardId { get; set; }
-
-    public string PoiId { get; set; }
+    public string ExternalId { get; set; }
 
     public string Id { get; set; }
 
     public string InstallmentRef { get; set; }
+
+    public bool NeedsReview { get; set; }
+
+    public decimal? ParentAmount { get; set; }
+
+    public decimal? ParentCurrencyExchangeRate { get; set; }
+
+    public string ParentCurrencyId { get; set; }
+
+    public string PaymentTypeId { get; set; }
+
+    public string PoiId { get; set; }
 
     public string VendorId { get; set; }
 

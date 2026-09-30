@@ -14,25 +14,25 @@ public class Trip : UserEntity, IHasName, IHasValueId, IHasCreatedModified
         Cities = new List<Common.City>();
     }
 
+    public ICollection<Common.City> Cities { get; set; }
+
+    public DateTime Created { get; set; }
+
+    public ICollection<Storage.File> Files { get; set; }
+
     public int Id { get; set; }
 
-    public string ValueId { get; set; }
+    public bool IsDomestic { get; set; }
+
+    public DateTime Modified { get; set; }
 
     public string Name { get; set; }
+
+    public ICollection<TripPoi> Pois { get; set; }
 
     public DateTime TimestampEnd { get; set; }
 
     public DateTime TimestampStart { get; set; }
 
-    public DateTime Created { get; set; }
-
-    public DateTime Modified { get; set; }
-
-    public bool IsDomestic { get; set; }
-
-    public ICollection<Common.City> Cities { get; set; }
-
-    public ICollection<Storage.File> Files { get; set; }
-
-    public ICollection<TripPoi> Pois { get; set; }
+    public string ValueId { get; set; }
 }

@@ -147,18 +147,6 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         }).Sum(x => x);
     }
 
-    public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
-    {
-        using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountValueId).Value;
-
-        return await context.Transactions.Where(x => x.AccountId == accountId)
-                                         .OrderByDescending(x => x.Created)
-                                         .Select(x => new View.Transaction(x))
-                                         .ToPagedViewAsync(b);
-    }
-
     public async Task<View.AccountOverview> GetOverview(string accountValueId)
     {
         using (var context = GetMainContext())
@@ -177,6 +165,50 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 SumOut = sumOut
             };
         }
+    }
+
+    public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
+    {
+        using var context = GetMainContext();
+        int accountId = context.Accounts.WhereUser(UserId)
+                                        .GetId(accountValueId).Value;
+
+        return await context.Transactions.Where(x => x.AccountId == accountId)
+                                         .OrderByDescending(x => x.Created)
+                                         .Select(x => new View.Transaction(x))
+                                         .ToPagedViewAsync(b);
+    }
+
+    private IEnumerable<string> ParseCsvLine(string line, char separator = ',')
+    {
+        var sb = new StringBuilder();
+        bool insideQuotes = false;
+
+        for (int i = 0; i < line.Length; i++)
+        {
+            char c = line[i];
+
+            if (c == '"')
+                insideQuotes = !insideQuotes;
+            else if (c == separator && !insideQuotes)
+            {
+                if (sb.Length == 0)
+                    yield return string.Empty;
+                else
+                {
+                    string field = sb.ToString();
+                    sb.Clear();
+                    yield return field;
+                }
+
+                if (line.Length == i + 1)
+                    yield return string.Empty;
+            }
+            else
+                sb.Append(c);
+        }
+
+        yield return sb.ToString();
     }
 
     public async Task ProcessHacTransactions(string accountKey, string csv)
@@ -230,50 +262,6 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         await context.SaveChangesAsync();
     }
 
-    public async Task ProcessRevolutTransactions(string accountKey, string csv)
-    {
-        using (var context = GetMainContext())
-        {
-            int accountId = context.Accounts.WhereUser(UserId)
-                                            .GetId(accountKey).Value;
-
-            var transactions = new List<Transaction>();
-            var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
-                                                               .Select(x => x.Created)
-                                                               .ToListAsync();
-
-            foreach (string item in csv.Split("\n").Skip(1))
-            {
-                if (string.IsNullOrWhiteSpace(item))
-                    continue;
-
-                string[] parts = ParseCsvLine(item, ';').ToArray();
-                var transaction = new Transaction()
-                {
-                    AccountId = accountId,
-                    Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
-                    Description = parts[4],
-                    Created = DateTime.Parse(parts[2]),
-                    Type = parts[0]
-                };
-
-                if (existingTimestamps.Contains(transaction.Created))
-                    continue;
-
-                if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
-                    transaction.Balance = balance;
-
-                if (DateTime.TryParse(parts[3], out DateTime completed))
-                    transaction.Completed = completed;
-
-                transactions.Add(transaction);
-            }
-
-            await context.Transactions.AddRangeAsync(transactions);
-            await context.SaveChangesAsync();
-        }
-    }
-
     public async Task ProcessOtpBankTransactions(string accountKey, string csv)
     {
         using var context = GetMainContext();
@@ -325,6 +313,50 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         await context.SaveChangesAsync();
     }
 
+    public async Task ProcessRevolutTransactions(string accountKey, string csv)
+    {
+        using (var context = GetMainContext())
+        {
+            int accountId = context.Accounts.WhereUser(UserId)
+                                            .GetId(accountKey).Value;
+
+            var transactions = new List<Transaction>();
+            var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
+                                                               .Select(x => x.Created)
+                                                               .ToListAsync();
+
+            foreach (string item in csv.Split("\n").Skip(1))
+            {
+                if (string.IsNullOrWhiteSpace(item))
+                    continue;
+
+                string[] parts = ParseCsvLine(item, ';').ToArray();
+                var transaction = new Transaction()
+                {
+                    AccountId = accountId,
+                    Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
+                    Description = parts[4],
+                    Created = DateTime.Parse(parts[2]),
+                    Type = parts[0]
+                };
+
+                if (existingTimestamps.Contains(transaction.Created))
+                    continue;
+
+                if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
+                    transaction.Balance = balance;
+
+                if (DateTime.TryParse(parts[3], out DateTime completed))
+                    transaction.Completed = completed;
+
+                transactions.Add(transaction);
+            }
+
+            await context.Transactions.AddRangeAsync(transactions);
+            await context.SaveChangesAsync();
+        }
+    }
+
     public async Task Update(string accountValueId, AccountBinding binding)
     {
         using var context = GetMainContext();
@@ -333,37 +365,5 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                            .SingleOrDefaultAsync(x => x.ValueId == accountValueId) ?? throw new ResourceNotFoundException();
         binding.ToEntity(context, entity);
         await context.SaveChangesAsync();
-    }
-
-    private IEnumerable<string> ParseCsvLine(string line, char separator = ',')
-    {
-        var sb = new StringBuilder();
-        bool insideQuotes = false;
-
-        for (int i = 0; i < line.Length; i++)
-        {
-            char c = line[i];
-
-            if (c == '"')
-                insideQuotes = !insideQuotes;
-            else if (c == separator && !insideQuotes)
-            {
-                if (sb.Length == 0)
-                    yield return string.Empty;
-                else
-                {
-                    string field = sb.ToString();
-                    sb.Clear();
-                    yield return field;
-                }
-
-                if (line.Length == i + 1)
-                    yield return string.Empty;
-            }
-            else
-                sb.Append(c);
-        }
-
-        yield return sb.ToString();
     }
 }

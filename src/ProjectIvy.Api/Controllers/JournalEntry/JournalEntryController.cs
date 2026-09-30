@@ -21,6 +21,13 @@ public class JournalEntryController : BaseController<JournalEntryController>
         _journalEntryHandler = journalEntryHandler;
     }
 
+    [HttpDelete("{date}")]
+    public async Task<StatusCodeResult> Delete(DateOnly date)
+    {
+        await _journalEntryHandler.Delete(date);
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
     [HttpGet]
     public async Task<PagedView<Model.View.JournalEntry.JournalEntry>> Get([FromQuery] JournalEntryGetBinding binding)
         => await _journalEntryHandler.Get(binding);
@@ -35,11 +42,4 @@ public class JournalEntryController : BaseController<JournalEntryController>
     [HttpPut("{date}")]
     public async Task Put(DateOnly date, [FromBody] JournalEntryBinding binding)
         => await _journalEntryHandler.Update(date, binding);
-
-    [HttpDelete("{date}")]
-    public async Task<StatusCodeResult> Delete(DateOnly date)
-    {
-        await _journalEntryHandler.Delete(date);
-        return new StatusCodeResult(StatusCodes.Status204NoContent);
-    }
 }

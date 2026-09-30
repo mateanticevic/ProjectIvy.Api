@@ -25,16 +25,6 @@ public class AccountController : BaseController<AccountController>
     public async Task<PagedView<Model.View.Account.Account>> Get([FromQuery] AccountGetBinding binding)
         => await _accountHandler.Get(binding);
 
-    [HttpPost]
-    public async Task<IActionResult> Post([FromBody] AccountBinding binding) => Ok(await _accountHandler.Create(binding));
-
-    [HttpPut("{accountId}")]
-    public async Task<IActionResult> Put(string accountId, [FromBody] AccountBinding binding)
-    {
-        await _accountHandler.Update(accountId, binding);
-        return Ok();
-    }
-
     [HttpGet("NetWorth")]
     public async Task<decimal> GetNetWorth() => await _accountHandler.GetNetWorth();
 
@@ -44,6 +34,9 @@ public class AccountController : BaseController<AccountController>
     [HttpGet("{accountId}/transaction")]
     public async Task<PagedView<Model.View.Account.Transaction>> GetTransactions(string accountId, [FromQuery] FilteredPagedBinding binding)
         => await _accountHandler.GetTransactions(accountId, binding);
+
+    [HttpPost]
+    public async Task<IActionResult> Post([FromBody] AccountBinding binding) => Ok(await _accountHandler.Create(binding));
 
     [HttpPost("{accountId}/transaction")]
     public async Task<IActionResult> PostTransaction(string accountId, [FromBody] TransactionBinding binding)
@@ -82,6 +75,13 @@ public class AccountController : BaseController<AccountController>
             }
         }
 
+        return Ok();
+    }
+
+    [HttpPut("{accountId}")]
+    public async Task<IActionResult> Put(string accountId, [FromBody] AccountBinding binding)
+    {
+        await _accountHandler.Update(accountId, binding);
         return Ok();
     }
 }

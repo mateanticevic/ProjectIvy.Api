@@ -8,9 +8,9 @@ public class TripGetBinding : FilteredPagedBinding
 
     public IEnumerable<string> CountryId { get; set; }
 
+    public bool? IsDomestic { get; set; }
+
     public TripSort OrderBy { get; set; }
 
     public string Search { get; set; }
-
-    public bool? IsDomestic { get; set; }
 }

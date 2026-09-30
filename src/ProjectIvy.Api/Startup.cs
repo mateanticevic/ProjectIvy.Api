@@ -68,8 +68,6 @@ public class Startup
 {
     private readonly string _authority;
 
-    public IConfigurationRoot Configuration { get; }
-
     public Startup(IWebHostEnvironment env)
     {
         _authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
@@ -79,6 +77,38 @@ public class Startup
                                                 .AddEnvironmentVariables();
 
         Configuration = builder.Build();
+    }
+
+    public IConfigurationRoot Configuration { get; }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+
+        app.UseExceptionHandling();
+
+        app.UseSerilogRequestLoggingWithEnrichment(GetType().Assembly);
+
+        app.UseRouting();
+        app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.UseHttpMetrics();
+        app.UseMetricServer();
+        app.UseStaticFiles();
+
+        app.UseSwagger();
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
+        });
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllers();
+            endpoints.MapMcp();
+        });
     }
 
     public void ConfigureServices(IServiceCollection services)
@@ -314,35 +344,5 @@ public class Startup
                     options.SessionMode = HttpServerSessionMode.StatefulForInitializeClients;
                 })
                 .WithToolsFromAssembly();
-    }
-
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        if (env.IsDevelopment())
-            app.UseDeveloperExceptionPage();
-
-        app.UseExceptionHandling();
-
-        app.UseSerilogRequestLoggingWithEnrichment(GetType().Assembly);
-
-        app.UseRouting();
-        app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseHttpMetrics();
-        app.UseMetricServer();
-        app.UseStaticFiles();
-
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
-        {
-            c.SwaggerEndpoint("/swagger/v1/swagger.json", "ProjectIvy");
-        });
-
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapControllers();
-            endpoints.MapMcp();
-        });
     }
 }

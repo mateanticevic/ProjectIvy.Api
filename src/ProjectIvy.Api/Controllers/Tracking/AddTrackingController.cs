@@ -19,9 +19,9 @@ public class AddTrackingController : BaseController<AddTrackingController>
         _trackingHandler = trackingHandler;
     }
 
-    [HttpPut]
-    public async Task Put([FromBody] TrackingBinding binding) => await _trackingHandler.Create(binding);
-
     [HttpPost]
     public async Task Post([FromBody] IEnumerable<TrackingBinding> binding) => await _trackingHandler.Create(binding);
+
+    [HttpPut]
+    public async Task Put([FromBody] TrackingBinding binding) => await _trackingHandler.Create(binding);
 }

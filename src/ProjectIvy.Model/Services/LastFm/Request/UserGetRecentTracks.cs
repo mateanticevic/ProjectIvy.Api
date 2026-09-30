@@ -8,7 +8,7 @@ public class UserGetRecentTracks : BaseRequest
 
     public string From { get; set; }
 
-    public string To { get; set; }
-
     public override string Method => "user.getRecentTracks";
+
+    public string To { get; set; }
 }

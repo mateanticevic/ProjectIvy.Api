@@ -86,21 +86,6 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
         );
     }
 
-    public async Task<IEnumerable<View.BeerServing>> GetServings()
-    {
-        using var context = GetMainContext();
-        return await context.BeerServings.Select(x => new View.BeerServing(x)).ToListAsync();
-    }
-
-    public async Task<IEnumerable<View.BeerStyle>> GetStyles()
-    {
-        using var context = GetMainContext();
-        return await context
-            .BeerStyles.OrderBy(x => x.Name)
-            .Select(x => new View.BeerStyle(x))
-            .ToListAsync();
-    }
-
     public async Task<IEnumerable<View.BeerBrand>> GetBrandsNonCached(BrandGetBinding binding)
     {
         using var context = GetMainContext();
@@ -118,6 +103,21 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
             )
             .OrderBy(x => x.Name)
             .Select(x => new View.BeerBrand(x))
+            .ToListAsync();
+    }
+
+    public async Task<IEnumerable<View.BeerServing>> GetServings()
+    {
+        using var context = GetMainContext();
+        return await context.BeerServings.Select(x => new View.BeerServing(x)).ToListAsync();
+    }
+
+    public async Task<IEnumerable<View.BeerStyle>> GetStyles()
+    {
+        using var context = GetMainContext();
+        return await context
+            .BeerStyles.OrderBy(x => x.Name)
+            .Select(x => new View.BeerStyle(x))
             .ToListAsync();
     }
 

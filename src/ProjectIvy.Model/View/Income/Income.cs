@@ -24,7 +24,7 @@ public class Income
 
     public IncomeSource Source { get; set; }
 
-    public IncomeType Type { get; set; }
-
     public DateTime Timestamp { get; set; }
+
+    public IncomeType Type { get; set; }
 }

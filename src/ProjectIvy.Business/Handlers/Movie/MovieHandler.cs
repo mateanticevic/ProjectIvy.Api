@@ -19,18 +19,6 @@ public class MovieHandler : Handler<MovieHandler>, IMovieHandler
     {
     }
 
-    public PagedView<View.Movie> Get(MovieGetBinding binding)
-    {
-        using (var db = GetMainContext())
-        {
-            return db.Movies.WhereUser(UserId)
-                            .Where(binding)
-                            .OrderBy(binding)
-                            .Select(x => new View.Movie(x))
-                            .ToPagedView(binding);
-        }
-    }
-
     public int Count(MovieGetBinding binding)
     {
         using (var db = GetMainContext())
@@ -157,6 +145,18 @@ public class MovieHandler : Handler<MovieHandler>, IMovieHandler
                             .OrderBy(x => x.Key)
                             .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
                             .ToList();
+        }
+    }
+
+    public PagedView<View.Movie> Get(MovieGetBinding binding)
+    {
+        using (var db = GetMainContext())
+        {
+            return db.Movies.WhereUser(UserId)
+                            .Where(binding)
+                            .OrderBy(binding)
+                            .Select(x => new View.Movie(x))
+                            .ToPagedView(binding);
         }
     }
 

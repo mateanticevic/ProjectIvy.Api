@@ -89,91 +89,6 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         await context.SaveChangesAsync();
     }
 
-    public async Task Update(string toDoValueId, ToDoBinding binding)
-    {
-        using var context = GetMainContext();
-
-        var toDo = await context.ToDos.WhereUser(UserId)
-                                     .SingleOrDefaultAsync(x => x.ValueId == toDoValueId) ?? throw new ResourceNotFoundException();
-
-        bool wasCompleted = toDo.IsCompleted;
-
-        toDo.Name = binding.Name;
-        toDo.Description = binding.Description;
-        toDo.DueDate = binding.DueDate;
-        toDo.IsCompleted = binding.IsCompleted;
-        toDo.EstimatedPrice = binding.EstimatedPrice;
-        toDo.CurrencyId = binding.EstimatedPrice.HasValue
-            ? context.GetCurrencyId(binding.CurrencyId, UserId)
-            : null;
-
-        if (!wasCompleted && toDo.IsCompleted)
-            toDo.CompletedOn = DateTime.UtcNow;
-
-        if (wasCompleted && !toDo.IsCompleted)
-            toDo.CompletedOn = null;
-
-        if (binding.TagIds != null)
-        {
-            var requestedTagIds = NormalizeTagIds(binding.TagIds);
-            List<int> resolvedTagIds = [];
-
-            if (requestedTagIds.Count > 0)
-            {
-                resolvedTagIds = await context.Tags.WhereUser(UserId)
-                                                   .Where(x => requestedTagIds.Contains(x.ValueId))
-                                                   .Select(x => x.Id)
-                                                   .ToListAsync();
-            }
-
-            var currentTagIds = await context.ToDoTags
-                                             .Where(x => x.ToDoId == toDo.Id)
-                                             .Select(x => x.TagId)
-                                             .ToListAsync();
-
-            var resolvedTagIdSet = resolvedTagIds.ToHashSet();
-            var currentTagIdSet = currentTagIds.ToHashSet();
-
-            var removeTagIds = currentTagIds.Where(x => !resolvedTagIdSet.Contains(x))
-                                            .ToList();
-
-            if (removeTagIds.Count > 0)
-            {
-                var linksToRemove = await context.ToDoTags.Where(x => x.ToDoId == toDo.Id && removeTagIds.Contains(x.TagId))
-                                                           .ToListAsync();
-
-                context.ToDoTags.RemoveRange(linksToRemove);
-            }
-
-            var addTagIds = resolvedTagIds.Where(x => !currentTagIdSet.Contains(x))
-                                          .ToList();
-
-            if (addTagIds.Count > 0)
-            {
-                await context.ToDoTags.AddRangeAsync(addTagIds.Select(tagId => new Database.ToDoTag
-                {
-                    ToDoId = toDo.Id,
-                    TagId = tagId
-                }));
-            }
-        }
-
-        context.ToDos.Update(toDo);
-        await context.SaveChangesAsync();
-    }
-
-    private static HashSet<string> NormalizeTagIds(IEnumerable<string> tagIds)
-    {
-        if (tagIds == null)
-        {
-            return [];
-        }
-
-        return tagIds.Where(x => !string.IsNullOrWhiteSpace(x))
-                     .Select(x => x.Trim())
-                     .ToHashSet(StringComparer.OrdinalIgnoreCase);
-    }
-
     public async Task<PagedView<View.ToDo>> Get(ToDoGetBinding binding)
     {
         using var context = GetMainContext();
@@ -308,6 +223,47 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                             .ToListAsync();
     }
 
+    public async Task LinkTag(string toDoValueId, string tagValueId)
+    {
+        using var context = GetMainContext();
+
+        var toDoId = await context.ToDos.WhereUser(UserId)
+                                   .Where(x => x.ValueId == toDoValueId)
+                                   .Select(x => (long?)x.Id)
+                                   .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var tagId = await context.Tags.WhereUser(UserId)
+                                      .Where(x => x.ValueId == tagValueId)
+                                      .Select(x => (int?)x.Id)
+                                      .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        bool exists = await context.ToDoTags.AnyAsync(x => x.ToDoId == toDoId && x.TagId == tagId);
+        if (exists)
+        {
+            return;
+        }
+
+        await context.ToDoTags.AddAsync(new Database.ToDoTag
+        {
+            ToDoId = toDoId,
+            TagId = tagId
+        });
+
+        await context.SaveChangesAsync();
+    }
+
+    private static HashSet<string> NormalizeTagIds(IEnumerable<string> tagIds)
+    {
+        if (tagIds == null)
+        {
+            return [];
+        }
+
+        return tagIds.Where(x => !string.IsNullOrWhiteSpace(x))
+                     .Select(x => x.Trim())
+                     .ToHashSet(StringComparer.OrdinalIgnoreCase);
+    }
+
     public async Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ToDoGetBinding binding)
     {
         using var context = GetMainContext();
@@ -408,35 +364,6 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                   y.Sum))));
     }
 
-    public async Task LinkTag(string toDoValueId, string tagValueId)
-    {
-        using var context = GetMainContext();
-
-        var toDoId = await context.ToDos.WhereUser(UserId)
-                                   .Where(x => x.ValueId == toDoValueId)
-                                   .Select(x => (long?)x.Id)
-                                   .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
-
-        var tagId = await context.Tags.WhereUser(UserId)
-                                      .Where(x => x.ValueId == tagValueId)
-                                      .Select(x => (int?)x.Id)
-                                      .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
-
-        bool exists = await context.ToDoTags.AnyAsync(x => x.ToDoId == toDoId && x.TagId == tagId);
-        if (exists)
-        {
-            return;
-        }
-
-        await context.ToDoTags.AddAsync(new Database.ToDoTag
-        {
-            ToDoId = toDoId,
-            TagId = tagId
-        });
-
-        await context.SaveChangesAsync();
-    }
-
     public async Task UnlinkTag(string toDoValueId, string tagValueId)
     {
         using var context = GetMainContext();
@@ -455,6 +382,79 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
                                 .SingleOrDefaultAsync(x => x.ToDoId == toDoId && x.TagId == tagId) ?? throw new ResourceNotFoundException();
 
         context.ToDoTags.Remove(link);
+        await context.SaveChangesAsync();
+    }
+
+    public async Task Update(string toDoValueId, ToDoBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var toDo = await context.ToDos.WhereUser(UserId)
+                                     .SingleOrDefaultAsync(x => x.ValueId == toDoValueId) ?? throw new ResourceNotFoundException();
+
+        bool wasCompleted = toDo.IsCompleted;
+
+        toDo.Name = binding.Name;
+        toDo.Description = binding.Description;
+        toDo.DueDate = binding.DueDate;
+        toDo.IsCompleted = binding.IsCompleted;
+        toDo.EstimatedPrice = binding.EstimatedPrice;
+        toDo.CurrencyId = binding.EstimatedPrice.HasValue
+            ? context.GetCurrencyId(binding.CurrencyId, UserId)
+            : null;
+
+        if (!wasCompleted && toDo.IsCompleted)
+            toDo.CompletedOn = DateTime.UtcNow;
+
+        if (wasCompleted && !toDo.IsCompleted)
+            toDo.CompletedOn = null;
+
+        if (binding.TagIds != null)
+        {
+            var requestedTagIds = NormalizeTagIds(binding.TagIds);
+            List<int> resolvedTagIds = [];
+
+            if (requestedTagIds.Count > 0)
+            {
+                resolvedTagIds = await context.Tags.WhereUser(UserId)
+                                                   .Where(x => requestedTagIds.Contains(x.ValueId))
+                                                   .Select(x => x.Id)
+                                                   .ToListAsync();
+            }
+
+            var currentTagIds = await context.ToDoTags
+                                             .Where(x => x.ToDoId == toDo.Id)
+                                             .Select(x => x.TagId)
+                                             .ToListAsync();
+
+            var resolvedTagIdSet = resolvedTagIds.ToHashSet();
+            var currentTagIdSet = currentTagIds.ToHashSet();
+
+            var removeTagIds = currentTagIds.Where(x => !resolvedTagIdSet.Contains(x))
+                                            .ToList();
+
+            if (removeTagIds.Count > 0)
+            {
+                var linksToRemove = await context.ToDoTags.Where(x => x.ToDoId == toDo.Id && removeTagIds.Contains(x.TagId))
+                                                           .ToListAsync();
+
+                context.ToDoTags.RemoveRange(linksToRemove);
+            }
+
+            var addTagIds = resolvedTagIds.Where(x => !currentTagIdSet.Contains(x))
+                                          .ToList();
+
+            if (addTagIds.Count > 0)
+            {
+                await context.ToDoTags.AddRangeAsync(addTagIds.Select(tagId => new Database.ToDoTag
+                {
+                    ToDoId = toDo.Id,
+                    TagId = tagId
+                }));
+            }
+        }
+
+        context.ToDos.Update(toDo);
         await context.SaveChangesAsync();
     }
 }

@@ -12,13 +12,13 @@ public class GetIncomeSumQuery : IDynamicParameters
 {
     public DateTime? From { get; set; }
 
-    public DateTime? To { get; set; }
-
-    public int UserId { get; set; }
+    public IEnumerable<int> IncomeIds { get; set; }
 
     public int TargetCurrencyId { get; set; }
 
-    public IEnumerable<int> IncomeIds { get; set; }
+    public DateTime? To { get; set; }
+
+    public int UserId { get; set; }
 
     public void AddParameters(IDbCommand command, Identity identity)
     {

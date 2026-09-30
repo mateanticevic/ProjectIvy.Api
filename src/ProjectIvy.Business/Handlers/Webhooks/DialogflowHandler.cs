@@ -22,10 +22,15 @@ namespace ProjectIvy.Business.Handlers.Webhooks;
 public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 {
     private readonly ICarHandler _carHandler;
+
     private readonly IConsumationHandler _consumationHandler;
+
     private readonly IExpenseHandler _expenseHandler;
+
     private readonly IMovieHandler _movieHandler;
+
     private readonly ITrackingHandler _trackingHandler;
+
     private readonly IUserHandler _userHandler;
 
     public DialogflowHandler(IHandlerContext<DialogflowHandler> context,
@@ -42,54 +47,6 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         _movieHandler = movieHandler;
         _trackingHandler = trackingHandler;
         _userHandler = userHandler;
-    }
-
-    public async Task<GoogleCloudDialogflowV2WebhookResponse> ProcessWebhook(GoogleCloudDialogflowV2WebhookRequest request)
-    {
-        switch (request.QueryResult.Intent.Name)
-        {
-            case DialogflowIntents.CreateExpense:
-                return await CreateExpense(request);
-
-            case DialogflowIntents.GetConsecutiveConsumationDays:
-                return await GetConsecutiveConsumationDays(request);
-
-            case DialogflowIntents.GetDistance:
-                return await GetDistance(request);
-
-            case DialogflowIntents.GetTopSpeed:
-                return await GetTopSpeed(request);
-
-            case DialogflowIntents.GetLastTimeAtLocation:
-                return await GetLastTimeAtLocation();
-
-            case DialogflowIntents.GetLatestOdometer:
-                return await GetLatestOdometer();
-
-            case DialogflowIntents.SetLatestOdometer:
-                return await SetLatestOdometer(request);
-
-            case DialogflowIntents.GetConsumationCount:
-                return await GetConsumationCount(request);
-
-            case DialogflowIntents.GetConsumationSum:
-                return await GetConsumationSum(request);
-
-            case DialogflowIntents.GetExpenseSum:
-                return await GetExpenseSum(request);
-
-            case DialogflowIntents.SetWeight:
-                return await SetWeight(request);
-
-            case DialogflowIntents.GetMovieCount:
-                return await GetMovieCount(request);
-
-            default:
-                return new GoogleCloudDialogflowV2WebhookResponse()
-                {
-                    FulfillmentText = "Unknown intent"
-                };
-        }
     }
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> CreateExpense(GoogleCloudDialogflowV2WebhookRequest request)
@@ -113,6 +70,22 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         _expenseHandler.Create(binding);
 
         return new GoogleCloudDialogflowV2WebhookResponse();
+    }
+
+    private string FormatDistance(int distanceInMeters)
+    {
+        if (distanceInMeters < 1000)
+        {
+            return $"{distanceInMeters}m";
+        }
+        else if (distanceInMeters < 10000)
+        {
+            return $"{Math.Round((decimal)distanceInMeters / 1000, 1)}km";
+        }
+        else
+        {
+            return $"{Math.Floor((decimal)distanceInMeters / 1000)}km";
+        }
     }
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsecutiveConsumationDays(GoogleCloudDialogflowV2WebhookRequest request)
@@ -206,16 +179,6 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         };
     }
 
-    public async Task<GoogleCloudDialogflowV2WebhookResponse> GetTopSpeed(GoogleCloudDialogflowV2WebhookRequest request)
-    {
-        double maxSpeed = _trackingHandler.GetMaxSpeed(request.ToFilteredBinding(true));
-
-        return new GoogleCloudDialogflowV2WebhookResponse()
-        {
-            FulfillmentText = $"Your top speed was {(int)(maxSpeed * 3.6)} km/h."
-        };
-    }
-
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetMovieCount(GoogleCloudDialogflowV2WebhookRequest request)
     {
         var filteredBinding = request.ToFilteredBinding();
@@ -230,6 +193,64 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         {
             FulfillmentText = $"You've watched {movieCount} movies."
         };
+    }
+
+    public async Task<GoogleCloudDialogflowV2WebhookResponse> GetTopSpeed(GoogleCloudDialogflowV2WebhookRequest request)
+    {
+        double maxSpeed = _trackingHandler.GetMaxSpeed(request.ToFilteredBinding(true));
+
+        return new GoogleCloudDialogflowV2WebhookResponse()
+        {
+            FulfillmentText = $"Your top speed was {(int)(maxSpeed * 3.6)} km/h."
+        };
+    }
+
+    public async Task<GoogleCloudDialogflowV2WebhookResponse> ProcessWebhook(GoogleCloudDialogflowV2WebhookRequest request)
+    {
+        switch (request.QueryResult.Intent.Name)
+        {
+            case DialogflowIntents.CreateExpense:
+                return await CreateExpense(request);
+
+            case DialogflowIntents.GetConsecutiveConsumationDays:
+                return await GetConsecutiveConsumationDays(request);
+
+            case DialogflowIntents.GetDistance:
+                return await GetDistance(request);
+
+            case DialogflowIntents.GetTopSpeed:
+                return await GetTopSpeed(request);
+
+            case DialogflowIntents.GetLastTimeAtLocation:
+                return await GetLastTimeAtLocation();
+
+            case DialogflowIntents.GetLatestOdometer:
+                return await GetLatestOdometer();
+
+            case DialogflowIntents.SetLatestOdometer:
+                return await SetLatestOdometer(request);
+
+            case DialogflowIntents.GetConsumationCount:
+                return await GetConsumationCount(request);
+
+            case DialogflowIntents.GetConsumationSum:
+                return await GetConsumationSum(request);
+
+            case DialogflowIntents.GetExpenseSum:
+                return await GetExpenseSum(request);
+
+            case DialogflowIntents.SetWeight:
+                return await SetWeight(request);
+
+            case DialogflowIntents.GetMovieCount:
+                return await GetMovieCount(request);
+
+            default:
+                return new GoogleCloudDialogflowV2WebhookResponse()
+                {
+                    FulfillmentText = "Unknown intent"
+                };
+        }
     }
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> SetLatestOdometer(GoogleCloudDialogflowV2WebhookRequest request)
@@ -250,21 +271,5 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         await _userHandler.SetWeight((decimal)unitWeight["amount"]);
 
         return new GoogleCloudDialogflowV2WebhookResponse();
-    }
-
-    private string FormatDistance(int distanceInMeters)
-    {
-        if (distanceInMeters < 1000)
-        {
-            return $"{distanceInMeters}m";
-        }
-        else if (distanceInMeters < 10000)
-        {
-            return $"{Math.Round((decimal)distanceInMeters / 1000, 1)}km";
-        }
-        else
-        {
-            return $"{Math.Floor((decimal)distanceInMeters / 1000)}km";
-        }
     }
 }

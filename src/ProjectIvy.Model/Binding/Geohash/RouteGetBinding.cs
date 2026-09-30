@@ -6,7 +6,7 @@ public class RouteGetBinding
 {
 	public IEnumerable<string> From { get; set; }
 
-	public IEnumerable<string> To { get; set; }
-
 	public RouteTimeSort OrderBy { get; set; }
+
+	public IEnumerable<string> To { get; set; }
 }

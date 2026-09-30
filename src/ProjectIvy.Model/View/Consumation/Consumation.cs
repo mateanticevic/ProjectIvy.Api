@@ -19,7 +19,7 @@ public class Consumation
 
     public DateTime Date { get; set; }
 
-    public int Volume { get; set; }
-
     public BeerServing Serving { get; set; }
+
+    public int Volume { get; set; }
 }

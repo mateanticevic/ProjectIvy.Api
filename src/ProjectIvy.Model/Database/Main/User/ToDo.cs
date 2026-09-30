@@ -6,24 +6,24 @@ namespace ProjectIvy.Model.Database.Main.User;
 [Table(nameof(ToDo), Schema = nameof(User))]
 public class ToDo : UserEntity, IHasCreated, IHasName
 {
-    [Key]
-    public long Id { get; set; }
-
     public DateTime? CompletedOn { get; set; }
 
     public DateTime Created { get; set; }
 
-    public bool IsCompleted { get; set; }
-
-    public string ValueId { get; set; }
-
-    public string Name { get; set; }
-
-    public DateTime? DueDate { get; set; }
+    public int? CurrencyId { get; set; }
 
     public string Description { get; set; }
 
+    public DateTime? DueDate { get; set; }
+
     public int? EstimatedPrice { get; set; }
 
-    public int? CurrencyId { get; set; }
+    [Key]
+    public long Id { get; set; }
+
+    public bool IsCompleted { get; set; }
+
+    public string Name { get; set; }
+
+    public string ValueId { get; set; }
 }

@@ -10,6 +10,24 @@ namespace ProjectIvy.Business.Caching;
 
 public static class CacheKeyGenerator
 {
+	public static string BeerBrandsGet(BrandGetBinding b) => $"{nameof(BeerBrandsGet)}_{GetHash(b)}";
+
+	public static string CityDays(string cityId, FilteredBinding binding) => $"{nameof(CityDays)}_{cityId}_{GetHash(binding)}";
+
+	public static string CountriesVisited() => nameof(CountriesVisited);
+
+	public static string CurrenciesGet() => nameof(CurrenciesGet);
+
+	public static string ExpensesGet(ExpenseGetBinding b) => $"{nameof(ExpenseGetBinding)}_{GetHash(b)}";
+
+	public static string ExpensesKeys() => nameof(ExpensesKeys);
+
+	public static string ExpensesSumAmount(ExpenseSumGetBinding b) => $"{nameof(ExpensesSumAmount)}_{GetHash(b)}";
+
+	public static string GeohashCountUnique(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUnique)}_{GetHash(b)}";
+
+	public static string GeohashCountUniqueByYear(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUniqueByYear)}_{GetHash(b)}";
+
 	private static string GetHash(object obj)
 	{
 		var json = JsonConvert.SerializeObject(obj);
@@ -17,24 +35,6 @@ public static class CacheKeyGenerator
 		var hashBytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(json));
 		return Convert.ToHexString(hashBytes);
 	}
-
-	public static string BeerBrandsGet(BrandGetBinding b) => $"{nameof(BeerBrandsGet)}_{GetHash(b)}";
-
-	public static string CityDays(string cityId, FilteredBinding binding) => $"{nameof(CityDays)}_{cityId}_{GetHash(binding)}";
-
-	public static string CurrenciesGet() => nameof(CurrenciesGet);
-
-	public static string CountriesVisited() => nameof(CountriesVisited);
-
-	public static string ExpensesKeys() => nameof(ExpensesKeys);
-
-	public static string ExpensesGet(ExpenseGetBinding b) => $"{nameof(ExpenseGetBinding)}_{GetHash(b)}";
-
-	public static string ExpensesSumAmount(ExpenseSumGetBinding b) => $"{nameof(ExpensesSumAmount)}_{GetHash(b)}";
-
-	public static string GeohashCountUnique(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUnique)}_{GetHash(b)}";
-
-	public static string GeohashCountUniqueByYear(GeohashUniqueGetBinding b) => $"{nameof(GeohashCountUniqueByYear)}_{GetHash(b)}";
 
 	public static string LocationDays(string locationId) => $"{nameof(LocationDays)}_{locationId}";
 

@@ -8,11 +8,11 @@ public class PoiGetBinding : PagedBinding
 
     public string Name { get; set; }
 
+    public string Search { get; set; }
+
     public string VendorId { get; set; }
 
     public LocationBinding X { get; set; }
 
     public LocationBinding Y { get; set; }
-
-    public string Search { get; set; }
 }

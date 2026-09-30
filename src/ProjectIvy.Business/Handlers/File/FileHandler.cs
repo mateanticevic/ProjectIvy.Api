@@ -15,9 +15,9 @@ namespace ProjectIvy.Business.Handlers.File;
 
 public class FileHandler : Handler<FileHandler>, IFileHandler
 {
-    private readonly IAzureStorageHelper _azureStorageHelper;
-
     private const string ShareName = "documents";
+
+    private readonly IAzureStorageHelper _azureStorageHelper;
 
     public FileHandler(IHandlerContext<FileHandler> context, IAzureStorageHelper azureStorageHelper) : base(context)
     {
@@ -54,6 +54,23 @@ public class FileHandler : Handler<FileHandler>, IFileHandler
         }
     }
 
+    private async Task<byte[]> ProcessImageFile(FileBinding file)
+    {
+        if (file.ImageResize.HasValue)
+        {
+            var image = Image.Load(file.Data);
+            image.Mutate(x => x.Resize((int)(image.Width * file.ImageResize.Value), 0));
+
+            using (var ms = new MemoryStream())
+            {
+                await image.SaveAsJpegAsync(ms);
+                return ms.ToArray();
+            }
+        }
+        else
+            return file.Data;
+    }
+
     public async Task<string> UploadFile(FileBinding file) => (await UploadFileInternal(file)).ValueId;
 
     public async Task<Model.Database.Main.Storage.File> UploadFileInternal(FileBinding file)
@@ -83,22 +100,5 @@ public class FileHandler : Handler<FileHandler>, IFileHandler
         await context.SaveChangesAsync();
 
         return fileEntity;
-    }
-
-    private async Task<byte[]> ProcessImageFile(FileBinding file)
-    {
-        if (file.ImageResize.HasValue)
-        {
-            var image = Image.Load(file.Data);
-            image.Mutate(x => x.Resize((int)(image.Width * file.ImageResize.Value), 0));
-
-            using (var ms = new MemoryStream())
-            {
-                await image.SaveAsJpegAsync(ms);
-                return ms.ToArray();
-            }
-        }
-        else
-            return file.Data;
     }
 }

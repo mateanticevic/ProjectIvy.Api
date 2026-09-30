@@ -9,9 +9,9 @@ public interface IRouteHandler
 {
     Task Create(RouteBinding binding);
 
-    Task<PagedView<Model.View.Route.Route>> GetRoutes(RouteGetBinding b);
-
     Task<IEnumerable<decimal[]>> GetRoutePoints(string routeValueId);
+
+    Task<PagedView<Model.View.Route.Route>> GetRoutes(RouteGetBinding b);
 
     Task SetPointsFromKml(string routeValueId, XDocument kml, string kmlName);
 }

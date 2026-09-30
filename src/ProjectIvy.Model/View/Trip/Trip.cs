@@ -24,27 +24,27 @@ public class Trip
         TimestampStart = x.TimestampStart;
     }
 
+    public IEnumerable<City.City> Cities { get; set; }
+
+    public IEnumerable<Country.Country> Countries { get; set; }
+
+    public int Distance { get; set; }
+
+    public IEnumerable<Expense.Expense> Expenses { get; set; }
+
+    public IEnumerable<File.File> Files { get; set; }
+
     public string Id { get; set; }
 
     public string Name { get; set; }
 
-    public DateTime TimestampEnd { get; set; }
-
-    public DateTime TimestampStart { get; set; }
-
-    public int Distance { get; set; }
-
-    public IEnumerable<Country.Country> Countries { get; set; }
-
-    public IEnumerable<City.City> Cities { get; set; }
-
-    public IEnumerable<File.File> Files { get; set; }
-
-    public IEnumerable<Expense.Expense> Expenses { get; set; }
-
     public IEnumerable<Poi.Poi> Pois { get; set; }
 
     public IEnumerable<Stay.Stay> Stays { get; set; }
+
+    public DateTime TimestampEnd { get; set; }
+
+    public DateTime TimestampStart { get; set; }
 
     public decimal TotalSpent { get; set; }
 }

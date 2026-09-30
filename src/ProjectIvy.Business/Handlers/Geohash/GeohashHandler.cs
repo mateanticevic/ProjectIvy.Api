@@ -17,11 +17,29 @@ namespace ProjectIvy.Business.Handlers.Geohash;
 public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 {
     private const string GeohashChars = "0123456789bcdefghjkmnpqrstuvwxyz";
+
     private readonly ILogger _logger;
 
     public GeohashHandler(IHandlerContext<GeohashHandler> context, ILogger<GeohashHandler> logger, IMemoryCache memoryCache) : base(context, memoryCache, nameof(GeohashHandler))
     {
         _logger = logger;
+    }
+
+    private async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
+    {
+        foreach (string geohash in geohashes)
+        {
+            var childGeohashes = geohashItems.Where(matchItem)
+                                             .Where(x => x.Geohash.StartsWith(geohash))
+                                             .ToList();
+
+            if (childGeohashes.Any())
+                geohashItems.RemoveRange(childGeohashes);
+
+            var entity = itemFactory();
+            entity.Geohash = geohash;
+            await geohashItems.AddAsync(entity);
+        }
     }
 
     public async Task AddGeohashToCity(string cityValueId, IEnumerable<string> geohashes)
@@ -89,6 +107,58 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         });
     }
 
+    private async Task<IEnumerable<KeyValuePair<int, int>>> CountUniqueByYearNonCached(GeohashUniqueGetBinding binding)
+    {
+        using var context = GetMainContext();
+
+        if (binding.OnlyNew)
+        {
+            var counts = await context.Trackings.WhereUser(UserId)
+                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+                                          .GroupBy(x => x.Timestamp.Year)
+                                          .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                          .ToListAsync();
+
+            return counts.OrderBy(x => x.Key).ToList();
+        }
+
+        var byYear = await context.Trackings.WhereUser(UserId)
+                                      .WhereTimestampInclusive(binding)
+                                      .Select(x => new { Year = x.Timestamp.Year, Geohash = x.Geohash.Substring(0, binding.Precision) })
+                                      .Distinct()
+                                      .GroupBy(x => x.Year)
+                                      .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
+                                      .ToListAsync();
+
+        return byYear.OrderBy(x => x.Key).ToList();
+    }
+
+    private async Task<int> CountUniqueNonCached(GeohashUniqueGetBinding binding)
+    {
+        using var context = GetMainContext();
+
+        if (binding.OnlyNew)
+        {
+            return await context.Trackings.WhereUser(UserId)
+                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
+                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
+                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
+                                          .CountAsync();
+        }
+
+        return await context.Trackings.WhereUser(UserId)
+                                      .WhereTimestampInclusive(binding)
+                                      .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
+                                      .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
+                                      .CountAsync();
+    }
+
     public async Task DeleteTrackings(string geohash)
     {
         using var context = GetMainContext();
@@ -127,6 +197,105 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         return sort == RouteTimeSort.Date
                        ? routes.OrderByDescending(x => x.From)
                        : routes.OrderBy(x => x.Duration);
+    }
+
+    public async Task<IEnumerable<string>> GetChildren(string geohash, GeohashChildrenGetBinding b)
+    {
+        using var context = GetMainContext();
+        int geohashLength = geohash?.Length ?? 0;
+
+        int precision = b.Precision ?? geohashLength + 1;
+
+        return await context.Trackings.WhereUser(UserId)
+                                      .WhereIf(!string.IsNullOrWhiteSpace(geohash), x => x.Geohash.StartsWith(geohash))
+                                      .GroupBy(x => x.Geohash.Substring(0, precision))
+                                      .Select(x => x.Key)
+                                      .ToListAsync();
+    }
+
+    public async Task<Model.View.City.City> GetCity(string geohash)
+    {
+        using (var context = GetMainContext())
+        {
+            var geohashes = Enumerable.Range(0, geohash.Length)
+                                      .Select(x => geohash.Substring(0, geohash.Length - x))
+                                      .ToList();
+
+            return await context.CityGeohashes.Include(x => x.City)
+                                              .ThenInclude(x => x.Country)
+                                              .Where(x => geohashes.Contains(x.Geohash))
+                                              .OrderByDescending(x => x.Geohash.Length)
+                                              .Select(x => new Model.View.City.City(x.City))
+                                              .FirstOrDefaultAsync();
+        }
+    }
+
+    public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
+    {
+        using var context = GetMainContext();
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        return await context.CityGeohashes.Where(x => x.CityId == cityId)
+                                          .Select(x => x.Geohash)
+                                          .ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding)
+    {
+        using var context = GetMainContext();
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        var cityGeohashes = await context.CityGeohashes.Where(x => x.CityId == cityId)
+                                                   .Select(x => x.Geohash)
+                                                   .ToListAsync();
+
+        var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
+
+        return cityGeohashesResolved.Where(x => context.Trackings
+                                        .WhereUser(UserId)
+                                        .Any(y => y.Geohash.StartsWith(x)))
+                                    .Distinct()
+                                    .ToList();
+    }
+
+    public async Task<Model.View.Country.Country> GetCountry(string geohash)
+    {
+        using (var context = GetMainContext())
+        {
+            var geohashes = Enumerable.Range(0, geohash.Length)
+                                      .Select(x => geohash.Substring(0, geohash.Length - x))
+                                      .ToList();
+
+            return await context.CountryGeohashes.Include(x => x.Country)
+                                                 .Where(x => geohashes.Contains(x.Geohash))
+                                                 .OrderByDescending(x => x.Geohash.Length)
+                                                 .Select(x => new Model.View.Country.Country(x.Country))
+                                                 .FirstOrDefaultAsync();
+        }
+    }
+
+    public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
+    {
+        using var context = GetMainContext();
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
+                                             .Select(x => x.Geohash)
+                                             .ToListAsync();
+    }
+
+    public async Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding)
+    {
+        using var context = GetMainContext();
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        var countryGeohashes = await context.CountryGeohashes.Where(x => x.CountryId == countryId)
+                                                   .Select(x => x.Geohash)
+                                                   .ToListAsync();
+
+        var countryGeohashesResolved = GeohashHelper.ResolveChildGeohashes(countryGeohashes, binding.Precision);
+
+        return countryGeohashesResolved.Where(x => context.Trackings
+                                        .WhereUser(UserId)
+                                        .Any(y => y.Geohash.StartsWith(x)))
+                                    .Distinct()
+                                    .ToList();
     }
 
     public async Task<IEnumerable<DateOnly>> GetDays(string geohash)
@@ -200,105 +369,6 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
         }
     }
 
-    public async Task<IEnumerable<string>> GetChildren(string geohash, GeohashChildrenGetBinding b)
-    {
-        using var context = GetMainContext();
-        int geohashLength = geohash?.Length ?? 0;
-
-        int precision = b.Precision ?? geohashLength + 1;
-
-        return await context.Trackings.WhereUser(UserId)
-                                      .WhereIf(!string.IsNullOrWhiteSpace(geohash), x => x.Geohash.StartsWith(geohash))
-                                      .GroupBy(x => x.Geohash.Substring(0, precision))
-                                      .Select(x => x.Key)
-                                      .ToListAsync();
-    }
-
-    public async Task<Model.View.City.City> GetCity(string geohash)
-    {
-        using (var context = GetMainContext())
-        {
-            var geohashes = Enumerable.Range(0, geohash.Length)
-                                      .Select(x => geohash.Substring(0, geohash.Length - x))
-                                      .ToList();
-
-            return await context.CityGeohashes.Include(x => x.City)
-                                              .ThenInclude(x => x.Country)
-                                              .Where(x => geohashes.Contains(x.Geohash))
-                                              .OrderByDescending(x => x.Geohash.Length)
-                                              .Select(x => new Model.View.City.City(x.City))
-                                              .FirstOrDefaultAsync();
-        }
-    }
-
-    public async Task<Model.View.Country.Country> GetCountry(string geohash)
-    {
-        using (var context = GetMainContext())
-        {
-            var geohashes = Enumerable.Range(0, geohash.Length)
-                                      .Select(x => geohash.Substring(0, geohash.Length - x))
-                                      .ToList();
-
-            return await context.CountryGeohashes.Include(x => x.Country)
-                                                 .Where(x => geohashes.Contains(x.Geohash))
-                                                 .OrderByDescending(x => x.Geohash.Length)
-                                                 .Select(x => new Model.View.Country.Country(x.Country))
-                                                 .FirstOrDefaultAsync();
-        }
-    }
-
-    public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
-    {
-        using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
-        return await context.CityGeohashes.Where(x => x.CityId == cityId)
-                                          .Select(x => x.Geohash)
-                                          .ToListAsync();
-    }
-
-    public async Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding)
-    {
-        using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
-        var cityGeohashes = await context.CityGeohashes.Where(x => x.CityId == cityId)
-                                                   .Select(x => x.Geohash)
-                                                   .ToListAsync();
-
-        var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
-
-        return cityGeohashesResolved.Where(x => context.Trackings
-                                        .WhereUser(UserId)
-                                        .Any(y => y.Geohash.StartsWith(x)))
-                                    .Distinct()
-                                    .ToList();
-    }
-
-    public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
-    {
-        using var context = GetMainContext();
-        int countryId = context.Countries.GetId(countryValueId).Value;
-        return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
-                                             .Select(x => x.Geohash)
-                                             .ToListAsync();
-    }
-
-    public async Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding)
-    {
-        using var context = GetMainContext();
-        int countryId = context.Countries.GetId(countryValueId).Value;
-        var countryGeohashes = await context.CountryGeohashes.Where(x => x.CountryId == countryId)
-                                                   .Select(x => x.Geohash)
-                                                   .ToListAsync();
-
-        var countryGeohashesResolved = GeohashHelper.ResolveChildGeohashes(countryGeohashes, binding.Precision);
-
-        return countryGeohashesResolved.Where(x => context.Trackings
-                                        .WhereUser(UserId)
-                                        .Any(y => y.Geohash.StartsWith(x)))
-                                    .Distinct()
-                                    .ToList();
-    }
-
     public async Task<IEnumerable<string>> GetUnique(GeohashUniqueGetBinding binding)
     {
         using var context = GetMainContext();
@@ -321,117 +391,6 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
                                       .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
                                       .Select(x => x.Key)
                                       .ToListAsync();
-    }
-
-    public async Task RemoveGeohashFromCity(string cityValueId, IEnumerable<string> geohashes)
-    {
-        using var context = GetMainContext();
-
-        int cityId = context.Cities.GetId(cityValueId).Value;
-        await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
-        await context.SaveChangesAsync();
-
-        await context.Trackings.WhereUser(UserId)
-                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
-        await context.SaveChangesAsync();
-    }
-
-    public async Task RemoveGeohashFromCountry(string countryValueId, IEnumerable<string> geohashes)
-    {
-        using var context = GetMainContext();
-
-        int countryId = context.Countries.GetId(countryValueId).Value;
-        await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
-        await context.SaveChangesAsync();
-
-        await context.Trackings.WhereUser(UserId)
-                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
-        await context.SaveChangesAsync();
-    }
-
-    public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
-    {
-        using var context = GetMainContext();
-
-        int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
-        await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
-        await context.SaveChangesAsync();
-
-        await context.Trackings.WhereUser(UserId)
-                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
-                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, (int?)null));
-        await context.SaveChangesAsync();
-    }
-
-    private async Task<IEnumerable<KeyValuePair<int, int>>> CountUniqueByYearNonCached(GeohashUniqueGetBinding binding)
-    {
-        using var context = GetMainContext();
-
-        if (binding.OnlyNew)
-        {
-            var counts = await context.Trackings.WhereUser(UserId)
-                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
-                                          .GroupBy(x => x.Timestamp.Year)
-                                          .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                                          .ToListAsync();
-
-            return counts.OrderBy(x => x.Key).ToList();
-        }
-
-        var byYear = await context.Trackings.WhereUser(UserId)
-                                      .WhereTimestampInclusive(binding)
-                                      .Select(x => new { Year = x.Timestamp.Year, Geohash = x.Geohash.Substring(0, binding.Precision) })
-                                      .Distinct()
-                                      .GroupBy(x => x.Year)
-                                      .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                                      .ToListAsync();
-
-        return byYear.OrderBy(x => x.Key).ToList();
-    }
-
-    private async Task<int> CountUniqueNonCached(GeohashUniqueGetBinding binding)
-    {
-        using var context = GetMainContext();
-
-        if (binding.OnlyNew)
-        {
-            return await context.Trackings.WhereUser(UserId)
-                                          .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                                          .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp > binding.From)
-                                          .WhereIf(binding.From.HasValue, x => x.Timestamp >= binding.From)
-                                          .WhereIf(binding.To.HasValue, x => x.Timestamp <= binding.To)
-                                          .CountAsync();
-        }
-
-        return await context.Trackings.WhereUser(UserId)
-                                      .WhereTimestampInclusive(binding)
-                                      .GroupBy(x => x.Geohash.Substring(0, binding.Precision))
-                                      .Select(x => new { x.Key, Timestamp = x.Min(y => y.Timestamp) })
-                                      .CountAsync();
-    }
-
-    private async Task AddGeohashesTo<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<TGeohash> itemFactory) where TGeohash : class, IHasGeohash
-    {
-        foreach (string geohash in geohashes)
-        {
-            var childGeohashes = geohashItems.Where(matchItem)
-                                             .Where(x => x.Geohash.StartsWith(geohash))
-                                             .ToList();
-
-            if (childGeohashes.Any())
-                geohashItems.RemoveRange(childGeohashes);
-
-            var entity = itemFactory();
-            entity.Geohash = geohash;
-            await geohashItems.AddAsync(entity);
-        }
     }
 
     private async Task RemoveGeohashFrom<TGeohash>(DbSet<TGeohash> geohashItems, IEnumerable<string> geohashes, Expression<Func<TGeohash, bool>> matchItem, Func<int, TGeohash> itemFactory) where TGeohash : class, IHasGeohash
@@ -476,6 +435,48 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
             return item;
         }));
         geohashItems.RemoveRange(geohashesToDelete.Distinct());
+    }
+
+    public async Task RemoveGeohashFromCity(string cityValueId, IEnumerable<string> geohashes)
+    {
+        using var context = GetMainContext();
+
+        int cityId = context.Cities.GetId(cityValueId).Value;
+        await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
+        await context.SaveChangesAsync();
+
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CityId, (int?)null));
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RemoveGeohashFromCountry(string countryValueId, IEnumerable<string> geohashes)
+    {
+        using var context = GetMainContext();
+
+        int countryId = context.Countries.GetId(countryValueId).Value;
+        await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
+        await context.SaveChangesAsync();
+
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.CountryId, (int?)null));
+        await context.SaveChangesAsync();
+    }
+
+    public async Task RemoveGeohashFromLocation(string locationValueId, IEnumerable<string> geohashes)
+    {
+        using var context = GetMainContext();
+
+        int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
+        await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
+        await context.SaveChangesAsync();
+
+        await context.Trackings.WhereUser(UserId)
+                               .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
+                               .ExecuteUpdateAsync(x => x.SetProperty(x => x.LocationId, (int?)null));
+        await context.SaveChangesAsync();
     }
 
     private async Task SetCityIdToTrackings(int cityId, IEnumerable<string> geohashes)

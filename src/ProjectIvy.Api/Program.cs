@@ -10,6 +10,19 @@ namespace ProjectIvy.Api;
 
 public class Program
 {
+    public static IHostBuilder CreateHostBuilder(string[] args) =>
+        Host.CreateDefaultBuilder(args)
+            .ConfigureWebHostDefaults(webBuilder =>
+            {
+                webBuilder.UseStartup<Startup>()
+                          .UseKestrel(options =>
+                          {
+                              if (Environment.GetEnvironmentVariable("USE_HTTP2") is not null)
+                                  options.ConfigureEndpointDefaults(x => x.Protocols = HttpProtocols.Http2);
+                          });
+            })
+        .UseSerilog();
+
     public static void Main(string[] args)
     {
         Log.Logger = new LoggerConfiguration().MinimumLevel.Debug()
@@ -35,17 +48,4 @@ public class Program
 
         CreateHostBuilder(args).Build().Run();
     }
-
-    public static IHostBuilder CreateHostBuilder(string[] args) =>
-        Host.CreateDefaultBuilder(args)
-            .ConfigureWebHostDefaults(webBuilder =>
-            {
-                webBuilder.UseStartup<Startup>()
-                          .UseKestrel(options =>
-                          {
-                              if (Environment.GetEnvironmentVariable("USE_HTTP2") is not null)
-                                  options.ConfigureEndpointDefaults(x => x.Protocols = HttpProtocols.Http2);
-                          });
-            })
-        .UseSerilog();
 }

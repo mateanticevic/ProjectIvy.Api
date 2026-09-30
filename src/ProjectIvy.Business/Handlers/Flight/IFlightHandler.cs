@@ -9,13 +9,13 @@ public interface IFlightHandler
 {
     int Count(FlightGetBinding binding);
 
-    Task Create(FlightBinding binding);
-
     Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding);
 
     IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
 
     IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
+
+    Task Create(FlightBinding binding);
 
     PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
 

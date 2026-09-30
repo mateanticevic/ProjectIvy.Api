@@ -9,7 +9,7 @@ public class Movie : UserEntity, IHasTimestamp
     [Key]
     public int Id { get; set; }
 
-    public DateTime Timestamp { get; set; }
+    public string ImdbId { get; set; }
 
     public short MyRating { get; set; }
 
@@ -17,9 +17,9 @@ public class Movie : UserEntity, IHasTimestamp
 
     public int Runtime { get; set; }
 
-    public short Year { get; set; }
-
-    public string ImdbId { get; set; }
+    public DateTime Timestamp { get; set; }
 
     public string Title { get; set; }
+
+    public short Year { get; set; }
 }

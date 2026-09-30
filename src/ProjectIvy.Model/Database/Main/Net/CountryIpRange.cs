@@ -6,14 +6,14 @@ namespace ProjectIvy.Model.Database.Main.Net;
 [Table(nameof(CountryIpRange), Schema = nameof(Net))]
 public class CountryIpRange
 {
-    [Key]
-    public int Id { get; set; }
+    public Common.Country Country { get; set; }
 
     public int CountryId { get; set; }
 
     public long FromIpValue { get; set; }
 
-    public long ToIpValue { get; set; }
+    [Key]
+    public int Id { get; set; }
 
-    public Common.Country Country { get; set; }
+    public long ToIpValue { get; set; }
 }

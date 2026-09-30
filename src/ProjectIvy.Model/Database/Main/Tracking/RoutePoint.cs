@@ -5,7 +5,7 @@ namespace ProjectIvy.Model.Database.Main.Tracking;
 [Table(nameof(RoutePoint), Schema = nameof(Tracking))]
 public class RoutePoint
 {
-    public int RouteId { get; set; }
+    public string Geohash { get; set; }
 
     public int Index { get; set; }
 
@@ -13,7 +13,7 @@ public class RoutePoint
 
     public decimal Lng { get; set; }
 
-    public string Geohash { get; set; }
-
     public Route Route { get; set; }
+
+    public int RouteId { get; set; }
 }

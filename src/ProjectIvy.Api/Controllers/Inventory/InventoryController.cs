@@ -16,6 +16,14 @@ public class InventoryController : BaseController<InventoryController>
     public InventoryController(ILogger<InventoryController> logger, IInventoryHandler inventoryHandler) : base(logger)
         => _inventoryHandler = inventoryHandler;
 
+    [HttpDelete("item/{itemValueId}/Expense/{expenseValueId}")]
+    public async Task<StatusCodeResult> DeleteItemExpense(string itemValueId, string expenseValueId)
+    {
+        await _inventoryHandler.UnlinkItemFromExpense(itemValueId, expenseValueId);
+
+        return new StatusCodeResult(StatusCodes.Status204NoContent);
+    }
+
     [HttpGet("Item")]
     public async Task<PagedView<View.InventoryItem>> GetItems(InventoryItemGetBinding binding)
         => await _inventoryHandler.GetItems(binding);
@@ -32,10 +40,6 @@ public class InventoryController : BaseController<InventoryController>
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpPut("Item/{valueId}")]
-    public async Task UpdateItem(string valueId, [FromBody] InventoryItemBinding binding)
-        => await _inventoryHandler.UpdateItem(valueId, binding);
-
     [HttpPost("item/{itemValueId}/Expense/{expenseValueId}")]
     public async Task<StatusCodeResult> PostItemExpense(string itemValueId, string expenseValueId)
     {
@@ -44,11 +48,7 @@ public class InventoryController : BaseController<InventoryController>
         return new StatusCodeResult(StatusCodes.Status201Created);
     }
 
-    [HttpDelete("item/{itemValueId}/Expense/{expenseValueId}")]
-    public async Task<StatusCodeResult> DeleteItemExpense(string itemValueId, string expenseValueId)
-    {
-        await _inventoryHandler.UnlinkItemFromExpense(itemValueId, expenseValueId);
-
-        return new StatusCodeResult(StatusCodes.Status204NoContent);
-    }
+    [HttpPut("Item/{valueId}")]
+    public async Task UpdateItem(string valueId, [FromBody] InventoryItemBinding binding)
+        => await _inventoryHandler.UpdateItem(valueId, binding);
 }

@@ -6,6 +6,7 @@ namespace ProjectIvy.Model.View.Vendor;
 public class Vendor
 {
     public Vendor() { }
+
     public Vendor(DatabaseModel.Finance.Vendor x)
     {
         City = x.City.ConvertTo(y => new City.City(y));
@@ -13,9 +14,9 @@ public class Vendor
         Id = x.ValueId;
     }
 
+    public City.City City { get; set; }
+
     public string Id { get; set; }
 
     public string Name { get; set; }
-
-    public City.City City { get; set; }
 }

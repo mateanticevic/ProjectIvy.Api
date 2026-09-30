@@ -10,7 +10,7 @@ public class TrackingBinding
 
     public decimal Longitude { get; set; }
 
-    public DateTime Timestamp { get; set; }
-
     public decimal? Speed { get; set; }
+
+    public DateTime Timestamp { get; set; }
 }

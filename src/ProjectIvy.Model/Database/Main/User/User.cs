@@ -6,38 +6,38 @@ namespace ProjectIvy.Model.Database.Main.User;
 [Table(nameof(User), Schema = nameof(User))]
 public class User : IHasCreatedModified
 {
-    [Key]
-    public int Id { get; set; }
+    public Common.City BirthCity { get; set; }
+
+    public int? BirthCityId { get; set; }
+
+    public DateTime Created { get; set; }
+
+    public Transport.Car DefaultCar { get; set; }
 
     public int? DefaultCarId { get; set; }
+
+    public Common.Currency DefaultCurrency { get; set; }
 
     public int DefaultCurrencyId { get; set; }
 
     public int DefaultLanguageId { get; set; }
 
-    public int? BirthCityId { get; set; }
+    public string Email { get; set; }
 
     public string FirstName { get; set; }
 
-    public string LastName { get; set; }
+    public string IcsCalendarUrl { get; set; }
 
-    public string Email { get; set; }
-
-    public string Username { get; set; }
+    [Key]
+    public int Id { get; set; }
 
     public string LastFmUsername { get; set; }
 
-    public string IcsCalendarUrl { get; set; }
-
-    public DateTime Created { get; set; }
+    public string LastName { get; set; }
 
     public DateTime Modified { get; set; }
 
-    public Common.Currency DefaultCurrency { get; set; }
-
-    public Common.City BirthCity { get; set; }
-
-    public Transport.Car DefaultCar { get; set; }
-
     public ICollection<Tracking.Tracking> Trackings { get; set; }
+
+    public string Username { get; set; }
 }

@@ -51,6 +51,21 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
                 return GetNonCached(id);
             });
 
+    private View.User GetNonCached(int? id = null)
+    {
+        id = id.HasValue ? id : UserId;
+
+        using (var db = GetMainContext())
+        {
+            var userEntity = db.Users.Include(x => x.DefaultCar)
+                                     .Include(x => x.DefaultCurrency)
+                                     .Include(x => x.DefaultCar.CarModel)
+                                     .SingleOrDefault(x => x.Id == id);
+
+            return new View.User(userEntity);
+        }
+    }
+
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b)
     {
         using var context = GetMainContext();
@@ -61,15 +76,6 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
                                     .OrderByDescending(x => x.Date)
                                     .Select(x => new KeyValuePair<DateTime, decimal>(x.Date, x.Value))
                                     .ToListAsync();
-    }
-
-    public async Task Update(UserUpdateBinding binding)
-    {
-        using var context = GetMainContext();
-        var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
-        context.Update(binding.ToEntity(context, user));
-
-        await context.SaveChangesAsync();
     }
 
     public async Task SetWeight(decimal weight)
@@ -86,18 +92,12 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
         await context.SaveChangesAsync();
     }
 
-    private View.User GetNonCached(int? id = null)
+    public async Task Update(UserUpdateBinding binding)
     {
-        id = id.HasValue ? id : UserId;
+        using var context = GetMainContext();
+        var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
+        context.Update(binding.ToEntity(context, user));
 
-        using (var db = GetMainContext())
-        {
-            var userEntity = db.Users.Include(x => x.DefaultCar)
-                                     .Include(x => x.DefaultCurrency)
-                                     .Include(x => x.DefaultCar.CarModel)
-                                     .SingleOrDefault(x => x.Id == id);
-
-            return new View.User(userEntity);
-        }
+        await context.SaveChangesAsync();
     }
 }

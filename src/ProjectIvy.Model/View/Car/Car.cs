@@ -19,7 +19,7 @@ public class Car
 
     public short ProductionYear { get; set; }
 
-    public IEnumerable<CarService> Services { get; set; }
-
     public IEnumerable<CarServiceDue> ServiceDue { get; set; }
+
+    public IEnumerable<CarService> Services { get; set; }
 }

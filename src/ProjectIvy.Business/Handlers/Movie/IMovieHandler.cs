@@ -7,10 +7,6 @@ namespace ProjectIvy.Business.Handlers.Movie;
 
 public interface IMovieHandler : IHandler
 {
-    PagedView<View.Movie> Get(MovieGetBinding binding);
-
-    View.Movie Get(string imdbId);
-
     int Count(MovieGetBinding binding);
 
     IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding);
@@ -30,6 +26,10 @@ public interface IMovieHandler : IHandler
     IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
 
     IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding);
+
+    PagedView<View.Movie> Get(MovieGetBinding binding);
+
+    View.Movie Get(string imdbId);
 
     double GetMyRatingAverage(MovieGetBinding binding);
 

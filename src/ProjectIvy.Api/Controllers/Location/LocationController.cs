@@ -15,6 +15,7 @@ namespace ProjectIvy.Api.Controllers.Location;
 public class LocationController : BaseController<LocationController>
 {
     private readonly IGeohashHandler _geohashHandler;
+
     private readonly ILocationHandler _locationHandler;
 
     public LocationController(ILogger<LocationController> logger,
@@ -24,6 +25,10 @@ public class LocationController : BaseController<LocationController>
         _geohashHandler = geohashHandler;
         _locationHandler = locationHandler;
     }
+
+    [HttpDelete("{locationId}/Geohash")]
+    public async Task DeleteLocationGeohash(string locationId, [FromQuery] IEnumerable<string> ids)
+        => await _geohashHandler.RemoveGeohashFromLocation(locationId, ids);
 
     [HttpGet]
     public async Task<PagedView<Model.View.Location.Location>> Get(LocationGetBinding b) => await _locationHandler.Get(b);
@@ -38,6 +43,10 @@ public class LocationController : BaseController<LocationController>
     [HttpGet("{locationId}/Geohashes")]
     public async Task<IEnumerable<string>> GetGeohashes(string locationId) => await _locationHandler.GetGeohashes(locationId);
 
+    [HttpGet("{fromLocationId}/To/{toLocationId}")]
+    public async Task<IActionResult> GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date, [FromQuery] int ignoreLocationsBelow = 60)
+        => Ok(await _locationHandler.FromLocationToLocation(fromLocationId, toLocationId, orderBy, ignoreLocationsBelow));
+
     [HttpGet("Types")]
     public async Task<IEnumerable<LocationType>> GetTypes()
         => await _locationHandler.GetLocationTypes();
@@ -48,14 +57,6 @@ public class LocationController : BaseController<LocationController>
     [HttpPost("{locationId}/Geohash")]
     public async Task PostLocationGeohash(string locationId, [FromBody] IEnumerable<string> geohashes)
         => await _geohashHandler.AddGeohashToLocation(locationId, geohashes);
-
-    [HttpDelete("{locationId}/Geohash")]
-    public async Task DeleteLocationGeohash(string locationId, [FromQuery] IEnumerable<string> ids)
-        => await _geohashHandler.RemoveGeohashFromLocation(locationId, ids);
-
-    [HttpGet("{fromLocationId}/To/{toLocationId}")]
-    public async Task<IActionResult> GetRoutes(string fromLocationId, string toLocationId, [FromQuery] RouteTimeSort orderBy = RouteTimeSort.Date, [FromQuery] int ignoreLocationsBelow = 60)
-        => Ok(await _locationHandler.FromLocationToLocation(fromLocationId, toLocationId, orderBy, ignoreLocationsBelow));
 
     [HttpPost("{locationId}/Scan")]
     public async Task Scan(string locationId) => await _locationHandler.UpdateTrackings(locationId);

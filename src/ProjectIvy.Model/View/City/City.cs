@@ -15,15 +15,15 @@ public class City
         TimeZone = x.Timezone ?? x.Country?.Timezone;
     }
 
-    public string Id { get; set; }
+    public Country.Country Country { get; set; }
 
-    public string Name { get; set; }
+    public string Id { get; set; }
 
     public decimal? Lat { get; set; }
 
     public decimal? Lng { get; set; }
 
-    public Country.Country Country { get; set; }
+    public string Name { get; set; }
 
     public string TimeZone { get; set; }
 }

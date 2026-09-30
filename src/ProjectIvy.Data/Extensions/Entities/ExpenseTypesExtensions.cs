@@ -6,14 +6,12 @@ namespace ProjectIvy.Data.Extensions.Entities;
 
 public static class ExpenseTypesExtensions
 {
-    public static ExpenseType ToParentType(this ExpenseType type)
+    public static IEnumerable<ExpenseType> GetAll(this IQueryable<ExpenseType> types)
     {
-        while (type.ParentTypeId.HasValue)
-        {
-            type = type.ParentType;
-        }
+        var all = types.ToList();
 
-        return type;
+        all.ForEach(x => { if (x.ParentTypeId.HasValue) x.ParentType = types.SingleOrDefault(y => y.Id == x.ParentTypeId.Value); });
+        return all;
     }
 
     public static IEnumerable<int> ToChildTypeIds(this IEnumerable<ExpenseType> types, IEnumerable<int> parentTypeIds)
@@ -25,6 +23,16 @@ public static class ExpenseTypesExtensions
         return firstLevelIds.Concat(recursiveIds);
     }
 
+    public static ExpenseType ToParentType(this ExpenseType type)
+    {
+        while (type.ParentTypeId.HasValue)
+        {
+            type = type.ParentType;
+        }
+
+        return type;
+    }
+
     public static IEnumerable<int> ToParentTypeIds(this ExpenseType type)
     {
         while (type.ParentTypeId.HasValue)
@@ -32,13 +40,5 @@ public static class ExpenseTypesExtensions
             yield return type.ParentTypeId.Value;
             type = type.ParentType;
         }
-    }
-
-    public static IEnumerable<ExpenseType> GetAll(this IQueryable<ExpenseType> types)
-    {
-        var all = types.ToList();
-
-        all.ForEach(x => { if (x.ParentTypeId.HasValue) x.ParentType = types.SingleOrDefault(y => y.Id == x.ParentTypeId.Value); });
-        return all;
     }
 }

@@ -26,13 +26,13 @@ public class InventoryItem
             : null;
     }
 
-    public string Id { get; set; }
-
-    public string Name { get; set; }
+    public DateTime? Acquired { get; set; }
 
     public BrandView Brand { get; set; }
 
-    public DateTime? Acquired { get; set; }
+    public string Id { get; set; }
+
+    public string Name { get; set; }
 
     public Ownership Ownership { get; set; }
 }

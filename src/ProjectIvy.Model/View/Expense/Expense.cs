@@ -30,45 +30,45 @@ public class Expense
         InstallmentRef = x.InstallmentRef;
     }
 
-    public string ExternalId { get; set; }
-
     public decimal Amount { get; set; }
-
-    public decimal? ParentCurrencyExchangeRate { get; set; }
-
-    public string Comment { get; set; }
 
     public Card.Card Card { get; set; }
 
+    public string Comment { get; set; }
+
     public Currency.Currency Currency { get; set; }
-
-    public IEnumerable<ExpenseFile> Files { get; set; }
-
-    public decimal? ParentAmount { get; set; }
-
-    public Currency.Currency ParentCurrency { get; set; }
 
     public DateTime Date { get; set; }
 
     public DateTime DatePaid { get; set; }
 
-    public DateTime? Modified { get; set; }
-
-    public DateTime? Timestamp { get; set; }
-
     public ExpenseType.ExpenseType ExpenseType { get; set; }
 
-    public Poi.Poi Poi { get; set; }
+    public string ExternalId { get; set; }
+
+    public IEnumerable<ExpenseFile> Files { get; set; }
 
     public string Id { get; set; }
 
     public string InstallmentRef { get; set; }
 
+    public DateTime? Modified { get; set; }
+
+    public string Name => $"[{ExpenseType.Name}] {Comment} ({Amount} {Currency.Code})";
+
     public bool NeedsReview { get; set; }
+
+    public decimal? ParentAmount { get; set; }
+
+    public Currency.Currency ParentCurrency { get; set; }
+
+    public decimal? ParentCurrencyExchangeRate { get; set; }
 
     public PaymentType.PaymentType PaymentType { get; set; }
 
-    public Vendor.Vendor Vendor { get; set; }
+    public Poi.Poi Poi { get; set; }
 
-    public string Name => $"[{ExpenseType.Name}] {Comment} ({Amount} {Currency.Code})";
+    public DateTime? Timestamp { get; set; }
+
+    public Vendor.Vendor Vendor { get; set; }
 }

@@ -16,9 +16,12 @@ namespace ProjectIvy.Api.Mcp;
 public class ExpenseTools
 {
     private readonly IExpenseHandler _expenseHandler;
+
     private readonly IExpenseTypeHandler _expenseTypeHandler;
-    private readonly IUserHandler _userHandler;
+
     private readonly ILogger<ExpenseTools> _logger;
+
+    private readonly IUserHandler _userHandler;
 
     public ExpenseTools(IExpenseHandler expenseHandler,
                         IExpenseTypeHandler expenseTypeHandler,

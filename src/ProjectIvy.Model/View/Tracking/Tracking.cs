@@ -20,21 +20,21 @@ public class Tracking : ITracking
 
     public double? Altitude { get; set; }
 
+    public decimal Lat { get; set; }
+
     public decimal Latitude
     {
         get => Lat;
         set => Lat = value;
     }
 
+    public decimal Lng { get; set; }
+
     public decimal Longitude
     {
         get => Lng;
         set => Lng = value;
     }
-
-    public decimal Lat { get; set; }
-
-    public decimal Lng { get; set; }
 
     public double? Speed { get; set; }
 
