@@ -11,6 +11,7 @@ public class User
         FirstName = x.FirstName;
         LastName = x.LastName;
         Email = x.Email;
+        TrackingStartDate = x.TrackingStartDate;
         Username = x.Username;
     }
 
@@ -23,6 +24,8 @@ public class User
     public string FirstName { get; set; }
 
     public string LastName { get; set; }
+
+    public DateTime? TrackingStartDate { get; set; }
 
     public string Username { get; set; }
 }

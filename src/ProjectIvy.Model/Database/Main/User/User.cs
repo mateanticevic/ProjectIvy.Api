@@ -39,5 +39,7 @@ public class User : IHasCreatedModified
 
     public ICollection<Tracking.Tracking> Trackings { get; set; }
 
+    public DateTime? TrackingStartDate { get; set; }
+
     public string Username { get; set; }
 }
