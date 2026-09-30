@@ -20,23 +20,23 @@ public class FlightController : BaseController<FlightController>
     }
 
     [HttpGet]
-    public PagedView<Model.View.Flight.Flight> Get([FromQuery] FlightGetBinding binding) => _flightHandler.Get(binding);
+    public async Task<PagedView<Model.View.Flight.Flight>> Get([FromQuery] FlightGetBinding binding) => await _flightHandler.Get(binding);
 
     [HttpGet("Count")]
-    public IActionResult GetCount(FlightGetBinding binding) => Ok(_flightHandler.Count(binding));
+    public async Task<IActionResult> GetCount(FlightGetBinding binding) => Ok(await _flightHandler.Count(binding));
 
     [HttpGet("Count/ByAirline")]
     public async Task<IEnumerable<KeyValuePair<Model.View.Airline.Airline, int>>> GetCountByAirline(FlightGetBinding binding)
         => await _flightHandler.CountByAirline(binding);
 
     [HttpGet("Count/ByAirport")]
-    public IActionResult GetCountByAirport(FlightGetBinding binding) => Ok(_flightHandler.CountByAirport(binding));
+    public async Task<IActionResult> GetCountByAirport(FlightGetBinding binding) => Ok(await _flightHandler.CountByAirport(binding));
 
     [HttpGet("Count/ByYear")]
-    public IActionResult GetCountByYear(FlightGetBinding binding) => Ok(_flightHandler.CountByYear(binding));
+    public async Task<IActionResult> GetCountByYear(FlightGetBinding binding) => Ok(await _flightHandler.CountByYear(binding));
 
     [HttpGet("Distance/ByYear")]
-    public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear() => _flightHandler.GetDistanceByYear();
+    public async Task<IEnumerable<KeyValuePair<int, int>>> GetDistanceByYear() => await _flightHandler.GetDistanceByYear();
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] FlightBinding binding)

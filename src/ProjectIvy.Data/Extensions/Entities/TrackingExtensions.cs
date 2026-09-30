@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using GeoCoordinatePortable;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Database.Main.Tracking;
 
 namespace ProjectIvy.Data.Extensions.Entities;
@@ -18,6 +20,22 @@ public static class TrackingExtensions
                                 .ToList()
                                 .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, x.Altitude ?? 0))
                                 .ToList();
+        double sum = 0;
+        for (var i = 0; i < filtered.Count() - 1; i++)
+        {
+            sum += filtered[i].GetDistanceTo(filtered[i + 1]);
+        }
+
+        return (int)sum;
+    }
+
+    public static async Task<int> DistanceAsync(this IQueryable<Tracking> trackings, DateTime from, DateTime to)
+    {
+        var filtered = (await trackings.Where(x => x.Timestamp >= from && x.Timestamp <= to)
+                                      .OrderBy(x => x.Timestamp)
+                                      .ToListAsync())
+                                      .Select(x => new GeoCoordinate((double)x.Latitude, (double)x.Longitude, x.Altitude ?? 0))
+                                      .ToList();
         double sum = 0;
         for (var i = 0; i < filtered.Count() - 1; i++)
         {

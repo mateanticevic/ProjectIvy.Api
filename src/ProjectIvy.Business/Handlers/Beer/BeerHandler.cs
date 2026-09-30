@@ -22,7 +22,7 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     {
         using var context = GetMainContext();
         binding.BrandId = brandValueId;
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         await context.Beers.AddAsync(entity);
         await context.SaveChangesAsync();
 
@@ -32,7 +32,7 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     public async Task<string> CreateBrand(BrandBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
 
         await context.BeerBrands.AddAsync(entity);
         await context.SaveChangesAsync();
@@ -54,7 +54,7 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     public async Task<PagedView<View.Beer>> GetBeers(BeerGetBinding binding)
     {
         using var context = GetMainContext();
-        int? brandId = context.BeerBrands.GetId(binding.BrandId);
+        int? brandId = await context.BeerBrands.GetIdAsync(binding.BrandId);
 
         return await context
             .Beers.Include(x => x.BeerStyle)
@@ -125,7 +125,7 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     {
         using var context = GetMainContext();
         var beer = await context.Beers.SingleOrDefaultAsync(x => x.ValueId == id);
-        var entity = binding.ToEntity(context, beer);
+        var entity = await binding.ToEntity(context, beer);
 
         await context.SaveChangesAsync();
     }
@@ -134,7 +134,7 @@ public class BeerHandler : Handler<BeerHandler>, IBeerHandler
     {
         using var context = GetMainContext();
         var brand = await context.BeerBrands.SingleOrDefaultAsync(x => x.ValueId == id);
-        var entity = binding.ToEntity(context, brand);
+        var entity = await binding.ToEntity(context, brand);
 
         await context.SaveChangesAsync();
         ClearCache();

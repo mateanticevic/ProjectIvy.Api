@@ -31,39 +31,39 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         _geohashHandler = geohashHandler;
     }
 
-    public int Count(FilteredBinding binding)
+    public async Task<int> Count(FilteredBinding binding)
     {
         using var db = GetMainContext();
         var userTrackings = db.Trackings.WhereUser(UserId)
                                         .WhereTimestampInclusive(binding);
 
-        return userTrackings.Count();
+        return await userTrackings.CountAsync();
     }
 
-    public IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding)
+    public async Task<IEnumerable<GroupedByMonth<int>>> CountByMonth(FilteredBinding binding)
     {
         using var context = GetMainContext();
-        return context.Trackings.WhereUser(UserId)
+        return await context.Trackings.WhereUser(UserId)
                       .WhereTimestampInclusive(binding.From, binding.To)
                       .GroupBy(x => new { x.Timestamp.Year, x.Timestamp.Month })
                       .OrderByDescending(x => x.Key.Year)
                       .ThenByDescending(x => x.Key.Month)
                       .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                      .ToList();
+                      .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(FilteredBinding binding)
     {
         using var context = GetMainContext();
-        return context.Trackings.WhereUser(UserId)
+        return await context.Trackings.WhereUser(UserId)
                                 .WhereTimestampInclusive(binding.From, binding.To)
                                 .GroupBy(x => x.Timestamp.Year)
                                 .OrderByDescending(x => x.Key)
                                 .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
-                                .ToList();
+                                .ToListAsync();
     }
 
-    public int CountUnique(FilteredBinding binding)
+    public Task<int> CountUnique(FilteredBinding binding)
     {
         throw new NotImplementedException();
     }
@@ -139,23 +139,23 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         await context.SaveChangesAsync();
     }
 
-    public IEnumerable<View.Tracking> Get(TrackingGetBinding binding)
+    public async Task<IEnumerable<View.Tracking>> Get(TrackingGetBinding binding)
     {
         using var db = GetMainContext();
-        return db.Trackings.WhereUser(UserId)
+        return (await db.Trackings.WhereUser(UserId)
                            .WhereTimestampInclusive(binding)
                            .WhereIf(binding.BottomRight != null && binding.TopLeft != null, x => x.Longitude > binding.TopLeft.Longitude && x.Longitude < binding.BottomRight.Longitude && x.Latitude < binding.TopLeft.Latitude && x.Latitude > binding.BottomRight.Latitude)
                            .OrderBy(x => x.Timestamp)
-                           .ToList()
+                           .ToListAsync())
                            .Select(x => new View.Tracking(x));
     }
 
-    public double GetAverageSpeed(FilteredBinding binding)
+    public async Task<double> GetAverageSpeed(FilteredBinding binding)
     {
         using var context = GetMainContext();
-        var averageSpeed = context.Trackings.WhereUser(UserId)
+        var averageSpeed = await context.Trackings.WhereUser(UserId)
                                             .WhereTimestampInclusive(binding)
-                                            .Average(x => x.Speed);
+                                            .AverageAsync(x => x.Speed);
 
         return averageSpeed ?? 0;
     }
@@ -223,18 +223,18 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         };
     }
 
-    public int GetDistance(FilteredBinding binding)
+    public async Task<int> GetDistance(FilteredBinding binding)
     {
         string cacheKey = BuildUserCacheKey(CacheKeyGenerator.TrackingsGetDistance(binding.From, binding.To));
 
-        return MemoryCache.GetOrCreate(cacheKey, cacheEntry =>
+        return await MemoryCache.GetOrCreateAsync(cacheKey, async cacheEntry =>
         {
             cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-            return GetDistanceNonCached(binding);
+            return await GetDistanceNonCached(binding);
         });
     }
 
-    private int GetDistanceNonCached(FilteredBinding binding)
+    private async Task<int> GetDistanceNonCached(FilteredBinding binding)
     {
 
         binding.From = binding.From ?? DateTime.MinValue;
@@ -248,28 +248,28 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
             var from = binding.From.Value.TimeOfDay != TimeSpan.Zero ? binding.From.Value.Date.AddDays(1) : binding.From.Value;
             var to = binding.To.Value.Date;
 
-            total = db.TrackingDistances.WhereUser(UserId)
+            total = await db.TrackingDistances.WhereUser(UserId)
                                             .WhereTimestampFromInclusive(from, to)
-                                            .Sum(x => x.DistanceInMeters);
+                                            .SumAsync(x => x.DistanceInMeters);
         }
 
-        var lastDate = db.TrackingDistances.WhereUser(UserId)
+        var lastDate = (await db.TrackingDistances.WhereUser(UserId)
                                            .OrderByDescending(x => x.Timestamp)
-                                           .FirstOrDefault()
+                                           .FirstOrDefaultAsync())
                                            .Timestamp;
 
         if (lastDate > binding.From.Value && binding.From.Value.TimeOfDay != TimeSpan.Zero)
         {
             var to = binding.From.Value.Date == binding.To.Value.Date ? binding.To.Value : binding.From.Value.Date.AddDays(1);
 
-            total += db.Trackings.WhereUser(UserId)
-                                 .Distance(binding.From.Value, to);
+            total += await db.Trackings.WhereUser(UserId)
+                                 .DistanceAsync(binding.From.Value, to);
         }
 
         if (lastDate > binding.To.Value && binding.To.Value.TimeOfDay != TimeSpan.Zero && binding.From.Value.Date != binding.To.Value.Date)
         {
-            total += db.Trackings.WhereUser(UserId)
-                                 .Distance(binding.To.Value.Date, binding.To.Value);
+            total += await db.Trackings.WhereUser(UserId)
+                                 .DistanceAsync(binding.To.Value.Date, binding.To.Value);
         }
 
         binding.To = binding.To.HasValue ? binding.To : DateTime.Now;
@@ -279,8 +279,8 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
             var from = lastDate.AddDays(1) < binding.From ? binding.From : lastDate.AddDays(1);
 
             // TODO: Include last tracking from previous date
-            total += db.Trackings.WhereUser(UserId)
-                                 .Distance(from.Value, binding.To.Value);
+            total += await db.Trackings.WhereUser(UserId)
+                                 .DistanceAsync(from.Value, binding.To.Value);
         }
 
         return total;
@@ -339,12 +339,12 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
                                  .FirstOrDefaultAsync();
     }
 
-    public double GetMaxSpeed(FilteredBinding binding)
+    public async Task<double> GetMaxSpeed(FilteredBinding binding)
     {
         using var context = GetMainContext();
-        var maxSpeed = context.Trackings.WhereUser(UserId)
+        var maxSpeed = await context.Trackings.WhereUser(UserId)
                                         .WhereTimestampInclusive(binding)
-                                        .Max(x => x.Speed);
+                                        .MaxAsync(x => x.Speed);
 
         return maxSpeed ?? 0;
     }
@@ -368,7 +368,7 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
         await db.SaveChangesAsync();
     }
 
-    public bool ImportFromKml(XDocument kml)
+    public async Task<bool> ImportFromKml(XDocument kml)
     {
         var trackings = KmlHandler.ParseKml(kml)
                                   .Select(x => (Model.Database.Main.Tracking.Tracking)x);
@@ -379,8 +379,8 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
             t.UserId = UserId;
         }
 
-        db.Trackings.AddRange(trackings);
-        db.SaveChanges();
+        await db.Trackings.AddRangeAsync(trackings);
+        await db.SaveChangesAsync();
 
         return true;
     }

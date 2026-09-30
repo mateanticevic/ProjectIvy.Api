@@ -20,10 +20,10 @@ public class CallHandler : Handler<CallHandler>, ICallHandler
     public async Task<string> Create(CallBinding binding)
     {
         using var context = GetMainContext();
-        if (context.CallBlacklist.WhereUser(UserId).Any(x => x.Number == binding.Number))
+        if (await context.CallBlacklist.WhereUser(UserId).AnyAsync(x => x.Number == binding.Number))
             throw new ResourceForbiddenException();
 
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
 
         await context.Calls.AddAsync(entity);

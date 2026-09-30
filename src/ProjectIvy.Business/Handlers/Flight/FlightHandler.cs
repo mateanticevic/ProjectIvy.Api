@@ -16,12 +16,12 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
     {
     }
 
-    public int Count(FlightGetBinding binding)
+    public async Task<int> Count(FlightGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Flights.WhereUser(UserId)
+        return await context.Flights.WhereUser(UserId)
                               .Where(binding)
-                              .Count();
+                              .CountAsync();
     }
 
     public async Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding)
@@ -37,7 +37,7 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                                     .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<Views.Airport.Airport, int>>> CountByAirport(FlightGetBinding binding)
     {
         using var context = GetMainContext();
         var userAirports = context.Flights.WhereUser(UserId)
@@ -47,7 +47,7 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                                           .Include(x => x.OriginAirport)
                                           .ThenInclude(x => x.Poi);
 
-        return userAirports.Select(x => x.DestinationAirport)
+        return await userAirports.Select(x => x.DestinationAirport)
                            .Concat(userAirports.Select(x => x.OriginAirport))
                            .GroupBy(x => new
                            {
@@ -66,37 +66,37 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                                    Location = new Model.View.LatLng(x.Key.Latitude, x.Key.Longitude)
                                }
                            }, x.Count()))
-                           .ToList();
+                           .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(FlightGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Flights.WhereUser(UserId)
+        return await context.Flights.WhereUser(UserId)
                               .Where(binding)
                               .GroupBy(x => x.DateOfDepartureLocal.Year)
                               .OrderByDescending(x => x.Key)
                               .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                              .ToList();
+                              .ToListAsync();
     }
 
     public async Task Create(FlightBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
 
         await context.Flights.AddAsync(entity);
         await context.SaveChangesAsync();
     }
 
-    public PagedView<Views.Flight.Flight> Get(FlightGetBinding binding)
+    public async Task<PagedView<Views.Flight.Flight>> Get(FlightGetBinding binding)
     {
         using var context = GetMainContext();
-        int? destinationAirportId = binding.DestinationId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.DestinationId)?.Id;
-        int? originAirportId = binding.OriginId is null ? null : context.Airports.SingleOrDefault(x => x.Iata == binding.OriginId)?.Id;
+        int? destinationAirportId = binding.DestinationId is null ? null : (await context.Airports.SingleOrDefaultAsync(x => x.Iata == binding.DestinationId))?.Id;
+        int? originAirportId = binding.OriginId is null ? null : (await context.Airports.SingleOrDefaultAsync(x => x.Iata == binding.OriginId))?.Id;
 
-        return context.Flights.WhereUser(UserId)
+        return await context.Flights.WhereUser(UserId)
                               .Where(binding)
                               .WhereIf(destinationAirportId, x => x.DestinationAirportId == destinationAirportId)
                               .WhereIf(originAirportId, x => x.OriginAirportId == originAirportId)
@@ -107,14 +107,14 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                               .ThenInclude(x => x.Poi)
                               .OrderByDescending(x => x.DateOfArrivalLocal)
                               .Select(x => new Views.Flight.Flight(x))
-                              .ToPagedView(binding);
+                              .ToPagedViewAsync(binding);
     }
 
-    public IEnumerable<KeyValuePair<int, int>> GetDistanceByYear()
+    public async Task<IEnumerable<KeyValuePair<int, int>>> GetDistanceByYear()
     {
         using var context = GetMainContext();
 
-        return context.Flights.WhereUser(UserId)
+        return (await context.Flights.WhereUser(UserId)
                               .Include(x => x.Airline)
                               .Include(x => x.DestinationAirport)
                               .ThenInclude(x => x.Poi)
@@ -122,7 +122,7 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
                               .ThenInclude(x => x.Poi)
                               .OrderByDescending(x => x.DateOfArrivalLocal)
                               .Select(x => new Views.Flight.Flight(x))
-                              .ToList()
+                              .ToListAsync())
                               .GroupBy(x => x.DepartureLocal.Year)
                               .Select(g => new KeyValuePair<int, int>(g.Key, g.Sum(x => x.DistanceInKm ?? 0)));
     }
@@ -132,7 +132,7 @@ public class FlightHandler : Handler<FlightHandler>, IFlightHandler
         using var context = GetMainContext();
 
         var entity = await context.Flights.WhereUser(UserId).SingleOrDefaultAsync(x => x.ValueId == valueId);
-        entity = flight.ToEntity(context, entity);
+        entity = await flight.ToEntity(context, entity);
 
         context.Flights.Update(entity);
         await context.SaveChangesAsync();

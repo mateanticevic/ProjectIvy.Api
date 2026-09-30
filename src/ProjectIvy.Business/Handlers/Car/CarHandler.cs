@@ -15,34 +15,34 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
 {
     public CarHandler(IHandlerContext<CarHandler> context) : base(context) { }
 
-    public void Create(string valueId, CarBinding car)
+    public async Task Create(string valueId, CarBinding car)
     {
         using var context = GetMainContext();
         var entity = car.ToEntity(context);
         entity.ValueId = valueId;
         entity.UserId = UserId;
 
-        context.Cars.Add(entity);
-        context.SaveChanges();
+        await context.Cars.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
-    public DateTime CreateLog(CarLogBinding binding)
+    public async Task<DateTime> CreateLog(CarLogBinding binding)
     {
         using var context = GetMainContext();
         if (string.IsNullOrWhiteSpace(binding.CarValueId))
-            binding.CarValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId).DefaultCar.ValueId;
+            binding.CarValueId = (await context.Users.Include(x => x.DefaultCar).SingleOrDefaultAsync(x => x.Id == UserId)).DefaultCar.ValueId;
 
-        var lastEntry = GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
+        var lastEntry = await GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
 
         if (lastEntry != null && binding.Odometer < lastEntry.Odometer)
         {
             throw new InvalidRequestException($"Odometer must be {lastEntry.Odometer}km or higher.");
         }
 
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
 
-        context.CarLogs.Add(entity);
-        context.SaveChanges();
+        await context.CarLogs.AddAsync(entity);
+        await context.SaveChangesAsync();
 
         return entity.Timestamp;
     }
@@ -50,58 +50,58 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<string> CreateService(string carValueId, CarServiceBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
-        entity.CarId = context.Cars.GetId(carValueId).Value;
+        var entity = await binding.ToEntity(context);
+        entity.CarId = (await context.Cars.GetIdAsync(carValueId)).Value;
 
-        context.CarServices.Add(entity);
+        await context.CarServices.AddAsync(entity);
         await context.SaveChangesAsync();
 
         return entity.ValueId;
     }
 
-    public void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding)
+    public async Task CreateTorqueLog(string carValueId, CarLogTorqueBinding binding)
     {
         using var context = GetMainContext();
-        int? carId = context.Cars.GetId(carValueId);
+        int? carId = await context.Cars.GetIdAsync(carValueId);
 
         var entity = binding.ToEntity();
         entity.CarId = carId.Value;
-        context.CarLogs.Add(entity);
-        context.SaveChanges();
+        await context.CarLogs.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
-    public IEnumerable<View.Car> Get()
+    public async Task<IEnumerable<View.Car>> Get()
     {
         using var context = GetMainContext();
-        return context.Cars.WhereUser(UserId)
+        return (await context.Cars.WhereUser(UserId)
                            .Include(x => x.CarModel)
                            .ThenInclude(x => x.Manufacturer)
-                           .ToList()
+                           .ToListAsync())
                            .Select(x => new View.Car(x))
                            .ToList();
     }
 
-    public View.Car Get(string carId)
+    public async Task<View.Car> Get(string carId)
     {
         using var context = GetMainContext();
-        var car = context.Cars.WhereUser(UserId)
+        var car = await context.Cars.WhereUser(UserId)
                               .Include(x => x.CarServices)
                               .Include($"{nameof(Model.Database.Main.Transport.Car.CarServices)}.{nameof(Model.Database.Main.Transport.CarServiceType)}")
                               .Include(x => x.CarModel)
                               .ThenInclude(x => x.Manufacturer)
-                              .SingleOrDefault(x => x.ValueId == carId);
+                              .SingleOrDefaultAsync(x => x.ValueId == carId);
 
-        var lastLog = context.CarLogs.Where(x => x.Odometer.HasValue && x.CarId == car.Id)
+        var lastLog = await context.CarLogs.Where(x => x.Odometer.HasValue && x.CarId == car.Id)
                                      .OrderByDescending(x => x.Odometer)
-                                     .FirstOrDefault();
+                                     .FirstOrDefaultAsync();
 
         int averageKmPerDay = lastLog.Odometer.Value / lastLog.Timestamp.Subtract(car.FirstRegistered.Value).Days;
 
         var serviceDue = new List<CarServiceDue>();
-        foreach (var serviceInterval in context.CarServiceIntervals
+        foreach (var serviceInterval in await context.CarServiceIntervals
                                                .Include(x => x.CarServiceType)
                                                .Where(x => x.CarModelId == car.CarModelId && (x.Days.HasValue || x.Range.HasValue))
-                                               .ToList())
+                                               .ToListAsync())
         {
             var lastService = car.CarServices.Where(x => x.CarServiceTypeId == serviceInterval.CarServiceTypeId)
                                              .OrderByDescending(x => x.Date)
@@ -122,7 +122,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
             }
             else
             {
-                int? aproximateOdometer = context.CarLogs.GetAproximateOdometer(car.Id, lastService.Date);
+                int? aproximateOdometer = await context.CarLogs.GetAproximateOdometerAsync(car.Id, lastService.Date);
                 int? dueIn = serviceInterval.Range.HasValue ? aproximateOdometer + serviceInterval.Range - lastLog.Odometer : null;
 
                 serviceDue.Add(new CarServiceDue()
@@ -136,9 +136,18 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
             }
         }
 
+        var services = new List<CarService>();
+        foreach (var service in car.CarServices.OrderByDescending(x => x.Date))
+        {
+            services.Add(new CarService(service)
+            {
+                Odometer = await context.CarLogs.GetAproximateOdometerAsync(car.Id, service.Date) ?? 0
+            });
+        }
+
         return new(car)
         {
-            Services = car.CarServices.OrderByDescending(x => x.Date).Select(x => new CarService(x) { Odometer = context.CarLogs.GetAproximateOdometer(car.Id, x.Date) ?? 0 }).ToList(),
+            Services = services,
             ServiceDue = serviceDue
         };
     }
@@ -160,17 +169,17 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetAverageConsumptionByYear(string carValueId)
     {
         var kilometersByYear = await GetKilometersByYear(carValueId);
-        var fuelByYear = GetFuelByYear(carValueId);
+        var fuelByYear = await GetFuelByYear(carValueId);
 
         return fuelByYear.Join(kilometersByYear, x => x.Key, x => x.Key, (x, y) => new KeyValuePair<int, decimal>(x.Key, Math.Round(x.Value / (y.Value / 100), 2)));
     }
 
-    public IEnumerable<KeyValuePair<int, decimal>> GetFuelByMonth(string carValueId)
+    public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetFuelByMonth(string carValueId)
     {
         using var context = GetMainContext();
-        return context.Cars.WhereUser(UserId)
+        return (await context.Cars.WhereUser(UserId)
                            .Include(x => x.CarFuelings)
-                           .Single(x => x.ValueId == carValueId)
+                           .SingleAsync(x => x.ValueId == carValueId))
                            .CarFuelings
                            .GroupBy(x => x.Timestamp.Month)
                            .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.AmountInLiters)))
@@ -178,12 +187,12 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
                            .ToList();
     }
 
-    public IEnumerable<KeyValuePair<int, decimal>> GetFuelByYear(string carValueId)
+    public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetFuelByYear(string carValueId)
     {
         using var context = GetMainContext();
-        return context.Cars.WhereUser(UserId)
+        return (await context.Cars.WhereUser(UserId)
                            .Include(x => x.CarFuelings)
-                           .Single(x => x.ValueId == carValueId)
+                           .SingleAsync(x => x.ValueId == carValueId))
                            .CarFuelings
                            .GroupBy(x => x.Timestamp.Year)
                            .Select(x => new KeyValuePair<int, decimal>(x.Key, x.Sum(y => y.AmountInLiters)))
@@ -195,9 +204,9 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     {
         using var context = GetMainContext();
 
-        return context.Cars.WhereUser(UserId)
+        return (await context.Cars.WhereUser(UserId)
                            .Include(x => x.CarFuelings)
-                           .Single(x => x.ValueId == carValueId)
+                           .SingleAsync(x => x.ValueId == carValueId))
                            .CarFuelings
                            .OrderByDescending(x => x.Timestamp)
                            .Select(x => new CarFueling(x))
@@ -207,7 +216,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carValueId)
     {
         using var context = GetMainContext();
-        var car = context.Cars.WhereUser(UserId).Single(x => x.ValueId == carValueId);
+        var car = await context.Cars.WhereUser(UserId).SingleAsync(x => x.ValueId == carValueId);
 
         var years = Enumerable.Range(car.FirstRegistered.Value.Year, DateTime.Now.Year - car.FirstRegistered.Value.Year + 1);
 
@@ -215,8 +224,8 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
 
         foreach (int year in years)
         {
-            int fromOdometer = context.CarLogs.GetAproximateOdometer(car.Id, new DateTime(year, 1, 1)) ?? 0;
-            int toOdometer = context.CarLogs.GetAproximateOdometer(car.Id, new DateTime(year + 1, 1, 1)) ?? 0;
+            int fromOdometer = await context.CarLogs.GetAproximateOdometerAsync(car.Id, new DateTime(year, 1, 1)) ?? 0;
+            int toOdometer = await context.CarLogs.GetAproximateOdometerAsync(car.Id, new DateTime(year + 1, 1, 1)) ?? 0;
 
             kilometersByYear.Add(new KeyValuePair<int, int>(year, toOdometer - fromOdometer));
         }
@@ -224,33 +233,33 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
         return kilometersByYear.OrderBy(x => x.Key);
     }
 
-    public View.CarLog GetLatestLog(CarLogGetBinding binding)
+    public async Task<View.CarLog> GetLatestLog(CarLogGetBinding binding)
     {
         using var context = GetMainContext();
-        string carValueId = context.Users.Include(x => x.DefaultCar).SingleOrDefault(x => x.Id == UserId).DefaultCar.ValueId;
-        return GetLatestLog(carValueId, binding);
+        string carValueId = (await context.Users.Include(x => x.DefaultCar).SingleOrDefaultAsync(x => x.Id == UserId)).DefaultCar.ValueId;
+        return await GetLatestLog(carValueId, binding);
     }
 
-    public View.CarLog GetLatestLog(string carValueId, CarLogGetBinding binding)
+    public async Task<View.CarLog> GetLatestLog(string carValueId, CarLogGetBinding binding)
     {
         using var db = GetMainContext();
-        int? carId = db.Cars.WhereUser(UserId).GetId(carValueId);
+        int? carId = await db.Cars.WhereUser(UserId).GetIdAsync(carValueId);
 
-        var carLog = db.CarLogs
+        var carLog = await db.CarLogs
                        .Where(x => x.CarId == carId)
                        .WhereIf(binding.HasOdometer.HasValue, x => x.Odometer.HasValue == binding.HasOdometer.Value)
                        .OrderByDescending(x => x.Timestamp)
-                       .FirstOrDefault();
+                       .FirstOrDefaultAsync();
 
         return carLog == null ? null : new View.CarLog(carLog);
     }
 
-    public IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding)
+    public async Task<IEnumerable<View.CarLogBySession>> GetLogBySession(string carValueId, CarLogGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Cars.WhereUser(UserId)
+        return (await context.Cars.WhereUser(UserId)
                            .Include(x => x.CarLogs)
-                           .SingleOrDefault(x => x.ValueId == carValueId)
+                           .SingleOrDefaultAsync(x => x.ValueId == carValueId))
                            .CarLogs
                            .AsQueryable()
                            .Where(binding)
@@ -271,12 +280,12 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
 
     }
 
-    public int GetLogCount(string carValueId)
+    public async Task<int> GetLogCount(string carValueId)
     {
         using var db = GetMainContext();
-        return db.Cars.WhereUser(UserId)
+        return (await db.Cars.WhereUser(UserId)
                             .Include(x => x.CarLogs)
-                            .SingleOrDefault(x => x.ValueId == carValueId)
+                            .SingleOrDefaultAsync(x => x.ValueId == carValueId))
                             .CarLogs
                             .Count;
     }
@@ -284,7 +293,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<IEnumerable<View.CarLog>> GetLogs(string carValueId, CarLogGetBinding binding)
     {
         using var context = GetMainContext();
-        int? carId = context.Cars.GetId(carValueId);
+        int? carId = await context.Cars.GetIdAsync(carValueId);
 
         return await context.CarLogs
                             .Where(x => x.CarId == carId.Value)
@@ -297,7 +306,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<IEnumerable<View.CarServiceInterval>> GetServiceIntervals(string carModelValueId)
     {
         using var context = GetMainContext();
-        int? carModelId = context.CarModels.GetId(carModelValueId);
+        int? carModelId = await context.CarModels.GetIdAsync(carModelValueId);
 
         return await context.CarServiceIntervals.Where(x => x.CarModelId == carModelId)
                                                 .Include(x => x.CarServiceType)
@@ -308,7 +317,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     public async Task<IEnumerable<View.CarServiceType>> GetServiceTypes(string carModelValueId)
     {
         using var context = GetMainContext();
-        int? carModelId = context.CarModels.GetId(carModelValueId);
+        int? carModelId = await context.CarModels.GetIdAsync(carModelValueId);
 
         return await context.CarServiceIntervals.Where(x => x.CarModelId == carModelId)
                                                 .Include(x => x.CarServiceType)
@@ -321,7 +330,7 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
     {
         using var context = GetMainContext();
 
-        int carId = context.Cars.WhereUser(UserId).GetId(carValueId).Value;
+        int carId = (await context.Cars.WhereUser(UserId).GetIdAsync(carValueId)).Value;
         var expense = await context.Expenses.WhereUser(UserId)
                                             .SingleOrDefaultAsync(x => x.Date == b.Date && x.Comment != null && x.Comment.Contains(b.AmountInLiters.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture)));
 

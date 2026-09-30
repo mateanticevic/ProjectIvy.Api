@@ -60,17 +60,17 @@ public class CommonController : BaseController<CommonController>
     public async Task<IActionResult> GetBeerStyles() => Ok(await _beerHandler.GetStyles());
 
     [HttpGet("Currency")]
-    public IEnumerable<View.Currency.Currency> GetCurrencies() => _currencyHandler.Get();
+    public async Task<IEnumerable<View.Currency.Currency>> GetCurrencies() => await _currencyHandler.Get();
 
     [HttpGet("ExpenseFileType")]
-    public IEnumerable<View.Expense.ExpenseFileType> GetExpenseFileTypes() => _expenseTypeHandler.GetFileTypes();
+    public async Task<IEnumerable<View.Expense.ExpenseFileType>> GetExpenseFileTypes() => await _expenseTypeHandler.GetFileTypes();
 
     [HttpGet("IncomeType")]
     public async Task<IActionResult> GetIncomeTypes() => Ok(await _incomeHandler.GetTypes());
 
     [HttpGet("PaymentType")]
-    public IActionResult GetPaymentTypes() => Ok(_paymentHandler.GetPaymentTypes());
+    public async Task<IActionResult> GetPaymentTypes() => Ok(await _paymentHandler.GetPaymentTypes());
 
     [HttpGet("PoiCategory")]
-    public IEnumerable<View.Poi.PoiCategory> GetPoiCategories() => _poiHandler.GetCategories();
+    public async Task<IEnumerable<View.Poi.PoiCategory>> GetPoiCategories() => await _poiHandler.GetCategories();
 }

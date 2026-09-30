@@ -71,7 +71,7 @@ public static class IQueryableExtensions
     {
         return new PagedView<T>()
         {
-            Count = count ?? query.Count(),
+            Count = count ?? await query.CountAsync(),
             Items = await query.Page(binding).ToListAsync()
         };
     }

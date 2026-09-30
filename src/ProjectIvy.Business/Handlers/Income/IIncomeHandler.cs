@@ -18,9 +18,9 @@ public interface IIncomeHandler : IHandler
 
     Task<decimal> GetSum(IncomeGetSumBinding binding);
 
-    IEnumerable<KeyValuePair<DateTime, decimal>> GetSumByMonthOfYear(IncomeGetSumBinding binding);
+    Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetSumByMonthOfYear(IncomeGetSumBinding binding);
 
-    IEnumerable<KeyValuePair<int, decimal>> GetSumByYear(IncomeGetSumBinding binding);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> GetSumByYear(IncomeGetSumBinding binding);
 
     Task<IEnumerable<View.IncomeType>> GetTypes();
 }

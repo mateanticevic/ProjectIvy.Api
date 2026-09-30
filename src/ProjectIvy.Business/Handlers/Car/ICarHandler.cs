@@ -7,37 +7,37 @@ namespace ProjectIvy.Business.Handlers.Car;
 
 public interface ICarHandler : IHandler
 {
-    void Create(string valueId, CarBinding car);
+    Task Create(string valueId, CarBinding car);
 
-    DateTime CreateLog(CarLogBinding binding);
+    Task<DateTime> CreateLog(CarLogBinding binding);
 
     Task<string> CreateService(string carValueId, CarServiceBinding binding);
 
-    void CreateTorqueLog(string carValueId, CarLogTorqueBinding binding);
+    Task CreateTorqueLog(string carValueId, CarLogTorqueBinding binding);
 
-    IEnumerable<View.Car> Get();
+    Task<IEnumerable<View.Car>> Get();
 
-    View.Car Get(string carId);
+    Task<View.Car> Get(string carId);
 
     Task<decimal> GetAverageConsumption(string carValueId);
 
     Task<IEnumerable<KeyValuePair<int, decimal>>> GetAverageConsumptionByYear(string carValueId);
 
-    IEnumerable<KeyValuePair<int, decimal>> GetFuelByMonth(string carValueId);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> GetFuelByMonth(string carValueId);
 
-    IEnumerable<KeyValuePair<int, decimal>> GetFuelByYear(string carValueId);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> GetFuelByYear(string carValueId);
 
     Task<IEnumerable<CarFueling>> GetFuelings(string carValueId);
 
     Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carValueId);
 
-    CarLog GetLatestLog(CarLogGetBinding binding);
+    Task<CarLog> GetLatestLog(CarLogGetBinding binding);
 
-    CarLog GetLatestLog(string carValueId, CarLogGetBinding binding);
+    Task<CarLog> GetLatestLog(string carValueId, CarLogGetBinding binding);
 
-    IEnumerable<View.CarLogBySession> GetLogBySession(string carValueId, CarLogGetBinding binding);
+    Task<IEnumerable<View.CarLogBySession>> GetLogBySession(string carValueId, CarLogGetBinding binding);
 
-    int GetLogCount(string carValueId);
+    Task<int> GetLogCount(string carValueId);
 
     Task<IEnumerable<View.CarLog>> GetLogs(string carValueId, CarLogGetBinding binding);
 

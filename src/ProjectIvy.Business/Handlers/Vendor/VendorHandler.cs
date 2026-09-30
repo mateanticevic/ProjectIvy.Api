@@ -16,10 +16,10 @@ public class VendorHandler : Handler<VendorHandler>, IVendorHandler
     {
     }
 
-    public View.Vendor Get(string id)
+    public async Task<View.Vendor> Get(string id)
     {
         using var context = GetMainContext();
-        return context.Vendors.SingleOrDefault(x => x.ValueId == id).ConvertTo(x => new View.Vendor(x));
+        return (await context.Vendors.SingleOrDefaultAsync(x => x.ValueId == id)).ConvertTo(x => new View.Vendor(x));
     }
 
     public async Task<PagedView<View.Vendor>> Get(VendorGetBinding binding)

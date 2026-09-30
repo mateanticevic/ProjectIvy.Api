@@ -18,10 +18,10 @@ public class CarController : BaseController<CarController>
     }
 
     [HttpGet]
-    public IEnumerable<View.Car> Get() => _carHandler.Get();
+    public async Task<IEnumerable<View.Car>> Get() => await _carHandler.Get();
 
     [HttpGet("{carId}")]
-    public View.Car Get(string carId) => _carHandler.Get(carId);
+    public async Task<View.Car> Get(string carId) => await _carHandler.Get(carId);
 
     [HttpGet("{carId}/Consumption/Avg")]
     public async Task<IActionResult> GetAverageConsumption(string carId) => Ok(await _carHandler.GetAverageConsumption(carId));
@@ -33,31 +33,31 @@ public class CarController : BaseController<CarController>
     public async Task<IActionResult> GetFuel(string carId) => Ok(await _carHandler.GetFuelings(carId));
 
     [HttpGet("{carId}/Fuel/Sum/ByMonth")]
-    public IActionResult GetFuelSumByMonth(string carId) => Ok(_carHandler.GetFuelByMonth(carId));
+    public async Task<IActionResult> GetFuelSumByMonth(string carId) => Ok(await _carHandler.GetFuelByMonth(carId));
 
     [HttpGet("{carId}/Fuel/Sum/ByYear")]
-    public IActionResult GetFuelSumByYear(string carId) => Ok(_carHandler.GetFuelByYear(carId));
+    public async Task<IActionResult> GetFuelSumByYear(string carId) => Ok(await _carHandler.GetFuelByYear(carId));
 
     [HttpGet("{carId}/Kilometers/ByYear")]
     public async Task<IEnumerable<KeyValuePair<int, int>>> GetKilometersByYear(string carId) => await _carHandler.GetKilometersByYear(carId);
 
     [HttpGet("{carId}/Log/BySession")]
-    public IEnumerable<View.CarLogBySession> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLogBySession(carId, binding);
+    public async Task<IEnumerable<View.CarLogBySession>> GetLogBySession(string carId, [FromQuery] CarLogGetBinding binding) => await _carHandler.GetLogBySession(carId, binding);
 
     [HttpGet("{carId}/Log/Count")]
-    public int GetLogCount(string carId) => _carHandler.GetLogCount(carId);
+    public async Task<int> GetLogCount(string carId) => await _carHandler.GetLogCount(carId);
 
     [HttpGet("{carId}/Log/Latest")]
-    public View.CarLog GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding) => _carHandler.GetLatestLog(carId, binding);
+    public async Task<View.CarLog> GetLogLatest(string carId, [FromQuery] CarLogGetBinding binding) => await _carHandler.GetLatestLog(carId, binding);
 
     [HttpGet("{carId}/Log")]
     public async Task<IActionResult> GetLogs(string carId, [FromQuery] CarLogGetBinding binding) => Ok(await _carHandler.GetLogs(carId, binding));
 
     [AllowAnonymous]
     [HttpGet("{carId}/Log/Torque.php")]
-    public string GetLogTorque(string carId, [FromQuery] CarLogTorqueBinding binding)
+    public async Task<string> GetLogTorque(string carId, [FromQuery] CarLogTorqueBinding binding)
     {
-        _carHandler.CreateTorqueLog(carId, binding);
+        await _carHandler.CreateTorqueLog(carId, binding);
         return "OK!";
     }
 
@@ -69,19 +69,19 @@ public class CarController : BaseController<CarController>
     }
 
     [HttpPost("{id}/Log")]
-    public DateTime PostLog([FromBody] CarLogBinding binding, string id)
+    public async Task<DateTime> PostLog([FromBody] CarLogBinding binding, string id)
     {
         binding.CarValueId = id;
-        return _carHandler.CreateLog(binding);
+        return await _carHandler.CreateLog(binding);
     }
 
     [HttpPost("{id}/Service")]
     public async Task<IActionResult> PostService(string id, [FromBody] CarServiceBinding binding) => Ok(await _carHandler.CreateService(id, binding));
 
     [HttpPut("{id}")]
-    public IActionResult PutCar(string id, [FromBody] CarBinding car)
+    public async Task<IActionResult> PutCar(string id, [FromBody] CarBinding car)
     {
-        _carHandler.Create(id, car);
+        await _carHandler.Create(id, car);
 
         return Ok();
     }

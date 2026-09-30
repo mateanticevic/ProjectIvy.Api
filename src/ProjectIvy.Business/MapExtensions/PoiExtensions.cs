@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Poi;
@@ -8,7 +9,7 @@ namespace ProjectIvy.Business.MapExtensions;
 
 public static class PoiExtensions
 {
-    public static Poi ToEntity(this PoiBinding binding, MainContext context, Poi entity = null)
+    public static async Task<Poi> ToEntity(this PoiBinding binding, MainContext context, Poi entity = null)
     {
         entity = entity ?? new Poi();
 
@@ -17,7 +18,7 @@ public static class PoiExtensions
         entity.Address = binding.Address;
         entity.Latitude = binding.Latitude;
         entity.Longitude = binding.Longitude;
-        entity.PoiCategoryId = context.PoiCategories.GetId(binding.PoiCategoryId).Value;
+        entity.PoiCategoryId = (await context.PoiCategories.GetIdAsync(binding.PoiCategoryId)).Value;
         entity.Modified = DateTime.Now;
         entity.Created = entity.Created != default(DateTime) ? entity.Created : DateTime.Now;
 

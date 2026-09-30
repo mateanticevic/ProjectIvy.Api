@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
@@ -14,23 +15,23 @@ public class AirportHandler : Handler<AirportHandler>, IAirportHandler
     {
     }
 
-    public long Count(AirportGetBinding binding)
+    public async Task<long> Count(AirportGetBinding binding)
     {
         using var context = GetMainContext();
 
-        return context.Airports.Where(binding, context, UserId)
-                               .LongCount();
+        return await context.Airports.Where(binding, context, UserId)
+                               .LongCountAsync();
     }
 
-    public PagedView<View.Airport> Get(AirportGetBinding binding)
+    public async Task<PagedView<View.Airport>> Get(AirportGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Airports.Where(binding, context, UserId)
+        return await context.Airports.Where(binding, context, UserId)
                                .WhereIf(binding.Search, x => x.Iata == binding.Search.ToUpper() || x.Name.ToLower().Contains(binding.Search.ToLower()))
                                .Include(x => x.Poi)
                                .ThenInclude(x => x.PoiCategory)
                                .OrderByDescending(x => x.Iata == binding.Search)
                                .Select(x => new View.Airport(x))
-                               .ToPagedView(binding);
+                               .ToPagedViewAsync(binding);
     }
 }

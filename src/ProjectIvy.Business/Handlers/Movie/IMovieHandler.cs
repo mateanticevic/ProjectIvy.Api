@@ -7,39 +7,39 @@ namespace ProjectIvy.Business.Handlers.Movie;
 
 public interface IMovieHandler : IHandler
 {
-    int Count(MovieGetBinding binding);
+    Task<int> Count(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<DateTime, int>> CountByDay(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<DateTime, int>>> CountByDay(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByDayOfWeek(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByMonth(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByMonth(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<DateTime, int>> CountByMonthOfYear(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<DateTime, int>>> CountByMonthOfYear(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<string, int>> CountByMovieDecade(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<string, int>>> CountByMovieDecade(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<short, int>> CountByMovieYear(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<short, int>>> CountByMovieYear(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<short, int>> CountByMyRating(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<short, int>>> CountByMyRating(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<string, int>> CountByRuntime(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<string, int>>> CountByRuntime(MovieGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByYear(MovieGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(MovieGetBinding binding);
 
-    PagedView<View.Movie> Get(MovieGetBinding binding);
+    Task<PagedView<View.Movie>> Get(MovieGetBinding binding);
 
-    View.Movie Get(string imdbId);
+    Task<View.Movie> Get(string imdbId);
 
-    double GetMyRatingAverage(MovieGetBinding binding);
+    Task<double> GetMyRatingAverage(MovieGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<int, decimal>>> GetMyRatingAverageByYear(MovieGetBinding binding);
 
-    double GetRatingAverage(MovieGetBinding binding);
+    Task<double> GetRatingAverage(MovieGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<int, decimal>>> GetRatingAverageByYear(MovieGetBinding binding);
 
-    int GetRuntimeAverage(MovieGetBinding binding);
+    Task<int> GetRuntimeAverage(MovieGetBinding binding);
 
-    int GetSum(MovieGetBinding binding, Func<Model.Database.Main.User.Movie, int> selector);
+    Task<int> GetSum(MovieGetBinding binding, Func<Model.Database.Main.User.Movie, int> selector);
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Card;
 using ProjectIvy.Model.Binding.Card;
@@ -15,5 +16,5 @@ public class CardController : BaseController<CardController>
     }
 
     [HttpGet]
-    public IActionResult Get([FromQuery] CardGetBinding binding) => Ok(_cardHandler.GetCards(binding));
+    public async Task<IActionResult> Get([FromQuery] CardGetBinding binding) => Ok(await _cardHandler.GetCards(binding));
 }

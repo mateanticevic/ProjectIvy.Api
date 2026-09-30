@@ -15,10 +15,10 @@ public class BrandHandler : Handler<BrandHandler>, IBrandHandler
     {
     }
 
-    public View.Brand Get(string id)
+    public async Task<View.Brand> Get(string id)
     {
         using var context = GetMainContext();
-        return context.Brands.SingleOrDefault(x => x.ValueId == id).ConvertTo(x => new View.Brand(x));
+        return (await context.Brands.SingleOrDefaultAsync(x => x.ValueId == id)).ConvertTo(x => new View.Brand(x));
     }
 
     public async Task<PagedView<View.Brand>> Get(BrandGetBinding binding)

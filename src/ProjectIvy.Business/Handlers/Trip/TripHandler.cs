@@ -31,8 +31,8 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
     public async Task AddCity(string tripValueId, string cityValueId)
     {
         using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
-        int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
+        int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
         var cityVisited = new CityVisited()
         {
             CityId = cityId,
@@ -46,10 +46,10 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
     public async Task AddExpense(string tripValueId, string expenseValueId)
     {
         using var context = GetMainContext();
-        int expenseId = context.Expenses.WhereUser(UserId).GetId(expenseValueId).Value;
-        int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
+        int expenseId = (await context.Expenses.WhereUser(UserId).GetIdAsync(expenseValueId)).Value;
+        int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
 
-        var excludedExpense = context.TripExpensesExcluded.SingleOrDefault(x => x.TripId == tripId && x.ExpenseId == expenseId);
+        var excludedExpense = await context.TripExpensesExcluded.SingleOrDefaultAsync(x => x.TripId == tripId && x.ExpenseId == expenseId);
         if (excludedExpense != null)
         {
             context.TripExpensesExcluded.Remove(excludedExpense);
@@ -71,8 +71,8 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
     public async Task AddPoi(string tripValueId, string poiValueId)
     {
         using var context = GetMainContext();
-        int tripId = context.Trips.WhereUser(UserId).GetId(tripValueId).Value;
-        int poiId = context.Pois.GetId(poiValueId).Value;
+        int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
+        int poiId = (await context.Pois.GetIdAsync(poiValueId)).Value;
 
         var tripPoi = new TripPoi()
         {
@@ -112,7 +112,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
 
         foreach (string cityValueId in binding.CityIds.EmptyIfNull())
         {
-            var cityId = context.Cities.GetId(cityValueId).Value;
+            var cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
             var cityVisited = new CityVisited()
             {
                 CityId = cityId,
@@ -122,7 +122,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
             await context.CitiesVisited.AddAsync(cityVisited);
         }
 
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<KeyValuePair<int, int>>> DaysByYear(TripGetBinding binding)
@@ -222,7 +222,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         if (expenseIds.Any())
         {
             using var db = GetSqlConnection();
-            int targetCurrencyId = context.GetCurrencyId(null, UserId);
+            int targetCurrencyId = await context.GetCurrencyIdAsync(null, UserId);
             string sql = SqlLoader.Load(SqlScripts.GetExpenseSumInDefaultCurrency);
 
             var query = new GetExpenseSumQuery()
@@ -245,7 +245,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         var tripView = new View.Trip.Trip(trip)
         {
             Expenses = expenses.Select(x => new View.Expense.Expense(x)),
-            Distance = _trackingHandler.GetDistance(new Model.Binding.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
+            Distance = await _trackingHandler.GetDistance(new Model.Binding.FilteredBinding(trip.TimestampStart, trip.TimestampEnd)),
             Stays = stays.Select(x => new View.Stay.Stay(x)),
             TotalSpent = totalSpent
         };
@@ -293,7 +293,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
         int poiId = (await context.Pois.GetIdAsync(poiValueId)).Value;
         int tripId = (await context.Trips.WhereUser(UserId).GetIdAsync(tripValueId)).Value;
 
-        var tripPoi = context.TripPois.SingleOrDefault(x => x.PoiId == poiId && x.TripId == tripId);
+        var tripPoi = await context.TripPois.SingleOrDefaultAsync(x => x.PoiId == poiId && x.TripId == tripId);
 
         if (tripPoi != null)
         {

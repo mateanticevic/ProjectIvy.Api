@@ -37,16 +37,16 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
             ValueId = binding.Name.ToValueId()
         };
 
-        context.ExpenseTypes.Add(expenseType);
+        await context.ExpenseTypes.AddAsync(expenseType);
         await context.SaveChangesAsync();
 
         return new ExpenseType(expenseType);
     }
 
-    public IEnumerable<ExpenseType> Get(ExpenseTypeGetBinding binding)
+    public async Task<IEnumerable<ExpenseType>> Get(ExpenseTypeGetBinding binding)
     {
         using var context = GetMainContext();
-        int? parentId = context.ExpenseTypes.GetId(binding.ParentId);
+        int? parentId = await context.ExpenseTypes.GetIdAsync(binding.ParentId);
 
         var query = context.ExpenseTypes.Include(x => x.Children)
                                         .WhereIf(binding.HasChildren.HasValue, x => binding.HasChildren.Value ? x.Children.Any() : !x.Children.Any())
@@ -72,7 +72,7 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
                 break;
         }
 
-        return query.Select(x => new ExpenseType(x)).ToList();
+        return await query.Select(x => new ExpenseType(x)).ToListAsync();
     }
 
     private IEnumerable<Node<ExpenseType>> GetChildrenNodes(IEnumerable<Database.ExpenseType> entities, int parentId)
@@ -82,25 +82,22 @@ public class ExpenseTypeHandler : Handler<ExpenseTypeHandler>, IExpenseTypeHandl
         return children.Any() ? children.Select(x => new Node<ExpenseType>() { This = new ExpenseType(x), Children = GetChildrenNodes(entities, x.Id) }).ToList() : null;
     }
 
-    public IEnumerable<ExpenseFileType> GetFileTypes()
+    public async Task<IEnumerable<ExpenseFileType>> GetFileTypes()
     {
         using var context = GetMainContext();
-        return context.ExpenseFileTypes.Select(x => new ExpenseFileType(x))
-                                       .ToList();
+        return await context.ExpenseFileTypes.Select(x => new ExpenseFileType(x))
+                                       .ToListAsync();
     }
 
-    public IEnumerable<Node<ExpenseType>> GetTree()
+    public async Task<IEnumerable<Node<ExpenseType>>> GetTree()
     {
         using var context = GetMainContext();
-        var typeEntities = context.ExpenseTypes.ToList();
+        var typeEntities = await context.ExpenseTypes.ToListAsync();
 
         var rootTypes = typeEntities.Where(x => !x.ParentTypeId.HasValue)
                                     .ToList();
 
-        foreach (var type in rootTypes)
-        {
-            yield return new Node<ExpenseType>() { This = new ExpenseType(type), Children = GetChildrenNodes(typeEntities, type.Id) };
-        }
+        return rootTypes.Select(type => new Node<ExpenseType>() { This = new ExpenseType(type), Children = GetChildrenNodes(typeEntities, type.Id) }).ToList();
     }
 
     public async Task SetParent(string parentValueId, string childValueId)

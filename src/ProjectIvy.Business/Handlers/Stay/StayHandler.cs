@@ -25,17 +25,17 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
 
         if (!string.IsNullOrEmpty(binding.CityId))
         {
-            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.ValueId == binding.CityId);
+            var city = await context.Cities.Include(c => c.Country).FirstOrDefaultAsync(c => c.ValueId == binding.CityId);
             if (city != null)
             {
                 cityId = city.Id;
                 countryId = city.CountryId;
             }
             else
-                countryId = context.Countries.GetId(binding.CountryId).Value;
+                countryId = (await context.Countries.GetIdAsync(binding.CountryId)).Value;
         }
         else
-            countryId = context.Countries.GetId(binding.CountryId).Value;
+            countryId = (await context.Countries.GetIdAsync(binding.CountryId)).Value;
         
         var stay = new Database.Travel.Stay()
         {   
@@ -78,17 +78,17 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
 
         if (!string.IsNullOrEmpty(binding.CityId))
         {
-            var city = context.Cities.Include(c => c.Country).FirstOrDefault(c => c.ValueId == binding.CityId);
+            var city = await context.Cities.Include(c => c.Country).FirstOrDefaultAsync(c => c.ValueId == binding.CityId);
             if (city != null)
             {
                 cityId = city.Id;
                 countryId = city.CountryId;
             }
             else
-                countryId = context.Countries.GetId(binding.CountryId).Value;
+                countryId = (await context.Countries.GetIdAsync(binding.CountryId)).Value;
         }
         else
-            countryId = context.Countries.GetId(binding.CountryId).Value;
+            countryId = (await context.Countries.GetIdAsync(binding.CountryId)).Value;
 
         stay.From = binding.From;
         stay.To = binding.To;

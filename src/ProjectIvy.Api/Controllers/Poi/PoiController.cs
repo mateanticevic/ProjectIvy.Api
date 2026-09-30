@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Poi;
@@ -15,12 +16,12 @@ public class PoiController : BaseController<PoiController>
     public PoiController(ILogger<PoiController> logger, IPoiHandler poiHandler) : base(logger) => _poiHandler = poiHandler;
 
     [HttpGet]
-    public PagedView<View.Poi> Get([FromQuery] PoiGetBinding binding) => _poiHandler.Get(binding);
+    public async Task<PagedView<View.Poi>> Get([FromQuery] PoiGetBinding binding) => await _poiHandler.Get(binding);
 
     [HttpPost]
-    public IActionResult Post([FromBody] PoiBinding binding)
+    public async Task<IActionResult> Post([FromBody] PoiBinding binding)
     {
-        _poiHandler.Create(binding);
+        await _poiHandler.Create(binding);
 
         return new StatusCodeResult(StatusCodes.Status201Created);
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Handlers;
 using ProjectIvy.Data.Services.LastFm;
 using ProjectIvy.Model.Binding;
@@ -20,7 +21,7 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     public async Task<IEnumerable<Track>> GetLovedTracks()
     {
         using var db = GetMainContext();
-        string username = db.Users.SingleOrDefault(x => x.Id == UserId).LastFmUsername;
+        string username = (await db.Users.SingleOrDefaultAsync(x => x.Id == UserId)).LastFmUsername;
 
         var info = await _userHelper.GetLovedTracks(username);
         return info.Select(x => new Track(x));
@@ -29,7 +30,7 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     public async Task<IEnumerable<Artist>> GetTopArtists()
     {
         using var db = GetMainContext();
-        string username = db.Users.SingleOrDefault(x => x.Id == UserId).LastFmUsername;
+        string username = (await db.Users.SingleOrDefaultAsync(x => x.Id == UserId)).LastFmUsername;
 
         var artists = await _userHelper.GetTopArtists(username);
         return artists.Select(x => new Artist(x));
@@ -38,7 +39,7 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     public async Task<IEnumerable<Track>> GetTopTracks()
     {
         using var db = GetMainContext();
-        string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+        string username = (await db.Users.SingleOrDefaultAsync(x => x.Id == UserId))
             .LastFmUsername;
 
         var info = await _userHelper.GetTopTracks(username);
@@ -48,7 +49,7 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     public async Task<int> GetTotalCount()
     {
         using var db = GetMainContext();
-        string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+        string username = (await db.Users.SingleOrDefaultAsync(x => x.Id == UserId))
                                   .LastFmUsername;
 
         var info = await _userHelper.GetTotalCount(username);
@@ -58,7 +59,7 @@ public class LastFmHandler : Handler<LastFmHandler>, ILastFmHandler
     public async Task<IEnumerable<Track>> GetTracks(FilteredPagedBinding binding)
     {
         using var db = GetMainContext();
-        string username = db.Users.SingleOrDefault(x => x.Id == UserId)
+        string username = (await db.Users.SingleOrDefaultAsync(x => x.Id == UserId))
                                   .LastFmUsername;
 
         var tracks = await _userHelper.GetTracks(username, binding);

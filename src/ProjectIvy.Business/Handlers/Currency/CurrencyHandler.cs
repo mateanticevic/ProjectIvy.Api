@@ -1,4 +1,6 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using ProjectIvy.Business.Caching;
 using View = ProjectIvy.Model.View.Currency;
@@ -15,27 +17,27 @@ public class CurrencyHandler : Handler<CurrencyHandler>, ICurrencyHandler
         _memoryCache = memoryCache;
     }
 
-    public IEnumerable<View.Currency> Get()
-        => _memoryCache.GetOrCreate(CacheKeyGenerator.CurrenciesGet(),
-            cacheEntry =>
+    public async Task<IEnumerable<View.Currency>> Get()
+        => await _memoryCache.GetOrCreateAsync(CacheKeyGenerator.CurrenciesGet(),
+            async cacheEntry =>
             {
                 cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return GetNonCached();
+                return await GetNonCached();
             });
 
-    public View.Currency Get(string code)
+    public async Task<View.Currency> Get(string code)
     {
         using var context = GetMainContext();
-        var entity = context.Currencies.SingleOrDefault(x => x.Code == code);
+        var entity = await context.Currencies.SingleOrDefaultAsync(x => x.Code == code);
 
         return new View.Currency(entity);
     }
 
-    private IEnumerable<View.Currency> GetNonCached()
+    private async Task<IEnumerable<View.Currency>> GetNonCached()
     {
         using var context = GetMainContext();
-        return context.Currencies.OrderBy(x => x.Name)
-                                 .ToList()
+        return (await context.Currencies.OrderBy(x => x.Name)
+                                 .ToListAsync())
                                  .Select(x => new View.Currency(x));
     }
 }

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
@@ -37,7 +38,7 @@ namespace ProjectIvy.Business.Handlers.Expense;
 
 public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 {
-    private static readonly ConcurrentDictionary<int, object> _createLocks = new();
+    private static readonly ConcurrentDictionary<int, SemaphoreSlim> _createLocks = new();
 
     private readonly IFileHandler _fileHandler;
 
@@ -48,12 +49,12 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         _fileHandler = fileHandler;
     }
 
-    public void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
+    public async Task AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding)
     {
         using var context = GetMainContext();
-        int fileId = context.Files.GetId(fileValueId).Value;
-        int expenseId = context.Expenses.WhereUser(UserId).GetId(expenseValueId).Value;
-        int expenseFileTypeId = context.ExpenseFileTypes.GetId(binding.TypeId).Value;
+        int fileId = (await context.Files.GetIdAsync(fileValueId)).Value;
+        int expenseId = (await context.Expenses.WhereUser(UserId).GetIdAsync(expenseValueId)).Value;
+        int expenseFileTypeId = (await context.ExpenseFileTypes.GetIdAsync(binding.TypeId)).Value;
 
         var entity = new Model.Database.Main.Finance.ExpenseFile()
         {
@@ -63,81 +64,81 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             Name = binding.Name
         };
 
-        context.ExpenseFiles.Add(entity);
-        context.SaveChanges();
+        await context.ExpenseFiles.AddAsync(entity);
+        await context.SaveChangesAsync();
         ClearCache();
     }
 
-    public int Count(ExpenseGetBinding binding)
+    public async Task<int> Count(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         var result = context.Expenses.WhereUser(UserId)
                             .Where(binding, context);
 
-        return result.Count();
+        return await result.CountAsync();
     }
 
-    public IEnumerable<KeyValuePair<string, int>> CountByDay(ExpenseGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<string, int>>> CountByDay(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Expenses.WhereUser(UserId)
+        return (await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .GroupBy(x => x.Date)
                                .OrderByDescending(x => x.Key)
                                .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Count()))
-                               .ToList()
+                               .ToListAsync())
                                .FillMissingDates(x => x.Key, x => new KeyValuePair<DateTime, int>(x, 0), binding.From, to)
                                .Select(x => new KeyValuePair<string, int>(x.Key.ToString("yyyy-MM-dd"), x.Value));
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(ExpenseGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByDayOfWeek(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         DateTime FirstSunday = new DateTime(2000, 1, 2);
         var to = binding.To ?? DateTime.Now;
 
-        return context.Expenses
+        return await context.Expenses
             .WhereUser(UserId)
             .Where(binding, context)
             .GroupBy(x => ((int)EF.Functions.DateDiffDay((DateTime?)FirstSunday, (DateTime?)x.Date) - 1) % 7)
             .OrderBy(x => x.Key)
             .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-            .ToList();
+            .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByMonth(ExpenseGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByMonth(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Expenses.WhereUser(UserId)
+        return await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .GroupBy(x => x.Date.Month)
                                .OrderBy(x => x.Key)
                                .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                               .ToList();
+                               .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ExpenseGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<string, int>>> CountByMonthOfYear(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Expenses.WhereUser(UserId)
+        return (await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                               .ToList()
+                               .ToListAsync())
                                .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to)
                                .Select(x => new KeyValuePair<string, int>($"{x.Year}-{x.Month}", x.Data));
     }
 
-    public PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding)
+    public async Task<PagedView<KeyValuePair<ExpenseType, int>>> CountByType(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Expenses.WhereUser(UserId)
+        return await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .Include(x => x.ExpenseType)
                                .GroupBy(x => new
@@ -151,13 +152,13 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                    Id = x.Key.ValueId,
                                    Name = x.Key.Name,
                                }, x.Count()))
-                               .ToPagedView(binding);
+                               .ToPagedViewAsync(binding);
     }
 
-    public PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> CountByVendor(ExpenseGetBinding binding)
+    public async Task<PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>>> CountByVendor(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Expenses.WhereUser(UserId)
+        return await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .Include(x => x.Vendor)
                                .GroupBy(x => new
@@ -167,63 +168,68 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                })
                                .OrderByDescending(x => x.Count())
                                .Select(x => new KeyValuePair<Model.View.Vendor.Vendor, int>(new() { Id = x.Key.ValueId, Name = x.Key.Name }, x.Count()))
-                               .ToPagedView(binding);
+                               .ToPagedViewAsync(binding);
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByYear(ExpenseGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Expenses.WhereUser(UserId)
+        return (await context.Expenses.WhereUser(UserId)
                                .Where(binding, context)
                                .GroupBy(x => x.Date.Year)
                                .Select(x => new KeyValuePair<int, int>(x.Key, x.Count()))
-                               .ToList()
+                               .ToListAsync())
                                .FillMissingYears(year => new KeyValuePair<int, int>(0, year), binding.From?.Year, to.Year);
     }
 
-    public int CountTypes(ExpenseGetBinding binding)
+    public async Task<int> CountTypes(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Expenses.WhereUser(UserId)
+        return await context.Expenses.WhereUser(UserId)
                                .Include(x => x.Vendor)
                                .Where(binding, context)
                                .GroupBy(x => x.ExpenseTypeId)
-                               .Count();
+                               .CountAsync();
     }
 
-    public int CountVendors(ExpenseGetBinding binding)
+    public async Task<int> CountVendors(ExpenseGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Expenses.WhereUser(UserId)
+        return await context.Expenses.WhereUser(UserId)
                                .Include(x => x.Vendor)
                                .Where(binding, context)
                                .Where(x => x.VendorId.HasValue)
                                .GroupBy(x => x.VendorId)
-                               .Count();
+                               .CountAsync();
     }
 
     public async Task<string> Create(ExpenseBinding binding)
     {
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
-            binding.VendorId = CreateVendor(binding.VendorName);
+            binding.VendorId = await CreateVendor(binding.VendorName);
 
-        var userLock = _createLocks.GetOrAdd(UserId, _ => new object());
-        lock (userLock)
+        var userLock = _createLocks.GetOrAdd(UserId, _ => new SemaphoreSlim(1, 1));
+        await userLock.WaitAsync();
+        try
         {
             using var db = GetMainContext();
-            var entity = binding.ToEntity(db);
+            var entity = await binding.ToEntity(db);
             entity.UserId = UserId;
-            entity.ValueId = db.Expenses.NextValueId(UserId).ToString();
+            entity.ValueId = (await db.Expenses.NextValueIdAsync(UserId)).ToString();
 
-            db.Expenses.Add(entity);
+            await db.Expenses.AddAsync(entity);
             ResolveTransaction(db, entity);
 
-            db.SaveChanges();
+            await db.SaveChangesAsync();
             ClearCache();
 
             return entity.ValueId;
+        }
+        finally
+        {
+            userLock.Release();
         }
     }
 
@@ -259,7 +265,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                                           .Where(x => x.FileType == fileType.ToString())
                                                           .ToListAsync();
 
-        var user = context.Users.Where(x => x.Id == UserId).Single();
+        var user = await context.Users.Where(x => x.Id == UserId).SingleAsync();
 
         string text = stringBuilder.ToString();
 
@@ -294,7 +300,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             NeedsReview = true,
             PaymentTypeId = template.PaymentTypeId,
             UserId = UserId,
-            ValueId = context.Expenses.NextValueId(UserId).ToString(),
+            ValueId = (await context.Expenses.NextValueIdAsync(UserId)).ToString(),
             VendorId = template.VendorId,
         };
 
@@ -328,7 +334,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         ClearCache();
     }
 
-    private string CreateVendor(string name)
+    private async Task<string> CreateVendor(string name)
     {
         using var context = GetMainContext();
         var entity = new Model.Database.Main.Finance.Vendor()
@@ -336,31 +342,31 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             Name = name,
             ValueId = name.Replace(" ", "-").ToLowerInvariant()
         };
-        context.Vendors.Add(entity);
-        context.SaveChanges();
+        await context.Vendors.AddAsync(entity);
+        await context.SaveChangesAsync();
         return entity.ValueId;
     }
 
     public async Task Delete(string valueId)
     {
         using var db = GetMainContext();
-        var entity = db.Expenses.WhereUser(UserId)
-                                .SingleOrDefault(x => x.ValueId == valueId);
+        var entity = await db.Expenses.WhereUser(UserId)
+                                .SingleOrDefaultAsync(x => x.ValueId == valueId);
 
         db.Expenses.Remove(entity);
         await db.SaveChangesAsync();
         ClearCache();
     }
 
-    public View.Expense Get(string expenseId)
+    public async Task<View.Expense> Get(string expenseId)
     {
         using var context = GetMainContext();
-        var expense = context.Expenses.Include(x => x.ExpenseType)
+        var expense = await context.Expenses.Include(x => x.ExpenseType)
                                       .Include(x => x.Currency)
                                       .Include(x => x.Poi)
                                       .Include(x => x.Vendor)
                                       .WhereUser(UserId)
-                                      .SingleOrDefault(x => x.ValueId == expenseId);
+                                      .SingleOrDefaultAsync(x => x.ValueId == expenseId);
 
         if (expense == null)
             throw new ResourceNotFoundException();
@@ -368,40 +374,40 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         return new View.Expense(expense);
     }
 
-    public PagedView<View.Expense> Get(ExpenseGetBinding binding)
+    public async Task<PagedView<View.Expense>> Get(ExpenseGetBinding binding)
     {
-        return MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.ExpensesGet(binding)),
-            cacheEntry =>
+        return await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.ExpensesGet(binding)),
+            async cacheEntry =>
             {
                 AddCacheKey(cacheEntry.Key.ToString());
                 cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(1);
-                return GetNonCached(binding);
+                return await GetNonCached(binding);
             });
     }
 
-    public IEnumerable<View.ExpenseFile> GetFiles(string expenseId)
+    public async Task<IEnumerable<View.ExpenseFile>> GetFiles(string expenseId)
     {
         using var context = GetMainContext();
-        return context.Expenses.IncludeAll()
+        return (await context.Expenses.IncludeAll()
                                .WhereUser(UserId)
-                               .SingleOrDefault(x => x.ValueId == expenseId)
+                               .SingleOrDefaultAsync(x => x.ValueId == expenseId))
                                .ExpenseFiles
                                .Select(x => new View.ExpenseFile(x))
                                .ToList();
     }
 
-    public PagedView<View.Expense> GetNonCached(ExpenseGetBinding binding)
+    public async Task<PagedView<View.Expense>> GetNonCached(ExpenseGetBinding binding)
     {
         try
         {
             using var context = GetMainContext();
-            return context.Expenses.WhereUser(UserId)
+            return await context.Expenses.WhereUser(UserId)
                                    .IncludeAll()
                                    .Where(binding, context)
                                    .OrderBy(binding)
                                    .ThenByDescending(x => x.Created)
                                    .Select(x => new View.Expense(x))
-                                   .ToPagedView(binding);
+                                   .ToPagedViewAsync(binding);
         }
         catch (Exception e)
         {
@@ -516,35 +522,39 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
     }
 
-    public IEnumerable<KeyValuePair<string, decimal>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<string, decimal>>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding)
     {
         using var context = GetMainContext();
-        var from = binding.From ?? context.Expenses.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefault().Date;
+        var from = binding.From ?? (await context.Expenses.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefaultAsync()).Date;
         var to = binding.To ?? DateTime.Now;
 
         var periods = from.RangeMonthsClosed(to)
                           .Select(x => new FilteredBinding(x.from, x.to))
                           .ToList();
 
-        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To), excludeFromMonthlySums: true)));
+        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To), excludeFromMonthlySums: true))).ToList();
+
+        await Task.WhenAll(tasks.Select(x => x.Value));
 
         return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
     }
 
-    public IEnumerable<KeyValuePair<int, decimal>> SumAmountByYear(ExpenseSumGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByYear(ExpenseSumGetBinding binding)
     {
         using var context = GetMainContext();
-        int startYear = context.Expenses.WhereUser(UserId)
+        int startYear = (await context.Expenses.WhereUser(UserId)
                                         .Where(binding, context)
                                         .OrderBy(x => x.Date)
-                                        .FirstOrDefault().Date.Year;
+                                        .FirstOrDefaultAsync()).Date.Year;
         int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
         var years = Enumerable.Range(startYear, endYear - startYear + 1);
 
         var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
-        var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To))));
+        var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To)))).ToList();
+
+        await Task.WhenAll(tasks.Select(x => x.Value));
 
         return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
     }
@@ -558,7 +568,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     private async Task<GetExpenseSumQuery> SumBindingToQuery(ExpenseSumGetBinding binding, bool excludeFromMonthlySums = false)
     {
         using var context = GetMainContext();
-        int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
+        int targetCurrencyId = await context.GetCurrencyIdAsync(binding.TargetCurrencyId, UserId);
 
         var expenseIds = await context.Expenses.WhereUser(UserId)
                                                .Where(binding, context)
@@ -597,7 +607,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     public async Task<IEnumerable<KeyValuePair<string, IEnumerable<KeyValuePair<string, decimal>>>>> SumByMonthOfYearByType(ExpenseSumGetBinding binding)
     {
         using var context = GetMainContext();
-        var from = binding.From ?? context.Expenses.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefault().Date;
+        var from = binding.From ?? (await context.Expenses.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefaultAsync()).Date;
         var to = binding.To ?? DateTime.Now;
 
         var periods = from.RangeMonthsClosed(to)
@@ -640,10 +650,10 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     public async Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType(ExpenseSumGetBinding binding)
     {
         using var context = GetMainContext();
-        int startYear = context.Expenses.WhereUser(UserId)
+        int startYear = (await context.Expenses.WhereUser(UserId)
                             .Where(binding, context)
                             .OrderBy(x => x.Date)
-                            .FirstOrDefault().Date.Year;
+                            .FirstOrDefaultAsync()).Date.Year;
         int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
         var years = Enumerable.Range(startYear, endYear - startYear + 1);
@@ -656,21 +666,21 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         return tasks.Select(x => new KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>(x.Key, x.Value.Result));
     }
 
-    public bool Update(ExpenseBinding binding)
+    public async Task<bool> Update(ExpenseBinding binding)
     {
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
-            binding.VendorId = CreateVendor(binding.VendorName);
+            binding.VendorId = await CreateVendor(binding.VendorName);
 
         using var context = GetMainContext();
-        var entity = context.Expenses.WhereUser(UserId)
-                                     .SingleOrDefault(x => x.ValueId == binding.Id);
+        var entity = await context.Expenses.WhereUser(UserId)
+                                     .SingleOrDefaultAsync(x => x.ValueId == binding.Id);
 
-        entity = binding.ToEntity(context, entity);
+        entity = await binding.ToEntity(context, entity);
 
         context.Expenses.Update(entity);
         ResolveTransaction(context, entity);
 
-        context.SaveChanges();
+        await context.SaveChangesAsync();
         ClearCache();
 
         return true;

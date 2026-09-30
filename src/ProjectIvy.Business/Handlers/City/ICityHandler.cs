@@ -18,5 +18,5 @@ public interface ICityHandler
 
     Task<IEnumerable<RouteTime>> GetRoutes(string fromCityValueId, string toCityValueId, RouteTimeSort sort);
 
-    IEnumerable<View.City> GetVisited();
+    Task<IEnumerable<View.City>> GetVisited();
 }

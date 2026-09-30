@@ -28,7 +28,7 @@ public class ConsumationController : BaseController<ConsumationController>
     }
 
     [HttpGet]
-    public PagedView<View.Consumation> Get(ConsumationGetBinding binding) => _consumationHandler.Get(binding);
+    public async Task<PagedView<View.Consumation>> Get(ConsumationGetBinding binding) => await _consumationHandler.Get(binding);
 
     [HttpGet("Alcohol/ByYear")]
     public async Task<IActionResult> GetAlcoholByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AlcoholByYear(binding));
@@ -37,39 +37,39 @@ public class ConsumationController : BaseController<ConsumationController>
     public async Task<IActionResult> GetAverageByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.AverageByYear(binding));
 
     [HttpGet("Beer")]
-    public IActionResult GetBeer(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBeers(binding));
+    public async Task<IActionResult> GetBeer(FilteredPagedBinding binding) => Ok(await _consumationHandler.GetBeers(binding));
 
     [HttpGet("Count/Beer")]
     [HttpGet("Beer/Count")]
-    public int GetBeerCount(ConsumationGetBinding binding) => _consumationHandler.CountBeers(binding);
+    public async Task<int> GetBeerCount(ConsumationGetBinding binding) => await _consumationHandler.CountBeers(binding);
 
     [HttpGet("Beer/New")]
-    public IActionResult GetBeerNew(ConsumationGetBinding binding) => Ok(_consumationHandler.GetNewBeers(binding));
+    public async Task<IActionResult> GetBeerNew(ConsumationGetBinding binding) => Ok(await _consumationHandler.GetNewBeers(binding));
 
     [HttpGet("Count/Brand")]
     [HttpGet("Brand/Count")]
-    public int GetBrandCount(ConsumationGetBinding binding) => _consumationHandler.CountBrands(binding);
+    public async Task<int> GetBrandCount(ConsumationGetBinding binding) => await _consumationHandler.CountBrands(binding);
 
     [HttpGet("Brand")]
-    public IActionResult GetBrands(FilteredPagedBinding binding) => Ok(_consumationHandler.GetBrands(binding));
+    public async Task<IActionResult> GetBrands(FilteredPagedBinding binding) => Ok(await _consumationHandler.GetBrands(binding));
 
     [HttpGet("Consecutive/Days")]
-    public IActionResult GetConsecutiveDays(ConsumationGetBinding binding) => Ok(_consumationHandler.ConsecutiveDates(binding));
+    public async Task<IActionResult> GetConsecutiveDays(ConsumationGetBinding binding) => Ok(await _consumationHandler.ConsecutiveDates(binding));
 
     [HttpGet("Count")]
-    public int GetCount(ConsumationGetBinding binding) => _consumationHandler.Count(binding);
+    public async Task<int> GetCount(ConsumationGetBinding binding) => await _consumationHandler.Count(binding);
 
     [HttpGet("Count/ByBeer")]
-    public IActionResult GetCountByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.CountByBeer(binding));
+    public async Task<IActionResult> GetCountByBeer(ConsumationGetBinding binding) => Ok(await _consumationHandler.CountByBeer(binding));
 
     [HttpGet("Count/ByMonth")]
-    public IEnumerable<KeyValuePair<string, int>> GetCountByMonth([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonth(binding);
+    public async Task<IEnumerable<KeyValuePair<string, int>>> GetCountByMonth([FromQuery] ConsumationGetBinding binding) => await _consumationHandler.CountByMonth(binding);
 
     [HttpGet("Count/ByMonthOfYear")]
-    public IEnumerable<KeyValuePair<string, int>> GetCountByMonthOfYear([FromQuery] ConsumationGetBinding binding) => _consumationHandler.CountByMonthOfYear(binding);
+    public async Task<IEnumerable<KeyValuePair<string, int>>> GetCountByMonthOfYear([FromQuery] ConsumationGetBinding binding) => await _consumationHandler.CountByMonthOfYear(binding);
 
     [HttpGet("Count/ByYear")]
-    public IActionResult GetCountByYear([FromQuery] ConsumationGetBinding binding) => Ok(_consumationHandler.CountByYear(binding));
+    public async Task<IActionResult> GetCountByYear([FromQuery] ConsumationGetBinding binding) => Ok(await _consumationHandler.CountByYear(binding));
 
     [HttpGet("Country")]
     public async Task<IActionResult> GetCountries(ConsumationGetBinding binding) => Ok(await _consumationHandler.GetCountries(binding));
@@ -78,46 +78,46 @@ public class ConsumationController : BaseController<ConsumationController>
     public async Task<IActionResult> GetCountryBoundaries(ConsumationGetBinding binding)
     {
         var countries = await _consumationHandler.GetCountries(binding);
-        return Ok(_countryHandler.GetBoundaries(countries));
+        return Ok(await _countryHandler.GetBoundaries(countries));
     }
 
     [HttpGet("Sum")]
-    public int GetSum(ConsumationGetBinding binding) => _consumationHandler.SumVolume(binding);
+    public async Task<int> GetSum(ConsumationGetBinding binding) => await _consumationHandler.SumVolume(binding);
 
     [HttpGet("Sum/ByDay")]
-    public IActionResult GetSumByDay(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByDay(binding));
+    public async Task<IActionResult> GetSumByDay(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByDay(binding));
 
     [HttpGet("Sum/ByDayOfWeek")]
-    public IActionResult GetSumByDayOfWeek(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByDayOfWeek(binding));
+    public async Task<IActionResult> GetSumByDayOfWeek(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByDayOfWeek(binding));
 
     [HttpGet("Sum/ByMonth")]
-    public IActionResult GetSumByMonth(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonth(binding));
+    public async Task<IActionResult> GetSumByMonth(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByMonth(binding));
 
     [HttpGet("Sum/ByMonthOfYear")]
-    public IActionResult GetSumByMonthOfYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByMonthOfYear(binding));
+    public async Task<IActionResult> GetSumByMonthOfYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByMonthOfYear(binding));
 
     [HttpGet("Sum/ByServing")]
-    public IActionResult GetSumByServing(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByServing(binding));
+    public async Task<IActionResult> GetSumByServing(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByServing(binding));
 
     [HttpGet("Sum/ByYear")]
-    public IActionResult GetSumByYear(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByYear(binding));
+    public async Task<IActionResult> GetSumByYear(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByYear(binding));
 
     [HttpGet("Sum/ByBeer")]
-    public IActionResult GetSumVolumeByBeer(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBeer(binding));
+    public async Task<IActionResult> GetSumVolumeByBeer(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByBeer(binding));
 
     [HttpGet("Sum/ByBrand")]
-    public IActionResult GetSumVolumeByBrand(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByBrand(binding));
+    public async Task<IActionResult> GetSumVolumeByBrand(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByBrand(binding));
 
     [HttpGet("Sum/ByCountry")]
-    public IActionResult GetSumVolumeByCountry(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByCountry(binding));
+    public async Task<IActionResult> GetSumVolumeByCountry(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByCountry(binding));
 
     [HttpGet("Sum/ByStyle")]
-    public IActionResult GetSumVolumeByStyle(ConsumationGetBinding binding) => Ok(_consumationHandler.SumVolumeByStyle(binding));
+    public async Task<IActionResult> GetSumVolumeByStyle(ConsumationGetBinding binding) => Ok(await _consumationHandler.SumVolumeByStyle(binding));
 
     [HttpPost]
-    public IActionResult Post([FromBody] ConsumationBinding binding)
+    public async Task<IActionResult> Post([FromBody] ConsumationBinding binding)
     {
-        _consumationHandler.Add(binding);
+        await _consumationHandler.Add(binding);
         return Ok();
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
@@ -14,20 +15,20 @@ public class PoiHandler : Handler<PoiHandler>, IPoiHandler
     {
     }
 
-    public void Create(PoiBinding binding)
+    public async Task Create(PoiBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
 
-        context.Pois.Add(entity);
-        context.SaveChanges();
+        await context.Pois.AddAsync(entity);
+        await context.SaveChangesAsync();
     }
 
-    public PagedView<Model.View.Poi.Poi> Get(PoiGetBinding binding)
+    public async Task<PagedView<Model.View.Poi.Poi>> Get(PoiGetBinding binding)
     {
         using var context = GetMainContext();
-        int? categoryId = context.PoiCategories.GetId(binding.CategoryId);
-        int? vendorId = context.Vendors.GetId(binding.VendorId);
+        int? categoryId = await context.PoiCategories.GetIdAsync(binding.CategoryId);
+        int? vendorId = await context.Vendors.GetIdAsync(binding.VendorId);
 
         var pois = context.Pois.Include(x => x.PoiCategory)
                                .WhereIf(categoryId.HasValue, x => x.PoiCategoryId == categoryId)
@@ -37,21 +38,20 @@ public class PoiHandler : Handler<PoiHandler>, IPoiHandler
                                .InsideRectangle(binding.X, binding.Y);
 
         var result = new PagedView<Model.View.Poi.Poi>();
-        result.Count = pois.Count();
-        result.Items = pois.OrderByDescending(x => x.Id)
+        result.Count = await pois.CountAsync();
+        result.Items = (await pois.OrderByDescending(x => x.Id)
                            .Page(binding)
-                           .ToList()
+                           .ToListAsync())
                            .Select(x => new Model.View.Poi.Poi(x));
 
         return result;
     }
 
-    public IEnumerable<Model.View.Poi.PoiCategory> GetCategories()
+    public async Task<IEnumerable<Model.View.Poi.PoiCategory>> GetCategories()
     {
         using var context = GetMainContext();
-        return context.PoiCategories.OrderBy(x => x.Name)
-                                    .ToList()
+        return (await context.PoiCategories.OrderBy(x => x.Name)
+                                    .ToListAsync())
                                     .Select(x => new Model.View.Poi.PoiCategory(x));
     }
 }
- 

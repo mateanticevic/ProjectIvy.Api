@@ -20,7 +20,7 @@ public class MovieRatingController : BaseController<MovieController>
     }
 
     [HttpGet("Average")]
-    public double GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetRatingAverage(binding);
+    public async Task<double> GetAverage([FromQuery] MovieGetBinding binding) => await _movieHandler.GetRatingAverage(binding);
 
     [HttpGet("ByYear")]
     public async Task<IActionResult> GetAveragerByYear([FromQuery] MovieGetBinding binding) => Ok(await _movieHandler.GetRatingAverageByYear(binding));

@@ -27,14 +27,14 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
         {
             Name = binding.Name,
             ValueId = binding.Name.ToValueId(),
-            BrandId = context.Brands.GetId(binding.BrandId),
+            BrandId = await context.Brands.GetIdAsync(binding.BrandId),
             UserId = UserId
         };
 
         var itemOwnership = new Database.InventoryItemOwnership
         {
             InventoryItem = entity,
-            OwnershipId = context.Ownerships.GetId(binding.OwershipId) ?? context.Ownerships.GetId(DefaultOwnershipValueId).Value,
+            OwnershipId = await context.Ownerships.GetIdAsync(binding.OwershipId) ?? (await context.Ownerships.GetIdAsync(DefaultOwnershipValueId)).Value,
             Created = DateTime.UtcNow
         };
 
@@ -94,7 +94,7 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
 
         if (!hasOwnerships)
         {
-            var ownershipId = context.Ownerships.GetId(DefaultOwnershipValueId);
+            var ownershipId = await context.Ownerships.GetIdAsync(DefaultOwnershipValueId);
 
             var ownership = new Database.InventoryItemOwnership
             {
@@ -134,7 +134,7 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
                                  .WhereUser(UserId)
                                  .SingleOrDefaultAsync(x => x.ValueId == valueId) ?? throw new ResourceNotFoundException();
 
-        var ownershipId = context.Ownerships.GetId(binding.OwershipId) ?? context.Ownerships.GetId(DefaultOwnershipValueId).Value;
+        var ownershipId = await context.Ownerships.GetIdAsync(binding.OwershipId) ?? (await context.Ownerships.GetIdAsync(DefaultOwnershipValueId)).Value;
         var lastOwnershipId = await context.InventoryItemOwnerships
                                            .Where(x => x.InventoryItemId == item.Id)
                                            .OrderByDescending(x => x.Created)
@@ -143,7 +143,7 @@ public class InventoryHandler : Handler<InventoryHandler>, IInventoryHandler
                                            .FirstOrDefaultAsync();
 
         item.Name = binding.Name;
-        item.BrandId = context.Brands.GetId(binding.BrandId);
+        item.BrandId = await context.Brands.GetIdAsync(binding.BrandId);
 
         context.InventoryItems.Update(item);
 

@@ -9,27 +9,27 @@ namespace ProjectIvy.Business.Handlers.Expense;
 
 public interface IExpenseHandler : IHandler
 {
-    void AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding);
+    Task AddFile(string expenseValueId, string fileValueId, ExpenseFileBinding binding);
 
-    int Count(ExpenseGetBinding binding);
+    Task<int> Count(ExpenseGetBinding binding);
 
-    IEnumerable<KeyValuePair<string, int>> CountByDay(ExpenseGetBinding binding);
+    Task<IEnumerable<KeyValuePair<string, int>>> CountByDay(ExpenseGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByDayOfWeek(ExpenseGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByDayOfWeek(ExpenseGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByMonth(ExpenseGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByMonth(ExpenseGetBinding binding);
 
-    IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ExpenseGetBinding binding);
+    Task<IEnumerable<KeyValuePair<string, int>>> CountByMonthOfYear(ExpenseGetBinding binding);
 
-    PagedView<KeyValuePair<ExpenseType, int>> CountByType(ExpenseGetBinding binding);
+    Task<PagedView<KeyValuePair<ExpenseType, int>>> CountByType(ExpenseGetBinding binding);
 
-    PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>> CountByVendor(ExpenseGetBinding binding);
+    Task<PagedView<KeyValuePair<Model.View.Vendor.Vendor, int>>> CountByVendor(ExpenseGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByYear(ExpenseGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(ExpenseGetBinding binding);
 
-    int CountTypes(ExpenseGetBinding binding);
+    Task<int> CountTypes(ExpenseGetBinding binding);
 
-    int CountVendors(ExpenseGetBinding binding);
+    Task<int> CountVendors(ExpenseGetBinding binding);
 
     Task<string> Create(ExpenseBinding binding);
 
@@ -37,11 +37,11 @@ public interface IExpenseHandler : IHandler
 
     Task Delete(string valueId);
 
-    View.Expense Get(string expenseId);
+    Task<View.Expense> Get(string expenseId);
 
-    PagedView<View.Expense> Get(ExpenseGetBinding binding);
+    Task<PagedView<View.Expense>> Get(ExpenseGetBinding binding);
 
-    IEnumerable<View.ExpenseFile> GetFiles(string expenseValueId);
+    Task<IEnumerable<View.ExpenseFile>> GetFiles(string expenseValueId);
 
     Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding);
 
@@ -53,9 +53,9 @@ public interface IExpenseHandler : IHandler
 
     Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByMonth(ExpenseSumGetBinding binding);
 
-    IEnumerable<KeyValuePair<string, decimal>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding);
+    Task<IEnumerable<KeyValuePair<string, decimal>>> SumAmountByMonthOfYear(ExpenseSumGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, decimal>> SumAmountByYear(ExpenseSumGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByYear(ExpenseSumGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<Model.View.Currency.Currency, decimal>>> SumByCurrency(ExpenseSumGetBinding binding);
 
@@ -65,5 +65,5 @@ public interface IExpenseHandler : IHandler
 
     Task<IEnumerable<KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>>> SumByYearByType(ExpenseSumGetBinding binding);
 
-    bool Update(ExpenseBinding binding);
+    Task<bool> Update(ExpenseBinding binding);
 }

@@ -21,7 +21,7 @@ public class BrandController : BaseController<BrandController>
     }
 
     [HttpGet("{id}")]
-    public ViewBrand.Brand Get(string id) => _brandHandler.Get(id);
+    public async Task<ViewBrand.Brand> Get(string id) => await _brandHandler.Get(id);
 
     [HttpGet]
     public async Task<PagedView<ViewBrand.Brand>> Get([FromQuery] BrandGetBinding binding)

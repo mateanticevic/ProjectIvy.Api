@@ -10,13 +10,13 @@ namespace ProjectIvy.Business.Handlers.Tracking;
 
 public interface ITrackingHandler : IHandler
 {
-    int Count(FilteredBinding binding);
+    Task<int> Count(FilteredBinding binding);
 
-    IEnumerable<GroupedByMonth<int>> CountByMonth(FilteredBinding binding);
+    Task<IEnumerable<GroupedByMonth<int>>> CountByMonth(FilteredBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByYear(FilteredBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(FilteredBinding binding);
 
-    int CountUnique(FilteredBinding binding);
+    Task<int> CountUnique(FilteredBinding binding);
 
     Task Create(TrackingBinding binding);
 
@@ -24,9 +24,9 @@ public interface ITrackingHandler : IHandler
 
     Task Delete(IEnumerable<long> timestamps);
 
-    IEnumerable<View.Tracking> Get(TrackingGetBinding binding);
+    Task<IEnumerable<View.Tracking>> Get(TrackingGetBinding binding);
 
-    double GetAverageSpeed(FilteredBinding binding);
+    Task<double> GetAverageSpeed(FilteredBinding binding);
 
     Task<IEnumerable<string>> GetDays(TrackingGetBinding binding);
 
@@ -34,15 +34,15 @@ public interface ITrackingHandler : IHandler
 
     Task<TrackingDetails> GetDetails(FilteredBinding binding);
 
-    int GetDistance(FilteredBinding binding);
+    Task<int> GetDistance(FilteredBinding binding);
 
     Task<View.Tracking> GetLast(DateTime? at = null);
 
     Task<View.TrackingLocation> GetLastLocation();
 
-    double GetMaxSpeed(FilteredBinding binding);
+    Task<double> GetMaxSpeed(FilteredBinding binding);
 
     Task ImportFromGpx(XDocument xml);
 
-    bool ImportFromKml(XDocument kml);
+    Task<bool> ImportFromKml(XDocument kml);
 }

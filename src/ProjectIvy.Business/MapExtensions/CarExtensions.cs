@@ -1,9 +1,9 @@
-﻿using ProjectIvy.Common.Helpers;
+﻿using System.Threading.Tasks;
+using ProjectIvy.Common.Helpers;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Database.Main.Transport;
-using System;
 
 namespace ProjectIvy.Business.MapExtensions;
 
@@ -18,12 +18,12 @@ public static class CarExtensions
         return entity;
     }
 
-    public static CarLog ToEntity(this CarLogBinding b, MainContext context, CarLog entity = null)
+    public static async Task<CarLog> ToEntity(this CarLogBinding b, MainContext context, CarLog entity = null)
     {
         if (entity == null)
             entity = new CarLog();
 
-        entity.CarId = context.Cars.GetId(b.CarValueId).Value;
+        entity.CarId = (await context.Cars.GetIdAsync(b.CarValueId)).Value;
         entity.Odometer = b.Odometer;
         entity.Timestamp = DateTime.Now;
 
@@ -57,12 +57,12 @@ public static class CarExtensions
         };
     }
 
-    public static CarService ToEntity(this CarServiceBinding b, MainContext context, CarService entity = null)
+    public static async Task<CarService> ToEntity(this CarServiceBinding b, MainContext context, CarService entity = null)
     {
         if (entity == null)
             entity = new CarService();
 
-        entity.CarServiceTypeId = context.CarServiceTypes.GetId(b.TypeId).Value;
+        entity.CarServiceTypeId = (await context.CarServiceTypes.GetIdAsync(b.TypeId)).Value;
         entity.Date = b.Date;
         entity.Description = b.Description;
         entity.ValueId = IdHelper.Generate();

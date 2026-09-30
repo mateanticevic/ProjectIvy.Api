@@ -33,16 +33,16 @@ public class CountryController : BaseController<CountryController>
         => await _geohashHandler.RemoveGeohashFromCountry(countryId, ids);
 
     [HttpGet]
-    public PagedView<View.Country> Get(CountryGetBinding binding) => _countryHandler.Get(binding);
+    public async Task<PagedView<View.Country>> Get(CountryGetBinding binding) => await _countryHandler.Get(binding);
 
     [HttpGet("{countryId}")]
-    public View.Country Get(string countryId) => _countryHandler.Get(countryId);
+    public async Task<View.Country> Get(string countryId) => await _countryHandler.Get(countryId);
 
     [HttpGet("{countryId}/City")]
     public async Task<PagedView<Model.View.City.City>> GetCities(string countryId, [FromQuery] FilteredPagedBinding binding) => await _countryHandler.GetCities(countryId, binding);
 
     [HttpGet("Count")]
-    public long GetCount(CountryGetBinding binding) => _countryHandler.Count(binding);
+    public async Task<long> GetCount(CountryGetBinding binding) => await _countryHandler.Count(binding);
 
     [HttpGet("List")]
     public async Task<IActionResult> GetCountryLists() => Ok(await _countryHandler.GetLists());
@@ -64,7 +64,7 @@ public class CountryController : BaseController<CountryController>
     public async Task<IEnumerable<View.Country>> GetVisited(TripGetBinding binding) => await _countryHandler.GetVisited(binding);
 
     [HttpGet("Visited/Boundaries")]
-    public async Task<IEnumerable<View.CountryBoundaries>> GetVisitedBoundaries(TripGetBinding binding) => _countryHandler.GetBoundaries(await _countryHandler.GetVisited(binding));
+    public async Task<IEnumerable<View.CountryBoundaries>> GetVisitedBoundaries(TripGetBinding binding) => await _countryHandler.GetBoundaries(await _countryHandler.GetVisited(binding));
 
     [HttpGet("Visited/ByDay")]
     public async Task<IEnumerable<KeyValuePair<DateTime, IEnumerable<string>>>> GetVisitedByDay(FilteredBinding binding)
@@ -74,7 +74,7 @@ public class CountryController : BaseController<CountryController>
     public async Task<IEnumerable<KeyValuePair<int, IEnumerable<View.Country>>>> GetVisitedByYear() => await _countryHandler.GetVisitedByYear();
 
     [HttpGet("Visited/Count")]
-    public long GetVisitedCount() => _countryHandler.CountVisited();
+    public async Task<long> GetVisitedCount() => await _countryHandler.CountVisited();
 
     [HttpGet("Visited/Count/ByYear")]
     public async Task<IEnumerable<KeyValuePair<int, int>>> GetVisitedCountByYear() => await _countryHandler.GetVisitedCountByYear();

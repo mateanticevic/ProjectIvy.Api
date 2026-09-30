@@ -17,10 +17,10 @@ public class ExpenseTypeController : BaseController<ExpenseTypeController>
     public ExpenseTypeController(ILogger<ExpenseTypeController> logger, IExpenseTypeHandler expenseTypeHandler) : base(logger) => _expenseTypeHandler = expenseTypeHandler;
 
     [HttpGet]
-    public IEnumerable<View.ExpenseType.ExpenseType> Get([FromQuery] ExpenseTypeGetBinding binding) => _expenseTypeHandler.Get(binding);
+    public async Task<IEnumerable<View.ExpenseType.ExpenseType>> Get([FromQuery] ExpenseTypeGetBinding binding) => await _expenseTypeHandler.Get(binding);
 
     [HttpGet("Tree")]
-    public IEnumerable<View.Node<View.ExpenseType.ExpenseType>> GetTree() => _expenseTypeHandler.GetTree();
+    public async Task<IEnumerable<View.Node<View.ExpenseType.ExpenseType>>> GetTree() => await _expenseTypeHandler.GetTree();
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] ExpenseTypeBinding binding) => Ok(await _expenseTypeHandler.Create(binding));

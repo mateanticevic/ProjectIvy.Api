@@ -7,7 +7,7 @@ namespace ProjectIvy.Business.Handlers.Brand;
 
 public interface IBrandHandler : IHandler
 {
-    View.Brand Get(string id);
+    Task<View.Brand> Get(string id);
 
     Task<PagedView<View.Brand>> Get(BrandGetBinding binding);
 }

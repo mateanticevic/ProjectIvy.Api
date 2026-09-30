@@ -52,7 +52,7 @@ public class CityController : BaseController<CityController>
         => Ok(await _cityHandler.GetRoutes(fromCityId, toCityId, orderBy));
 
     [HttpGet("Visited")]
-    public IEnumerable<View.City> GetVisited() => _cityHandler.GetVisited();
+    public async Task<IEnumerable<View.City>> GetVisited() => await _cityHandler.GetVisited();
 
     [HttpPost("{cityId}/Geohash")]
     public async Task<IActionResult> PostGeohashes(string cityId, [FromBody] IEnumerable<string> geohashes)

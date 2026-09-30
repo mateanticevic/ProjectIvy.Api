@@ -9,9 +9,9 @@ public interface IUserHandler : IHandler
 {
     Task AddWeight(WeightBinding binding);
 
-    View.User Get(string username);
+    Task<View.User> Get(string username);
 
-    View.User Get(int? id = null);
+    Task<View.User> Get(int? id = null);
 
     Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight(FilteredBinding b);
 

@@ -18,7 +18,7 @@ public class RideHandler : Handler<RideHandler>, IRideHandler
     public async Task Create(RideBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
 
         await context.Rides.AddAsync(entity);

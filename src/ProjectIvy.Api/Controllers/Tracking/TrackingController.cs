@@ -35,19 +35,19 @@ public class TrackingController : BaseController<TrackingController>
     }
 
     [HttpGet]
-    public IEnumerable<View.Tracking> Get([FromQuery] TrackingGetBinding binding) => _trackingHandler.Get(binding);
+    public async Task<IEnumerable<View.Tracking>> Get([FromQuery] TrackingGetBinding binding) => await _trackingHandler.Get(binding);
 
     [HttpGet("Speed/Average")]
-    public double GetAverageSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetAverageSpeed(binding);
+    public async Task<double> GetAverageSpeed([FromQuery] FilteredBinding binding) => await _trackingHandler.GetAverageSpeed(binding);
 
     [HttpGet("Count")]
-    public int GetCount([FromQuery] FilteredBinding binding) => _trackingHandler.Count(binding);
+    public async Task<int> GetCount([FromQuery] FilteredBinding binding) => await _trackingHandler.Count(binding);
 
     [HttpGet("Count/ByMonth")]
-    public IEnumerable<GroupedByMonth<int>> GetCountByMonth([FromQuery] FilteredBinding binding) => _trackingHandler.CountByMonth(binding);
+    public async Task<IEnumerable<GroupedByMonth<int>>> GetCountByMonth([FromQuery] FilteredBinding binding) => await _trackingHandler.CountByMonth(binding);
 
     [HttpGet("Count/ByYear")]
-    public IActionResult GetCountByYear([FromQuery] FilteredBinding binding) => Ok(_trackingHandler.CountByYear(binding));
+    public async Task<IActionResult> GetCountByYear([FromQuery] FilteredBinding binding) => Ok(await _trackingHandler.CountByYear(binding));
 
     [HttpGet("Day")]
     public async Task<IActionResult> GetDays(TrackingGetBinding binding) => Ok(await _trackingHandler.GetDays(binding));
@@ -56,12 +56,12 @@ public class TrackingController : BaseController<TrackingController>
     public async Task<TrackingDetails> GetDetails([FromQuery] FilteredBinding binding) => await _trackingHandler.GetDetails(binding);
 
     [HttpGet("Distance")]
-    public int GetDistance([FromQuery] FilteredBinding binding) => _trackingHandler.GetDistance(binding);
+    public async Task<int> GetDistance([FromQuery] FilteredBinding binding) => await _trackingHandler.GetDistance(binding);
 
     [HttpGet("Gpx")]
-    public string GetGpx([FromQuery] TrackingGetBinding binding)
+    public async Task<string> GetGpx([FromQuery] TrackingGetBinding binding)
     {
-        return _trackingHandler.Get(binding)
+        return (await _trackingHandler.Get(binding))
                                .Select(x => (ITracking)x)
                                .ToGpx()
                                .ToString();
@@ -74,10 +74,10 @@ public class TrackingController : BaseController<TrackingController>
     public async Task<IEnumerable<DateTime>> GetLastDays([FromQuery] DateTime? at = null) => await _trackingHandler.GetDaysAtLast(at);
 
     [HttpGet("Speed/Max")]
-    public double GetMaxSpeed([FromQuery] FilteredBinding binding) => _trackingHandler.GetMaxSpeed(binding);
+    public async Task<double> GetMaxSpeed([FromQuery] FilteredBinding binding) => await _trackingHandler.GetMaxSpeed(binding);
 
     [HttpGet("Count/Unique")]
-    public int GetUniqueCount([FromQuery] FilteredBinding binding) => _trackingHandler.CountUnique(binding);
+    public async Task<int> GetUniqueCount([FromQuery] FilteredBinding binding) => await _trackingHandler.CountUnique(binding);
 
     [HttpPost("Delete")]
     public async Task<IActionResult> PostDelete([FromBody] IEnumerable<long> timestamps)
@@ -102,10 +102,10 @@ public class TrackingController : BaseController<TrackingController>
     }
 
     [HttpPut("Kml")]
-    public bool PutKml([FromBody] string kmlRaw)
+    public async Task<bool> PutKml([FromBody] string kmlRaw)
     {
         var kml = XDocument.Parse(kmlRaw);
 
-        return _trackingHandler.ImportFromKml(kml);
+        return await _trackingHandler.ImportFromKml(kml);
     }
 }

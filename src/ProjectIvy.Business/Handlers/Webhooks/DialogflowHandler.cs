@@ -54,7 +54,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         var unitCurrency = (JObject)request.QueryResult.Parameters["unit-currency"];
         string currencyId = (string)unitCurrency["currency"];
 
-        var user = _userHandler.Get(UserId);
+        var user = await _userHandler.Get(UserId);
 
         var binding = new ExpenseBinding()
         {
@@ -67,7 +67,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
             PaymentTypeId = (string)request.QueryResult.Parameters["payment-type"]
         };
 
-        _expenseHandler.Create(binding);
+        await _expenseHandler.Create(binding);
 
         return new GoogleCloudDialogflowV2WebhookResponse();
     }
@@ -90,7 +90,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetConsecutiveConsumationDays(GoogleCloudDialogflowV2WebhookRequest request)
     {
-        var consecutive = _consumationHandler.ConsecutiveDates(new ConsumationGetBinding()).FirstOrDefault();
+        var consecutive = (await _consumationHandler.ConsecutiveDates(new ConsumationGetBinding())).FirstOrDefault();
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -102,7 +102,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
     {
         var binding = new ConsumationGetBinding(request.ToFilteredBinding());
 
-        int count = _consumationHandler.Count(binding);
+        int count = await _consumationHandler.Count(binding);
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -114,7 +114,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
     {
         var binding = new ConsumationGetBinding(request.ToFilteredBinding());
 
-        int sum = _consumationHandler.SumVolume(binding);
+        int sum = await _consumationHandler.SumVolume(binding);
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -124,7 +124,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetDistance(GoogleCloudDialogflowV2WebhookRequest request)
     {
-        int distance = _trackingHandler.GetDistance(request.ToFilteredBinding(true));
+        int distance = await _trackingHandler.GetDistance(request.ToFilteredBinding(true));
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -140,7 +140,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 
         decimal sum = await _expenseHandler.SumAmount(binding);
 
-        var user = _userHandler.Get(UserId);
+        var user = await _userHandler.Get(UserId);
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -171,7 +171,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetLatestOdometer()
     {
-        var carLog = _carHandler.GetLatestLog(new CarLogGetBinding() { HasOdometer = true });
+        var carLog = await _carHandler.GetLatestLog(new CarLogGetBinding() { HasOdometer = true });
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -187,7 +187,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
             From = filteredBinding.From,
             To = filteredBinding.To
         };
-        int movieCount = _movieHandler.Count(movieGetBinding);
+        int movieCount = await _movieHandler.Count(movieGetBinding);
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -197,7 +197,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
 
     public async Task<GoogleCloudDialogflowV2WebhookResponse> GetTopSpeed(GoogleCloudDialogflowV2WebhookRequest request)
     {
-        double maxSpeed = _trackingHandler.GetMaxSpeed(request.ToFilteredBinding(true));
+        double maxSpeed = await _trackingHandler.GetMaxSpeed(request.ToFilteredBinding(true));
 
         return new GoogleCloudDialogflowV2WebhookResponse()
         {
@@ -260,7 +260,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         {
             Odometer = (int)odometer["amount"]
         };
-        _carHandler.CreateLog(carLog);
+        await _carHandler.CreateLog(carLog);
 
         return new GoogleCloudDialogflowV2WebhookResponse();
     }

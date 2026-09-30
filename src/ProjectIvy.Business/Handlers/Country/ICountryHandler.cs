@@ -9,15 +9,15 @@ namespace ProjectIvy.Business.Handlers.Country;
 
 public interface ICountryHandler
 {
-    long Count(CountryGetBinding binding);
+    Task<long> Count(CountryGetBinding binding);
 
-    long CountVisited();
+    Task<long> CountVisited();
 
-    View.Country Get(string id);
+    Task<View.Country> Get(string id);
 
-    PagedView<View.Country> Get(CountryGetBinding binding);
+    Task<PagedView<View.Country>> Get(CountryGetBinding binding);
 
-    IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries);
+    Task<IEnumerable<View.CountryBoundaries>> GetBoundaries(IEnumerable<View.Country> countries);
 
     Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding);
 

@@ -25,7 +25,7 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
     public async Task Add(IncomeBinding binding)
     {
         using var context = GetMainContext();
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
 
         await context.Incomes.AddAsync(entity);
@@ -65,12 +65,12 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
     public async Task<decimal> GetSum(IncomeGetSumBinding binding)
     {
         using var context = GetMainContext();
-        int targetCurrencyId = context.GetCurrencyId(binding.TargetCurrencyId, UserId);
+        int targetCurrencyId = await context.GetCurrencyIdAsync(binding.TargetCurrencyId, UserId);
 
-        var incomeIds = context.Incomes.WhereUser(UserId)
+        var incomeIds = await context.Incomes.WhereUser(UserId)
                                        .Where(binding, context)
                                        .Select(x => x.Id)
-                                       .ToList();
+                                       .ToListAsync();
 
         if (incomeIds.Count == 0)
             return 0;
@@ -86,32 +86,36 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
         return Math.Round(await sql.ExecuteScalarAsync<decimal>(SqlLoader.Load(SqlScripts.GetIncomeSum), parameters), 2);
     }
 
-    public IEnumerable<KeyValuePair<DateTime, decimal>> GetSumByMonthOfYear(IncomeGetSumBinding binding)
+    public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetSumByMonthOfYear(IncomeGetSumBinding binding)
     {
         using var context = GetMainContext();
-        var from = binding.From ?? context.Incomes.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefault().Date;
+        var from = binding.From ?? (await context.Incomes.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefaultAsync()).Date;
         var to = binding.To ?? DateTime.Now;
 
         var periods = from.RangeMonthsClosed(to)
                           .Select(x => new FilteredBinding(x.from, x.to))
                           .ToList();
 
-        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
+        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To)))).ToList();
+
+        await Task.WhenAll(tasks.Select(x => x.Value));
 
         return tasks.Select(x => new KeyValuePair<DateTime, decimal>(new DateTime(x.Key.From.Value.Year, x.Key.From.Value.Month, 1), x.Value.Result));
     }
 
-    public IEnumerable<KeyValuePair<int, decimal>> GetSumByYear(IncomeGetSumBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, decimal>>> GetSumByYear(IncomeGetSumBinding binding)
     {
         using var context = GetMainContext();
-        int startYear = binding.From?.Year ?? context.Incomes.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefault().Date.Year;
+        int startYear = binding.From?.Year ?? (await context.Incomes.WhereUser(UserId).OrderBy(x => x.Date).FirstOrDefaultAsync()).Date.Year;
         int endYear = binding.To?.Year ?? DateTime.Now.Year;
 
         var years = Enumerable.Range(startYear, endYear - startYear + 1);
 
         var periods = years.Select(x => new FilteredBinding(new DateTime(x, 1, 1), new DateTime(x, 12, 31)));
 
-        var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To))));
+        var tasks = periods.Select(x => new KeyValuePair<int, Task<decimal>>(x.From.Value.Year, GetSum(binding.OverrideFromTo<IncomeGetSumBinding>(x.From, x.To)))).ToList();
+
+        await Task.WhenAll(tasks.Select(x => x.Value));
 
         return tasks.Select(x => new KeyValuePair<int, decimal>(x.Key, x.Value.Result));
     }

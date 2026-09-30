@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -19,8 +20,8 @@ public class MovieRuntimeController : BaseController<MovieController>
     }
 
     [HttpGet("Average")]
-    public int GetAverage([FromQuery] MovieGetBinding binding) => _movieHandler.GetRuntimeAverage(binding);
+    public async Task<int> GetAverage([FromQuery] MovieGetBinding binding) => await _movieHandler.GetRuntimeAverage(binding);
 
     [HttpGet("Sum")]
-    public int GetSum([FromQuery] MovieGetBinding binding) => _movieHandler.GetSum(binding, x => x.Runtime);
+    public async Task<int> GetSum([FromQuery] MovieGetBinding binding) => await _movieHandler.GetSum(binding, x => x.Runtime);
 }

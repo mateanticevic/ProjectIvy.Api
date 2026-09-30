@@ -19,7 +19,7 @@ public class UserController : BaseController<UserController>
 
     [HttpGet]
     [ResponseCache(Duration = 10)]
-    public View.User Get() => _userHandler.Get();
+    public async Task<View.User> Get() => await _userHandler.Get();
 
     [HttpGet("Weight")]
     public async Task<IEnumerable<KeyValuePair<DateTime, decimal>>> GetWeight([FromQuery] FilteredBinding b) => await _userHandler.GetWeight(b);

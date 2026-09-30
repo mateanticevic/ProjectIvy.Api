@@ -33,31 +33,31 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
         await context.SaveChangesAsync();
     }
 
-    public View.User Get(string username)
+    public async Task<View.User> Get(string username)
     {
         using var db = GetMainContext();
-        var userEntity = db.Users.SingleOrDefault(x => x.Username == username);
+        var userEntity = await db.Users.SingleOrDefaultAsync(x => x.Username == username);
 
         return new View.User(userEntity);
     }
 
-    public View.User Get(int? id = null)
-        => MemoryCache.GetOrCreate(BuildUserCacheKey(CacheKeyGenerator.UserGet()),
-            cacheEntry =>
+    public async Task<View.User> Get(int? id = null)
+        => await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.UserGet()),
+            async cacheEntry =>
             {
                 cacheEntry.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10);
-                return GetNonCached(id);
+                return await GetNonCached(id);
             });
 
-    private View.User GetNonCached(int? id = null)
+    private async Task<View.User> GetNonCached(int? id = null)
     {
         id = id.HasValue ? id : UserId;
 
         using var db = GetMainContext();
-        var userEntity = db.Users.Include(x => x.DefaultCar)
+        var userEntity = await db.Users.Include(x => x.DefaultCar)
                                  .Include(x => x.DefaultCurrency)
                                  .Include(x => x.DefaultCar.CarModel)
-                                 .SingleOrDefault(x => x.Id == id);
+                                 .SingleOrDefaultAsync(x => x.Id == id);
 
         return new View.User(userEntity);
     }
@@ -92,7 +92,7 @@ public class UserHandler : Handler<UserHandler>, IUserHandler
     {
         using var context = GetMainContext();
         var user = await context.Users.SingleOrDefaultAsync(x => x.Id == UserId);
-        context.Update(binding.ToEntity(context, user));
+        context.Update(await binding.ToEntity(context, user));
 
         await context.SaveChangesAsync();
     }

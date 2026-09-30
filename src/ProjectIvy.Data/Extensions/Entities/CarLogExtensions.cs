@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Model.Binding.Car;
 using ProjectIvy.Model.Database.Main.Transport;
 
@@ -16,6 +18,31 @@ public static class CarLogExtensions
         var firstLogAfter = logs.Where(x => x.CarId == carId && x.Timestamp > dateTime && x.Odometer.HasValue)
                                 .OrderBy(x => x.Timestamp)
                                 .FirstOrDefault();
+
+        if (lastLogBefore == null)
+            return null;
+
+        if (lastLogBefore.Timestamp.Date == dateTime.Date)
+            return lastLogBefore.Odometer;
+
+        if (firstLogAfter == null)
+            return lastLogBefore.Odometer;
+
+        return (int)(lastLogBefore.Odometer
+               + (firstLogAfter.Odometer - lastLogBefore.Odometer)
+               * (dateTime - lastLogBefore.Timestamp).TotalMilliseconds
+               / (firstLogAfter.Timestamp - lastLogBefore.Timestamp).TotalMilliseconds);
+    }
+
+    public static async Task<int?> GetAproximateOdometerAsync(this IQueryable<CarLog> logs, int carId, DateTime dateTime)
+    {
+        var lastLogBefore = await logs.Where(x => x.CarId == carId && x.Timestamp.Date <= dateTime.Date && x.Odometer.HasValue)
+                                      .OrderByDescending(x => x.Timestamp)
+                                      .FirstOrDefaultAsync();
+
+        var firstLogAfter = await logs.Where(x => x.CarId == carId && x.Timestamp > dateTime && x.Odometer.HasValue)
+                                      .OrderBy(x => x.Timestamp)
+                                      .FirstOrDefaultAsync();
 
         if (lastLogBefore == null)
             return null;

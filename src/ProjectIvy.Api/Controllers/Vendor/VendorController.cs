@@ -25,12 +25,12 @@ public class VendorController : BaseController<VendorController>
     }
 
     [HttpGet("{id}")]
-    public ViewVendor.Vendor Get(string id) => _vendorHandler.Get(id);
+    public async Task<ViewVendor.Vendor> Get(string id) => await _vendorHandler.Get(id);
 
     [HttpGet]
     public async Task<PagedView<ViewVendor.Vendor>> Get([FromQuery] VendorGetBinding binding)
         => await _vendorHandler.Get(binding);
 
     [HttpGet("{vendorId}/Poi")]
-    public IEnumerable<object> GetPois(string vendorId) => _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true }).Items;
+    public async Task<IEnumerable<object>> GetPois(string vendorId) => (await _poiHandler.Get(new PoiGetBinding() { VendorId = vendorId, PageAll = true })).Items;
 }

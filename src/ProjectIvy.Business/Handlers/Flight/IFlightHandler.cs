@@ -7,19 +7,19 @@ namespace ProjectIvy.Business.Handlers.Flight;
 
 public interface IFlightHandler
 {
-    int Count(FlightGetBinding binding);
+    Task<int> Count(FlightGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<Views.Airline.Airline, int>>> CountByAirline(FlightGetBinding binding);
 
-    IEnumerable<KeyValuePair<Views.Airport.Airport, int>> CountByAirport(FlightGetBinding binding);
+    Task<IEnumerable<KeyValuePair<Views.Airport.Airport, int>>> CountByAirport(FlightGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> CountByYear(FlightGetBinding binding);
+    Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(FlightGetBinding binding);
 
     Task Create(FlightBinding binding);
 
-    PagedView<Views.Flight.Flight> Get(FlightGetBinding binding);
+    Task<PagedView<Views.Flight.Flight>> Get(FlightGetBinding binding);
 
-    IEnumerable<KeyValuePair<int, int>> GetDistanceByYear();
+    Task<IEnumerable<KeyValuePair<int, int>>> GetDistanceByYear();
 
     Task Update(string valueId, FlightBinding flight);
 }

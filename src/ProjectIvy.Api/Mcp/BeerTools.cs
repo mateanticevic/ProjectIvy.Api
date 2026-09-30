@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Threading.Tasks;
 using ModelContextProtocol.Server;
 using ProjectIvy.Business.Handlers.Consumation;
 
@@ -15,9 +16,9 @@ public class BeerTools
     }
 
     [McpServerTool, Description("Total amount of beer drank in liters")]
-    public decimal Sum(DateTime? from, DateTime? to)
+    public async Task<decimal> Sum(DateTime? from, DateTime? to)
     {
-        return _consumationHandler.SumVolume(new Model.Binding.Consumation.ConsumationGetBinding()
+        return await _consumationHandler.SumVolume(new Model.Binding.Consumation.ConsumationGetBinding()
         {
             From = from,
             To = to ?? DateTime.UtcNow,

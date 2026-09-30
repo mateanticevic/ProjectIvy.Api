@@ -10,11 +10,11 @@ public interface IExpenseTypeHandler : IHandler
 {
     Task<ExpenseType> Create(ExpenseTypeBinding binding);
 
-    IEnumerable<ExpenseType> Get(ExpenseTypeGetBinding binding);
+    Task<IEnumerable<ExpenseType>> Get(ExpenseTypeGetBinding binding);
 
-    IEnumerable<ExpenseFileType> GetFileTypes();
+    Task<IEnumerable<ExpenseFileType>> GetFileTypes();
 
-    IEnumerable<Node<ExpenseType>> GetTree();
+    Task<IEnumerable<Node<ExpenseType>>> GetTree();
 
     Task SetParent(string parentValueId, string childValueId);
 }

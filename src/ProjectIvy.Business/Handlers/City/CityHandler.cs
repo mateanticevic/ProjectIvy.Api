@@ -26,7 +26,7 @@ public class CityHandler : Handler<CityHandler>, ICityHandler
     public async Task AddVisitedCity(string cityValueId)
     {
         using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
         var entity = new Model.Database.Main.Travel.CityVisited()
         {
             CityId = cityId,
@@ -92,17 +92,17 @@ public class CityHandler : Handler<CityHandler>, ICityHandler
         return await _geohashHandler.FromGeohashToGeohash(fromGeohashes, toGeohashes, sort);
     }
 
-    public IEnumerable<View.City> GetVisited()
+    public async Task<IEnumerable<View.City>> GetVisited()
     {
         using var context = GetMainContext();
-        var cities = context.Trackings
+        var cities = await context.Trackings
                             .Include(x => x.City)
                             .WhereUser(UserId)
                             .Where(x => x.CityId.HasValue)
                             .Select(x => x.City)
                             .Distinct()
                             .Select(x => new View.City(x))
-                            .ToList();
+                            .ToListAsync();
 
         return cities.Distinct(new View.CityComparer());
     }

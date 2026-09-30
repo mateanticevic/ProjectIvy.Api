@@ -31,10 +31,10 @@ public class IncomeController : BaseController<IncomeController>
     public async Task<decimal> GetSum([FromQuery] IncomeGetSumBinding binding) => await _incomeHandler.GetSum(binding);
 
     [HttpGet("Sum/ByMonthOfYear")]
-    public IActionResult GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByMonthOfYear(binding));
+    public async Task<IActionResult> GetSumByMonth([FromQuery] IncomeGetSumBinding binding) => Ok(await _incomeHandler.GetSumByMonthOfYear(binding));
 
     [HttpGet("Sum/ByYear")]
-    public IActionResult GetSumByYear([FromQuery] IncomeGetSumBinding binding) => Ok(_incomeHandler.GetSumByYear(binding));
+    public async Task<IActionResult> GetSumByYear([FromQuery] IncomeGetSumBinding binding) => Ok(await _incomeHandler.GetSumByYear(binding));
 
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] IncomeBinding binding)

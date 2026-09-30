@@ -25,7 +25,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         int? currencyId = null;
 
         if (binding.EstimatedPrice.HasValue)
-            currencyId = context.GetCurrencyId(binding.CurrencyId, UserId);
+            currencyId = await context.GetCurrencyIdAsync(binding.CurrencyId, UserId);
 
         List<int> resolvedTagIds = [];
         if (tagIds.Count > 0)
@@ -400,7 +400,7 @@ public class ToDoHandler : Handler<ToDoHandler>, IToDoHandler
         toDo.IsCompleted = binding.IsCompleted;
         toDo.EstimatedPrice = binding.EstimatedPrice;
         toDo.CurrencyId = binding.EstimatedPrice.HasValue
-            ? context.GetCurrencyId(binding.CurrencyId, UserId)
+            ? await context.GetCurrencyIdAsync(binding.CurrencyId, UserId)
             : null;
 
         if (!wasCompleted && toDo.IsCompleted)

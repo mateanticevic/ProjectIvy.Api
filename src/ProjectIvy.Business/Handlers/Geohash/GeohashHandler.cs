@@ -29,9 +29,9 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         foreach (string geohash in geohashes)
         {
-            var childGeohashes = geohashItems.Where(matchItem)
+            var childGeohashes = await geohashItems.Where(matchItem)
                                              .Where(x => x.Geohash.StartsWith(geohash))
-                                             .ToList();
+                                             .ToListAsync();
 
             if (childGeohashes.Any())
                 geohashItems.RemoveRange(childGeohashes);
@@ -46,7 +46,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int cityId = context.Cities.GetId(cityValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
         await AddGeohashesTo(context.CityGeohashes, geohashes, x => x.CityId == cityId, () => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
 
         try
@@ -64,7 +64,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        int countryId = (await context.Countries.GetIdAsync(countryValueId)).Value;
         await AddGeohashesTo(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, () => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
         // _ = context.Trackings.WhereUser(UserId)
         //                      .Where(x => geohashes.Any(y => x.Geohash.StartsWith(y)))
@@ -76,7 +76,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
+        int locationId = (await context.Locations.WhereUser(UserId).GetIdAsync(locationValueId)).Value;
         await AddGeohashesTo(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, () => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
         await context.SaveChangesAsync();
 
@@ -178,14 +178,22 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
 
         var fromTms = TimestampsByDay(context, fromGeohashes.FirstOrDefault(), true);
 
-        var fromTimestamps = fromGeohashes.Select(x => TimestampsByDay(context, x, true))
-                                          .SelectMany(x => x)
+        var fromTimestampLists = new List<DateTime>();
+        foreach (var x in fromGeohashes)
+        {
+            fromTimestampLists.AddRange(await TimestampsByDay(context, x, true).ToListAsync());
+        }
+        var fromTimestamps = fromTimestampLists
                                           .GroupBy(x => x.Date)
                                           .Select(x => x.Max())
                                           .ToList();
 
-        var toTimestamps = toGeohashes.Select(x => TimestampsByDay(context, x, false))
-                                      .SelectMany(x => x)
+        var toTimestampLists = new List<DateTime>();
+        foreach (var x in toGeohashes)
+        {
+            toTimestampLists.AddRange(await TimestampsByDay(context, x, false).ToListAsync());
+        }
+        var toTimestamps = toTimestampLists
                                       .GroupBy(x => x.Date)
                                       .Select(x => x.Min())
                                       .ToList();
@@ -231,7 +239,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     public async Task<IEnumerable<string>> GetCityGeohashes(string cityValueId)
     {
         using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
         return await context.CityGeohashes.Where(x => x.CityId == cityId)
                                           .Select(x => x.Geohash)
                                           .ToListAsync();
@@ -240,18 +248,20 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     public async Task<IEnumerable<string>> GetCityGeohashesVisited(string cityValueId, GeohashCityVisitedGetBinding binding)
     {
         using var context = GetMainContext();
-        int cityId = context.Cities.GetId(cityValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
         var cityGeohashes = await context.CityGeohashes.Where(x => x.CityId == cityId)
                                                    .Select(x => x.Geohash)
                                                    .ToListAsync();
 
         var cityGeohashesResolved = GeohashHelper.ResolveChildGeohashes(cityGeohashes, binding.Precision);
 
-        return cityGeohashesResolved.Where(x => context.Trackings
-                                        .WhereUser(UserId)
-                                        .Any(y => y.Geohash.StartsWith(x)))
-                                    .Distinct()
-                                    .ToList();
+        var result = new List<string>();
+        foreach (var x in cityGeohashesResolved.Distinct())
+        {
+            if (await context.Trackings.WhereUser(UserId).AnyAsync(y => y.Geohash.StartsWith(x)))
+                result.Add(x);
+        }
+        return result;
     }
 
     public async Task<Model.View.Country.Country> GetCountry(string geohash)
@@ -271,7 +281,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     public async Task<IEnumerable<string>> GetCountryGeohashes(string countryValueId)
     {
         using var context = GetMainContext();
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        int countryId = (await context.Countries.GetIdAsync(countryValueId)).Value;
         return await context.CountryGeohashes.Where(x => x.CountryId == countryId)
                                              .Select(x => x.Geohash)
                                              .ToListAsync();
@@ -280,18 +290,20 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     public async Task<IEnumerable<string>> GetCountryGeohashesVisited(string countryValueId, GeohashCountryVisitedGetBinding binding)
     {
         using var context = GetMainContext();
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        int countryId = (await context.Countries.GetIdAsync(countryValueId)).Value;
         var countryGeohashes = await context.CountryGeohashes.Where(x => x.CountryId == countryId)
                                                    .Select(x => x.Geohash)
                                                    .ToListAsync();
 
         var countryGeohashesResolved = GeohashHelper.ResolveChildGeohashes(countryGeohashes, binding.Precision);
 
-        return countryGeohashesResolved.Where(x => context.Trackings
-                                        .WhereUser(UserId)
-                                        .Any(y => y.Geohash.StartsWith(x)))
-                                    .Distinct()
-                                    .ToList();
+        var result = new List<string>();
+        foreach (var x in countryGeohashesResolved.Distinct())
+        {
+            if (await context.Trackings.WhereUser(UserId).AnyAsync(y => y.Geohash.StartsWith(x)))
+                result.Add(x);
+        }
+        return result;
     }
 
     public async Task<IEnumerable<DateOnly>> GetDays(string geohash)
@@ -433,7 +445,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int cityId = context.Cities.GetId(cityValueId).Value;
+        int cityId = (await context.Cities.GetIdAsync(cityValueId)).Value;
         await RemoveGeohashFrom(context.CityGeohashes, geohashes, x => x.CityId == cityId, x => new Model.Database.Main.Common.CityGeohash() { CityId = cityId });
         await context.SaveChangesAsync();
 
@@ -447,7 +459,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        int countryId = (await context.Countries.GetIdAsync(countryValueId)).Value;
         await RemoveGeohashFrom(context.CountryGeohashes, geohashes, x => x.CountryId == countryId, x => new Model.Database.Main.Common.CountryGeohash() { CountryId = countryId });
         await context.SaveChangesAsync();
 
@@ -461,7 +473,7 @@ public class GeohashHandler : Handler<GeohashHandler>, IGeohashHandler
     {
         using var context = GetMainContext();
 
-        int locationId = context.Locations.WhereUser(UserId).GetId(locationValueId).Value;
+        int locationId = (await context.Locations.WhereUser(UserId).GetIdAsync(locationValueId)).Value;
         await RemoveGeohashFrom(context.LocationGeohashes, geohashes, x => x.LocationId == locationId, x => new Model.Database.Main.Tracking.LocationGeohash() { LocationId = locationId });
         await context.SaveChangesAsync();
 

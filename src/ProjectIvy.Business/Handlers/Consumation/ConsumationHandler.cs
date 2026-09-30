@@ -21,18 +21,18 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
     public ConsumationHandler(IHandlerContext<ConsumationHandler> context)
         : base(context) { }
 
-    public void Add(ConsumationBinding binding)
+    public async Task Add(ConsumationBinding binding)
     {
         using var context = GetMainContext();
         foreach (var i in Enumerable.Range(0, binding.Units))
         {
-            var consumation = binding.ToEntity(context);
+            var consumation = await binding.ToEntity(context);
             consumation.UserId = UserId;
 
-            context.Consumations.Add(consumation);
+            await context.Consumations.AddAsync(consumation);
         }
 
-        context.SaveChanges();
+        await context.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<KeyValuePair<int, decimal>>> AlcoholByYear(ConsumationGetBinding binding)
@@ -61,14 +61,14 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         return sumByYear.Select(x => new KeyValuePair<int, int>(x.Key, x.Key == DateTime.Now.Year ? (int)(x.Value / DateTime.Now.Subtract(new DateTime(DateTime.Now.Year, 1, 1)).TotalDays) : x.Value / 365));
     }
 
-    public IEnumerable<(DateTime From, DateTime To)> ConsecutiveDates(ConsumationGetBinding binding)
+    public async Task<IEnumerable<(DateTime From, DateTime To)>> ConsecutiveDates(ConsumationGetBinding binding)
     {
         using MainContext context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .Select(x => x.Date)
                                    .Distinct()
-                                   .ToList()
+                                   .ToListAsync())
                                    .ConsecutiveDates()
                                    .Select(x => new { Range = x, Count = x.To.Subtract(x.From).Days + 1 })
                                    .OrderByDescending(x => x.Count)
@@ -76,39 +76,39 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                    .ToList();
     }
 
-    public int Count(ConsumationGetBinding binding)
+    public async Task<int> Count(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                       .Where(binding, context)
-                      .Count();
+                      .CountAsync();
     }
 
-    public int CountBeers(ConsumationGetBinding binding)
+    public async Task<int> CountBeers(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                       .Where(binding, context)
                       .Select(x => x.BeerId)
                       .Distinct()
-                      .Count();
+                      .CountAsync();
     }
 
-    public int CountBrands(ConsumationGetBinding binding)
+    public async Task<int> CountBrands(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .Include(x => x.Beer)
                                    .Select(x => x.Beer.BeerBrandId)
                                    .Distinct()
-                                   .Count();
+                                   .CountAsync();
     }
 
-    public PagedView<KeyValuePair<View.Beer.Beer, int>> CountByBeer(ConsumationGetBinding binding)
+    public async Task<PagedView<KeyValuePair<View.Beer.Beer, int>>> CountByBeer(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .Include(x => x.Beer)
                                    .GroupBy(x => new
@@ -122,52 +122,52 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                        Id = x.Key.ValueId,
                                        Name = x.Key.Name
                                    }, x.Count()))
-                                   .ToPagedView(binding);
+                                   .ToPagedViewAsync(binding);
     }
 
-    public IEnumerable<KeyValuePair<string, int>> CountByMonth(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<string, int>>> CountByMonth(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => x.Date.ToString("MMMM"))
                                    .Select(x => new KeyValuePair<string, int>(x.Key, x.Count()))
-                                   .ToList();
+                                   .ToListAsync();
     }
 
-    public IEnumerable<KeyValuePair<string, int>> CountByMonthOfYear(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<string, int>>> CountByMonthOfYear(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                    .Select(x => new GroupedByMonth<int>(x.Count(), x.Key.Year, x.Key.Month))
-                                   .ToList()
+                                   .ToListAsync())
                                    .FillMissingMonths(datetime => new GroupedByMonth<int>(0, datetime.Year, datetime.Month), binding.From, to)
                                    .Select(x => new KeyValuePair<string, int>($"{x.Year}-{x.Month}", x.Data));
     }
 
-    public IEnumerable<KeyValuePair<int, int>> CountByYear(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> CountByYear(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var to = binding.To ?? DateTime.Now;
 
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => x.Date.Year)
                                    .Select(x => new KeyValuePair<int, int>(x.Count(), x.Key))
-                                   .ToList()
+                                   .ToListAsync())
                                    .FillMissingYears(year => new KeyValuePair<int, int>(0, year), binding.From?.Year, to.Year);
     }
 
-    public PagedView<View.Consumation.Consumation> Get(ConsumationGetBinding binding)
+    public async Task<PagedView<View.Consumation.Consumation>> Get(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .Include(x => x.Beer)
                                    .ThenInclude(x => x.BeerStyle)
@@ -175,29 +175,29 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                    .ThenInclude(x => x.BeerBrand)
                                    .OrderByDescending(x => x.Date)
                                    .Select(x => new View.Consumation.Consumation(x))
-                                   .ToPagedView(binding);
+                                   .ToPagedViewAsync(binding);
     }
 
-    public PagedView<View.Beer.Beer> GetBeers(FilteredPagedBinding binding)
+    public async Task<PagedView<View.Beer.Beer>> GetBeers(FilteredPagedBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding)
                                    .Select(x => x.Beer)
                                    .Distinct()
                                    .Select(x => new View.Beer.Beer(x))
-                                   .ToPagedView(binding);
+                                   .ToPagedViewAsync(binding);
     }
 
-    public PagedView<View.Beer.BeerBrand> GetBrands(FilteredPagedBinding binding)
+    public async Task<PagedView<View.Beer.BeerBrand>> GetBrands(FilteredPagedBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding)
                                    .Select(x => x.Beer.BeerBrand)
                                    .Distinct()
                                    .Select(x => new View.Beer.BeerBrand(x))
-                                   .ToPagedView(binding);
+                                   .ToPagedViewAsync(binding);
     }
 
     public async Task<IEnumerable<View.Country.Country>> GetCountries(ConsumationGetBinding binding)
@@ -216,7 +216,7 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                             .ToListAsync();
     }
 
-    public PagedView<View.Beer.Beer> GetNewBeers(ConsumationGetBinding binding)
+    public async Task<PagedView<View.Beer.Beer>> GetNewBeers(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var oldConsumationBinding = new ConsumationGetBinding
@@ -230,15 +230,15 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         };
 
         var oldBeerIds = binding.From.HasValue
-            ? context.Consumations.WhereUser(UserId)
+            ? await context.Consumations.WhereUser(UserId)
                                  .Where(oldConsumationBinding, context)
                                  .Select(x => x.Beer.Id)
                                  .Distinct()
-                                 .ToList()
+                                 .ToListAsync()
             : new List<int>();
 
         // Get all beers in the date range with their first consumption date
-        var beersInRange = context.Consumations.WhereUser(UserId)
+        var beersInRange = await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => new
                                    {
@@ -247,7 +247,7 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                        x.Beer.ValueId
                                    })
                                    .Select(x => new { Beer = x.Key, Date = x.Min(y => y.Date) })
-                                   .ToList();
+                                   .ToListAsync();
 
         // Filter out old beers in memory and apply paging
         var filteredBeers = beersInRange
@@ -272,15 +272,15 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
         };
     }
 
-    public int SumVolume(ConsumationGetBinding binding)
+    public async Task<int> SumVolume(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
-                                   .Sum(x => x.Volume);
+                                   .SumAsync(x => x.Volume);
     }
 
-    public PagedView<KeyValuePair<View.Beer.Beer, int>> SumVolumeByBeer(ConsumationGetBinding binding)
+    public async Task<PagedView<KeyValuePair<View.Beer.Beer, int>>> SumVolumeByBeer(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var grouped = context.Consumations
@@ -293,16 +293,16 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                  x.Beer.ValueId
                              });
 
-        return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+        return await grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                       .Select(x => new KeyValuePair<View.Beer.Beer, int>(new()
                       {
                           Id = x.Key.ValueId,
                           Name = x.Key.Name
                       }, x.Sum(y => y.Volume)))
-                      .ToPagedView(binding, grouped.Count());
+                      .ToPagedViewAsync(binding, await grouped.CountAsync());
     }
 
-    public PagedView<KeyValuePair<View.Beer.BeerBrand, int>> SumVolumeByBrand(ConsumationGetBinding binding)
+    public async Task<PagedView<KeyValuePair<View.Beer.BeerBrand, int>>> SumVolumeByBrand(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
 
@@ -317,17 +317,17 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                           x.Beer.BeerBrand.ValueId
                       });
 
-        return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+        return await grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                       .Select(x => new KeyValuePair<View.Beer.BeerBrand, int>(new()
                       {
                           Id = x.Key.ValueId,
                           Name = x.Key.Name
                       }, x.Sum(y => y.Volume)))
-                      .ToPagedView(binding, grouped.Count());
+                      .ToPagedViewAsync(binding, await grouped.CountAsync());
 
     }
 
-    public PagedView<KeyValuePair<View.Country.Country, int>> SumVolumeByCountry(ConsumationGetBinding binding)
+    public async Task<PagedView<KeyValuePair<View.Country.Country, int>>> SumVolumeByCountry(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var grouped = context.Consumations
@@ -343,65 +343,65 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                  x.Country.ValueId
                              });
 
-        return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+        return await grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                       .Select(x => new KeyValuePair<View.Country.Country, int>(new()
                       {
                           Id = x.Key.ValueId,
                           Name = x.Key.Name
                       }, x.Sum(y => y.Volume)))
-                      .ToPagedView(binding, grouped.Count());
+                      .ToPagedViewAsync(binding, await grouped.CountAsync());
     }
 
-    public IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByDay(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<DateTime, int>>> SumVolumeByDay(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
 
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                        .Where(binding, context)
                        .GroupBy(x => x.Date)
                        .Select(x => new KeyValuePair<DateTime, int>(x.Key, x.Sum(y => y.Volume)))
-                       .ToList()
+                       .ToListAsync())
                        .OrderBy(x => x.Key);
     }
 
-    public IEnumerable<KeyValuePair<int, int>> SumVolumeByDayOfWeek(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> SumVolumeByDayOfWeek(ConsumationGetBinding binding)
     {
         using var sqlConnection = GetSqlConnection();
-        return sqlConnection.Query<KeyValuePair<int, int>>(SqlLoader.Load(SqlScripts.GetConsumationSumByDayOfWeek),
+        return (await sqlConnection.QueryAsync<KeyValuePair<int, int>>(SqlLoader.Load(SqlScripts.GetConsumationSumByDayOfWeek),
                                 new
                                 {
                                     binding.From,
                                     binding.To,
                                     UserId = UserId
-                                })
+                                }))
                             .Select(x => new KeyValuePair<int, int>(x.Key == 1 ? 6 : x.Key - 2, x.Value))
                             .OrderBy(x => x.Key);
     }
 
-    public IEnumerable<KeyValuePair<int, int>> SumVolumeByMonth(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> SumVolumeByMonth(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => x.Date.Month)
                                    .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
-                                   .ToList()
+                                   .ToListAsync())
                                    .FillMissingMonths()
                                    .OrderBy(x => x.Key);
     }
 
-    public IEnumerable<KeyValuePair<DateTime, int>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<DateTime, int>>> SumVolumeByMonthOfYear(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => new { x.Date.Year, x.Date.Month })
                                    .Select(x => new KeyValuePair<DateTime, int>(new DateTime(x.Key.Year, x.Key.Month, 1), x.Sum(y => y.Volume)))
-                                   .ToList()
+                                   .ToListAsync())
                                    .OrderBy(x => x.Key);
     }
 
-    public IEnumerable<KeyValuePair<View.Beer.BeerServing, int>> SumVolumeByServing(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<View.Beer.BeerServing, int>>> SumVolumeByServing(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var grouped = context.Consumations.WhereUser(UserId)
@@ -413,16 +413,16 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                               x.BeerServing.ValueId
                                           });
 
-        return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+        return await grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                       .Select(x => new KeyValuePair<View.Beer.BeerServing, int>(new()
                       {
                           Id = x.Key.ValueId,
                           Name = x.Key.Name
                       }, x.Sum(y => y.Volume)))
-                                      .ToList();
+                                      .ToListAsync();
     }
 
-    public PagedView<KeyValuePair<View.Beer.BeerStyle, int>> SumVolumeByStyle(ConsumationGetBinding binding)
+    public async Task<PagedView<KeyValuePair<View.Beer.BeerStyle, int>>> SumVolumeByStyle(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
         var grouped = context.Consumations
@@ -436,24 +436,24 @@ public class ConsumationHandler : Handler<ConsumationHandler>, IConsumationHandl
                                  x.Beer.BeerStyle.Name
                              });
 
-        return grouped.OrderByDescending(x => x.Sum(y => y.Volume))
+        return await grouped.OrderByDescending(x => x.Sum(y => y.Volume))
                       .Select(x => new KeyValuePair<View.Beer.BeerStyle, int>(
                           new()
                           {
                               Id = x.Key.ValueId,
                               Name = x.Key.Name
                           }, x.Sum(y => y.Volume)))
-                      .ToPagedView(binding, grouped.Count());
+                      .ToPagedViewAsync(binding, await grouped.CountAsync());
     }
 
-    public IEnumerable<KeyValuePair<int, int>> SumVolumeByYear(ConsumationGetBinding binding)
+    public async Task<IEnumerable<KeyValuePair<int, int>>> SumVolumeByYear(ConsumationGetBinding binding)
     {
         using var context = GetMainContext();
-        return context.Consumations.WhereUser(UserId)
+        return (await context.Consumations.WhereUser(UserId)
                                    .Where(binding, context)
                                    .GroupBy(x => x.Date.Year)
                                    .Select(x => new KeyValuePair<int, int>(x.Key, x.Sum(y => y.Volume)))
-                                   .ToList()
+                                   .ToListAsync())
                                    .OrderBy(x => x.Key);
     }
 }

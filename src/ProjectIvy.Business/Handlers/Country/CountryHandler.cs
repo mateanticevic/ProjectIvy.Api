@@ -18,46 +18,46 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
     {
     }
 
-    public long Count(CountryGetBinding binding)
+    public async Task<long> Count(CountryGetBinding binding)
     {
         using var context = GetMainContext();
         var countries = context.Countries;
 
-        return countries.Count();
+        return await countries.CountAsync();
     }
 
-    public long CountVisited()
+    public async Task<long> CountVisited()
     {
         using var context = GetMainContext();
-        return context.Trips.WhereUser(UserId)
+        return await context.Trips.WhereUser(UserId)
                             .Where(x => x.TimestampEnd < DateTime.Now)
                             .Include(x => x.Cities)
                             .SelectMany(x => x.Cities)
                             .Select(x => x.Country)
                             .Distinct()
                             .Select(x => x)
-                            .LongCount();
+                            .LongCountAsync();
     }
 
-    public View.Country Get(string id)
+    public async Task<View.Country> Get(string id)
     {
         using var context = GetMainContext();
-        var country = context.Countries.SingleOrDefault(x => x.ValueId == id);
+        var country = await context.Countries.SingleOrDefaultAsync(x => x.ValueId == id);
 
         return new View.Country(country);
     }
 
-    public PagedView<View.Country> Get(CountryGetBinding binding)
+    public async Task<PagedView<View.Country>> Get(CountryGetBinding binding)
     {
         using var context = GetMainContext();
         var countries = context.Countries;
 
-        long count = countries.Count();
+        long count = await countries.CountAsync();
 
-        var items = countries.OrderBy(x => x.Name)
+        var items = (await countries.OrderBy(x => x.Name)
                              .WhereSearch(binding)
                              .Page(binding)
-                             .ToList()
+                             .ToListAsync())
                              .Select(x => new View.Country(x))
                              .ToList();
 
@@ -68,13 +68,15 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
         };
     }
 
-    public IEnumerable<View.CountryBoundaries> GetBoundaries(IEnumerable<View.Country> countries)
+    public async Task<IEnumerable<View.CountryBoundaries>> GetBoundaries(IEnumerable<View.Country> countries)
     {
         using var context = GetMainContext();
         var countryValueIds = countries.Select(x => x.Id);
-        var polygons = context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
+        var polygons = await context.CountryPolygons.Where(x => countryValueIds.Any(y => y == x.Country.ValueId))
                                               .Include(x => x.Country)
-                                              .ToList();
+                                              .ToListAsync();
+
+        var result = new List<View.CountryBoundaries>();
 
         foreach (var countryPolygons in polygons.GroupBy(x => new { x.Country.ValueId }))
         {
@@ -94,14 +96,16 @@ public class CountryHandler : Handler<CountryHandler>, ICountryHandler
                 Polygons = paths
             };
 
-            yield return countryBoundaries;
+            result.Add(countryBoundaries);
         }
+
+        return result;
     }
 
     public async Task<PagedView<Model.View.City.City>> GetCities(string countryValueId, FilteredPagedBinding binding)
     {
         using var context = GetMainContext();
-        int countryId = context.Countries.GetId(countryValueId).Value;
+        int countryId = (await context.Countries.GetIdAsync(countryValueId)).Value;
         return await context.Cities.Where(x => x.CountryId == countryId)
                                    .OrderByDescending(x => x.Population)
                                    .Select(x => new Model.View.City.City(x))

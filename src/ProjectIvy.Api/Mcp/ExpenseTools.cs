@@ -40,7 +40,7 @@ public class ExpenseTools
                                          [Description("Date when expense occurred, in YYYY-MM-DD format")] DateTime? date = null,
                                          [Description("Currency id in ISO 4217 format")] string currencyId = null)
     {
-        var user = _userHandler.Get();
+        var user = await _userHandler.Get();
 
         string currencyIdFinal = currencyId ?? user.DefaultCurrency.Code;
         var newExpense = new ExpenseBinding()
@@ -72,7 +72,7 @@ public class ExpenseTools
                 To = to ?? DateTime.UtcNow,
                 TypeId = typeId is null ? null : [typeId],
             };
-            return _expenseHandler.Get(binding);
+            return await _expenseHandler.Get(binding);
         }
         catch (Exception ex)
         {
@@ -82,9 +82,9 @@ public class ExpenseTools
     }
 
     [McpServerTool, Description("Hierarchy of expense types")]
-    public IEnumerable<Node<ExpenseType>> GetTypes()
+    public async Task<IEnumerable<Node<ExpenseType>>> GetTypes()
     {
-        return _expenseTypeHandler.GetTree();
+        return await _expenseTypeHandler.GetTree();
     }
 
     [McpServerTool, Description("Get total sum of expenses")]

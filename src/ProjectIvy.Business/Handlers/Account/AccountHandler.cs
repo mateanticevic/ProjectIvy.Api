@@ -26,9 +26,9 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using var context = GetMainContext();
 
-        var entity = binding.ToEntity(context);
+        var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
-        entity.ValueId = context.Accounts.NextValueId(UserId).ToString();
+        entity.ValueId = (await context.Accounts.NextValueIdAsync(UserId)).ToString();
 
         await context.Accounts.AddAsync(entity);
         await context.SaveChangesAsync();
@@ -40,8 +40,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     {
         using var context = GetMainContext();
 
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountValueId).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountValueId)).Value;
         var lastTransaction = await context.Transactions.Where(x => x.AccountId == accountId)
                                                         .OrderByDescending(x => x.Created)
                                                         .FirstOrDefaultAsync();
@@ -116,9 +116,9 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     public async Task<decimal> GetNetWorth()
     {
         using var context = GetMainContext();
-        int targetCurrencyId = context.Users.Where(x => x.Id == UserId)
+        int targetCurrencyId = await context.Users.Where(x => x.Id == UserId)
                                             .Select(x => x.DefaultCurrencyId)
-                                            .Single();
+                                            .SingleAsync();
 
         var accountBalances = await context.Accounts.WhereUser(UserId)
                                 .Include(x => x.Transactions)
@@ -129,29 +129,35 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                 })
                                 .ToListAsync();
 
-        return accountBalances.Select(x =>
+        decimal total = 0;
+        foreach (var x in accountBalances)
         {
             if (x.CurrencyId == targetCurrencyId)
-                return x.Balance;
+            {
+                total += x.Balance;
+                continue;
+            }
 
-            decimal? rate = context.CurrencyRates.Where(y => y.FromCurrencyId == x.CurrencyId
+            decimal? rate = await context.CurrencyRates.Where(y => y.FromCurrencyId == x.CurrencyId
                                                         && y.ToCurrencyId == targetCurrencyId)
-                                                .OrderByDescending(x => x.Timestamp)
-                                                .Select(x => x.Rate)
-                                                .FirstOrDefault();
+                                                .OrderByDescending(r => r.Timestamp)
+                                                .Select(r => (decimal?)r.Rate)
+                                                .FirstOrDefaultAsync();
 
             if (rate is null)
-                return 0;
+                continue;
 
-            return x.Balance * rate.Value;
-        }).Sum(x => x);
+            total += x.Balance * rate.Value;
+        }
+
+        return total;
     }
 
     public async Task<View.AccountOverview> GetOverview(string accountValueId)
     {
         using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountValueId).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountValueId)).Value;
         decimal sumIn = await context.Transactions.Where(x => x.AccountId == accountId && x.Amount > 0)
                                                   .SumAsync(x => x.Amount);
 
@@ -168,8 +174,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
     {
         using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountValueId).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountValueId)).Value;
 
         return await context.Transactions.Where(x => x.AccountId == accountId)
                                          .OrderByDescending(x => x.Created)
@@ -212,8 +218,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     public async Task ProcessHacTransactions(string accountKey, string csv)
     {
         using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountKey).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountKey)).Value;
 
         var transactions = new List<Transaction>();
         foreach (string item in csv.Split("\r\n").Skip(1).Reverse().Skip(1))
@@ -250,7 +256,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
         foreach (var transaction in transactions)
         {
-            if (context.Transactions.Any(x => x.Created == transaction.Created
+            if (await context.Transactions.AnyAsync(x => x.Created == transaction.Created
                                             && x.Amount == transaction.Amount
                                             && x.AccountId == accountId))
                 continue;
@@ -263,8 +269,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     public async Task ProcessOtpBankTransactions(string accountKey, string csv)
     {
         using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountKey).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountKey)).Value;
 
         var transactions = new List<Transaction>();
         foreach (string item in csv.Split("\r\n").Skip(1))
@@ -301,7 +307,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
         foreach (var transaction in transactions)
         {
-            if (context.Transactions.Any(x => x.Created == transaction.Created
+            if (await context.Transactions.AnyAsync(x => x.Created == transaction.Created
                                             && x.Description == transaction.Description
                                             && x.AccountId == accountId))
                 continue;
@@ -314,8 +320,8 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     public async Task ProcessRevolutTransactions(string accountKey, string csv)
     {
         using var context = GetMainContext();
-        int accountId = context.Accounts.WhereUser(UserId)
-                                        .GetId(accountKey).Value;
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountKey)).Value;
 
         var transactions = new List<Transaction>();
         var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
@@ -359,7 +365,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 
         var entity = await context.Accounts.WhereUser(UserId)
                                            .SingleOrDefaultAsync(x => x.ValueId == accountValueId) ?? throw new ResourceNotFoundException();
-        binding.ToEntity(context, entity);
+        await binding.ToEntity(context, entity);
         await context.SaveChangesAsync();
     }
 }

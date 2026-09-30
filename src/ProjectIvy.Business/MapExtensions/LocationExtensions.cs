@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Model.Binding.Common;
@@ -7,12 +8,12 @@ namespace ProjectIvy.Business.MapExtensions;
 
 public static class LocationExtensions
 {
-    public static Location ToEntity(this LocationBinding b, MainContext context)
+    public static async Task<Location> ToEntity(this LocationBinding b, MainContext context)
     {
         return new Location
         {
             Name = b.Name,
-            LocationTypeId = context.LocationTypes.GetId(b.TypeId).Value,
+            LocationTypeId = (await context.LocationTypes.GetIdAsync(b.TypeId)).Value,
             Latitude = b.Latitude,
             Longitude = b.Longitude,
             ValueId = b.Name.ToValueId()

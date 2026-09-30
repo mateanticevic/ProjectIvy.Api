@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -20,8 +21,8 @@ public class AirportController : BaseController<AirportController>
     }
 
     [HttpGet]
-    public PagedView<View.Airport> Get([FromQuery] AirportGetBinding binding) => _airportHandler.Get(binding);
+    public async Task<PagedView<View.Airport>> Get([FromQuery] AirportGetBinding binding) => await _airportHandler.Get(binding);
 
     [HttpGet("Count")]
-    public long GetCount([FromQuery] AirportGetBinding binding) => _airportHandler.Count(binding);
+    public async Task<long> GetCount([FromQuery] AirportGetBinding binding) => await _airportHandler.Count(binding);
 }

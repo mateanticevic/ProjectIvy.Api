@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -15,5 +16,5 @@ public class CurrencyController : BaseController<CurrencyController>
     public CurrencyController(ILogger<CurrencyController> logger, ICurrencyHandler currencyHandler) : base(logger) => _currencyHandler = currencyHandler;
 
     [HttpGet]
-    public IEnumerable<View.Currency> Get() => _currencyHandler.Get();
+    public async Task<IEnumerable<View.Currency>> Get() => await _currencyHandler.Get();
 }

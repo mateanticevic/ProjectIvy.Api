@@ -40,7 +40,7 @@ public class LocationHandler : Handler<LocationHandler>, ILocationHandler
     {
         using var context = GetMainContext();
 
-        var location = b.ToEntity(context);
+        var location = await b.ToEntity(context);
         location.UserId = UserId;
 
         await context.Locations.AddAsync(location);
