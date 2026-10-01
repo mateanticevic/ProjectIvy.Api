@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using ProjectIvy.Model.Constants.Database;
 
 namespace ProjectIvy.Model.Database.Main.Finance;
 
@@ -24,6 +25,8 @@ public class Account : UserEntity, IHasValueId, IHasName
     public string Name { get; set; }
 
     public ICollection<Transaction> Transactions { get; set; }
+
+    public TransactionSource? TransactionSource { get; set; }
 
     public string ValueId { get; set; }
 }

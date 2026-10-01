@@ -3,11 +3,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using ProjectIvy.Business.Constants;
 using ProjectIvy.Business.Handlers.Account;
-using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Binding.Transaction;
+using ProjectIvy.Model.Binding;
+using ProjectIvy.Model.Constants.Database;
 using ProjectIvy.Model.View;
 
 namespace ProjectIvy.Api.Controllers.Account;
@@ -71,7 +71,7 @@ public class AccountController : BaseController<AccountController>
                     await _accountHandler.ProcessRevolutTransactions(accountId, await sr.ReadToEndAsync());
                     break;
                 default:
-                    throw new System.Exception();
+                    throw new Exception();
             }
         }
 

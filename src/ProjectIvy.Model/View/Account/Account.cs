@@ -1,4 +1,6 @@
-﻿namespace ProjectIvy.Model.View.Account;
+﻿using ProjectIvy.Model.Constants.Database;
+
+namespace ProjectIvy.Model.View.Account;
 
 public class Account
 {
@@ -10,6 +12,7 @@ public class Account
         Bank = a.BankId.HasValue ? new Bank.Bank(a.Bank) : null;
         Currency = new Currency.Currency(a.Currency);
         Iban = a.Iban;
+        TransactionSource = a.TransactionSource;
     }
 
     public bool Active { get; set; }
@@ -27,4 +30,6 @@ public class Account
     public string Id { get; set; }
 
     public string Name { get; set; }
+
+    public TransactionSource? TransactionSource { get; set; }
 }

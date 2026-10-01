@@ -203,6 +203,10 @@ public class MainContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Account>()
+                    .Property(a => a.TransactionSource)
+                    .HasConversion<string>();
+
         modelBuilder.Entity<Trip>()
                     .HasMany(p => p.Cities)
                     .WithMany(p => p.Trips)
