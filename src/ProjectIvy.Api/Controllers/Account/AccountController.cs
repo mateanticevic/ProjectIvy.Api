@@ -64,6 +64,9 @@ public class AccountController : BaseController<AccountController>
                 case TransactionSource.OtpBank:
                     await _accountHandler.ProcessOtpBankTransactions(accountId, await sr.ReadToEndAsync());
                     break;
+                case TransactionSource.ZabaBank:
+                    await _accountHandler.ProcessZabaBankTransactions(accountId, await sr.ReadToEndAsync());
+                    break;
                 case TransactionSource.Revolut:
                     await _accountHandler.ProcessRevolutTransactions(accountId, await sr.ReadToEndAsync());
                     break;

@@ -9,4 +9,5 @@ public enum TransactionSource
     Hac,
     OtpBank,
     Revolut,
+    ZabaBank,
 }

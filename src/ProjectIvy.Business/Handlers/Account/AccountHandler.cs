@@ -317,6 +317,52 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         await context.SaveChangesAsync();
     }
 
+    public async Task ProcessZabaBankTransactions(string accountKey, string csv)
+    {
+        using var context = GetMainContext();
+        int accountId = (await context.Accounts.WhereUser(UserId)
+                                        .GetIdAsync(accountKey)).Value;
+
+        var transactions = new List<Transaction>();
+        // Columns: Datum, Referencija, Opis, Uplata, Isplata, Saldo, Valuta.
+        foreach (string item in csv.Split('\n').Skip(1))
+        {
+            if (string.IsNullOrWhiteSpace(item))
+                continue;
+
+            string[] parts = ParseCsvLine(item.TrimEnd('\r'), ',').ToArray();
+            decimal amount = decimal.Parse(parts[3], NumberStyles.Number, CultureInfo.InvariantCulture)
+                           - decimal.Parse(parts[4], NumberStyles.Number, CultureInfo.InvariantCulture);
+            if (amount == 0)
+                continue;
+
+            var transaction = new Transaction()
+            {
+                AccountId = accountId,
+                Amount = amount,
+                Description = parts[2],
+                Created = DateTime.ParseExact(parts[0], "dd.MM.yyyy", CultureInfo.InvariantCulture),
+                Balance = decimal.Parse(parts[5], NumberStyles.Number, CultureInfo.InvariantCulture)
+            };
+
+            if (transactions.Any(x => x.Created == transaction.Created
+                                  && x.Description == transaction.Description
+                                  && x.Amount == transaction.Amount))
+                continue;
+
+            if (await context.Transactions.AnyAsync(x => x.AccountId == accountId
+                                                     && x.Created == transaction.Created
+                                                     && x.Description == transaction.Description
+                                                     && x.Amount == transaction.Amount))
+                continue;
+
+            transactions.Add(transaction);
+        }
+
+        await context.Transactions.AddRangeAsync(transactions);
+        await context.SaveChangesAsync();
+    }
+
     public async Task ProcessRevolutTransactions(string accountKey, string csv)
     {
         using var context = GetMainContext();

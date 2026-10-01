@@ -25,6 +25,8 @@ public interface IAccountHandler
 
     Task ProcessOtpBankTransactions(string accountKey, string csv);
 
+    Task ProcessZabaBankTransactions(string accountKey, string csv);
+
     Task ProcessRevolutTransactions(string accountKey, string csv);
 
     Task Update(string accountValueId, AccountBinding binding);
