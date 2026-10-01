@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Data.Extensions;
+using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Account;
 using ProjectIvy.Model.Binding.Transaction;
@@ -67,7 +68,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         var accountsQuery = context.Accounts.WhereUser(UserId)
                                      .Include(x => x.Bank)
                                      .Include(x => x.Currency)
-                                     .WhereIf(b.IsActive, x => x.Active == b.IsActive)
+                                     .Where(b)
                                      .Select(x => new
                                      {
                                          Account = x,

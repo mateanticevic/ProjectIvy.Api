@@ -1,6 +1,12 @@
-﻿namespace ProjectIvy.Model.Binding.Account;
+﻿using ProjectIvy.Model.Binding.Route;
 
-public class AccountGetBinding : FilteredPagedBinding
+namespace ProjectIvy.Model.Binding.Account;
+
+public class AccountGetBinding : FilteredPagedBinding, ISearchable
 {
+    public IEnumerable<string> BankIds { get; set; }
+
     public bool? IsActive { get; set; }
+
+    public string Search { get; set; }
 }
