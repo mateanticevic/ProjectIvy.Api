@@ -27,9 +27,10 @@ public class FilteredBinding : IFilteredBinding
 
     public T OverrideFromTo<T>(DateTime? from, DateTime? to) where T : FilteredBinding
     {
-        From = from;
-        To = to;
+        var binding = (T)MemberwiseClone();
+        binding.From = from;
+        binding.To = to;
 
-        return (T)this;
+        return binding;
     }
 }
