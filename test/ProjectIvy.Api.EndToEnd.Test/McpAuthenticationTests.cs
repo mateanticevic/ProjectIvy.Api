@@ -87,12 +87,15 @@ public sealed class McpAuthenticationTests
         Assert.Equal("true", response.Headers.GetValues("Access-Control-Allow-Credentials").Single());
     }
 
-    [Fact]
-    public async Task DiscoveryAndAnonymousChallengeAreAvailableWithoutDatabaseAccess()
+    [Theory]
+    [InlineData("http://localhost")]
+    [InlineData("http://internal-api:8080")]
+    [InlineData("https://localhost")]
+    public async Task DiscoveryAndAnonymousChallengeAreAvailableWithoutDatabaseAccess(string baseAddress)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
-        using var client = factory.CreateClient();
+        using var client = factory.CreateClient(new WebApplicationFactoryClientOptions { BaseAddress = new Uri(baseAddress) });
         using var metadata = await client.GetAsync("/.well-known/oauth-protected-resource/mcp");
         Assert.Equal(HttpStatusCode.OK, metadata.StatusCode);
         var json = JsonDocument.Parse(await metadata.Content.ReadAsStringAsync()).RootElement;
@@ -100,7 +103,7 @@ public sealed class McpAuthenticationTests
         Assert.Contains("expense:create", json.GetProperty("scopes_supported").EnumerateArray().Select(x => x.GetString()));
         using var response = await client.PostAsJsonAsync("/mcp", new { });
         Assert.True(response.StatusCode == HttpStatusCode.Unauthorized, await response.Content.ReadAsStringAsync());
-        Assert.Contains("resource_metadata", response.Headers.WwwAuthenticate.ToString());
+        Assert.Contains("resource_metadata=\"https://localhost/.well-known/oauth-protected-resource/mcp\"", response.Headers.WwwAuthenticate.ToString());
     }
 
     [Theory]

@@ -7,6 +7,9 @@ using ModelContextProtocol.AspNetCore;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using ModelContextProtocol;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -111,6 +114,12 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+            // Serve discovery behind proxies even when the internal host or scheme differs from the public URL.
+            var mcpOptions = app.ApplicationServices.GetRequiredService<IOptionsMonitor<McpAuthenticationOptions>>()
+                .Get(McpAuthenticationDefaults.AuthenticationScheme);
+            endpoints.MapGet(mcpOptions.ResourceMetadataUri.AbsolutePath, () =>
+                Results.Json(mcpOptions.ResourceMetadata, McpJsonUtilities.DefaultOptions))
+                .AllowAnonymous().RequireCors("McpBrowserClient");
             endpoints.MapMcp("/mcp").RequireAuthorization("McpAccess").RequireCors("McpBrowserClient");
         });
     }
