@@ -172,6 +172,8 @@ public class MainContext : DbContext
 
     public DbSet<Tracking> Trackings { get; set; }
 
+    public DbSet<TrackingView> TrackingViews { get; set; }
+
     public DbSet<Transaction> Transactions { get; set; }
 
     public DbSet<TripExpenseExclude> TripExpensesExcluded { get; set; }

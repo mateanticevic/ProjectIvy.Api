@@ -1,7 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Keycloak.AuthServices.Authentication;
 using Keycloak.AuthServices.Authorization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using ModelContextProtocol.AspNetCore;
@@ -60,7 +59,6 @@ using ProjectIvy.Business.Services.Calendar;
 using ProjectIvy.Business.Services.LastFm;
 using ProjectIvy.Model.Converters;
 using Prometheus;
-using Serilog;
 using AzureStorage = ProjectIvy.Data.Services.AzureStorage;
 using LastFm = ProjectIvy.Data.Services.LastFm;
 
@@ -180,6 +178,7 @@ public class Startup
         services.AddHandler<IStayHandler, StayHandler>();
         services.AddHandler<ITagHandler, TagHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();
+        services.AddHandler<ITrackingViewHandler, TrackingViewHandler>();
         services.AddHandler<IToDoHandler, ToDoHandler>();
         services.AddHandler<ITripHandler, TripHandler>();
         services.AddHandler<IUserHandler, UserHandler>();

@@ -15,10 +15,17 @@ public abstract class Handler<THandler> : IHandler
 
     private readonly string _resourceCacheKey;
 
-    public Handler(IHandlerContext<THandler> context)
+    public Handler(IHandlerContext<THandler> context) : this(context, requireAuthentication: true)
+    {
+    }
+
+    protected Handler(IHandlerContext<THandler> context, bool requireAuthentication)
     {
         HttpContext = context.Context.HttpContext;
         Logger = context.Logger;
+
+        if (!requireAuthentication)
+            return;
 
         var emails = HttpContext?.User.FindAll(ClaimTypes.Email).Concat(HttpContext.User.FindAll("email")).Select(c => c.Value).Distinct().ToArray();
         if (HttpContext?.User.Identity?.IsAuthenticated != true || emails?.Length != 1 || string.IsNullOrWhiteSpace(emails[0]))
