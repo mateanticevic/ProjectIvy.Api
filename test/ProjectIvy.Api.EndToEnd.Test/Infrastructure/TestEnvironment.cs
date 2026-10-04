@@ -10,6 +10,7 @@ public sealed class TestEnvironment : IDisposable
         Set("CONNECTION_STRING_AZURE_STORAGE",
             $"AccountName=e2e;AccountKey={Convert.ToBase64String(new byte[64])};FileEndpoint=http://127.0.0.1:1/e2e");
         Set("LAST_FM_KEY", "unused-e2e-key");
+        Set("Mcp__AllowedOrigins__0", "https://mcp-client.example.test");
         Set("Mcp__Resource", "https://localhost/mcp");
         Set("OAUTH_AUTHORITY", "https://127.0.0.1:1/realms/e2e");
         Set("Keycloak__auth-server-url", "https://127.0.0.1:1/");

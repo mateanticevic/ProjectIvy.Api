@@ -97,10 +97,7 @@ public class Startup
         app.UseSerilogRequestLoggingWithEnrichment(GetType().Assembly);
 
         app.UseRouting();
-        app.UseCors(builder => builder
-            .WithOrigins(Configuration.GetSection("Mcp:AllowedOrigins").Get<string[]>() ?? [])
-            .AllowAnyHeader().AllowAnyMethod()
-            .WithExposedHeaders("WWW-Authenticate", "Mcp-Session-Id", "MCP-Protocol-Version"));
+        app.UseCors();
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseHttpMetrics();
@@ -116,12 +113,23 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapMcp("/mcp").RequireAuthorization("McpAccess");
+            endpoints.MapMcp("/mcp").RequireAuthorization("McpAccess").RequireCors("McpBrowserClient");
         });
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
+
+        services.AddCors(options =>
+        {
+            // Preserve the existing REST browser clients, including cookie authentication.
+            options.AddDefaultPolicy(policy => policy.SetIsOriginAllowed(_ => true)
+                .AllowCredentials().AllowAnyHeader().AllowAnyMethod());
+            options.AddPolicy("McpBrowserClient", policy => policy
+                .WithOrigins(Configuration.GetSection("Mcp:AllowedOrigins").Get<string[]>() ?? [])
+                .AllowAnyHeader().AllowAnyMethod()
+                .WithExposedHeaders("WWW-Authenticate", "Mcp-Session-Id", "MCP-Protocol-Version"));
+        });
 
         services.AddResponseCaching(options =>
         {

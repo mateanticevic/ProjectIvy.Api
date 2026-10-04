@@ -54,6 +54,39 @@ public sealed class McpAuthenticationTests
         return new JwtSecurityTokenHandler().WriteToken(jwt);
     }
 
+    [Theory]
+    [InlineData("/expense", "https://existing-rest-client.example.test", true, true)]
+    [InlineData("/mcp", "https://mcp-client.example.test", true, false)]
+    [InlineData("/mcp", "https://untrusted.example.test", false, false)]
+    public async Task CorsPreflightKeepsRestCompatibilityAndMcpOriginRestrictions(string path, string origin, bool allowed, bool credentials)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = factory.CreateClient();
+        using var request = new HttpRequestMessage(HttpMethod.Options, path);
+        request.Headers.Add("Origin", origin);
+        request.Headers.Add("Access-Control-Request-Method", "POST");
+        request.Headers.Add("Access-Control-Request-Headers", "authorization,content-type");
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(allowed, response.Headers.Contains("Access-Control-Allow-Origin"));
+        if (allowed) Assert.Equal(origin, response.Headers.GetValues("Access-Control-Allow-Origin").Single());
+        Assert.Equal(credentials, response.Headers.Contains("Access-Control-Allow-Credentials"));
+    }
+
+    [Fact]
+    public async Task RestUnauthorizedResponseIncludesCorsHeaders()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Add("Origin", "https://existing-rest-client.example.test");
+        using var response = await client.GetAsync("/expense");
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal("https://existing-rest-client.example.test", response.Headers.GetValues("Access-Control-Allow-Origin").Single());
+        Assert.Equal("true", response.Headers.GetValues("Access-Control-Allow-Credentials").Single());
+    }
+
     [Fact]
     public async Task DiscoveryAndAnonymousChallengeAreAvailableWithoutDatabaseAccess()
     {
