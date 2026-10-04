@@ -281,6 +281,8 @@ public class Startup
         })
         .AddMcp(options =>
         {
+            options.ResourceMetadataUri = new Uri(
+                resourceUri, $"/.well-known/oauth-protected-resource{resourceUri.AbsolutePath}");
             options.ResourceMetadata = new()
             {
                 Resource = resource,
