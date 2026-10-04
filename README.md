@@ -144,7 +144,7 @@ MCP is protected at `/mcp`, with stateless requests and Keycloak JWT validation.
 
 Set `Mcp__Resource` to the externally reachable HTTPS MCP URL, without a query or fragment. This is required at startup. REST retains its existing origin policy and credential support. For MCP browser clients configure explicit origins with `Mcp__AllowedOrigins__0`, etc.; credentials are not enabled on MCP endpoints. MCP OAuth challenge and session headers are exposed through CORS. At a reverse proxy, preserve the public host and HTTPS scheme using trusted proxy configuration, or configure the public metadata URL explicitly; never trust arbitrary forwarded headers.
 
-MCP tool permissions are `expense:user` for expense reads, `expense:create` for adding expenses, and `beer:user` for beer volume. The SDK authorization filters enforce these policies before tool execution. Issued access tokens must include an email claim matching an existing Ivy user. Missing email claims fail authentication; unregistered users are denied by handlers.
+MCP tool permissions are `expense:user` for reading and adding expenses, and `beer:user` for beer volume. The SDK authorization filters enforce these policies before tool execution. Issued access tokens must include an email claim matching an existing Ivy user. Missing email claims fail authentication; unregistered users are denied by handlers.
 
 ### Keycloak configuration required before deployment
 
@@ -152,7 +152,7 @@ These settings live in Keycloak and must be applied by its administrator:
 
 1. Use the HTTPS realm issuer as `OAUTH_AUTHORITY`; keep its OIDC discovery endpoint accessible to clients and this API.
 2. Pre-register each MCP OAuth client, enable authorization code flow, and require PKCE S256. Configure exact client callback URLs and restrict web origins. Public clients must not require a client secret. Disable password and implicit grants.
-3. Create/assign `expense:user`, `expense:create`, and `beer:user` client scopes. Include granted values in the access token's `scope` claim and include the user's email through the email mapper.
+3. Create/assign `expense:user` and `beer:user` client scopes. Include granted values in the access token's `scope` claim and include the user's email through the email mapper.
 4. Configure an audience mapper so access tokens for MCP contain the exact public `Mcp__Resource` URI in `aud`. Verify that authorization and token requests containing the OAuth `resource` parameter work with your Keycloak version; a mapper alone does not prove RFC 8707 support.
 5. Enable refresh tokens according to the client's needs and realm policy; clients handle token refresh. Dynamic registration is optional when clients are pre-registered.
 

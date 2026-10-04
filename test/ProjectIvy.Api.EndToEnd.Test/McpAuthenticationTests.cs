@@ -100,7 +100,8 @@ public sealed class McpAuthenticationTests
         Assert.Equal(HttpStatusCode.OK, metadata.StatusCode);
         var json = JsonDocument.Parse(await metadata.Content.ReadAsStringAsync()).RootElement;
         Assert.Equal(Resource, json.GetProperty("resource").GetString());
-        Assert.Contains("expense:create", json.GetProperty("scopes_supported").EnumerateArray().Select(x => x.GetString()));
+        Assert.Equal(new[] { "expense:user", "beer:user" },
+            json.GetProperty("scopes_supported").EnumerateArray().Select(x => x.GetString()));
         using var response = await client.PostAsJsonAsync("/mcp", new { });
         Assert.True(response.StatusCode == HttpStatusCode.Unauthorized, await response.Content.ReadAsStringAsync());
         Assert.Contains("resource_metadata=\"https://localhost/.well-known/oauth-protected-resource/mcp\"", response.Headers.WwwAuthenticate.ToString());
@@ -142,8 +143,8 @@ public sealed class McpAuthenticationTests
     }
 
     [Theory]
-    [InlineData("expense:user", true, false)]
-    [InlineData("expense:create", false, true)]
+    [InlineData("expense:user", true, true)]
+    [InlineData("beer:user", false, false)]
     public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canRead, bool canCreate)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
@@ -162,12 +163,12 @@ public sealed class McpAuthenticationTests
     }
 
     [Fact]
-    public async Task ReadTokenCannotCreateExpenses()
+    public async Task TokenWithoutExpenseScopeCannotCreateExpenses()
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
         using var client = factory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new("Bearer", Token());
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: "beer:user"));
         client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         client.DefaultRequestHeaders.Accept.ParseAdd("text/event-stream");
         client.DefaultRequestHeaders.Add("MCP-Protocol-Version", "2025-11-25");
