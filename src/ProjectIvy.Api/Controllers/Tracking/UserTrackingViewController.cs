@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Tracking;
+using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking;
 
@@ -15,6 +16,6 @@ public class UserTrackingViewController : BaseController<UserTrackingViewControl
         : base(logger) => _trackingViewHandler = trackingViewHandler;
 
     [HttpGet("/user/{username}/trackingview/{viewIdentifier}")]
-    public async Task<IActionResult> Get(string username, string viewIdentifier)
-        => Ok(await _trackingViewHandler.Get(username, viewIdentifier));
+    public async Task<IEnumerable<View.Tracking>> Get(string username, string viewIdentifier)
+        => await _trackingViewHandler.Get(username, viewIdentifier);
 }

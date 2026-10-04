@@ -1,9 +1,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Business.Handlers.Tracking;
 using ProjectIvy.Model.Binding.Tracking;
+using View = ProjectIvy.Model.View.Tracking;
 
 namespace ProjectIvy.Api.Controllers.Tracking;
 
@@ -16,13 +18,14 @@ public class TrackingViewController : BaseController<TrackingViewController>
         : base(logger) => _trackingViewHandler = trackingViewHandler;
 
     [HttpGet]
-    public async Task<IActionResult> Get() => Ok(await _trackingViewHandler.Get());
+    public async Task<IEnumerable<View.TrackingView>> Get() => await _trackingViewHandler.Get();
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> Get(string id) => Ok(await _trackingViewHandler.GetSingle(id));
+    public async Task<View.TrackingView> Get(string id) => await _trackingViewHandler.GetSingle(id);
 
     [HttpPost]
-    public async Task<IActionResult> Post([FromBody] TrackingViewBinding binding)
+    [ProducesResponseType(typeof(View.TrackingView), StatusCodes.Status201Created)]
+    public async Task<ActionResult<View.TrackingView>> Post([FromBody] TrackingViewBinding binding)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
@@ -31,6 +34,7 @@ public class TrackingViewController : BaseController<TrackingViewController>
     }
 
     [HttpPut("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Put(string id, [FromBody] TrackingViewBinding binding)
     {
         if (!ModelState.IsValid)
@@ -40,6 +44,7 @@ public class TrackingViewController : BaseController<TrackingViewController>
     }
 
     [HttpDelete("{id}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     public async Task<IActionResult> Delete(string id)
     {
         await _trackingViewHandler.Delete(id);
