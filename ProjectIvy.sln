@@ -30,6 +30,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6CEFA7A4-6
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Data.Test", "test\ProjectIvy.Data.Test\ProjectIvy.Data.Test.csproj", "{A82C5647-2D25-4E15-B79A-D13E2D654322}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjectIvy.Api.EndToEnd.Test", "test\ProjectIvy.Api.EndToEnd.Test\ProjectIvy.Api.EndToEnd.Test.csproj", "{8FDA3365-1125-4152-BD03-EF35DBAF3379}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -60,11 +62,16 @@ Global
 		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A82C5647-2D25-4E15-B79A-D13E2D654322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FDA3365-1125-4152-BD03-EF35DBAF3379}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FDA3365-1125-4152-BD03-EF35DBAF3379}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FDA3365-1125-4152-BD03-EF35DBAF3379}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FDA3365-1125-4152-BD03-EF35DBAF3379}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
+		{8FDA3365-1125-4152-BD03-EF35DBAF3379} = {6CEFA7A4-61BF-4730-8E74-4F6407051F82}
 		{EC4A6C81-DCDB-4F12-9BD5-76DCA1A23146} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{C1D52306-AE37-4299-BD7B-A61405307139} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}
 		{17E941D2-B071-4E44-99F8-78C33534EC3A} = {EB61CAA5-ED2F-45D1-8BBE-FB9D0D1BAD6E}

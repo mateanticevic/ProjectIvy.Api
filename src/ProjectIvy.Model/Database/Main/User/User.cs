@@ -31,6 +31,8 @@ public class User : IHasCreatedModified
     [Key]
     public int Id { get; set; }
 
+    public bool IsTrackingEnabled { get; set; }
+
     public string LastFmUsername { get; set; }
 
     public string LastName { get; set; }

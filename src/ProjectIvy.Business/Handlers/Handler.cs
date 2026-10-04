@@ -1,4 +1,6 @@
-﻿using System.Linq;
+using System.Linq;
+using System.Security.Claims;
+using ProjectIvy.Business.Exceptions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Caching.Memory;
@@ -18,7 +20,10 @@ public abstract class Handler<THandler> : IHandler
         HttpContext = context.Context.HttpContext;
         Logger = context.Logger;
 
-        string authIdentifier = HttpContext.User.Claims.Single(x => x.Type == "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress").Value;
+        var emails = HttpContext?.User.FindAll(ClaimTypes.Email).Concat(HttpContext.User.FindAll("email")).Select(c => c.Value).Distinct().ToArray();
+        if (HttpContext?.User.Identity?.IsAuthenticated != true || emails?.Length != 1 || string.IsNullOrWhiteSpace(emails[0]))
+            throw new UnauthorizedException();
+        string authIdentifier = emails[0];
         UserId = ResolveUserId(authIdentifier);
     }
 
@@ -78,6 +83,8 @@ public abstract class Handler<THandler> : IHandler
                                              .ToDictionary(x => x.Email, x => x.Id);
         }
 
-        return _identifierUserMapping[email];
+        if (!_identifierUserMapping.TryGetValue(email, out var userId))
+            throw new ResourceForbiddenException();
+        return userId;
     }
 }

@@ -46,3 +46,4 @@ launchSettings.json
 Properties
 *.DS_Store
 logs/
+test/ProjectIvy.Api.EndToEnd.Test/Schema/*.tmp.dacpac

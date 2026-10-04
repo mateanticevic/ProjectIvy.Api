@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using ProjectIvy.Api.Constants;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using ModelContextProtocol.Server;
@@ -15,6 +17,7 @@ public class BeerTools
         _consumationHandler = consumationHandler;
     }
 
+    [Authorize(ApiScopes.BeerUser)]
     [McpServerTool, Description("Total amount of beer drank in liters")]
     public async Task<decimal> Sum(DateTime? from, DateTime? to)
     {

@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.IdentityModel.Logging;
+using System.Security.Claims;
+using System.Linq;
+using ModelContextProtocol.AspNetCore.Authentication;
 using Microsoft.OpenApi;
 using ProjectIvy.Api.Attributes;
 using ProjectIvy.Api.Constants;
@@ -71,6 +73,10 @@ public class Startup
     public Startup(IWebHostEnvironment env)
     {
         _authority = Environment.GetEnvironmentVariable("OAUTH_AUTHORITY");
+        if (!Uri.TryCreate(_authority, UriKind.Absolute, out var authorityUri) ||
+            authorityUri.Scheme != Uri.UriSchemeHttps || !string.IsNullOrEmpty(authorityUri.Query) ||
+            !string.IsNullOrEmpty(authorityUri.Fragment) || !string.IsNullOrEmpty(authorityUri.UserInfo))
+            throw new InvalidOperationException("OAUTH_AUTHORITY must be the HTTPS Keycloak realm issuer.");
         var builder = new ConfigurationBuilder()
                                                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                                                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
@@ -91,7 +97,10 @@ public class Startup
         app.UseSerilogRequestLoggingWithEnrichment(GetType().Assembly);
 
         app.UseRouting();
-        app.UseCors(builder => builder.SetIsOriginAllowed(origin => true).AllowCredentials().AllowAnyHeader().AllowAnyMethod());
+        app.UseCors(builder => builder
+            .WithOrigins(Configuration.GetSection("Mcp:AllowedOrigins").Get<string[]>() ?? [])
+            .AllowAnyHeader().AllowAnyMethod()
+            .WithExposedHeaders("WWW-Authenticate", "Mcp-Session-Id", "MCP-Protocol-Version"));
         app.UseAuthentication();
         app.UseAuthorization();
         app.UseHttpMetrics();
@@ -107,13 +116,13 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapMcp();
+            endpoints.MapMcp("/mcp").RequireAuthorization("McpAccess");
         });
     }
 
     public void ConfigureServices(IServiceCollection services)
     {
-        IdentityModelEventSource.ShowPII = true;
+
         services.AddResponseCaching(options =>
         {
             options.MaximumBodySize = 1024;
@@ -195,56 +204,31 @@ public class Startup
                         {
                             AuthorizationCode = new OpenApiOAuthFlow
                             {
-                                AuthorizationUrl = new Uri($"{_authority}/connect/authorize"),
-                                TokenUrl = new Uri($"{_authority}/connect/token"),
+                                AuthorizationUrl = new Uri($"{_authority}/protocol/openid-connect/auth"),
+                                TokenUrl = new Uri($"{_authority}/protocol/openid-connect/token"),
                             }
                         }
                     });
                 });
 
-        // Register the individual schemes first (Keycloak JWT + MCP)
+        var resource = Configuration["Mcp:Resource"];
+        if (!Uri.TryCreate(resource, UriKind.Absolute, out var resourceUri) ||
+            resourceUri.Scheme != Uri.UriSchemeHttps || !string.IsNullOrEmpty(resourceUri.Fragment) ||
+            !string.IsNullOrEmpty(resourceUri.Query) || !string.IsNullOrEmpty(resourceUri.UserInfo))
+            throw new InvalidOperationException("Mcp:Resource must be the public HTTPS MCP URL (without query or fragment).");
+
+        // Preserve the REST API's Keycloak issuer and audience configuration.
         services.AddKeycloakWebApiAuthentication(Configuration, o =>
         {
-            o.RequireHttpsMetadata = false;
-            
+            o.MapInboundClaims = true;
+            o.TokenValidationParameters.ValidateLifetime = true;
+            o.TokenValidationParameters.ValidateIssuerSigningKey = true;
             o.Events = new JwtBearerEvents
             {
                 OnMessageReceived = context =>
                 {
-                    var token = context.Request.Cookies["AccessToken"];
-                    if (string.IsNullOrEmpty(token))
-                    {
-                        token = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "").Trim();
-                    }
-                    
-                    // Check if this is the special token - if so, disable lifetime validation
-                    if (!string.IsNullOrEmpty(token) && token.EndsWith("x2DI4Q"))
-                    {
-                        Log.Information("Special token ending with x2DI4Q detected in OnMessageReceived - will disable lifetime validation");
-                        context.Options.TokenValidationParameters.ValidateLifetime = false;
-                    }
-                    
-                    context.Token = context.Request.Cookies["AccessToken"];
-                    return Task.CompletedTask;
-                },
-                OnTokenValidated = context =>
-                {
-                    var token = context.SecurityToken as System.IdentityModel.Tokens.Jwt.JwtSecurityToken;
-                    if (token != null && token.RawData.EndsWith("x2DI4Q"))
-                    {
-                        Log.Information("Special token ending with x2DI4Q successfully validated");
-                    }
-                    return Task.CompletedTask;
-                },
-                OnAuthenticationFailed = context =>
-                {
-                    if (context.Exception != null)
-                    {
-                        Log.Warning("Authentication failed: {ExceptionType} - {Message}", 
-                            context.Exception.GetType().Name, 
-                            context.Exception.Message);
-                    }
-                    Console.WriteLine(context.Exception);
+                    if (!context.Request.Headers.ContainsKey("Authorization"))
+                        context.Token = context.Request.Cookies["AccessToken"];
                     return Task.CompletedTask;
                 }
             };
@@ -252,53 +236,50 @@ public class Startup
 
         services.AddAuthentication(options =>
         {
-            // Use a policy scheme that can decide at runtime which underlying scheme to use
-            options.DefaultScheme = "dynamic";
-            options.DefaultAuthenticateScheme = "dynamic";
-            options.DefaultChallengeScheme = "dynamic";
+            options.DefaultScheme = "api";
+            options.DefaultAuthenticateScheme = "api";
+            options.DefaultChallengeScheme = "challenge";
         })
-        .AddPolicyScheme("dynamic", "Dynamic Auth (JWT or MCP)", policy =>
+        .AddPolicyScheme("api", "REST or MCP bearer validation", options =>
         {
-            policy.ForwardDefaultSelector = context =>
+            options.ForwardDefaultSelector = context => context.Request.Path.StartsWithSegments("/mcp")
+                ? "McpBearer" : JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer("McpBearer", options =>
+        {
+            options.Authority = _authority;
+            options.RequireHttpsMetadata = true;
+            options.MapInboundClaims = true;
+            options.TokenValidationParameters.ValidateIssuer = true;
+            options.TokenValidationParameters.ValidateAudience = true;
+            options.TokenValidationParameters.ValidateLifetime = true;
+            options.TokenValidationParameters.ValidateIssuerSigningKey = true;
+            options.TokenValidationParameters.ValidAudience = resource;
+            options.Events = new JwtBearerEvents
             {
-                // Heuristic 1: MCP endpoint path (adjust if MapMcp uses a different base path)
-                var path = context.Request.Path.Value?.ToLowerInvariant();
-                string chosen;
-                if (path != null && path.StartsWith("/mcp"))
+                OnTokenValidated = context =>
                 {
-                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
-                    context.Items["ChosenAuthScheme"] = chosen;
-                    Log.Debug("Dynamic auth selector chose {Scheme} based on path {Path}", chosen, path);
-                    return chosen;
+                    var emails = context.Principal.FindAll(ClaimTypes.Email).ToArray();
+                    if (emails.Length != 1 || string.IsNullOrWhiteSpace(emails[0].Value))
+                        context.Fail("An email claim is required.");
+                    return Task.CompletedTask;
                 }
-
-                // Heuristic 2: Check for a custom MCP header (if clients send one, e.g. X-MCP-Client)
-                if (context.Request.Headers.ContainsKey("X-MCP-Client"))
-                {
-                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
-                    context.Items["ChosenAuthScheme"] = chosen;
-                    Log.Debug("Dynamic auth selector chose {Scheme} based on header X-MCP-Client for path {Path}", chosen, path);
-                    return chosen;
-                }
-
-                // Heuristic 3: Accept header indicates MCP media type
-                var accept = context.Request.Headers["Accept"].ToString();
-                if (!string.IsNullOrEmpty(accept) && accept.Contains("application/mcp", StringComparison.OrdinalIgnoreCase))
-                {
-                    chosen = ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme;
-                    context.Items["ChosenAuthScheme"] = chosen;
-                    Log.Debug("Dynamic auth selector chose {Scheme} based on Accept header {Accept} for path {Path}", chosen, accept, path);
-                    return chosen;
-                }
-
-                // Otherwise fall back to JWT (Keycloak)
-                chosen = JwtBearerDefaults.AuthenticationScheme;
-                context.Items["ChosenAuthScheme"] = chosen;
-                Log.Debug("Dynamic auth selector defaulted to {Scheme} for path {Path}", chosen, path);
-                return chosen;
             };
         })
-        .AddMcp();
+        .AddPolicyScheme("challenge", "OAuth challenge", options =>
+        {
+            options.ForwardDefaultSelector = context => context.Request.Path.StartsWithSegments("/mcp")
+                ? McpAuthenticationDefaults.AuthenticationScheme : JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddMcp(options =>
+        {
+            options.ResourceMetadata = new()
+            {
+                Resource = resource,
+                AuthorizationServers = { _authority },
+                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.ExpenseCreate, ApiScopes.BeerUser]
+            };
+        });
 
         services.AddAuthorization(options =>
             {
@@ -313,11 +294,10 @@ public class Startup
                     });
                 }
 
-                // Policy that explicitly requires the MCP scheme (for endpoints that should not accept JWT)
+                // MCP uses the validated bearer identity and the MCP discovery challenge.
                 options.AddPolicy("McpAccess", builder =>
                 {
-                    builder.AddAuthenticationSchemes(ModelContextProtocol.AspNetCore.Authentication.McpAuthenticationDefaults.AuthenticationScheme)
-                           .RequireAuthenticatedUser();
+                    builder.RequireAuthenticatedUser();
                 });
 
                 // Policy that explicitly requires JWT (if you need to exclude MCP for some endpoints)
@@ -341,8 +321,9 @@ public class Startup
         services.AddMcpServer()
                 .WithHttpTransport(options =>
                 {
-                    options.SessionMode = HttpServerSessionMode.StatefulForInitializeClients;
+                    options.SessionMode = HttpServerSessionMode.Stateless;
                 })
+                .AddAuthorizationFilters()
                 .WithToolsFromAssembly();
     }
 }

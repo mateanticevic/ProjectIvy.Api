@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+using ProjectIvy.Api.Constants;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -34,6 +36,7 @@ public class ExpenseTools
         _logger = logger;
     }
 
+    [Authorize(ApiScopes.ExpenseCreate)]
     [McpServerTool, Description("Add new expense")]
     public async Task<string> AddExpense([Description("Amount of the expense")] decimal amount,
                                          [Description("Expense type id")] string typeId,
@@ -55,6 +58,7 @@ public class ExpenseTools
         return id;
     }
 
+    [Authorize(ApiScopes.ExpenseUser)]
     [McpServerTool, Description("Get paged list of expenses")]
     public async Task<PagedView<Expense>> GetExpenses([Description("Start date")] DateTime? from,
                                                       [Description("End date")] DateTime? to,
@@ -81,12 +85,14 @@ public class ExpenseTools
         }
     }
 
+    [Authorize(ApiScopes.ExpenseUser)]
     [McpServerTool, Description("Hierarchy of expense types")]
     public async Task<IEnumerable<Node<ExpenseType>>> GetTypes()
     {
         return await _expenseTypeHandler.GetTree();
     }
 
+    [Authorize(ApiScopes.ExpenseUser)]
     [McpServerTool, Description("Get total sum of expenses")]
     public async Task<decimal> Sum([Description("Start date for the expense sum calculation")] DateTime? from,
                                    [Description("End date for the expense sum calculation")] DateTime? to,

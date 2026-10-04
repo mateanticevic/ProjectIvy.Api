@@ -24,7 +24,7 @@ public static class MiddlewareExtensions
 
                 if (token is not null)
                 {
-                    string maskedToken = $"*****{token[^6..]}";
+                    string maskedToken = token.Length > 6 ? $"*****{token[^6..]}" : "*****";
                     context.Set("Token", maskedToken);
                 }
                 context.Set("Version", assembly.GetName().Version.ToString());

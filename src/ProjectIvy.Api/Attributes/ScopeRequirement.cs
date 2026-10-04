@@ -18,8 +18,8 @@ public class ScopeRequirementHandler : AuthorizationHandler<ScopeRequirement>
 {
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, ScopeRequirement requirement)
     {
-        var scopeClaim = context.User.FindFirst(c => c.Type == "scope")?.Value;
-        if (scopeClaim != null && scopeClaim.Split(' ').Contains(requirement.RequiredScope))
+        var scopes = context.User.FindAll("scope").SelectMany(c => c.Value.Split(' ', System.StringSplitOptions.RemoveEmptyEntries));
+        if (context.User.Identity?.IsAuthenticated == true && scopes.Contains(requirement.RequiredScope))
         {
             context.Succeed(requirement);
         }
