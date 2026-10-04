@@ -179,6 +179,7 @@ public class Startup
         services.AddHandler<ITagHandler, TagHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();
         services.AddHandler<ITrackingViewHandler, TrackingViewHandler>();
+        services.AddHandler<IUserTrackingViewHandler, UserTrackingViewHandler>();
         services.AddHandler<IToDoHandler, ToDoHandler>();
         services.AddHandler<ITripHandler, TripHandler>();
         services.AddHandler<IUserHandler, UserHandler>();
