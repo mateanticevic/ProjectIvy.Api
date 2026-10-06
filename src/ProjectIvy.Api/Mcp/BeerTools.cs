@@ -18,7 +18,7 @@ public class BeerTools
     }
 
     [Authorize(ApiScopes.BeerUser)]
-    [McpServerTool(Name = "sum_beer"), Description("Total amount of beer drank in liters")]
+    [McpServerTool(Name = "sum_beer"), Description("Returns the total volume of beer consumed in milliliters (mL).")]
     public async Task<decimal> Sum(DateTime? from, DateTime? to)
     {
         return await _consumationHandler.SumVolume(new Model.Binding.Consumation.ConsumationGetBinding()
