@@ -141,8 +141,11 @@ public sealed class McpAuthenticationTests
     }
 
     [Theory]
+    [InlineData("openid email profile", false, false)]
     [InlineData("expense:user", true, false)]
-    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canRead, bool canCreate)
+    [InlineData("beer:user", false, true)]
+    [InlineData("expense:user beer:user", true, true)]
+    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
@@ -154,18 +157,24 @@ public sealed class McpAuthenticationTests
         using var response = await client.PostAsJsonAsync("/mcp", new { jsonrpc = "2.0", id = 1, method = "tools/list" });
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadAsStringAsync();
-        Assert.Equal(canRead, body.Contains("get_expenses"));
-        Assert.Equal(canCreate, body.Contains("add_expense"));
-        Assert.DoesNotContain("error", body);
+        var payload = body.Split('\n').Single(line => line.StartsWith("data: "))[6..];
+        using var json = JsonDocument.Parse(payload);
+        Assert.False(json.RootElement.TryGetProperty("error", out _), body);
+        var names = json.RootElement.GetProperty("result").GetProperty("tools")
+            .EnumerateArray().Select(tool => tool.GetProperty("name").GetString()).Order().ToArray();
+        var expected = new List<string>();
+        if (canUseExpenses) expected.AddRange(["add_expense", "get_expenses", "get_types", "sum"]);
+        if (canUseBeer) expected.Add("sum_beer");
+        Assert.Equal(expected.Order(), names);
     }
 
     [Fact]
-    public async Task ReadTokenCannotCreateExpenses()
+    public async Task TokenWithoutExpenseScopeCannotCreateExpenses()
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
         using var client = factory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new("Bearer", Token());
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: "beer:user"));
         client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
         client.DefaultRequestHeaders.Accept.ParseAdd("text/event-stream");
         client.DefaultRequestHeaders.Add("MCP-Protocol-Version", "2025-11-25");

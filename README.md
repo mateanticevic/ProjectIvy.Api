@@ -146,6 +146,10 @@ Set `Mcp__Resource` to the externally reachable HTTPS MCP URL, without a query o
 
 MCP tool permissions are `expense:user` for expenses, and `beer:user` for beer volume. The SDK authorization filters enforce these policies before tool execution. Issued access tokens must include an email claim matching an existing Ivy user. Missing email claims fail authentication; unregistered users are denied by handlers.
 
+The same authorization filters hide tools from `tools/list` when their scope is missing. A successful login with only `openid`, `email`, and `profile` can therefore return an empty tool list. Assign the required client scopes to the MCP OAuth client in Keycloak and either make them default scopes or request them explicitly during authorization. Reconnect the client to obtain a new access token after changing scopes. Use the public HTTPS `/mcp` URL directly, and verify that the token's `aud` contains that exact URL and its `scope` contains `expense:user` and/or `beer:user`. Inspect claims locally without sharing the token.
+
+Expense tools are `add_expense`, `get_expenses`, `get_types`, and `sum`; the beer tool is `sum_beer`. MCP tool names must be unique across all tool classes.
+
 ### Keycloak configuration required before deployment
 
 These settings live in Keycloak and must be applied by its administrator:
