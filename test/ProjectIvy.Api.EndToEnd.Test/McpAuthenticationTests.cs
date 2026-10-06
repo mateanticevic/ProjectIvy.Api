@@ -100,7 +100,6 @@ public sealed class McpAuthenticationTests
         Assert.Equal(HttpStatusCode.OK, metadata.StatusCode);
         var json = JsonDocument.Parse(await metadata.Content.ReadAsStringAsync()).RootElement;
         Assert.Equal(Resource, json.GetProperty("resource").GetString());
-        Assert.Contains("expense:create", json.GetProperty("scopes_supported").EnumerateArray().Select(x => x.GetString()));
         using var response = await client.PostAsJsonAsync("/mcp", new { });
         Assert.True(response.StatusCode == HttpStatusCode.Unauthorized, await response.Content.ReadAsStringAsync());
         Assert.Contains("resource_metadata=\"https://localhost/.well-known/oauth-protected-resource/mcp\"", response.Headers.WwwAuthenticate.ToString());
@@ -143,7 +142,6 @@ public sealed class McpAuthenticationTests
 
     [Theory]
     [InlineData("expense:user", true, false)]
-    [InlineData("expense:create", false, true)]
     public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canRead, bool canCreate)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");

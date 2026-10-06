@@ -36,7 +36,7 @@ public class ExpenseTools
         _logger = logger;
     }
 
-    [Authorize(ApiScopes.ExpenseCreate)]
+    [Authorize(ApiScopes.ExpenseUser)]
     [McpServerTool, Description("Add new expense")]
     public async Task<string> AddExpense([Description("Amount of the expense")] decimal amount,
                                          [Description("Expense type id")] string typeId,

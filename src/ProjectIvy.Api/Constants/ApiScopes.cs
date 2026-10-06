@@ -8,8 +8,6 @@ public static class ApiScopes
 
     public const string BeerUser = "beer:user";
 
-    public const string ExpenseCreate = "expense:create";
-
     public const string ExpenseUser = "expense:user";
 
     public const string FlightUser = "flight:user";
