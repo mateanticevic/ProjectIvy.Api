@@ -18,12 +18,12 @@ public static class CarExtensions
         return entity;
     }
 
-    public static async Task<CarLog> ToEntity(this CarLogBinding b, MainContext context, CarLog entity = null)
+    public static async Task<CarLog> ToEntity(this CarLogBinding b, string carValueId, MainContext context, CarLog entity = null)
     {
         if (entity == null)
             entity = new CarLog();
 
-        entity.CarId = (await context.Cars.GetIdAsync(b.CarValueId)).Value;
+        entity.CarId = (await context.Cars.GetIdAsync(carValueId)).Value;
         entity.Odometer = b.Odometer;
         entity.Timestamp = DateTime.Now;
 

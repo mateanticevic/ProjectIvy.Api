@@ -26,20 +26,18 @@ public class CarHandler : Handler<CarHandler>, ICarHandler
         await context.SaveChangesAsync();
     }
 
-    public async Task<DateTime> CreateLog(CarLogBinding binding)
+    public async Task<DateTime> CreateLog(string carValueId, CarLogBinding binding)
     {
         using var context = GetMainContext();
-        if (string.IsNullOrWhiteSpace(binding.CarValueId))
-            binding.CarValueId = (await context.Users.Include(x => x.DefaultCar).SingleOrDefaultAsync(x => x.Id == UserId)).DefaultCar.ValueId;
+        if (string.IsNullOrWhiteSpace(carValueId))
+            carValueId = (await context.Users.Include(x => x.DefaultCar).SingleOrDefaultAsync(x => x.Id == UserId)).DefaultCar.ValueId;
 
-        var lastEntry = await GetLatestLog(binding.CarValueId, new CarLogGetBinding() { HasOdometer = true });
+        var lastEntry = await GetLatestLog(carValueId, new CarLogGetBinding() { HasOdometer = true });
 
         if (lastEntry != null && binding.Odometer < lastEntry.Odometer)
-        {
             throw new InvalidRequestException($"Odometer must be {lastEntry.Odometer}km or higher.");
-        }
 
-        var entity = await binding.ToEntity(context);
+        var entity = await binding.ToEntity(carValueId, context);
 
         await context.CarLogs.AddAsync(entity);
         await context.SaveChangesAsync();

@@ -71,8 +71,7 @@ public class CarController : BaseController<CarController>
     [HttpPost("{id}/Log")]
     public async Task<DateTime> PostLog([FromBody] CarLogBinding binding, string id)
     {
-        binding.CarValueId = id;
-        return await _carHandler.CreateLog(binding);
+        return await _carHandler.CreateLog(id, binding);
     }
 
     [HttpPost("{id}/Service")]

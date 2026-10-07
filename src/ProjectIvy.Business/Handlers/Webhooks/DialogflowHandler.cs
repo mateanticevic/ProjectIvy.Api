@@ -260,7 +260,7 @@ public class DialogflowHandler : Handler<DialogflowHandler>, IDialogflowHandler
         {
             Odometer = (int)odometer["amount"]
         };
-        await _carHandler.CreateLog(carLog);
+        await _carHandler.CreateLog(null, carLog);
 
         return new GoogleCloudDialogflowV2WebhookResponse();
     }

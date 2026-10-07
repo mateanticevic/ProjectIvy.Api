@@ -9,7 +9,7 @@ public interface ICarHandler : IHandler
 {
     Task Create(string valueId, CarBinding car);
 
-    Task<DateTime> CreateLog(CarLogBinding binding);
+    Task<DateTime> CreateLog(string carValueId, CarLogBinding binding);
 
     Task<string> CreateService(string carValueId, CarServiceBinding binding);
 
