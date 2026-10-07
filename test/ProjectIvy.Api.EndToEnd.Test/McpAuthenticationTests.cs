@@ -8,10 +8,17 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using ModelContextProtocol;
+using Moq;
 using ProjectIvy.Api.EndToEnd.Test.Infrastructure;
+using ProjectIvy.Business.Handlers.User;
+using Database = ProjectIvy.Model.Database.Main;
+using View = ProjectIvy.Model.View.User;
 using Xunit;
 
 namespace ProjectIvy.Api.EndToEnd.Test;
@@ -22,13 +29,19 @@ public sealed class McpAuthenticationTests
     private const string Issuer = "https://issuer.example.test/realms/ivy";
     private static readonly SymmetricSecurityKey Key = new(new byte[64].Select((_, i) => (byte)(i + 1)).ToArray());
 
-    private sealed class Factory : WebApplicationFactory<Program>
+    private sealed class Factory(IUserHandler? userHandler = null) : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("EndToEnd");
             builder.ConfigureTestServices(services =>
             {
+                if (userHandler is not null)
+                {
+                    services.RemoveAll<IUserHandler>();
+                    services.AddSingleton(userHandler);
+                }
+
                 foreach (var scheme in new[] { "Bearer", "McpBearer" })
                     services.PostConfigure<JwtBearerOptions>(scheme, options =>
             {
@@ -141,11 +154,13 @@ public sealed class McpAuthenticationTests
     }
 
     [Theory]
-    [InlineData("openid email profile", false, false)]
-    [InlineData("expense:user", true, false)]
-    [InlineData("beer:user", false, true)]
-    [InlineData("expense:user beer:user", true, true)]
-    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer)
+    [InlineData("openid email profile", false, false, false)]
+    [InlineData("expense:user", true, false, false)]
+    [InlineData("beer:user", false, true, false)]
+    [InlineData("expense:user beer:user", true, true, false)]
+    [InlineData("basic:user", false, false, true)]
+    [InlineData("basic:user expense:user beer:user", true, true, true)]
+    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer, bool canUseCurrentUser)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
@@ -165,7 +180,118 @@ public sealed class McpAuthenticationTests
         var expected = new List<string>();
         if (canUseExpenses) expected.AddRange(["add_expense", "get_expenses", "get_types", "sum"]);
         if (canUseBeer) expected.Add("sum_beer");
+        if (canUseCurrentUser) expected.Add("get_current_user");
         Assert.Equal(expected.Order(), names);
+    }
+
+    [Fact]
+    public async Task CurrentUserDiscoveryReportsProfileSchemaAndReadOnlyHint()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = CreateMcpClient(factory, "basic:user");
+        using var json = await SendMcp(client, new { jsonrpc = "2.0", id = 1, method = "tools/list" });
+        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray());
+        Assert.Equal("get_current_user", tool.GetProperty("name").GetString());
+        Assert.Contains("authenticated user's profile", tool.GetProperty("description").GetString());
+        Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
+
+        var input = tool.GetProperty("inputSchema");
+        Assert.Equal("object", input.GetProperty("type").GetString());
+        Assert.True(!input.TryGetProperty("properties", out var inputs) || !inputs.EnumerateObject().Any());
+        Assert.True(!input.TryGetProperty("required", out var required) || required.GetArrayLength() == 0);
+
+        var properties = tool.GetProperty("outputSchema").GetProperty("properties");
+        Assert.Equal(new[] { "defaultCar", "defaultCurrency", "email", "firstName", "lastName", "trackingStartDate", "username" },
+            properties.EnumerateObject().Select(property => property.Name).Order());
+        var currency = properties.GetProperty("defaultCurrency").GetProperty("properties");
+        Assert.Equal(new[] { "code", "id", "name", "symbol" }, currency.EnumerateObject().Select(property => property.Name).Order());
+        var car = properties.GetProperty("defaultCar").GetProperty("properties");
+        Assert.Equal(new[] { "id", "model", "productionYear", "serviceDue", "services" }, car.EnumerateObject().Select(property => property.Name).Order());
+        var model = car.GetProperty("model").GetProperty("properties");
+        Assert.Equal(new[] { "engineDisplacement", "id", "manufacturer", "modelYear", "name", "power" }, model.EnumerateObject().Select(property => property.Name).Order());
+        Assert.Equal("date-time", properties.GetProperty("trackingStartDate").GetProperty("format").GetString());
+        Assert.Contains("null", properties.GetProperty("trackingStartDate").GetProperty("type").EnumerateArray().Select(type => type.GetString()));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task CurrentUserToolReturnsSameProfileAsRestWithoutDatabaseAccess(bool hasTrackingStartDate)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var profile = new View.User(new Database.User.User
+        {
+            Username = "test-user", FirstName = "Test", LastName = "User", Email = "user@example.test",
+            TrackingStartDate = hasTrackingStartDate ? new DateTime(2026, 10, 1) : null,
+            DefaultCurrency = new Database.Common.Currency { Code = "EUR", Name = "Euro", Symbol = "€" },
+            DefaultCar = new Database.Transport.Car
+            {
+                ValueId = "test-car", ProductionYear = 2020,
+                CarModel = new Database.Transport.CarModel { ValueId = "test-model", Name = "Test Model", ModelYear = 2020 }
+            }
+        });
+        var handler = new Mock<IUserHandler>(MockBehavior.Strict);
+        handler.Setup(value => value.Get((int?)null)).ReturnsAsync(profile);
+        await using var factory = new Factory(handler.Object);
+        using var client = CreateMcpClient(factory, "basic:user");
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "get_current_user", arguments = new { } }
+        });
+        var result = json.RootElement.GetProperty("result");
+        Assert.True(!result.TryGetProperty("isError", out var isError) || !isError.GetBoolean());
+        var structuredContent = result.GetProperty("structuredContent");
+        var expected = JsonSerializer.SerializeToElement(profile, McpJsonUtilities.DefaultOptions);
+        Assert.True(JsonElement.DeepEquals(expected, structuredContent), structuredContent.GetRawText());
+
+        using var rest = await client.GetAsync("/user");
+        Assert.Equal(HttpStatusCode.OK, rest.StatusCode);
+        using var restJson = JsonDocument.Parse(await rest.Content.ReadAsStringAsync());
+        // REST uses a custom date converter; both transports must preserve the same profile values.
+        var restOptions = factory.Services.GetRequiredService<IOptions<Microsoft.AspNetCore.Mvc.JsonOptions>>().Value.JsonSerializerOptions;
+        var expectedRest = JsonSerializer.SerializeToElement(profile, restOptions);
+        Assert.True(JsonElement.DeepEquals(expectedRest, restJson.RootElement), restJson.RootElement.GetRawText());
+        handler.Verify(value => value.Get((int?)null), Times.Exactly(2));
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData("openid email profile")]
+    [InlineData("expense:user beer:user")]
+    public async Task TokenWithoutBasicUserScopeCannotGetCurrentUser(string scope)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<IUserHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(handler.Object);
+        using var client = CreateMcpClient(factory, scope);
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "get_current_user", arguments = new { } }
+        });
+        Assert.Equal("Access forbidden: This tool requires authorization.", json.RootElement.GetProperty("error").GetProperty("message").GetString());
+        handler.VerifyNoOtherCalls();
+    }
+
+    private static HttpClient CreateMcpClient(Factory factory, string scope)
+    {
+        var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: scope));
+        client.DefaultRequestHeaders.Accept.ParseAdd("application/json");
+        client.DefaultRequestHeaders.Accept.ParseAdd("text/event-stream");
+        client.DefaultRequestHeaders.Add("MCP-Protocol-Version", "2025-11-25");
+        return client;
+    }
+
+    private static async Task<JsonDocument> SendMcp(HttpClient client, object request)
+    {
+        using var response = await client.PostAsJsonAsync("/mcp", request);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.True(response.StatusCode == HttpStatusCode.OK, body);
+        var payload = body.Split('\n').Single(line => line.StartsWith("data: "))[6..];
+        return JsonDocument.Parse(payload);
     }
 
     [Fact]
