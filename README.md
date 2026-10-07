@@ -178,3 +178,23 @@ A request goes controller → handler → `MainContext`. Handlers are registered
 `Ride` is the reference feature: `RideController`, `IRideHandler` / `RideHandler`, `RideBinding`, and `Model/View/Ride/Ride`. Public ids are string `ValueId`s. Integer database ids stay off bindings and views.
 
 There are no EF migrations. `MainContext` maps the database you already have. Raw SQL lives in `src/ProjectIvy.Data/Sql/Main/Scripts` and is loaded with `SqlLoader`.
+
+### Split an expense
+
+`POST /expense/{valueId}/split` requires `expense:user` and splits an expense owned by the current user. The top-level fields update the original expense; `expenses` contains one or more additional parts:
+
+```json
+{
+  "amount": 20.00,
+  "expenseTypeId": "food",
+  "comment": "Food portion",
+  "expenses": [
+    { "amount": 10.00, "expenseTypeId": "drinks", "comment": "Drinks portion" },
+    { "amount": 5.00 }
+  ]
+}
+```
+
+For an original amount of 35.00, this keeps 20.00 on the original and creates expenses of 10.00 and 5.00. Every amount is required, accepts at most two decimal places, and the amounts must sum to the original total. Omitted or null `expenseTypeId` and `comment` inherit the original values before the split; an empty comment clears it. Other expense details, receipt links, and explicit trip inclusion/exclusion links are copied. Parent-currency amounts are allocated proportionally, with rounding remainder retained on the original. New expenses receive new IDs and creation timestamps.
+
+The operation is atomic and returns a JSON array of value IDs, original first and new expenses in request order. Missing expenses (including another user's) return 404; invalid bodies, unknown expense types, or mismatched totals return 400.

@@ -125,6 +125,15 @@ public class ExpenseController : BaseController<ExpenseController>
     public async Task<string> Post([FromBody] ExpenseBinding binding)
         => await _expenseHandler.Create(binding);
 
+    [HttpPost("{valueId}/Split")]
+    public async Task<IActionResult> Split(string valueId, [FromBody] ExpenseSplitBinding binding)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        return Ok(await _expenseHandler.Split(valueId, binding));
+    }
+
     [HttpPost("{expenseId}/File/{fileId}")]
     public async Task<IActionResult> PostExpenseFile(string expenseId, string fileId, [FromBody] ExpenseFileBinding binding)
     {
