@@ -12,7 +12,6 @@
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.89" />
     <PackageReference Include="GeoCoordinate.NetStandard1" Version="1.0.1" />
-    <PackageReference Include="Google.Apis.Dialogflow.v2" Version="1.76.0.4254" />
     <PackageReference Include="Ical.Net" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="7.1.1" />
