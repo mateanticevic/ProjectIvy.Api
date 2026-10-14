@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using ModelContextProtocol;
+using ModelContextProtocol.Protocol;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -294,7 +295,7 @@ public class Startup
             {
                 Resource = resource,
                 AuthorizationServers = { _authority },
-                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser]
+                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser, ApiScopes.BasicUser]
             };
         });
 
@@ -335,7 +336,24 @@ public class Startup
             setup.Filters.Add(new AuthorizeFilter(policy));
         });
 
-        services.AddMcpServer()
+        services.AddMcpServer(options =>
+                {
+                    options.ServerInfo = new Implementation
+                    {
+                        Name = "ivy",
+                        Title = "Ivy",
+                        Version = GetType().Assembly.GetName().Version?.ToString() ?? "1.0.0",
+                        Icons =
+                        [
+                            new Icon
+                            {
+                                Source = new Uri(resourceUri, "assets/ivy-icon.png").AbsoluteUri,
+                                MimeType = "image/png",
+                                Sizes = ["256x256"]
+                            }
+                        ]
+                    };
+                })
                 .WithHttpTransport(options =>
                 {
                     options.SessionMode = HttpServerSessionMode.Stateless;
