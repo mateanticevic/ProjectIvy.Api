@@ -2,7 +2,7 @@
 
 Personal API for Project Ivy: money, travel, location, media, and day-to-day records behind one authenticated HTTP surface. It is an ASP.NET Core application on .NET 10 that talks to an existing SQL Server database.
 
-Swagger UI is served at `/swagger`. An MCP endpoint is mapped at `/mcp` for a small set of tools (expenses and beer volume).
+Swagger UI is served at `/swagger`. An MCP endpoint is mapped at `/mcp` for a small set of tools (expenses, beer volume, car logs, and the current user profile).
 
 ## What it covers
 
@@ -144,11 +144,11 @@ MCP is protected at `/mcp`, with stateless requests and Keycloak JWT validation.
 
 Set `Mcp__Resource` to the externally reachable HTTPS MCP URL, without a query or fragment. This is required at startup. REST retains its existing origin policy and credential support. For MCP browser clients configure explicit origins with `Mcp__AllowedOrigins__0`, etc.; credentials are not enabled on MCP endpoints. MCP OAuth challenge and session headers are exposed through CORS. At a reverse proxy, preserve the public host and HTTPS scheme using trusted proxy configuration, or configure the public metadata URL explicitly; never trust arbitrary forwarded headers.
 
-MCP tool permissions are `expense:user` for expenses, and `beer:user` for beer volume. The SDK authorization filters enforce these policies before tool execution. Issued access tokens must include an email claim matching an existing Ivy user. Missing email claims fail authentication; unregistered users are denied by handlers.
+MCP tool permissions are `expense:user` for expenses, `beer:user` for beer volume, and `basic:user` for car logs and the current user profile. The SDK authorization filters enforce these policies before tool execution. Issued access tokens must include an email claim matching an existing Ivy user. Missing email claims fail authentication; unregistered users are denied by handlers.
 
 The same authorization filters hide tools from `tools/list` when their scope is missing. A successful login with only `openid`, `email`, and `profile` can therefore return an empty tool list. Assign the required client scopes to the MCP OAuth client in Keycloak and either make them default scopes or request them explicitly during authorization. Reconnect the client to obtain a new access token after changing scopes. Use the public HTTPS `/mcp` URL directly, and verify that the token's `aud` contains that exact URL and its `scope` contains `expense:user` and/or `beer:user`. Inspect claims locally without sharing the token.
 
-Expense tools are `add_expense`, `get_expenses`, `get_types`, and `sum`; the beer tool is `sum_beer`. MCP tool names must be unique across all tool classes.
+Expense tools are `expense_add`, `expense_get`, `expense_types_get`, and `expense_sum`; the beer tool is `beer_sum`, the car log tool is `car_log_add`, and the current user tool is `get_current_user`. MCP tool names must be unique across all tool classes.
 
 ### Keycloak configuration required before deployment
 

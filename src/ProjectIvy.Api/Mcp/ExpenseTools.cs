@@ -37,7 +37,7 @@ public class ExpenseTools
     }
 
     [Authorize(ApiScopes.ExpenseUser)]
-    [McpServerTool, Description("Add new expense")]
+    [McpServerTool(Name = "expense_add"), Description("Add new expense")]
     public async Task<string> AddExpense([Description("Amount of the expense")] decimal amount,
                                          [Description("Expense type id")] string typeId,
                                          [Description("Date when expense occurred, in YYYY-MM-DD format")] DateTime? date = null,
@@ -59,7 +59,7 @@ public class ExpenseTools
     }
 
     [Authorize(ApiScopes.ExpenseUser)]
-    [McpServerTool, Description("Get paged list of expenses")]
+    [McpServerTool(Name = "expense_get", ReadOnly = true), Description("Get paged list of expenses")]
     public async Task<PagedView<Expense>> GetExpenses([Description("Start date")] DateTime? from,
                                                       [Description("End date")] DateTime? to,
                                                       [Description("Page number")] int page = 1,
@@ -86,14 +86,14 @@ public class ExpenseTools
     }
 
     [Authorize(ApiScopes.ExpenseUser)]
-    [McpServerTool, Description("Hierarchy of expense types")]
+    [McpServerTool(Name = "expense_types_get", ReadOnly = true), Description("Hierarchy of expense types")]
     public async Task<IEnumerable<Node<ExpenseType>>> GetTypes()
     {
         return await _expenseTypeHandler.GetTree();
     }
 
     [Authorize(ApiScopes.ExpenseUser)]
-    [McpServerTool, Description("Get total sum of expenses")]
+    [McpServerTool(Name = "expense_sum", ReadOnly = true), Description("Get total sum of expenses")]
     public async Task<decimal> Sum([Description("Start date for the expense sum calculation")] DateTime? from,
                                    [Description("End date for the expense sum calculation")] DateTime? to,
                                    [Description("Type ID for the expense sum calculation")] string typeId = null)

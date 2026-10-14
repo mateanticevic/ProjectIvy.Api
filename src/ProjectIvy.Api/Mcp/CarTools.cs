@@ -19,7 +19,7 @@ public class CarTools
     }
 
     [Authorize(ApiScopes.BasicUser)]
-    [McpServerTool(Name = "create_car_log")]
+    [McpServerTool(Name = "car_log_add")]
     [Description("Creates a car odometer log and returns its timestamp. The odometer reading must be at least the latest recorded reading.")]
     public Task<DateTime> CreateCarLog(
         [Description("Public car ID.")] string carValueId,

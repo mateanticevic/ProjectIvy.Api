@@ -160,7 +160,7 @@ public sealed class McpAuthenticationTests
     [InlineData("expense:user beer:user", true, true, false)]
     [InlineData("basic:user", false, false, true)]
     [InlineData("basic:user expense:user beer:user", true, true, true)]
-    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer, bool canUseCurrentUser)
+    public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer, bool canUseBasicTools)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         await using var factory = new Factory();
@@ -178,9 +178,9 @@ public sealed class McpAuthenticationTests
         var names = json.RootElement.GetProperty("result").GetProperty("tools")
             .EnumerateArray().Select(tool => tool.GetProperty("name").GetString()).Order().ToArray();
         var expected = new List<string>();
-        if (canUseExpenses) expected.AddRange(["add_expense", "get_expenses", "get_types", "sum"]);
-        if (canUseBeer) expected.Add("sum_beer");
-        if (canUseCurrentUser) expected.Add("get_current_user");
+        if (canUseExpenses) expected.AddRange(["expense_add", "expense_get", "expense_types_get", "expense_sum"]);
+        if (canUseBeer) expected.Add("beer_sum");
+        if (canUseBasicTools) expected.AddRange(["car_log_add", "get_current_user"]);
         Assert.Equal(expected.Order(), names);
     }
 
@@ -191,7 +191,8 @@ public sealed class McpAuthenticationTests
         await using var factory = new Factory();
         using var client = CreateMcpClient(factory, "basic:user");
         using var json = await SendMcp(client, new { jsonrpc = "2.0", id = 1, method = "tools/list" });
-        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray());
+        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray(),
+            tool => tool.GetProperty("name").GetString() == "get_current_user");
         Assert.Equal("get_current_user", tool.GetProperty("name").GetString());
         Assert.Contains("authenticated user's profile", tool.GetProperty("description").GetString());
         Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
@@ -307,7 +308,7 @@ public sealed class McpAuthenticationTests
         using var response = await client.PostAsJsonAsync("/mcp", new
         {
             jsonrpc = "2.0", id = 1, method = "tools/call",
-            @params = new { name = "add_expense", arguments = new { amount = 1, typeId = "test" } }
+            @params = new { name = "expense_add", arguments = new { amount = 1, typeId = "test" } }
         });
         Assert.True(response.StatusCode == HttpStatusCode.OK, await response.Content.ReadAsStringAsync());
         var body = await response.Content.ReadAsStringAsync();
