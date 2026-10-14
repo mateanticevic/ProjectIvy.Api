@@ -45,6 +45,8 @@ public interface IExpenseHandler : IHandler
 
     Task<IEnumerable<string>> GetTopDescriptions(ExpenseGetBinding binding);
 
+    Task<IEnumerable<string>> Split(string valueId, ExpenseSplitBinding binding);
+
     Task<decimal> SumAmount(ExpenseSumGetBinding binding);
 
     Task<IEnumerable<KeyValuePair<DateTime, decimal>>> SumAmountByDay(ExpenseSumGetBinding binding);

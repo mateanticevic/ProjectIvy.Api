@@ -666,6 +666,106 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         return tasks.Select(x => new KeyValuePair<short, IEnumerable<KeyValuePair<string, decimal>>>(x.Key, x.Value.Result));
     }
 
+    public async Task<IEnumerable<string>> Split(string valueId, ExpenseSplitBinding binding)
+    {
+        if (binding?.Amount is null || binding.Expenses is null || binding.Expenses.Count == 0
+            || binding.Expenses.Any(x => x?.Amount is null))
+            throw new InvalidRequestException("Provide an amount for the original expense and at least one additional expense.");
+
+        var parts = new[] { (ExpenseSplitPartBinding)binding }.Concat(binding.Expenses).ToList();
+        if (parts.Any(x => decimal.Round(x.Amount.Value, 2) != x.Amount.Value))
+            throw new InvalidRequestException("Expense amounts must have at most two decimal places.");
+
+        var userLock = _createLocks.GetOrAdd(UserId, _ => new SemaphoreSlim(1, 1));
+        await userLock.WaitAsync();
+        try
+        {
+            using var context = GetMainContext();
+            using var transaction = await context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
+            var original = await context.Expenses.WhereUser(UserId)
+                .Include(x => x.ExpenseFiles)
+                .SingleOrDefaultAsync(x => x.ValueId == valueId);
+            if (original is null)
+                throw new ResourceNotFoundException();
+
+            if (parts.Sum(x => x.Amount.Value) != original.Amount)
+                throw new InvalidRequestException("Split amounts must add up to the original expense amount.");
+            if (original.ParentAmount.HasValue && original.Amount == 0)
+                throw new InvalidRequestException("Cannot allocate a parent-currency amount for a zero-total expense.");
+
+            var typeIds = new List<int>();
+            foreach (var part in parts)
+            {
+                if (part.ExpenseTypeId is null)
+                    typeIds.Add(original.ExpenseTypeId);
+                else
+                {
+                    var typeId = await context.ExpenseTypes.GetIdAsync(part.ExpenseTypeId);
+                    if (!typeId.HasValue)
+                        throw new InvalidRequestException($"Unknown expense type: {part.ExpenseTypeId}");
+                    typeIds.Add(typeId.Value);
+                }
+            }
+
+            var includedTrips = await context.TripExpensesIncluded.Where(x => x.ExpenseId == original.Id).ToListAsync();
+            var excludedTrips = await context.TripExpensesExcluded.Where(x => x.ExpenseId == original.Id).ToListAsync();
+            int nextValueId = await context.Expenses.NextValueIdAsync(UserId);
+            var ids = new List<string> { original.ValueId };
+            decimal allocatedParentAmount = 0;
+            for (int i = 1; i < parts.Count; i++)
+            {
+                // Clone mapped scalar values, retaining foreign keys without copying the identity or navigations.
+                var expense = (Model.Database.Main.Finance.Expense)context.Entry(original).CurrentValues.ToObject();
+                expense.Id = 0;
+                expense.ValueId = (nextValueId++).ToString(CultureInfo.InvariantCulture);
+                expense.Created = DateTime.Now;
+                expense.Modified = expense.Created;
+                expense.Amount = parts[i].Amount.Value;
+                expense.ExpenseTypeId = typeIds[i];
+                expense.Comment = parts[i].Comment ?? original.Comment;
+                if (original.ParentAmount.HasValue)
+                {
+                    expense.ParentAmount = decimal.Round(original.ParentAmount.Value * expense.Amount / original.Amount, 2);
+                    allocatedParentAmount += expense.ParentAmount.Value;
+                }
+                context.Expenses.Add(expense);
+                foreach (var file in original.ExpenseFiles)
+                    context.ExpenseFiles.Add(new Model.Database.Main.Finance.ExpenseFile
+                    {
+                        Expense = expense, FileId = file.FileId,
+                        ExpenseFileTypeId = file.ExpenseFileTypeId, Name = file.Name
+                    });
+                foreach (var trip in includedTrips)
+                    context.TripExpensesIncluded.Add(new Model.Database.Main.Travel.TripExpenseInclude
+                    {
+                        Expense = expense, TripId = trip.TripId
+                    });
+                foreach (var trip in excludedTrips)
+                    context.TripExpensesExcluded.Add(new Model.Database.Main.Travel.TripExpenseExclude
+                    {
+                        Expense = expense, TripId = trip.TripId
+                    });
+                ids.Add(expense.ValueId);
+            }
+
+            original.Amount = binding.Amount.Value;
+            original.ExpenseTypeId = typeIds[0];
+            original.Comment = binding.Comment ?? original.Comment;
+            original.Modified = DateTime.Now;
+            if (original.ParentAmount.HasValue)
+                original.ParentAmount -= allocatedParentAmount;
+
+            await context.SaveChangesAsync();
+            await transaction.CommitAsync();
+            ClearCache();
+            return ids;
+        }
+        finally
+        {
+            userLock.Release();
+        }
+    }
+
     public async Task<bool> Update(ExpenseBinding binding)
     {
         if (!string.IsNullOrWhiteSpace(binding.VendorName))
