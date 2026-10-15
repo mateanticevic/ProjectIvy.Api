@@ -20,5 +20,9 @@ public class LastTrackingController : BaseController<TrackingController>
     }
 
     [HttpGet("LastLocation")]
-    public async Task<TrackingLocation> GetLastLocation() => await _trackingHandler.GetLastLocation();
+    public async Task<ActionResult<TrackingLocation>> GetLastLocation([FromQuery] DateTime? at = null)
+    {
+        var location = await _trackingHandler.GetLastLocation(at);
+        return location is null ? NotFound() : Ok(location);
+    }
 }

@@ -38,7 +38,7 @@ public interface ITrackingHandler : IHandler
 
     Task<View.Tracking> GetLast(DateTime? at = null);
 
-    Task<View.TrackingLocation> GetLastLocation();
+    Task<View.TrackingLocation> GetLastLocation(DateTime? at = null);
 
     Task<double> GetMaxSpeed(FilteredBinding binding);
 

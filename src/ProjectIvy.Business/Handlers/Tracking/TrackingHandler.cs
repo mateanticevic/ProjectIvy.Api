@@ -288,9 +288,13 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
 
     public async Task<View.Tracking> GetLast(DateTime? at = null) => new View.Tracking(await GetLastTracking(at));
 
-    public async Task<TrackingLocation> GetLastLocation()
+    public async Task<TrackingLocation> GetLastLocation(DateTime? at = null)
     {
-        var tracking = await GetLastTracking();
+        var tracking = await GetLastTracking(at);
+        if (tracking is null)
+            return null;
+
+        var referenceTime = at ?? DateTime.UtcNow;
         var trackingCoordiante = new GeoCoordinate((double)tracking.Latitude, (double)tracking.Longitude, tracking.Altitude ?? 0);
 
         var locationGeohashes = await MemoryCache.GetOrCreateAsync(BuildUserCacheKey(CacheKeyGenerator.LocationGeohashes()), async cacheKey =>
@@ -315,7 +319,7 @@ public class TrackingHandler : Handler<TrackingHandler>, ITrackingHandler
                                           .ThenInclude(x => x.Poi)
                                           .Include(x => x.OriginAirport)
                                           .ThenInclude(x => x.Poi)
-                                          .Where(x => x.DateOfDeparture.AddHours(-2) < DateTime.UtcNow && x.DateOfArrival.AddHours(6) > DateTime.UtcNow)
+                                          .Where(x => x.DateOfDeparture.AddHours(-2) < referenceTime && x.DateOfArrival.AddHours(6) > referenceTime)
                                           .FirstOrDefaultAsync();
 
         var trackingLocation = new View.TrackingLocation
