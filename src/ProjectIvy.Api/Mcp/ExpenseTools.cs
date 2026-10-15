@@ -93,10 +93,11 @@ public class ExpenseTools
     }
 
     [Authorize(ApiScopes.ExpenseUser)]
-    [McpServerTool(Name = "expense_sum", ReadOnly = true), Description("Get total sum of expenses")]
-    public async Task<decimal> Sum([Description("Start date for the expense sum calculation")] DateTime? from,
+    [McpServerTool(Name = "expense_sum", ReadOnly = true, UseStructuredContent = true), Description("Get total sum of expenses or sums grouped by time, currency, or expense type. Returns total or the matching by-group property.")]
+    public async Task<ExpenseSum> Sum([Description("Start date for the expense sum calculation")] DateTime? from,
                                    [Description("End date for the expense sum calculation")] DateTime? to,
-                                   [Description("Type ID for the expense sum calculation")] string typeId = null)
+                                   [Description("Type ID for the expense sum calculation")] string typeId = null,
+                                   [Description("Grouping: none (default total), day, dayOfWeek (0 Monday through 6 Sunday), month (calendar months across years, 1-12), monthOfYear (individual year/month periods), year, currency, type, monthOfYearByType, or yearByType. Values are case-insensitive.")] string groupBy = null)
     {
         var binding = new ExpenseSumGetBinding()
         {
@@ -107,16 +108,29 @@ public class ExpenseTools
         var sw = Stopwatch.StartNew();
         try
         {
-            _logger.LogInformation("MCP Tool GetSum start from={From} to={To} typeId={TypeId}", binding.From, binding.To, typeId);
-            var x = await _expenseHandler.SumAmount(binding);
+            _logger.LogInformation("MCP Tool GetSum start from={From} to={To} typeId={TypeId} groupBy={GroupBy}", binding.From, binding.To, typeId, groupBy);
+            ExpenseSum result = groupBy?.Trim().ToLowerInvariant() switch
+            {
+                null or "" or "none" => new() { Total = await _expenseHandler.SumAmount(binding) },
+                "day" => new() { ByDay = await _expenseHandler.SumAmountByDay(binding) },
+                "dayofweek" => new() { ByDayOfWeek = await _expenseHandler.SumAmountByDayOfWeek(binding) },
+                "month" => new() { ByMonth = await _expenseHandler.SumAmountByMonth(binding) },
+                "monthofyear" => new() { ByMonthOfYear = await _expenseHandler.SumAmountByMonthOfYear(binding) },
+                "year" => new() { ByYear = await _expenseHandler.SumAmountByYear(binding) },
+                "currency" => new() { ByCurrency = await _expenseHandler.SumByCurrency(binding) },
+                "type" => new() { ByType = await _expenseHandler.SumByType(binding) },
+                "monthofyearbytype" => new() { ByMonthOfYearByType = await _expenseHandler.SumByMonthOfYearByType(binding) },
+                "yearbytype" => new() { ByYearByType = await _expenseHandler.SumByYearByType(binding) },
+                _ => throw new ArgumentException("Supported groupBy values: none, day, dayOfWeek, month, monthOfYear, year, currency, type, monthOfYearByType, yearByType.", nameof(groupBy))
+            };
             sw.Stop();
-            _logger.LogInformation("MCP Tool GetSum success elapsed={Elapsed}ms result={Result}", sw.Elapsed.TotalMilliseconds.ToString("F1"), x);
-            return x;
+            _logger.LogInformation("MCP Tool GetSum success elapsed={Elapsed}ms groupBy={GroupBy} result={Result}", sw.Elapsed.TotalMilliseconds.ToString("F1"), groupBy, result);
+            return result;
         }
         catch (Exception ex)
         {
             sw.Stop();
-            _logger.LogError(ex, "MCP Tool GetSum failed elapsed={Elapsed}ms from={From} to={To}", sw.Elapsed.TotalMilliseconds.ToString("F1"), binding.From, binding.To);
+            _logger.LogError(ex, "MCP Tool GetSum failed elapsed={Elapsed}ms from={From} to={To} groupBy={GroupBy}", sw.Elapsed.TotalMilliseconds.ToString("F1"), binding.From, binding.To, groupBy);
             throw;
         }
     }

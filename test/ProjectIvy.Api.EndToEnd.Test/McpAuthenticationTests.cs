@@ -17,6 +17,7 @@ using ModelContextProtocol;
 using Moq;
 using ProjectIvy.Api.EndToEnd.Test.Infrastructure;
 using ProjectIvy.Business.Handlers.User;
+using ProjectIvy.Business.Handlers.Expense;
 using Database = ProjectIvy.Model.Database.Main;
 using View = ProjectIvy.Model.View.User;
 using Xunit;
@@ -29,13 +30,21 @@ public sealed class McpAuthenticationTests
     private const string Issuer = "https://issuer.example.test/realms/ivy";
     private static readonly SymmetricSecurityKey Key = new(new byte[64].Select((_, i) => (byte)(i + 1)).ToArray());
 
-    private sealed class Factory(IUserHandler? userHandler = null) : WebApplicationFactory<Program>
+    private sealed class Factory(IUserHandler? userHandler = null, IExpenseHandler? expenseHandler = null) : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("EndToEnd");
             builder.ConfigureTestServices(services =>
             {
+                if (expenseHandler is not null)
+                {
+                    services.RemoveAll<IExpenseHandler>();
+                    services.AddSingleton(expenseHandler);
+                    services.RemoveAll<IExpenseTypeHandler>();
+                    services.AddSingleton(Mock.Of<IExpenseTypeHandler>());
+                }
+
                 if (userHandler is not null)
                 {
                     services.RemoveAll<IUserHandler>();
@@ -273,6 +282,69 @@ public sealed class McpAuthenticationTests
             @params = new { name = "get_current_user", arguments = new { } }
         });
         Assert.Equal("Access forbidden: This tool requires authorization.", json.RootElement.GetProperty("error").GetProperty("message").GetString());
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task ExpenseSumDiscoveryExposesOptionalGrouping()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = CreateMcpClient(factory, "expense:user");
+        using var json = await SendMcp(client, new { jsonrpc = "2.0", id = 1, method = "tools/list" });
+        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray(),
+            tool => tool.GetProperty("name").GetString() == "expense_sum");
+        var input = tool.GetProperty("inputSchema");
+        var grouping = input.GetProperty("properties").GetProperty("groupBy");
+        Assert.Equal("string", grouping.GetProperty("type").GetString());
+        Assert.True(!input.TryGetProperty("required", out var required) ||
+            !required.EnumerateArray().Any(value => value.GetString() == "groupBy"));
+        Assert.Contains("monthOfYearByType", grouping.GetProperty("description").GetString());
+        Assert.Contains("calendar months across years", grouping.GetProperty("description").GetString());
+        Assert.Contains("0 Monday through 6 Sunday", grouping.GetProperty("description").GetString());
+        Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
+        var output = tool.GetProperty("outputSchema");
+        Assert.Equal("object", output.GetProperty("type").GetString());
+        var properties = output.GetProperty("properties");
+        Assert.Equal(new[] { "byCurrency", "byDay", "byDayOfWeek", "byMonth", "byMonthOfYear", "byMonthOfYearByType", "byType", "byYear", "byYearByType", "total" },
+            properties.EnumerateObject().Select(property => property.Name).Order());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("day")]
+    [InlineData("dayOfWeek")]
+    [InlineData("month")]
+    [InlineData("monthOfYear")]
+    [InlineData("year")]
+    [InlineData("currency")]
+    [InlineData("type")]
+    [InlineData("monthOfYearByType")]
+    [InlineData("yearByType")]
+    public async Task ExpenseSumSerializesTypedTotalGroupedAndNestedResults(string? groupBy)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<IExpenseHandler>(MockBehavior.Strict);
+        var expected = ExpenseSumToolTests.ConfigureSum(handler, groupBy ?? "none");
+        await using var factory = new Factory(userHandler: Mock.Of<IUserHandler>(), expenseHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "expense:user");
+        var arguments = new Dictionary<string, object?> { ["from"] = "2026-01-01", ["to"] = "2026-10-15", ["typeId"] = "food" };
+        if (groupBy is not null) arguments["groupBy"] = groupBy;
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "expense_sum", arguments }
+        });
+        var result = json.RootElement.GetProperty("result");
+        Assert.True(!result.TryGetProperty("isError", out var isError) || !isError.GetBoolean(), result.GetRawText());
+        var content = Assert.Single(result.GetProperty("content").EnumerateArray());
+        Assert.Equal("text", content.GetProperty("type").GetString());
+        using var actual = JsonDocument.Parse(content.GetProperty("text").GetString()!);
+        Assert.True(JsonElement.DeepEquals(JsonSerializer.SerializeToElement(expected, McpJsonUtilities.DefaultOptions), actual.RootElement),
+            actual.RootElement.GetRawText());
+        Assert.Single(actual.RootElement.EnumerateObject());
+        Assert.True(JsonElement.DeepEquals(actual.RootElement, result.GetProperty("structuredContent")), result.GetRawText());
+        handler.VerifyAll();
         handler.VerifyNoOtherCalls();
     }
 
