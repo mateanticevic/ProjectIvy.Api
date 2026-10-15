@@ -295,7 +295,7 @@ public class Startup
             {
                 Resource = resource,
                 AuthorizationServers = { _authority },
-                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser, ApiScopes.BasicUser]
+                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser, ApiScopes.BasicUser, ApiScopes.TrackingViewLast]
             };
         });
 

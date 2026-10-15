@@ -18,6 +18,7 @@ using Moq;
 using ProjectIvy.Api.EndToEnd.Test.Infrastructure;
 using ProjectIvy.Business.Handlers.User;
 using ProjectIvy.Business.Handlers.Expense;
+using ProjectIvy.Business.Handlers.Tracking;
 using Database = ProjectIvy.Model.Database.Main;
 using View = ProjectIvy.Model.View.User;
 using Xunit;
@@ -30,13 +31,19 @@ public sealed class McpAuthenticationTests
     private const string Issuer = "https://issuer.example.test/realms/ivy";
     private static readonly SymmetricSecurityKey Key = new(new byte[64].Select((_, i) => (byte)(i + 1)).ToArray());
 
-    private sealed class Factory(IUserHandler? userHandler = null, IExpenseHandler? expenseHandler = null) : WebApplicationFactory<Program>
+    private sealed class Factory(IUserHandler? userHandler = null, IExpenseHandler? expenseHandler = null, ITrackingHandler? trackingHandler = null) : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("EndToEnd");
             builder.ConfigureTestServices(services =>
             {
+                if (trackingHandler is not null)
+                {
+                    services.RemoveAll<ITrackingHandler>();
+                    services.AddSingleton(trackingHandler);
+                }
+
                 if (expenseHandler is not null)
                 {
                     services.RemoveAll<IExpenseHandler>();
@@ -169,6 +176,8 @@ public sealed class McpAuthenticationTests
     [InlineData("expense:user beer:user", true, true, false)]
     [InlineData("basic:user", false, false, true)]
     [InlineData("basic:user expense:user beer:user", true, true, true)]
+    [InlineData("tracking:view_last", false, false, false)]
+    [InlineData("basic:user expense:user beer:user tracking:view_last", true, true, true)]
     public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer, bool canUseBasicTools)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
@@ -190,6 +199,7 @@ public sealed class McpAuthenticationTests
         if (canUseExpenses) expected.AddRange(["expense_add", "expense_get", "expense_types_get", "expense_sum"]);
         if (canUseBeer) expected.Add("beer_sum");
         if (canUseBasicTools) expected.AddRange(["car_log_add", "get_current_user"]);
+        if (scope.Split(' ').Contains("tracking:view_last")) expected.Add("tracking_last_get");
         Assert.Equal(expected.Order(), names);
     }
 
@@ -345,6 +355,71 @@ public sealed class McpAuthenticationTests
         Assert.Single(actual.RootElement.EnumerateObject());
         Assert.True(JsonElement.DeepEquals(actual.RootElement, result.GetProperty("structuredContent")), result.GetRawText());
         handler.VerifyAll();
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task LastTrackingDiscoveryReportsOptionalCutoffAndLocationSchema()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = CreateMcpClient(factory, "tracking:view_last");
+        using var json = await SendMcp(client, new { jsonrpc = "2.0", id = 1, method = "tools/list" });
+        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray());
+        Assert.Equal("tracking_last_get", tool.GetProperty("name").GetString());
+        Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
+        var input = tool.GetProperty("inputSchema");
+        Assert.Contains("UTC", input.GetProperty("properties").GetProperty("at").GetProperty("description").GetString());
+        Assert.True(!input.TryGetProperty("required", out var required) || !required.EnumerateArray().Any());
+        Assert.True(tool.GetProperty("outputSchema").GetProperty("properties").TryGetProperty("tracking", out _));
+    }
+
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task LastTrackingForwardsOptionalUtcCutoffAndSerializesLocation(bool includeAt)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var at = new DateTime(2026, 10, 15, 12, 0, 0, DateTimeKind.Utc);
+        var handler = new Mock<ITrackingHandler>(MockBehavior.Strict);
+        var expected = new ProjectIvy.Model.View.Tracking.TrackingLocation
+        {
+            Tracking = new(new Database.Tracking.Tracking
+            {
+                Timestamp = at.AddMinutes(-1), Latitude = 45, Longitude = 16
+            })
+        };
+        handler.Setup(x => x.GetLastLocation(includeAt ? at : null)).ReturnsAsync(expected);
+        await using var factory = new Factory(trackingHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "tracking:view_last");
+        var arguments = new Dictionary<string, object?>();
+        if (includeAt) arguments["at"] = "2026-10-15T12:00:00Z";
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_last_get", arguments }
+        });
+        var result = json.RootElement.GetProperty("result");
+        Assert.True(!result.TryGetProperty("isError", out var isError) || !isError.GetBoolean(), result.GetRawText());
+        Assert.True(JsonElement.DeepEquals(JsonSerializer.SerializeToElement(expected, McpJsonUtilities.DefaultOptions),
+            result.GetProperty("structuredContent")), result.GetRawText());
+        handler.Verify(x => x.GetLastLocation(includeAt ? at : null), Times.Once);
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task TokenWithoutTrackingScopeCannotReadLastLocation()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(trackingHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "basic:user");
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_last_get", arguments = new { } }
+        });
+        Assert.Contains("Access forbidden: This tool requires authorization.", json.RootElement.GetRawText());
         handler.VerifyNoOtherCalls();
     }
 
