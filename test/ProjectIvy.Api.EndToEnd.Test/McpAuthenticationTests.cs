@@ -31,13 +31,24 @@ public sealed class McpAuthenticationTests
     private const string Issuer = "https://issuer.example.test/realms/ivy";
     private static readonly SymmetricSecurityKey Key = new(new byte[64].Select((_, i) => (byte)(i + 1)).ToArray());
 
-    private sealed class Factory(IUserHandler? userHandler = null, IExpenseHandler? expenseHandler = null, ITrackingHandler? trackingHandler = null) : WebApplicationFactory<Program>
+    private sealed class Factory(IUserHandler? userHandler = null, IExpenseHandler? expenseHandler = null, ITrackingHandler? trackingHandler = null, ITrackingExportHandler? trackingExportHandler = null) : WebApplicationFactory<Program>
     {
         protected override void ConfigureWebHost(IWebHostBuilder builder)
         {
             builder.UseEnvironment("EndToEnd");
             builder.ConfigureTestServices(services =>
             {
+                if (trackingExportHandler is not null)
+                {
+                    services.RemoveAll<ITrackingExportHandler>();
+                    services.AddSingleton(trackingExportHandler);
+                    if (trackingHandler is null)
+                    {
+                        services.RemoveAll<ITrackingHandler>();
+                        services.AddSingleton(new Mock<ITrackingHandler>(MockBehavior.Strict).Object);
+                    }
+                }
+
                 if (trackingHandler is not null)
                 {
                     services.RemoveAll<ITrackingHandler>();
@@ -177,6 +188,8 @@ public sealed class McpAuthenticationTests
     [InlineData("basic:user", false, false, true)]
     [InlineData("basic:user expense:user beer:user", true, true, true)]
     [InlineData("tracking:view_last", false, false, false)]
+    [InlineData("tracking:user", false, false, false)]
+    [InlineData("tracking:user tracking:view_last", false, false, false)]
     [InlineData("basic:user expense:user beer:user tracking:view_last", true, true, true)]
     public async Task ToolDiscoveryRespectsGrantedScopes(string scope, bool canUseExpenses, bool canUseBeer, bool canUseBasicTools)
     {
@@ -200,6 +213,7 @@ public sealed class McpAuthenticationTests
         if (canUseBeer) expected.Add("beer_sum");
         if (canUseBasicTools) expected.AddRange(["car_log_add", "get_current_user"]);
         if (scope.Split(' ').Contains("tracking:view_last")) expected.Add("tracking_last_get");
+        if (scope.Split(' ').Contains("tracking:user")) expected.Add("tracking_get");
         Assert.Equal(expected.Order(), names);
     }
 
@@ -421,6 +435,215 @@ public sealed class McpAuthenticationTests
         });
         Assert.Contains("Access forbidden: This tool requires authorization.", json.RootElement.GetRawText());
         handler.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task TrackingMapDiscoveryRequiresDateAndUsesUserDefaultTimezone()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = CreateMcpClient(factory, "tracking:user");
+        using var json = await SendMcp(client, new { jsonrpc = "2.0", id = 1, method = "tools/list" });
+        var tool = Assert.Single(json.RootElement.GetProperty("result").GetProperty("tools").EnumerateArray());
+        Assert.Equal("tracking_get", tool.GetProperty("name").GetString());
+        Assert.True(tool.GetProperty("annotations").GetProperty("readOnlyHint").GetBoolean());
+        var input = tool.GetProperty("inputSchema");
+        Assert.Equal(new[] { "date" }, input.GetProperty("required").EnumerateArray().Select(x => x.GetString()));
+        Assert.Contains("DefaultTimezone", input.GetProperty("properties").GetProperty("timezone").GetProperty("description").GetString());
+        Assert.Equal("date", input.GetProperty("properties").GetProperty("date").GetProperty("format").GetString());
+        Assert.False(tool.TryGetProperty("outputSchema", out _));
+    }
+
+    [Theory]
+    [InlineData(null, false)]
+    [InlineData("America/New_York", false)]
+    [InlineData(null, true)]
+    public async Task TrackingMapReturnsNativeImageOrEmptyMessage(string? timezone, bool empty)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var date = new DateOnly(2026, 10, 19);
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        handler.Setup(x => x.GetMap(date, timezone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(empty ? null! : TrackingExportTests.TileFixture.Tile);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "tracking:user");
+        var arguments = new Dictionary<string, object?> { ["date"] = "2026-10-19" };
+        if (timezone is not null) arguments["timezone"] = timezone;
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_get", arguments }
+        });
+        var result = json.RootElement.GetProperty("result");
+        Assert.True(!result.TryGetProperty("isError", out var error) || !error.GetBoolean(), result.GetRawText());
+        Assert.False(result.TryGetProperty("structuredContent", out _));
+        var content = Assert.Single(result.GetProperty("content").EnumerateArray());
+        Assert.Equal(empty ? "text" : "image", content.GetProperty("type").GetString());
+        if (empty) Assert.Contains("No usable tracking points", content.GetProperty("text").GetString());
+        else
+        {
+            Assert.Equal("image/png", content.GetProperty("mimeType").GetString());
+            Assert.Equal(TrackingExportTests.TileFixture.Tile, Convert.FromBase64String(content.GetProperty("data").GetString()!));
+        }
+        handler.VerifyAll();
+    }
+
+    [Theory]
+    [InlineData("tracking:view_last")]
+    [InlineData("basic:user")]
+    public async Task TrackingMapRequiresFullTrackingScope(string scope)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = CreateMcpClient(factory, scope);
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_get", arguments = new { date = "2026-10-19" } }
+        });
+        Assert.Contains("Access forbidden: This tool requires authorization.", json.RootElement.GetRawText());
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData("invalid")]
+    [InlineData("timeout")]
+    [InlineData("upstream")]
+    public async Task TrackingMapFailuresAreToolErrors(string failure)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        Exception exception = failure switch
+        {
+            "invalid" => new ArgumentException("Invalid timezone."),
+            "timeout" => new TimeoutException(),
+            _ => new HttpRequestException("Private tile URL must not appear in the response")
+        };
+        handler.Setup(x => x.GetMap(It.IsAny<DateOnly>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ThrowsAsync(exception);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "tracking:user");
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_get", arguments = new { date = "2026-10-19" } }
+        });
+        Assert.True(json.RootElement.GetProperty("result").GetProperty("isError").GetBoolean());
+        Assert.DoesNotContain("Private tile URL", json.RootElement.GetRawText());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("19-10-2026")]
+    public async Task TrackingMapRejectsMissingOrMalformedDate(string? date)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = CreateMcpClient(factory, "tracking:user");
+        var arguments = new Dictionary<string, object?>();
+        if (date is not null) arguments["date"] = date;
+        using var json = await SendMcp(client, new
+        {
+            jsonrpc = "2.0", id = 1, method = "tools/call",
+            @params = new { name = "tracking_get", arguments }
+        });
+        Assert.True(json.RootElement.TryGetProperty("error", out _) ||
+            json.RootElement.GetProperty("result").GetProperty("isError").GetBoolean());
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Fact]
+    public async Task TrackingMapRestDocumentsTimezoneAsOptional()
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        await using var factory = new Factory();
+        using var client = factory.CreateClient();
+        using var response = await client.GetAsync("/swagger/v1/swagger.json");
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        using var document = JsonDocument.Parse(await response.Content.ReadAsStringAsync());
+        var map = document.RootElement.GetProperty("paths").EnumerateObject()
+            .Single(path => path.Name.Equals("/tracking/map", StringComparison.OrdinalIgnoreCase)).Value;
+        var parameters = map.GetProperty("get").GetProperty("parameters").EnumerateArray().ToArray();
+        var timezone = parameters.Single(parameter => parameter.GetProperty("name").GetString()!
+            .Equals("timezone", StringComparison.OrdinalIgnoreCase));
+        Assert.True(!timezone.TryGetProperty("required", out var required) || !required.GetBoolean());
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("America/New_York")]
+    public async Task TrackingMapRestReturnsSamePngAndForwardsQueryFilters(string? timezone)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        handler.Setup(x => x.GetMap(new DateOnly(2026, 10, 19), timezone!, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(TrackingExportTests.TileFixture.Tile);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: "tracking:user"));
+        var query = "?date=2026-10-19" + (timezone is null ? "" : "&timezone=" + Uri.EscapeDataString(timezone));
+        using var response = await client.GetAsync("/tracking/map" + query);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("image/png", response.Content.Headers.ContentType?.MediaType);
+        Assert.Equal(TrackingExportTests.TileFixture.Tile, await response.Content.ReadAsByteArrayAsync());
+        handler.VerifyAll();
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("?date=invalid")]
+    public async Task TrackingMapRestRejectsInvalidQueryBeforeCallingHandler(string query)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: "tracking:user"));
+        using var response = await client.GetAsync("/tracking/map" + query);
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData(null, HttpStatusCode.Unauthorized)]
+    [InlineData("tracking:view_last", HttpStatusCode.Forbidden)]
+    public async Task TrackingMapRestRequiresFullTrackingScope(string? scope, HttpStatusCode status)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = factory.CreateClient();
+        if (scope is not null) client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: scope));
+        using var response = await client.GetAsync("/tracking/map?date=2026-10-19");
+        Assert.Equal(status, response.StatusCode);
+        handler.VerifyNoOtherCalls();
+    }
+
+    [Theory]
+    [InlineData("empty", HttpStatusCode.NotFound)]
+    [InlineData("invalid", HttpStatusCode.BadRequest)]
+    [InlineData("timeout", HttpStatusCode.GatewayTimeout)]
+    [InlineData("rendering", HttpStatusCode.InternalServerError)]
+    public async Task TrackingMapRestMapsEmptyAndFailureResultsToHttpStatuses(string outcome, HttpStatusCode status)
+    {
+        using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
+        var handler = new Mock<ITrackingExportHandler>(MockBehavior.Strict);
+        var setup = handler.Setup(x => x.GetMap(new DateOnly(2026, 10, 19), null!, It.IsAny<CancellationToken>()));
+        if (outcome == "empty") setup.ReturnsAsync((byte[])null!);
+        else setup.ThrowsAsync(outcome switch
+        {
+            "invalid" => new ArgumentException("Timezone must be a valid IANA timezone identifier."),
+            "timeout" => new TimeoutException(),
+            _ => new InvalidOperationException("Unable to render the tracking map.")
+        });
+        await using var factory = new Factory(trackingExportHandler: handler.Object);
+        using var client = factory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new("Bearer", Token(scope: "tracking:user"));
+        using var response = await client.GetAsync("/tracking/map?date=2026-10-19");
+        Assert.Equal(status, response.StatusCode);
+        handler.VerifyAll();
     }
 
     private static HttpClient CreateMcpClient(Factory factory, string scope)

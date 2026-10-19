@@ -1,8 +1,10 @@
 ﻿using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
@@ -36,6 +38,31 @@ public class TrackingController : BaseController<TrackingController>
 
     [HttpGet]
     public async Task<IEnumerable<View.Tracking>> Get([FromQuery] TrackingGetBinding binding) => await _trackingHandler.Get(binding);
+
+    [HttpGet("Map")]
+    [ProducesResponseType(typeof(FileContentResult), StatusCodes.Status200OK, "image/png")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status504GatewayTimeout)]
+    public async Task<IActionResult> GetMap([FromQuery] TrackingMapGetBinding binding,
+        [FromServices] ITrackingExportHandler trackingExportHandler, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid) return BadRequest(ModelState);
+
+        try
+        {
+            var png = await trackingExportHandler.GetMap(binding.Date.Value, binding.Timezone, cancellationToken);
+            return png is null ? NotFound() : File(png, "image/png");
+        }
+        catch (ArgumentException exception)
+        {
+            return BadRequest(new { error = exception.Message });
+        }
+        catch (TimeoutException)
+        {
+            return StatusCode(StatusCodes.Status504GatewayTimeout, new { error = "Tracking map rendering timed out. Please try again." });
+        }
+    }
 
     [HttpGet("Speed/Average")]
     public async Task<double> GetAverageSpeed([FromQuery] FilteredBinding binding) => await _trackingHandler.GetAverageSpeed(binding);

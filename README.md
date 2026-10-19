@@ -148,7 +148,26 @@ MCP tool permissions are `expense:user` for expenses, `beer:user` for beer volum
 
 The same authorization filters hide tools from `tools/list` when their scope is missing. A successful login with only `openid`, `email`, and `profile` can therefore return an empty tool list. Assign the required client scopes to the MCP OAuth client in Keycloak and either make them default scopes or request them explicitly during authorization. Reconnect the client to obtain a new access token after changing scopes. Use the public HTTPS `/mcp` URL directly, and verify that the token's `aud` contains that exact URL and its `scope` contains `expense:user` and/or `beer:user`. Inspect claims locally without sharing the token.
 
-Expense tools are `expense_add`, `expense_get`, `expense_types_get`, and `expense_sum`; the beer tool is `beer_sum`, the car log tool is `car_log_add`, and the current user tool is `get_current_user`. MCP tool names must be unique across all tool classes.
+Expense tools are `expense_add`, `expense_get`, `expense_types_get`, and `expense_sum`; the beer tool is `beer_sum`, the car log tool is `car_log_add`, and the current user tool is `get_current_user`. Tracking tools are `tracking_last_get` (requires `tracking:view_last`) and `tracking_get` (requires `tracking:user`). MCP tool names must be unique across all tool classes.
+
+### Tracking map export
+
+Call `tracking_get` with a required `date` (`YYYY-MM-DD`) and optional `timezone` (IANA identifier, defaults to the authenticated user’s `DefaultTimezone`). It returns native MCP `image/png` content: a 1024×768 map, a blue chronological route, and green start/red end markers. A stationary position uses one green marker. Day boundaries account for daylight saving; only the authenticated user's points are included. Days without usable points return a text message.
+
+The same image is available through `GET /tracking/map?date=2026-10-19&timezone=Europe%2FZagreb`, requiring `tracking:user`. The `date` query parameter is required; `timezone` defaults to the authenticated user’s `User.DefaultTimezone` database value. An explicit timezone overrides that preference; an unset default requires an explicit timezone. The response is `image/png`, with 404 for an empty day, 400 for invalid filters, and 504 if rendering times out.
+
+The map is composed on the server from OpenStreetMap tiles, with attribution and an embedded Lato font. No API key is required. Only viewport tiles are requested, with four concurrent downloads at most and a 30-second overall export timeout. Tile requests identify the application as `ProjectIvy/1.0`; their HTTP logs are disabled to avoid recording map tile locations. The provider receives tile coordinates, but no tracking timestamps, user identifiers, or route overlay. Availability depends on the tile service; failed exports return a tool error.
+
+Optional environment settings:
+
+| Variable | Default / purpose |
+| --- | --- |
+| `TrackingExport__TileUrl` | `https://tile.openstreetmap.org/{z}/{x}/{y}.png`; compatible 256×256 raster tile endpoint |
+| `TrackingExport__CacheDirectory` | `projectivy-map-tiles` in the OS temporary directory; must be writable |
+
+Tiles are cached on disk using upstream freshness headers (seven days when absent), with conditional revalidation of expired entries. Mount the cache directory on persistent storage in containers to retain it across restarts. Rendered maps and tracking points are not cached. Follow the [OSM tile usage policy](https://operations.osmfoundation.org/policies/tiles/); configure an appropriate provider and attribution before switching tile sources. The bundled Lato font's SIL Open Font License is in `src/ProjectIvy.Business/Assets/Fonts/OFL.txt` and is copied to published output.
+
+Assign/request the `tracking:user` client scope in Keycloak and reconnect the MCP client to expose `tracking_get`. A token with only `tracking:view_last` cannot access daily routes.
 
 ### Keycloak configuration required before deployment
 

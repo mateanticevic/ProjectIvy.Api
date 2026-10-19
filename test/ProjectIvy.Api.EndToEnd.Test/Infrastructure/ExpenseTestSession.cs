@@ -1,5 +1,6 @@
 using System.Globalization;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Data.DbContexts;
 using ProjectIvy.EndToEnd;
 using ProjectIvy.Model.Database.Main.Common;
@@ -36,6 +37,13 @@ public sealed class ExpenseTestSession : IAsyncDisposable
             _deploymentAttempted = true;
             await Task.Run(() => SqlServerDatabase.Deploy(_fixture.SnapshotPath, ConnectionString,
                 _fixture.Container.GetConnectionString(), _database));
+            // The committed snapshot predates this column. Supplement only the disposable test database
+            // until the snapshot is explicitly refreshed from the current database schema.
+            using (var db = OpenDatabase())
+                await db.Database.ExecuteSqlRawAsync("""
+                    IF COL_LENGTH('[User].[User]', 'DefaultTimezone') IS NULL
+                        ALTER TABLE [User].[User] ADD [DefaultTimezone] nvarchar(100) NULL;
+                    """);
             await SeedAsync();
             _environment = new TestEnvironment(ConnectionString);
             Factory = new ExpenseApiFactory(ConnectionString, _fixture.Container.GetConnectionString(), _database);
@@ -85,7 +93,7 @@ public sealed class ExpenseTestSession : IAsyncDisposable
         {
             Email = $"{prefix}-{token}@example.test", Username = $"e2e-{token}",
             FirstName = "Test", LastName = "User",
-            DefaultCurrencyId = CurrencyId, DefaultLanguageId = languageId,
+            DefaultCurrencyId = CurrencyId, DefaultLanguageId = languageId, DefaultTimezone = "Europe/Zagreb",
             Created = new DateTime(2026, 1, 1), Modified = new DateTime(2026, 1, 1)
         };
     }

@@ -22,6 +22,8 @@ public class User : IHasCreatedModified
 
     public int DefaultLanguageId { get; set; }
 
+    public string DefaultTimezone { get; set; }
+
     public string Email { get; set; }
 
     public string FirstName { get; set; }

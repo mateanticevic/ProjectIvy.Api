@@ -186,6 +186,9 @@ public class Startup
         services.AddHandler<IStayHandler, StayHandler>();
         services.AddHandler<ITagHandler, TagHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();
+        services.AddHandler<ITrackingExportHandler, TrackingExportHandler>();
+        services.AddSingleton<TrackingMapTileClient>();
+        services.AddHttpClient("TrackingMapTiles").RemoveAllLoggers();
         services.AddHandler<ITrackingViewHandler, TrackingViewHandler>();
         services.AddHandler<IUserTrackingViewHandler, UserTrackingViewHandler>();
         services.AddHandler<IToDoHandler, ToDoHandler>();
@@ -295,7 +298,7 @@ public class Startup
             {
                 Resource = resource,
                 AuthorizationServers = { _authority },
-                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser, ApiScopes.BasicUser, ApiScopes.TrackingViewLast]
+                ScopesSupported = [ApiScopes.ExpenseUser, ApiScopes.BeerUser, ApiScopes.BasicUser, ApiScopes.TrackingViewLast, ApiScopes.TrackingUser]
             };
         });
 

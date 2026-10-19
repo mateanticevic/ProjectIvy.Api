@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.12" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
     <PackageReference Include="SixLabors.ImageSharp" Version="3.1.12" />
+    <PackageReference Include="SixLabors.ImageSharp.Drawing" Version="2.1.7" />
     <PackageReference Include="ZXing.Net" Version="0.16.11" />
     <PackageReference Include="ZXing.Net.Bindings.ImageSharp.V3" Version="0.16.20" />
     <PackageReference Include="geohash-dotnet" Version="3.0.0" />
@@ -27,6 +28,11 @@
   <ItemGroup>
     <Using Include="System" />
     <Using Include="System.Collections.Generic" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Assets/Fonts/Lato-Regular.ttf" />
+    <None Update="Assets/Fonts/OFL.txt" CopyToOutputDirectory="PreserveNewest" />
+    <InternalsVisibleTo Include="ProjectIvy.Api.EndToEnd.Test" />
   </ItemGroup>
 
   <ItemGroup>
