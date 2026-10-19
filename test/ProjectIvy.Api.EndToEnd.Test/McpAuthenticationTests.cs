@@ -458,7 +458,7 @@ public sealed class McpAuthenticationTests
     [InlineData(null, false)]
     [InlineData("America/New_York", false)]
     [InlineData(null, true)]
-    public async Task TrackingMapReturnsNativeImageOrEmptyMessage(string? timezone, bool empty)
+    public async Task TrackingMapReturnsNativeImageAndDownloadLinkOrEmptyMessage(string? timezone, bool empty)
     {
         using var environment = new TestEnvironment("Server=127.0.0.1,1;Database=unused;User Id=sa;Password=Unused!123456");
         var date = new DateOnly(2026, 10, 19);
@@ -477,13 +477,27 @@ public sealed class McpAuthenticationTests
         var result = json.RootElement.GetProperty("result");
         Assert.True(!result.TryGetProperty("isError", out var error) || !error.GetBoolean(), result.GetRawText());
         Assert.False(result.TryGetProperty("structuredContent", out _));
-        var content = Assert.Single(result.GetProperty("content").EnumerateArray());
+        var blocks = result.GetProperty("content").EnumerateArray().ToArray();
+        Assert.Equal(empty ? 1 : 2, blocks.Length);
+        var content = blocks[0];
         Assert.Equal(empty ? "text" : "image", content.GetProperty("type").GetString());
         if (empty) Assert.Contains("No usable tracking points", content.GetProperty("text").GetString());
         else
         {
             Assert.Equal("image/png", content.GetProperty("mimeType").GetString());
             Assert.Equal(TrackingExportTests.TileFixture.Tile, Convert.FromBase64String(content.GetProperty("data").GetString()!));
+            Assert.Equal("text", blocks[1].GetProperty("type").GetString());
+            var text = blocks[1].GetProperty("text").GetString()!;
+            Assert.Contains("requires an authenticated Ivy session", text);
+            var url = new Uri(text.Split("](")[1].Split(')')[0]);
+            Assert.Equal("https", url.Scheme);
+            Assert.Equal("localhost", url.Host);
+            Assert.Equal("/Tracking/Map", url.AbsolutePath);
+            var expectedQuery = "?date=2026-10-19" + (timezone is null ? "" : "&timezone=America%2FNew_York");
+            Assert.Equal(expectedQuery, url.Query);
+            using var anonymous = factory.CreateClient();
+            using var download = await anonymous.GetAsync(url);
+            Assert.Equal(HttpStatusCode.Unauthorized, download.StatusCode);
         }
         handler.VerifyAll();
     }
