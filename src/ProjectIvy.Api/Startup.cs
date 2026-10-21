@@ -50,6 +50,7 @@ using ProjectIvy.Business.Handlers.PaymentType;
 using ProjectIvy.Business.Handlers.Person;
 using ProjectIvy.Business.Handlers.Poi;
 using ProjectIvy.Business.Handlers.Ride;
+using ProjectIvy.Business.Handlers.Salary;
 using ProjectIvy.Business.Handlers.Stay;
 using ProjectIvy.Business.Handlers.Tag;
 using ProjectIvy.Business.Handlers.ToDo;
@@ -183,6 +184,7 @@ public class Startup
         services.AddHandler<IPoiHandler, PoiHandler>();
         services.AddHandler<IRideHandler, RideHandler>();
         services.AddHandler<IRouteHandler, RouteHandler>();
+        services.AddHandler<ISalaryHandler, SalaryHandler>();
         services.AddHandler<IStayHandler, StayHandler>();
         services.AddHandler<ITagHandler, TagHandler>();
         services.AddHandler<ITrackingHandler, TrackingHandler>();

@@ -5,7 +5,7 @@ using ProjectIvy.Model.Database.Main.Common;
 namespace ProjectIvy.Model.Database.Main.Finance;
 
 [Table(nameof(Salary), Schema = nameof(Finance))]
-public class Salary : UserEntity
+public class Salary : UserEntity, IHasValueId
 {
     public Currency Currency { get; set; }
 
@@ -44,4 +44,6 @@ public class Salary : UserEntity
 
     [Column(TypeName = "decimal(12,2)")]
     public decimal TravelExpenses { get; set; }
+
+    public string ValueId { get; set; }
 }
