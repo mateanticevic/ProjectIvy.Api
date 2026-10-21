@@ -160,6 +160,8 @@ public class MainContext : DbContext
 
     public DbSet<Route> Routes { get; set; }
 
+    public DbSet<Salary> Salaries { get; set; }
+
     public DbSet<Stay> Stays { get; set; }
 
     public DbSet<Tag> Tags { get; set; }
@@ -205,6 +207,11 @@ public class MainContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Salary>()
+                    .Property(x => x.Note)
+                    .IsRequired(false)
+                    .UseCollation("SQL_Latin1_General_CP1_CI_AS");
+
         modelBuilder.Entity<Account>()
                     .Property(a => a.TransactionSource)
                     .HasConversion<string>();
