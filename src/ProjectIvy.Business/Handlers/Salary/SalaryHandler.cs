@@ -36,6 +36,7 @@ public class SalaryHandler : Handler<SalaryHandler>, ISalaryHandler
         await context.Salaries.AddAsync(entity);
         await context.SaveChangesAsync();
         await transaction.CommitAsync();
+        await context.Entry(entity).Reference(x => x.Company).LoadAsync();
         await context.Entry(entity).Reference(x => x.Currency).LoadAsync();
 
         return new View.Salary(entity);
@@ -56,6 +57,7 @@ public class SalaryHandler : Handler<SalaryHandler>, ISalaryHandler
         using var context = GetMainContext();
         return await context.Salaries.AsNoTracking()
                             .WhereUser(UserId)
+                            .Include(x => x.Company)
                             .Include(x => x.Currency)
                             .Where(binding)
                             .OrderBy(binding.OrderAscending, x => x.Date)
@@ -69,6 +71,7 @@ public class SalaryHandler : Handler<SalaryHandler>, ISalaryHandler
         using var context = GetMainContext();
         var entity = await context.Salaries.AsNoTracking()
                                   .WhereUser(UserId)
+                                  .Include(x => x.Company)
                                   .Include(x => x.Currency)
                                   .SingleOrDefaultAsync(x => x.ValueId == id) ?? throw new ResourceNotFoundException();
 

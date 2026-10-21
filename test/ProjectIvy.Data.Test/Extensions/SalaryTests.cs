@@ -9,6 +9,22 @@ namespace ProjectIvy.Data.Test.Extensions;
 public class SalaryTests
 {
     [Fact]
+    public void CompanyFilterMatchesPublicIdAndCanBeOmitted()
+    {
+        var salaries = new[]
+        {
+            new Salary { Id = 1, CompanyId = 10, Company = new Company { Id = 10, ValueId = "acme" } },
+            new Salary { Id = 2, CompanyId = 20, Company = new Company { Id = 20, ValueId = "other" } },
+            new Salary { Id = 3 }
+        }.AsQueryable();
+
+        Assert.Equal(new[] { 1 }, salaries.Where(new SalaryGetBinding { CompanyId = "acme" }).Select(x => x.Id));
+        Assert.Empty(salaries.Where(new SalaryGetBinding { CompanyId = "unknown" }));
+        Assert.Equal(3, salaries.Where(new SalaryGetBinding()).Count());
+        Assert.Equal(3, salaries.Where(new SalaryGetBinding { CompanyId = " " }).Count());
+    }
+
+    [Fact]
     public void FiltersIncludeDateBoundariesAndExcludeOtherOwnersAndCurrencies()
     {
         var from = new DateTime(2026, 1, 1);

@@ -4,6 +4,8 @@ namespace ProjectIvy.Model.Binding.Salary;
 
 public class SalaryBinding
 {
+    public string CompanyId { get; set; }
+
     [Required]
     public string CurrencyId { get; set; }
 

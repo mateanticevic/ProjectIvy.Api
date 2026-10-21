@@ -10,6 +10,7 @@ public static class SalaryExtensions
     {
         return query.WhereIf(binding.From.HasValue, x => x.Date >= binding.From)
                     .WhereIf(binding.To.HasValue, x => x.Date <= binding.To)
+                    .WhereIf(!string.IsNullOrWhiteSpace(binding.CompanyId), x => x.Company != null && x.Company.ValueId == binding.CompanyId)
                     .WhereIf(!string.IsNullOrWhiteSpace(binding.CurrencyId), x => x.Currency.ValueId == binding.CurrencyId);
     }
 }

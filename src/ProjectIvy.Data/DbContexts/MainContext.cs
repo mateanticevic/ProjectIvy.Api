@@ -66,6 +66,8 @@ public class MainContext : DbContext
 
     public DbSet<CityGeohash> CityGeohashes { get; set; }
 
+    public DbSet<Company> Companies { get; set; }
+
     public string ConnectionString { get; private set; }
 
     public DbSet<Consumation> Consumations { get; set; }

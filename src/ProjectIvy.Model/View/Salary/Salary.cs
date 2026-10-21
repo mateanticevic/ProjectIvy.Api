@@ -7,6 +7,7 @@ public class Salary
 {
     public Salary(DatabaseModel.Salary entity)
     {
+        CompanyId = entity.Company?.ValueId;
         Currency = entity.Currency.ConvertTo(x => new Currency.Currency(x));
         Date = entity.Date;
         Deductions = entity.Deductions;
@@ -20,6 +21,8 @@ public class Salary
         Tax = entity.Tax;
         TravelExpenses = entity.TravelExpenses;
     }
+
+    public string CompanyId { get; set; }
 
     public Currency.Currency Currency { get; set; }
 

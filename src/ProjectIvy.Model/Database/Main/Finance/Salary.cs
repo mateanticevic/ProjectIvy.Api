@@ -7,6 +7,10 @@ namespace ProjectIvy.Model.Database.Main.Finance;
 [Table(nameof(Salary), Schema = nameof(Finance))]
 public class Salary : UserEntity, IHasValueId
 {
+    public Company Company { get; set; }
+
+    public int? CompanyId { get; set; }
+
     public Currency Currency { get; set; }
 
     public int CurrencyId { get; set; }
