@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using ProjectIvy.Api.Constants;
 using ProjectIvy.Business.Handlers.Income;
@@ -41,5 +42,16 @@ public class IncomeController : BaseController<IncomeController>
     {
         await _incomeHandler.Add(binding);
         return Ok();
+    }
+
+    [HttpPut("{valueId}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    public async Task<IActionResult> Put(string valueId, [FromBody] IncomeBinding binding)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        await _incomeHandler.Update(valueId, binding);
+        return NoContent();
     }
 }

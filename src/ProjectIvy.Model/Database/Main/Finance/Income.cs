@@ -5,7 +5,7 @@ using ProjectIvy.Model.Database.Main.Common;
 namespace ProjectIvy.Model.Database.Main.Finance;
 
 [Table(nameof(Income), Schema = nameof(Finance))]
-public class Income : UserEntity, IHasCreatedModified
+public class Income : UserEntity, IHasCreatedModified, IHasValueId
 {
     public decimal Amount { get; set; }
 
@@ -35,4 +35,6 @@ public class Income : UserEntity, IHasCreatedModified
     public Salary Salary { get; set; }
 
     public int? SalaryId { get; set; }
+
+    public string ValueId { get; set; }
 }

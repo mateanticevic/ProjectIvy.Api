@@ -1,7 +1,10 @@
-﻿using System.Linq;
+﻿using System.Data;
+using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
@@ -28,8 +31,24 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
         var entity = await binding.ToEntity(context);
         entity.UserId = UserId;
 
+        using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var date = binding.Date.Date;
+        var nextDate = date.AddDays(1);
+        int number = await context.Incomes.WhereUser(UserId)
+                                  .CountAsync(x => x.Date >= date && x.Date < nextDate) + 1;
+        string prefix = date.ToString("yyyy-MM-dd-", CultureInfo.InvariantCulture);
+        string valueId;
+        do
+        {
+            valueId = prefix + number.ToString(CultureInfo.InvariantCulture);
+            number++;
+        }
+        while (await context.Incomes.WhereUser(UserId).AnyAsync(x => x.ValueId == valueId));
+        entity.ValueId = valueId;
+
         await context.Incomes.AddAsync(entity);
         await context.SaveChangesAsync();
+        await transaction.CommitAsync();
     }
 
     public async Task<PagedView<View.Income>> Get(IncomeGetBinding binding)
@@ -127,5 +146,15 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
         return await context.IncomeTypes.OrderBy(x => x.Name)
                                         .Select(x => new View.IncomeType(x))
                                         .ToListAsync();
+    }
+
+    public async Task Update(string valueId, IncomeBinding binding)
+    {
+        using var context = GetMainContext();
+        var entity = await context.Incomes.WhereUser(UserId)
+                                  .SingleOrDefaultAsync(x => x.ValueId == valueId) ?? throw new ResourceNotFoundException();
+
+        await binding.ToEntity(context, entity);
+        await context.SaveChangesAsync();
     }
 }
