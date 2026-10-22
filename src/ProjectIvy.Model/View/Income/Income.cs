@@ -1,5 +1,4 @@
 ﻿using ProjectIvy.Common.Extensions;
-using System;
 using DatabaseModel = ProjectIvy.Model.Database.Main;
 
 namespace ProjectIvy.Model.View.Income;
@@ -12,7 +11,7 @@ public class Income
         Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
         Description = x.Description;
         Id = x.ValueId;
-        SalaryId = x.Salary?.ValueId;
+        Salary = x.Salary.ConvertTo(y => new Salary.Salary(y));
         Source = x.IncomeSource.ConvertTo(y => new IncomeSource(y));
         Type = x.IncomeType.ConvertTo(y => new IncomeType(y));
         Timestamp = x.Date;
@@ -26,7 +25,7 @@ public class Income
 
     public string Id { get; set; }
 
-    public string SalaryId { get; set; }
+    public Salary.Salary Salary { get; set; }
 
     public IncomeSource Source { get; set; }
 
