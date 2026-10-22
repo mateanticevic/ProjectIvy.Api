@@ -11,6 +11,8 @@ public class IncomeGetBinding : FilteredPagedBinding
 
     public IncomeSort OrderBy { get; set; }
 
+    public string SalaryId { get; set; }
+
     public string SourceId { get; set; }
 
     public string TypeId { get; set; }

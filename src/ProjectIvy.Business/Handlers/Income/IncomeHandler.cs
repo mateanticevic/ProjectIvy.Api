@@ -39,6 +39,7 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
                                     .Include(x => x.Currency)
                                     .Include(x => x.IncomeSource)
                                     .Include(x => x.IncomeType)
+                                    .Include(x => x.Salary)
                                     .Where(binding, context)
                                     .OrderBy(binding)
                                     .Select(x => new View.Income(x))

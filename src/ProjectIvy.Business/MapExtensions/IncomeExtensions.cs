@@ -16,6 +16,7 @@ public static class IncomeExtensions
         entity.CurrencyId = (await context.Currencies.GetIdAsync(binding.CurrencyId)).Value;
         entity.Date = binding.Date;
         entity.Description = binding.Description;
+        entity.SalaryId = binding.SalaryId is null ? null : await context.Salaries.GetIdAsync(binding.SalaryId);
         entity.IncomeSourceId = (await context.IncomeSources.GetIdAsync(binding.SourceId)).Value;
         entity.IncomeTypeId = (await context.IncomeTypes.GetIdAsync(binding.TypeId)).Value;
 

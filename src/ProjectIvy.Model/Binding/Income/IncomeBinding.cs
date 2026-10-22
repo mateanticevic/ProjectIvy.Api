@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ProjectIvy.Model.Binding.Income;
+﻿namespace ProjectIvy.Model.Binding.Income;
 
 public class IncomeBinding
 {
@@ -11,6 +9,8 @@ public class IncomeBinding
     public DateTime Date { get; set; }
 
     public string Description { get; set; }
+
+    public string SalaryId { get; set; }
 
     public string SourceId { get; set; }
 

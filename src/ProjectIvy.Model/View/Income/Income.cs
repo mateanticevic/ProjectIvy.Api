@@ -11,6 +11,7 @@ public class Income
         Amount = x.Amount;
         Currency = x.Currency.ConvertTo(y => new Currency.Currency(y));
         Description = x.Description;
+        SalaryId = x.Salary?.ValueId;
         Source = x.IncomeSource.ConvertTo(y => new IncomeSource(y));
         Type = x.IncomeType.ConvertTo(y => new IncomeType(y));
         Timestamp = x.Date;
@@ -21,6 +22,8 @@ public class Income
     public Currency.Currency Currency { get; set; }
 
     public string Description { get; set; }
+
+    public string SalaryId { get; set; }
 
     public IncomeSource Source { get; set; }
 

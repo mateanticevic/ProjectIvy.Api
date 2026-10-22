@@ -1,5 +1,4 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using ProjectIvy.Model.Database.Main.Common;
 
@@ -32,4 +31,8 @@ public class Income : UserEntity, IHasCreatedModified
     public int IncomeTypeId { get; set; }
 
     public DateTime Modified { get; set; }
+
+    public Salary Salary { get; set; }
+
+    public int? SalaryId { get; set; }
 }
