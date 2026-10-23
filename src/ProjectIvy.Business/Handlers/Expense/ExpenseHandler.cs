@@ -532,11 +532,20 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                           .Select(x => new FilteredBinding(x.from, x.to))
                           .ToList();
 
-        var tasks = periods.Select(x => new KeyValuePair<FilteredBinding, Task<decimal>>(x, SumAmount(binding.OverrideFromTo<ExpenseSumGetBinding>(x.From, x.To), excludeFromMonthlySums: true))).ToList();
+        var query = await SumBindingToQuery(binding.OverrideFromTo<ExpenseSumGetBinding>(from, to), excludeFromMonthlySums: true);
+        var amounts = new Dictionary<DateTime, decimal>();
 
-        await Task.WhenAll(tasks.Select(x => x.Value));
+        if (query is not null)
+        {
+            query.To = to;
+            using var sql = GetSqlConnection();
+            var results = await sql.QueryAsync<(DateTime Month, decimal Amount)>(SqlLoader.Load(SqlScripts.GetExpenseSumByMonthOfYear), query);
+            amounts = results.ToDictionary(x => x.Month, x => Math.Round(x.Amount, 2));
+        }
 
-        return tasks.Select(x => new KeyValuePair<string, decimal>($"{x.Key.From.Value.Year}-{x.Key.From.Value.Month}-1", x.Value.Result));
+        return periods.Select(x => new KeyValuePair<string, decimal>(
+            $"{x.From.Value.Year}-{x.From.Value.Month}-1",
+            amounts.GetValueOrDefault(new DateTime(x.From.Value.Year, x.From.Value.Month, 1))));
     }
 
     public async Task<IEnumerable<KeyValuePair<int, decimal>>> SumAmountByYear(ExpenseSumGetBinding binding)

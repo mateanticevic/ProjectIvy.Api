@@ -9,6 +9,8 @@ public static class SqlScripts
 
     public static string GetExpenseSumByDay { get; } = Build(nameof(GetExpenseSumByDay));
 
+    public static string GetExpenseSumByMonthOfYear { get; } = Build(nameof(GetExpenseSumByMonthOfYear));
+
     public static string GetExpenseSumByType { get; } = Build(nameof(GetExpenseSumByType));
 
     public static string GetExpenseSumInDefaultCurrency { get; } = Build(nameof(GetExpenseSumInDefaultCurrency));

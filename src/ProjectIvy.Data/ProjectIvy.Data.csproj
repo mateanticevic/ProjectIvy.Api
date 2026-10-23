@@ -15,6 +15,7 @@
     <EmbeddedResource Include="Sql\Main\Scripts\GetWebTimeTotalByYear.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetConsumationSumByDayOfWeek.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumByDay.sql" />
+    <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumByMonthOfYear.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetExpenseSumByType.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetVisitedLocations.sql" />
     <EmbeddedResource Include="Sql\Main\Scripts\GetLocationRoutes.sql" />

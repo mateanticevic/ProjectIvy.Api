@@ -78,6 +78,37 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
     }
 
     [Fact]
+    public async Task MonthlySumsPreservePartialPeriodsFiltersAndEmptyMonths()
+    {
+        await _session.SeedExpenseAsync(_session.User.Id, "before", new(2025, 12, 9), 100m);
+        await _session.SeedExpenseAsync(_session.User.Id, "december", new(2025, 12, 10), 12.34m);
+        await _session.SeedExpenseAsync(_session.User.Id, "december-end", new(2025, 12, 31), 2.01m);
+        await _session.SeedExpenseAsync(_session.User.Id, "excluded", new(2026, 1, 5), 200m);
+        await _session.SeedExpenseAsync(_session.User.Id, "february", new(2026, 2, 10), 5.67m);
+        await _session.SeedExpenseAsync(_session.User.Id, "after", new(2026, 2, 11), 300m);
+        await _session.SeedExpenseAsync(_session.OtherUser.Id, "other", new(2025, 12, 15), 400m);
+        using (var db = _session.OpenDatabase())
+        {
+            var excluded = await db.Expenses.SingleAsync(x => x.ValueId == "excluded");
+            excluded.ExcludeFromMonthlySums = true;
+            await db.SaveChangesAsync();
+        }
+
+        const string url = "/expense/sum/byMonthOfYear?From=2025-12-10&To=2026-02-10";
+        var expected = new[]
+        {
+            KeyValuePair.Create("2025-12-1", 14.35m),
+            KeyValuePair.Create("2026-1-1", 0m),
+            KeyValuePair.Create("2026-2-1", 5.67m)
+        };
+        Assert.Equal(expected, await _client.GetFromJsonAsync<KeyValuePair<string, decimal>[]>(url));
+        Assert.Equal(expected.Select(x => KeyValuePair.Create(x.Key, x.Key == "2026-2-1" ? x.Value : 0m)),
+            await _client.GetFromJsonAsync<KeyValuePair<string, decimal>[]>(url + "&Month=2"));
+        Assert.Equal(expected.Select(x => KeyValuePair.Create(x.Key, 0m)),
+            await _client.GetFromJsonAsync<KeyValuePair<string, decimal>[]>(url + "&Description=no-match"));
+    }
+
+    [Fact]
     public async Task PostPersistsExpenseAndGetReturnsIt()
     {
         var binding = Binding();
