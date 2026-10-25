@@ -33,6 +33,7 @@ using ProjectIvy.Business.Handlers.Call;
 using ProjectIvy.Business.Handlers.Car;
 using ProjectIvy.Business.Handlers.Card;
 using ProjectIvy.Business.Handlers.City;
+using ProjectIvy.Business.Handlers.Company;
 using ProjectIvy.Business.Handlers.Consumation;
 using ProjectIvy.Business.Handlers.Country;
 using ProjectIvy.Business.Handlers.Currency;
@@ -164,6 +165,7 @@ public class Startup
         services.AddHandler<ICarHandler, CarHandler>();
         services.AddHandler<ICardHandler, CardHandler>();
         services.AddHandler<ICityHandler, CityHandler>();
+        services.AddHandler<ICompanyHandler, CompanyHandler>();
         services.AddHandler<IConsumationHandler, ConsumationHandler>();
         services.AddHandler<ICountryHandler, CountryHandler>();
         services.AddHandler<ICurrencyHandler, CurrencyHandler>();
