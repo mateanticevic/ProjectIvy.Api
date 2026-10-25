@@ -14,6 +14,37 @@ namespace ProjectIvy.Api.EndToEnd.Test;
 
 public class SalaryContractTests
 {
+    [Fact]
+    public void ViewReturnsCompanyWithPublicIdAndName()
+    {
+        var entity = new Entity
+        {
+            CompanyId = 42,
+            Company = new ProjectIvy.Model.Database.Main.Common.Company
+            {
+                Id = 42,
+                ValueId = "acme",
+                Name = "Acme"
+            }
+        };
+
+        var view = new View(entity);
+
+        Assert.Equal("acme", view.Company.Id);
+        Assert.Equal("Acme", view.Company.Name);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    public void BindingRequiresCompany(string? companyId)
+    {
+        var binding = new SalaryBinding { CompanyId = companyId!, CurrencyId = "eur" };
+
+        Assert.False(Validator.TryValidateObject(binding, new ValidationContext(binding), new List<ValidationResult>(), true));
+    }
+
     [Theory]
     [InlineData("", "2026-10-21-1")]
     [InlineData("2026-10-21-1,2026-10-21-2", "2026-10-21-3")]
@@ -63,7 +94,7 @@ public class SalaryContractTests
     [InlineData("eur", 1001, false)]
     public void BindingValidatesCurrencyAndNoteLength(string? currencyId, int noteLength, bool expected)
     {
-        var binding = new SalaryBinding { CurrencyId = currencyId!, Note = new string('x', noteLength) };
+        var binding = new SalaryBinding { CompanyId = "acme", CurrencyId = currencyId!, Note = new string('x', noteLength) };
 
         Assert.Equal(expected, Validator.TryValidateObject(binding, new ValidationContext(binding), new List<ValidationResult>(), true));
     }

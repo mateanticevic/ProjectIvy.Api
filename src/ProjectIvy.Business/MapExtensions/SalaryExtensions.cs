@@ -24,9 +24,8 @@ public static class SalaryExtensions
 
     public static async Task<Salary> ToEntity(this SalaryBinding binding, MainContext context, Salary entity = null)
     {
-        int? companyId = binding.CompanyId is null ? null
-                        : await context.Companies.GetIdAsync(binding.CompanyId)
-                          ?? throw new InvalidRequestException("Company not found.");
+        int companyId = await context.Companies.GetIdAsync(binding.CompanyId)
+                        ?? throw new InvalidRequestException("Company not found.");
         int currencyId = await context.Currencies.GetIdAsync(binding.CurrencyId)
                          ?? throw new InvalidRequestException("Currency not found.");
 

@@ -9,7 +9,7 @@ public class Salary : UserEntity, IHasValueId
 {
     public Company Company { get; set; }
 
-    public int? CompanyId { get; set; }
+    public int CompanyId { get; set; }
 
     public Currency Currency { get; set; }
 
