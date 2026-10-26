@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace ProjectIvy.Model.Binding.Income;
+﻿namespace ProjectIvy.Model.Binding.Income;
 
 public class IncomeGetBinding : FilteredPagedBinding
 {
     public string CurrencyId { get; set; }
 
     public IEnumerable<DayOfWeek> Day { get; set; }
+
+    public bool? LinkedToSalary { get; set; }
 
     public IncomeSort OrderBy { get; set; }
 
