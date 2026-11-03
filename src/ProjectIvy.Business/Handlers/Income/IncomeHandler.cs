@@ -54,7 +54,7 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
     public async Task<PagedView<View.Income>> Get(IncomeGetBinding binding)
     {
         using var context = GetMainContext();
-        return await context.Incomes.WhereUser(UserId)
+        var result = await context.Incomes.WhereUser(UserId)
                                     .Include(x => x.Currency)
                                     .Include(x => x.IncomeSource)
                                     .Include(x => x.IncomeType)
@@ -66,6 +66,27 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
                                     .OrderBy(binding)
                                     .Select(x => new View.Income(x))
                                     .ToPagedViewAsync(binding);
+
+        var incomeIds = result.Items.Select(x => x.Id).ToList();
+        if (incomeIds.Count == 0)
+            return result;
+
+        var links = await context.IncomeTransactions
+                                 .Where(x => x.IncomeId != null && x.TransactionId != null)
+                                 .Where(x => x.Income.UserId == UserId && incomeIds.Contains(x.Income.ValueId))
+                                 .Where(x => x.Transaction.Account.UserId == UserId)
+                                 .Select(x => new
+                                 {
+                                     IncomeId = x.Income.ValueId,
+                                     Transaction = new ProjectIvy.Model.View.Account.Transaction(x.Transaction)
+                                 })
+                                 .ToListAsync();
+
+        var transactions = links.ToLookup(x => x.IncomeId, x => x.Transaction);
+        foreach (var income in result.Items)
+            income.Transactions = transactions[income.Id].ToList();
+
+        return result;
     }
 
     public async Task<int> GetCount(FilteredBinding binding)

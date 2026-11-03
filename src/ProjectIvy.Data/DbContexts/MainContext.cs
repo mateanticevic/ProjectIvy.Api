@@ -114,6 +114,8 @@ public class MainContext : DbContext
 
     public DbSet<Income> Incomes { get; set; }
 
+    public DbSet<IncomeTransaction> IncomeTransactions { get; set; }
+
     public DbSet<IncomeSource> IncomeSources { get; set; }
 
     public DbSet<IncomeType> IncomeTypes { get; set; }
@@ -327,6 +329,19 @@ public class MainContext : DbContext
 
         modelBuilder.Entity<ExpenseTransaction>()
                     .HasKey(x => new { x.ExpenseId, x.TransactionId });
+
+        modelBuilder.Entity<IncomeTransaction>()
+                    .HasNoKey();
+
+        modelBuilder.Entity<IncomeTransaction>()
+                    .HasOne(x => x.Income)
+                    .WithMany()
+                    .HasForeignKey(x => x.IncomeId);
+
+        modelBuilder.Entity<IncomeTransaction>()
+                    .HasOne(x => x.Transaction)
+                    .WithMany()
+                    .HasForeignKey(x => x.TransactionId);
 
         modelBuilder.Entity<ExpenseType>()
                     .HasOne(x => x.ParentType)

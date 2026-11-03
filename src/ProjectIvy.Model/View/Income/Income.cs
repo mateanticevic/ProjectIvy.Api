@@ -31,5 +31,7 @@ public class Income
 
     public DateTime Timestamp { get; set; }
 
+    public IEnumerable<Account.Transaction> Transactions { get; set; } = Array.Empty<Account.Transaction>();
+
     public IncomeType Type { get; set; }
 }
