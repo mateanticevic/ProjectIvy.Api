@@ -43,6 +43,7 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
             To = binding.To,
             CityId = cityId,
             CountryId = countryId,
+            IsBooked = binding.IsBooked,
             UserId = UserId
         };
         
@@ -68,11 +69,7 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
     {
         using var context = GetMainContext();
 
-        var stay = await context.Stays.WhereUser(UserId).SingleOrDefaultAsync(x => x.Id == id);
-        
-        if (stay == null)
-            throw new Exceptions.ResourceNotFoundException();
-
+        var stay = await context.Stays.WhereUser(UserId).SingleOrDefaultAsync(x => x.Id == id) ?? throw new Exceptions.ResourceNotFoundException();
         int? cityId = null;
         int countryId;
 
@@ -94,6 +91,7 @@ public class StayHandler : Handler<StayHandler>, IStayHandler
         stay.To = binding.To;
         stay.CityId = cityId;
         stay.CountryId = countryId;
+        stay.IsBooked = binding.IsBooked;
 
         context.Stays.Update(stay);
         await context.SaveChangesAsync();

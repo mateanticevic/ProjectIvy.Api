@@ -4,5 +4,6 @@ public record StayBinding(
     DateTime From,
     DateTime To,
     string CityId,
-    string CountryId
+    string CountryId,
+    bool IsBooked = false
 );
