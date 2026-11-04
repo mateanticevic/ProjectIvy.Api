@@ -19,6 +19,8 @@ public interface IAccountHandler
 
     Task<View.AccountOverview> GetOverview(string accountValueId);
 
+    Task<PagedView<View.TransactionWithAccount>> GetTransactions(FilteredPagedBinding binding);
+
     Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b);
 
     Task ProcessHacTransactions(string accountKey, string csv);

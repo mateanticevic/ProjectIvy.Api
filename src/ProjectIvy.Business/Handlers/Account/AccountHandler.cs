@@ -172,6 +172,25 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         };
     }
 
+    public async Task<PagedView<View.TransactionWithAccount>> GetTransactions(FilteredPagedBinding binding)
+    {
+        using var context = GetMainContext();
+
+        var page = await context.Accounts.WhereUser(UserId)
+                                     .SelectMany(account => account.Transactions)
+                                     .WhereCreatedInclusive(binding)
+                                     .OrderBy(binding.OrderAscending, x => x.Created)
+                                     .ThenBy(x => x.Id)
+                                     .Include(x => x.Account)
+                                     .ThenInclude(x => x.Currency)
+                                     .AsNoTracking()
+                                     .ToPagedViewAsync(binding);
+
+        return new PagedView<View.TransactionWithAccount>(
+            page.Items.Select(x => new View.TransactionWithAccount(x)).ToList(),
+            page.Count);
+    }
+
     public async Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b)
     {
         using var context = GetMainContext();
