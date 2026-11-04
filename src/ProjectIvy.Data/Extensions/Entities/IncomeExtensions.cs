@@ -31,6 +31,9 @@ public static class IncomeExtensions
                     .WhereIf(typeId.HasValue, x => x.IncomeTypeId == typeId)
                     .WhereIf(binding.Day != null, x => binding.Day.Contains(x.Date.DayOfWeek))
                     .WhereIf(sourceId.HasValue, x => x.IncomeSourceId == sourceId)
+                    .WhereIf(binding.HasTransactions.HasValue, income => context.IncomeTransactions.Any(link =>
+                        link.IncomeId == income.Id && link.TransactionId != null &&
+                        link.Transaction.Account.UserId == income.UserId) == binding.HasTransactions.Value)
                     .WhereIf(binding.LinkedToSalary.HasValue, x => x.SalaryId.HasValue == binding.LinkedToSalary.Value)
                     .WhereIf(!string.IsNullOrWhiteSpace(binding.SalaryId), x => x.Salary.ValueId == binding.SalaryId)
                     .WhereIf(currencyId.HasValue, x => x.CurrencyId == currencyId);

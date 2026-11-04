@@ -6,6 +6,8 @@ public class IncomeGetBinding : FilteredPagedBinding
 
     public IEnumerable<DayOfWeek> Day { get; set; }
 
+    public bool? HasTransactions { get; set; }
+
     public bool? LinkedToSalary { get; set; }
 
     public IncomeSort OrderBy { get; set; }
