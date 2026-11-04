@@ -331,7 +331,7 @@ public class MainContext : DbContext
                     .HasKey(x => new { x.ExpenseId, x.TransactionId });
 
         modelBuilder.Entity<IncomeTransaction>()
-                    .HasNoKey();
+                    .HasKey(x => new { x.IncomeId, x.TransactionId });
 
         modelBuilder.Entity<IncomeTransaction>()
                     .HasOne(x => x.Income)

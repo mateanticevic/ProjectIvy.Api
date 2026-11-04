@@ -14,5 +14,7 @@ public class IncomeBinding
 
     public string SourceId { get; set; }
 
+    public IEnumerable<string> TransactionIds { get; set; }
+
     public string TypeId { get; set; }
 }

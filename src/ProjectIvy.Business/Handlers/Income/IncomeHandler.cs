@@ -8,12 +8,14 @@ using ProjectIvy.Business.Exceptions;
 using ProjectIvy.Business.MapExtensions;
 using ProjectIvy.Common.Extensions;
 using ProjectIvy.Data.Databases.Main.Queries;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Data.Sql;
 using ProjectIvy.Data.Sql.Main.Scripts;
 using ProjectIvy.Model.Binding;
 using ProjectIvy.Model.Binding.Income;
+using ProjectIvy.Model.Database.Main.Finance;
 using ProjectIvy.Model.View;
 using View = ProjectIvy.Model.View.Income;
 
@@ -48,6 +50,8 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
 
         await context.Incomes.AddAsync(entity);
         await context.SaveChangesAsync();
+        if (binding.TransactionIds is not null)
+            await SaveTransactions(context, entity.Id, binding.TransactionIds);
         await transaction.CommitAsync();
     }
 
@@ -84,7 +88,7 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
 
         var transactions = links.ToLookup(x => x.IncomeId, x => x.Transaction);
         foreach (var income in result.Items)
-            income.Transactions = transactions[income.Id].ToList();
+            income.Transactions = transactions[income.Id];
 
         return result;
     }
@@ -175,10 +179,36 @@ public class IncomeHandler : Handler<IncomeHandler>, IIncomeHandler
     public async Task Update(string valueId, IncomeBinding binding)
     {
         using var context = GetMainContext();
+        using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var entity = await context.Incomes.WhereUser(UserId)
                                   .SingleOrDefaultAsync(x => x.ValueId == valueId) ?? throw new ResourceNotFoundException();
 
         await binding.ToEntity(context, entity);
+        await context.SaveChangesAsync();
+        if (binding.TransactionIds is not null)
+            await SaveTransactions(context, entity.Id, binding.TransactionIds);
+        await transaction.CommitAsync();
+    }
+
+    private async Task SaveTransactions(MainContext context, int incomeId, IEnumerable<string> valueIds)
+    {
+        var distinctValueIds = valueIds.Distinct().ToArray();
+        var transactionIds = await context.Transactions
+            .Where(x => x.Account.UserId == UserId && EF.Parameter(distinctValueIds).Contains(x.ValueId))
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        if (transactionIds.Count != distinctValueIds.Length)
+            throw new ResourceNotFoundException();
+
+        var links = context.IncomeTransactions;
+        await links.Where(x => x.IncomeId == incomeId).ExecuteDeleteAsync();
+
+        links.AddRange(transactionIds.Select(transactionId => new IncomeTransaction
+        {
+            IncomeId = incomeId,
+            TransactionId = transactionId
+        }));
         await context.SaveChangesAsync();
     }
 }

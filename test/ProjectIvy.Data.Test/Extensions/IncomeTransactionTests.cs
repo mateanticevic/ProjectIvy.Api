@@ -7,16 +7,17 @@ namespace ProjectIvy.Data.Test.Extensions;
 public class IncomeTransactionTests
 {
     [Fact]
-    public void LinkMatchesKeylessTableWithNullableForeignKeys()
+    public void IncomeTransactionTracksCompleteLinksWithBothForeignKeys()
     {
         using var db = new MainContext("Server=localhost;Database=ModelOnly;Integrated Security=true");
-        var entity = db.Model.FindEntityType(typeof(IncomeTransaction))!;
+        var entry = db.IncomeTransactions.Add(new IncomeTransaction { IncomeId = 1, TransactionId = 2 });
+        var entity = entry.Metadata;
 
+        Assert.Equal(EntityState.Added, entry.State);
         Assert.Equal("Finance", entity.GetSchema());
         Assert.Equal("IncomeTransaction", entity.GetTableName());
-        Assert.Null(entity.FindPrimaryKey());
-        Assert.True(entity.FindProperty(nameof(IncomeTransaction.IncomeId))!.IsNullable);
-        Assert.True(entity.FindProperty(nameof(IncomeTransaction.TransactionId))!.IsNullable);
+        Assert.Equal(new[] { "IncomeId", "TransactionId" },
+            entity.FindPrimaryKey()!.Properties.Select(x => x.Name));
         Assert.Contains(entity.GetForeignKeys(), key =>
             key.Properties.Single().Name == nameof(IncomeTransaction.IncomeId)
             && key.PrincipalEntityType.ClrType == typeof(Income));
@@ -26,7 +27,7 @@ public class IncomeTransactionTests
     }
 
     [Fact]
-    public void LinkedTransactionQueryTranslatesWithoutAKey()
+    public void LinkedTransactionQueryTranslates()
     {
         using var db = new MainContext("Server=localhost;Database=ModelOnly;Integrated Security=true");
         var incomeIds = new[] { "2026-11-03-1" };
