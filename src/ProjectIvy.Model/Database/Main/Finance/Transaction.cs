@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace ProjectIvy.Model.Database.Main.Finance;
 
 [Table(nameof(Transaction), Schema = nameof(Finance))]
-public class Transaction : IHasCreated
+public class Transaction : IHasCreated, IHasValueId
 {
     public Account Account { get; set; }
 

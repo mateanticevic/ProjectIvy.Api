@@ -220,6 +220,11 @@ public class MainContext : DbContext
                     .Property(a => a.TransactionSource)
                     .HasConversion<string>();
 
+        modelBuilder.Entity<Transaction>()
+                    .Property(x => x.ValueId)
+                    .HasConversion<Guid>()
+                    .HasColumnType("uniqueidentifier");
+
         modelBuilder.Entity<Trip>()
                     .HasMany(p => p.Cities)
                     .WithMany(p => p.Trips)
