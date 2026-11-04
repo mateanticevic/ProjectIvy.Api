@@ -24,4 +24,6 @@ public class Transaction
     public int Id { get; set; }
 
     public string Type { get; set; }
+
+    public string ValueId { get; set; } = Guid.NewGuid().ToString();
 }
