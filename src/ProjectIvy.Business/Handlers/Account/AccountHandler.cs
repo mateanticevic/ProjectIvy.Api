@@ -394,28 +394,35 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                                            .Select(x => x.Created)
                                                            .ToListAsync();
 
-        foreach (string item in csv.Split("\n").Skip(1))
+        string[] lines = csv.Split('\n');
+        char separator = lines[0].Contains(';') ? ';' : ',';
+
+        foreach (string item in lines.Skip(1))
         {
             if (string.IsNullOrWhiteSpace(item))
                 continue;
 
-            string[] parts = ParseCsvLine(item, ';').ToArray();
+            string[] parts = ParseCsvLine(item.TrimEnd('\r'), separator).ToArray();
+            if (!string.Equals(parts[8].Trim(), "COMPLETED", StringComparison.OrdinalIgnoreCase))
+                continue;
+
             var transaction = new Transaction()
             {
                 AccountId = accountId,
-                Amount = Convert.ToDecimal(parts[5]) - Convert.ToDecimal(parts[6]),
+                Amount = decimal.Parse(parts[5], CultureInfo.InvariantCulture)
+                       - decimal.Parse(parts[6], CultureInfo.InvariantCulture),
                 Description = parts[4],
-                Created = DateTime.Parse(parts[2]),
+                Created = DateTime.Parse(parts[2], CultureInfo.InvariantCulture),
                 Type = parts[0]
             };
 
             if (existingTimestamps.Contains(transaction.Created))
                 continue;
 
-            if (decimal.TryParse(parts[9].Replace("\r", string.Empty), out decimal balance))
+            if (decimal.TryParse(parts[9], CultureInfo.InvariantCulture, out decimal balance))
                 transaction.Balance = balance;
 
-            if (DateTime.TryParse(parts[3], out DateTime completed))
+            if (DateTime.TryParse(parts[3], CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime completed))
                 transaction.Completed = completed;
 
             transactions.Add(transaction);
