@@ -34,6 +34,11 @@ public class ExpenseBinding
 
     public string PoiId { get; set; }
 
+    /// <summary>
+    /// Public transaction IDs. On update, null preserves existing links and an empty list clears them.
+    /// </summary>
+    public IEnumerable<string> TransactionIds { get; set; }
+
     public string VendorId { get; set; }
 
     public string VendorName { get; set; }

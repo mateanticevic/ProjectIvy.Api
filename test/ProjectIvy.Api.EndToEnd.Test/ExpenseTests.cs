@@ -4,6 +4,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Api.EndToEnd.Test.Infrastructure;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Database.Main.Finance;
 using Xunit;
 
 namespace ProjectIvy.Api.EndToEnd.Test;
@@ -137,6 +138,81 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
         Assert.Equal(binding.Date, DateTime.Parse(expense.GetProperty("datePaid").GetString()!));
         Assert.Equal("EUR", expense.GetProperty("currency").GetProperty("code").GetString());
         Assert.Equal("e2e-food", expense.GetProperty("expenseType").GetProperty("id").GetString());
+    }
+
+    [Fact]
+    public async Task TransactionIdsCreateReplacePreserveAndClearLinks()
+    {
+        string firstId;
+        string secondId;
+        string otherUserId;
+        using (var db = _session.OpenDatabase())
+        {
+            var first = new Transaction { Amount = -6m, Created = Binding().Date };
+            var second = new Transaction { Amount = -6.34m, Created = Binding().Date };
+            var other = new Transaction { Amount = -12.34m, Created = Binding().Date };
+            db.Accounts.AddRange(
+                new Account
+                {
+                    UserId = _session.User.Id, ValueId = "1", Name = "Test account",
+                    CurrencyId = _session.CurrencyId, Active = true, Transactions = [first, second]
+                },
+                new Account
+                {
+                    UserId = _session.OtherUser.Id, ValueId = "2", Name = "Other account",
+                    CurrencyId = _session.CurrencyId, Active = true, Transactions = [other]
+                });
+            await db.SaveChangesAsync();
+            firstId = first.ValueId;
+            secondId = second.ValueId;
+            otherUserId = other.ValueId;
+        }
+
+        var binding = Binding();
+        binding.TransactionIds = [firstId, secondId, firstId.ToUpperInvariant()];
+        var id = await CreateAsync(binding);
+
+        async Task<(decimal Amount, string?[] TransactionIds)> GetExpense()
+        {
+            var expense = await GetAsync($"/{id}");
+            return (expense.GetProperty("amount").GetDecimal(), expense.GetProperty("transactions").EnumerateArray()
+                .Select(x => x.GetProperty("id").GetString()).OrderBy(x => x).ToArray());
+        }
+
+        Assert.Equal(new[] { firstId, secondId }.OrderBy(x => x), (await GetExpense()).TransactionIds);
+
+        binding.TransactionIds = [secondId];
+        using (var response = await _client.PutAsJsonAsync($"/expense/{id}", binding))
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal(new[] { secondId }, (await GetExpense()).TransactionIds);
+
+        binding.Amount = 20m;
+        binding.TransactionIds = [firstId, otherUserId];
+        using (var response = await _client.PutAsJsonAsync($"/expense/{id}", binding))
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        var afterRejectedUpdate = await GetExpense();
+        Assert.Equal(12.34m, afterRejectedUpdate.Amount);
+        Assert.Equal(new[] { secondId }, afterRejectedUpdate.TransactionIds);
+
+        binding.TransactionIds = [Guid.NewGuid().ToString()];
+        using (var response = await _client.PostAsJsonAsync("/expense", binding))
+            Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(1, (await GetAsync()).GetProperty("count").GetInt32());
+
+        binding.TransactionIds = null;
+        using (var response = await _client.PutAsJsonAsync($"/expense/{id}", binding))
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var afterPreservedUpdate = await GetExpense();
+        Assert.Equal(20m, afterPreservedUpdate.Amount);
+        Assert.Equal(new[] { secondId }, afterPreservedUpdate.TransactionIds);
+
+        binding.TransactionIds = [];
+        using (var response = await _client.PutAsJsonAsync($"/expense/{id}", binding))
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Empty((await GetExpense()).TransactionIds);
+
+        using var dbAfter = _session.OpenDatabase();
+        Assert.Equal(3, await dbAfter.Transactions.CountAsync());
     }
 
     [Fact]

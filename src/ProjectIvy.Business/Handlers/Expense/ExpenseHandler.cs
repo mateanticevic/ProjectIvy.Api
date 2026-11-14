@@ -32,6 +32,7 @@ using SixLabors.ImageSharp;
 using ZXing.ImageSharp;
 using iText.Kernel.Pdf.Canvas.Parser;
 using iText.Kernel.Pdf;
+using ExpenseTransaction = ProjectIvy.Model.Database.Main.Finance.ExpenseTransaction;
 using View = ProjectIvy.Model.View.Expense;
 
 namespace ProjectIvy.Business.Handlers.Expense;
@@ -207,9 +208,6 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 
     public async Task<string> Create(ExpenseBinding binding)
     {
-        if (!string.IsNullOrWhiteSpace(binding.VendorName))
-            binding.VendorId = await CreateVendor(binding.VendorName);
-
         var userLock = _createLocks.GetOrAdd(UserId, _ => new SemaphoreSlim(1, 1));
         await userLock.WaitAsync();
         try
@@ -219,8 +217,14 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             entity.UserId = UserId;
             entity.ValueId = (await db.Expenses.NextValueIdAsync(UserId)).ToString();
 
+            if (binding.TransactionIds is not null)
+            {
+                var transactionIds = await ResolveTransactionIds(db, binding.TransactionIds);
+                foreach (var transactionId in transactionIds)
+                    entity.ExpenseTransactions.Add(new ExpenseTransaction { TransactionId = transactionId });
+            }
+
             await db.Expenses.AddAsync(entity);
-            ResolveTransaction(db, entity);
 
             await db.SaveChangesAsync();
             ClearCache();
@@ -334,19 +338,6 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
         ClearCache();
     }
 
-    private async Task<string> CreateVendor(string name)
-    {
-        using var context = GetMainContext();
-        var entity = new Model.Database.Main.Finance.Vendor()
-        {
-            Name = name,
-            ValueId = name.Replace(" ", "-").ToLowerInvariant()
-        };
-        await context.Vendors.AddAsync(entity);
-        await context.SaveChangesAsync();
-        return entity.ValueId;
-    }
-
     public async Task Delete(string valueId)
     {
         using var db = GetMainContext();
@@ -434,27 +425,30 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                             .ToListAsync();
     }
 
-    private void ResolveTransaction(MainContext context, Model.Database.Main.Finance.Expense expense)
+    private async Task<HashSet<int>> ResolveTransactionIds(MainContext context, IEnumerable<string> valueIds)
     {
-        // if (expense.Transaction is not null)
-        //     context.Transactions.Remove(expense.Transaction);
+        var normalizedIds = new HashSet<string>();
+        foreach (var valueId in valueIds)
+        {
+            if (!Guid.TryParse(valueId, out var id))
+                throw new InvalidRequestException("Transaction IDs must be valid GUIDs.");
 
-        // if (expense.PaymentTypeId == (int)Model.Constants.Database.PaymentType.Cash)
-        // {
-        //     int? accountId = context.Accounts.SingleOrDefault(x => !x.BankId.HasValue && x.CurrencyId == expense.CurrencyId)?.Id;
+            normalizedIds.Add(id.ToString());
+        }
 
-        //     if (accountId.HasValue)
-        //     {
-        //         var transaction = new Model.Database.Main.Finance.Transaction()
-        //         {
-        //             AccountId = accountId.Value,
-        //             Amount = -expense.Amount,
-        //             Created = expense.Date
-        //         };
-        //         expense.Transaction = transaction;
-        //         context.Transactions.Add(transaction);
-        //     }
-        // }
+        if (normalizedIds.Count == 0)
+            return new HashSet<int>();
+
+        var requestedIds = normalizedIds.ToArray();
+        var transactionIds = await context.Transactions
+            .Where(x => x.Account.UserId == UserId && EF.Parameter(requestedIds).Contains(x.ValueId))
+            .Select(x => x.Id)
+            .ToListAsync();
+
+        if (transactionIds.Count != requestedIds.Length)
+            throw new ResourceNotFoundException();
+
+        return transactionIds.ToHashSet();
     }
 
     public async Task<decimal> SumAmount(ExpenseSumGetBinding binding)
@@ -780,19 +774,39 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
 
     public async Task<bool> Update(ExpenseBinding binding)
     {
-        if (!string.IsNullOrWhiteSpace(binding.VendorName))
-            binding.VendorId = await CreateVendor(binding.VendorName);
-
         using var context = GetMainContext();
-        var entity = await context.Expenses.WhereUser(UserId)
-                                     .SingleOrDefaultAsync(x => x.ValueId == binding.Id);
+        using var transaction = binding.TransactionIds is null
+            ? null
+            : await context.Database.BeginTransactionAsync(System.Data.IsolationLevel.Serializable);
 
-        entity = await binding.ToEntity(context, entity);
+        var query = context.Expenses.WhereUser(UserId);
+        if (binding.TransactionIds is not null)
+            query = query.Include(x => x.ExpenseTransactions);
 
-        context.Expenses.Update(entity);
-        ResolveTransaction(context, entity);
+        var entity = await query.SingleOrDefaultAsync(x => x.ValueId == binding.Id)
+            ?? throw new ResourceNotFoundException();
 
+        if (binding.TransactionIds is not null)
+        {
+            var transactionIds = await ResolveTransactionIds(context, binding.TransactionIds);
+            foreach (var link in entity.ExpenseTransactions.ToList())
+            {
+                if (!transactionIds.Remove(link.TransactionId))
+                    context.ExpenseTransactions.Remove(link);
+            }
+
+            context.ExpenseTransactions.AddRange(transactionIds.Select(transactionId => new ExpenseTransaction
+            {
+                ExpenseId = entity.Id,
+                TransactionId = transactionId
+            }));
+        }
+
+        await binding.ToEntity(context, entity);
         await context.SaveChangesAsync();
+        if (transaction is not null)
+            await transaction.CommitAsync();
+
         ClearCache();
 
         return true;

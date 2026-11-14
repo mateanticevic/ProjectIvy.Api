@@ -68,7 +68,14 @@ public static class ExpenseExtensions
         entity.PaymentTypeId = await context.PaymentTypes.GetIdAsync(binding.PaymentTypeId);
         entity.PoiId = await context.Pois.GetIdAsync(binding.PoiId);
         entity.ValueId = binding.Id;
-        entity.VendorId = await context.Vendors.GetIdAsync(binding.VendorId);
+        if (string.IsNullOrWhiteSpace(binding.VendorName))
+            entity.VendorId = await context.Vendors.GetIdAsync(binding.VendorId);
+        else
+            entity.Vendor = new Vendor
+            {
+                Name = binding.VendorName,
+                ValueId = binding.VendorName.Replace(" ", "-").ToLowerInvariant()
+            };
         entity.InstallmentRef = binding.InstallmentRef;
 
         return entity;
