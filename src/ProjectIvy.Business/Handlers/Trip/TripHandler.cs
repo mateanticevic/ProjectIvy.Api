@@ -214,6 +214,7 @@ public class TripHandler : Handler<TripHandler>, ITripHandler
 
         var expenses = await context.Expenses.Where(x => expenseIds.Contains(x.Id))
                                        .IncludeAll()
+                                       .IncludeTransactions(UserId)
                                        .OrderBy(x => x.Date)
                                        .ToListAsync();
 

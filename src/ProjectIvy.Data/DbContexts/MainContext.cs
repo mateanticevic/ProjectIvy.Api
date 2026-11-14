@@ -102,6 +102,8 @@ public class MainContext : DbContext
 
     public DbSet<Expense> Expenses { get; set; }
 
+    public DbSet<ExpenseTransaction> ExpenseTransactions { get; set; }
+
     public DbSet<ExpenseType> ExpenseTypes { get; set; }
 
     public DbSet<File> Files { get; set; }
@@ -334,6 +336,18 @@ public class MainContext : DbContext
 
         modelBuilder.Entity<ExpenseTransaction>()
                     .HasKey(x => new { x.ExpenseId, x.TransactionId });
+
+        modelBuilder.Entity<ExpenseTransaction>()
+                    .HasOne(x => x.Expense)
+                    .WithMany(x => x.ExpenseTransactions)
+                    .HasForeignKey(x => x.ExpenseId)
+                    .OnDelete(DeleteBehavior.ClientCascade);
+
+        modelBuilder.Entity<ExpenseTransaction>()
+                    .HasOne(x => x.Transaction)
+                    .WithMany()
+                    .HasForeignKey(x => x.TransactionId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<IncomeTransaction>()
                     .HasKey(x => new { x.IncomeId, x.TransactionId });

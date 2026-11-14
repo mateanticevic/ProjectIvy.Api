@@ -26,6 +26,12 @@ public static class ExpenseExtensions
                     .ThenInclude(x => x.FileType);
     }
 
+    public static IQueryable<Expense> IncludeTransactions(this IQueryable<Expense> query, int userId)
+    {
+        return query.Include(x => x.ExpenseTransactions.Where(link => link.Transaction.Account.UserId == userId))
+                    .ThenInclude(link => link.Transaction);
+    }
+
     public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
     {
         switch (binding.OrderBy)

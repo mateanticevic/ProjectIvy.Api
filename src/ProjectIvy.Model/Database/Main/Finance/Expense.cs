@@ -35,6 +35,8 @@ public class Expense : UserEntity, IHasValueId, IHasCreatedModified
 
     public ICollection<ExpenseFile> ExpenseFiles { get; set; }
 
+    public ICollection<ExpenseTransaction> ExpenseTransactions { get; set; } = new List<ExpenseTransaction>();
+
     public ExpenseType ExpenseType { get; set; }
 
     public int ExpenseTypeId { get; set; }

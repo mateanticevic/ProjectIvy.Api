@@ -37,12 +37,15 @@ public sealed class ExpenseTestSession : IAsyncDisposable
             _deploymentAttempted = true;
             await Task.Run(() => SqlServerDatabase.Deploy(_fixture.SnapshotPath, ConnectionString,
                 _fixture.Container.GetConnectionString(), _database));
-            // The committed snapshot predates this column. Supplement only the disposable test database
+            // The committed snapshot predates these columns. Supplement only the disposable test database
             // until the snapshot is explicitly refreshed from the current database schema.
             using (var db = OpenDatabase())
                 await db.Database.ExecuteSqlRawAsync("""
                     IF COL_LENGTH('[User].[User]', 'DefaultTimezone') IS NULL
                         ALTER TABLE [User].[User] ADD [DefaultTimezone] nvarchar(100) NULL;
+
+                    IF COL_LENGTH('[Finance].[Transaction]', 'ValueId') IS NULL
+                        ALTER TABLE [Finance].[Transaction] ADD [ValueId] uniqueidentifier NOT NULL DEFAULT NEWID();
                     """);
             await SeedAsync();
             _environment = new TestEnvironment(ConnectionString);

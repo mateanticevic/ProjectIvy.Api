@@ -351,6 +351,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
     {
         using var db = GetMainContext();
         var entity = await db.Expenses.WhereUser(UserId)
+                                .Include(x => x.ExpenseTransactions)
                                 .SingleOrDefaultAsync(x => x.ValueId == valueId);
 
         db.Expenses.Remove(entity);
@@ -365,6 +366,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
                                       .Include(x => x.Currency)
                                       .Include(x => x.Poi)
                                       .Include(x => x.Vendor)
+                                      .IncludeTransactions(UserId)
                                       .WhereUser(UserId)
                                       .SingleOrDefaultAsync(x => x.ValueId == expenseId);
 
@@ -403,6 +405,7 @@ public class ExpenseHandler : Handler<ExpenseHandler>, IExpenseHandler
             using var context = GetMainContext();
             return await context.Expenses.WhereUser(UserId)
                                    .IncludeAll()
+                                   .IncludeTransactions(UserId)
                                    .Where(binding, context)
                                    .OrderBy(binding)
                                    .ThenByDescending(x => x.Created)
