@@ -44,6 +44,11 @@ public sealed class ExpenseTestSession : IAsyncDisposable
                     IF COL_LENGTH('[User].[User]', 'DefaultTimezone') IS NULL
                         ALTER TABLE [User].[User] ADD [DefaultTimezone] nvarchar(100) NULL;
 
+                    IF COL_LENGTH('[Finance].[Account]', 'DiscountPercentage') IS NULL
+                        ALTER TABLE [Finance].[Account] ADD
+                            [DiscountPercentage] decimal(9,8) NOT NULL CONSTRAINT [DF_Account_DiscountPercentage] DEFAULT (0),
+                            CONSTRAINT [CK_Account_DiscountPercentage] CHECK ([DiscountPercentage] BETWEEN 0 AND 1);
+
                     IF COL_LENGTH('[Finance].[Transaction]', 'ValueId') IS NULL
                         ALTER TABLE [Finance].[Transaction] ADD [ValueId] uniqueidentifier NOT NULL DEFAULT NEWID();
 

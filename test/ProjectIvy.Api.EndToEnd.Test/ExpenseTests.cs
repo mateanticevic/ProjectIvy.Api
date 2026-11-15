@@ -258,6 +258,44 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
         Assert.Equal(transaction.Id, (await dbAfter.ExpenseTransactions.SingleAsync()).TransactionId);
     }
 
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task DiscountedDebitMatchesRoundedExpenseAmount(bool import)
+    {
+        var purchaseDay = new DateTime(2026, 2, 12);
+        var account = await SeedImportAccountAsync(0.2174m);
+        await _session.SeedExpenseAsync(_session.User.Id, "discounted", purchaseDay, 40m);
+        await _session.SeedExpenseAsync(_session.User.Id, "full-amount", purchaseDay, 51.11m);
+
+        if (import)
+        {
+            const string csv = """
+                Datum,Referencija,Opis,Uplata,Isplata,Saldo,Valuta
+                12.02.2026,1,Toll,0,51.11,100,EUR
+                """;
+            await UploadTransactionsAsync(account.ValueId, TransactionSource.ZabaBank, csv);
+        }
+        else
+        {
+            using (var db = _session.OpenDatabase())
+            {
+                db.Transactions.Add(new Transaction { AccountId = account.Id, Amount = -51.11m, Created = purchaseDay });
+                await db.SaveChangesAsync();
+            }
+
+            using var response = await _client.PostAsync($"/account/{account.ValueId}/transaction/link", null);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        using var dbAfter = _session.OpenDatabase();
+        var link = await dbAfter.ExpenseTransactions
+            .Select(x => new { x.Expense.ValueId, x.Transaction.Amount })
+            .SingleAsync();
+        Assert.Equal("discounted", link.ValueId);
+        Assert.Equal(-51.11m, link.Amount);
+    }
+
     [Fact]
     public async Task ImportLeavesIneligibleAndAmbiguousDebitsUnlinked()
     {
@@ -433,13 +471,13 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 
-    private async Task<Account> SeedImportAccountAsync()
+    private async Task<Account> SeedImportAccountAsync(decimal discountPercentage = 0m)
     {
         using var db = _session.OpenDatabase();
         var account = new Account
         {
             UserId = _session.User.Id, ValueId = "1", Name = "Import account",
-            CurrencyId = _session.CurrencyId, Active = true
+            CurrencyId = _session.CurrencyId, Active = true, DiscountPercentage = discountPercentage
         };
         db.Accounts.Add(account);
         await db.SaveChangesAsync();

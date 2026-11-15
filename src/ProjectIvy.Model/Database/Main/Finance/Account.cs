@@ -17,6 +17,9 @@ public class Account : UserEntity, IHasValueId, IHasName
 
     public int CurrencyId { get; set; }
 
+    [Column(TypeName = "decimal(5,4)")]
+    public decimal DiscountPercentage { get; set; }
+
     public string Iban { get; set; }
 
     [Key]

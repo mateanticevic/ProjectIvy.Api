@@ -214,7 +214,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var account = await context.Accounts.WhereUser(UserId)
             .Where(x => x.ValueId == accountValueId)
-            .Select(x => new { x.Id, x.CurrencyId })
+            .Select(x => new { x.Id, x.CurrencyId, x.DiscountPercentage })
             .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
 
         var accountTransactions = context.Transactions.Where(x => x.AccountId == account.Id);
@@ -222,7 +222,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         var unlinked = accountTransactions.WhereUnlinked(context);
         var unlinkedCount = await unlinked.CountAsync();
         var debits = await unlinked.Where(x => x.Amount < 0).AsTracking().ToListAsync();
-        var links = await MatchExpenses(context, account.CurrencyId, debits);
+        var links = await MatchExpenses(context, account.CurrencyId, account.DiscountPercentage, debits);
 
         context.ExpenseTransactions.AddRange(links);
         await context.SaveChangesAsync();
@@ -285,11 +285,11 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         using var import = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
         var account = await context.Accounts.WhereUser(UserId)
             .Where(x => x.ValueId == accountKey)
-            .Select(x => new { x.Id, x.CurrencyId })
+            .Select(x => new { x.Id, x.CurrencyId, x.DiscountPercentage })
             .SingleAsync();
 
         var transactions = await readTransactions(context, account.Id, csv);
-        var links = await MatchExpenses(context, account.CurrencyId, transactions);
+        var links = await MatchExpenses(context, account.CurrencyId, account.DiscountPercentage, transactions);
 
         context.Transactions.AddRange(transactions);
         context.ExpenseTransactions.AddRange(links);
@@ -300,11 +300,13 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             ClearCache();
     }
 
-    private async Task<List<ExpenseTransaction>> MatchExpenses(MainContext context, int currencyId,
+    private async Task<List<ExpenseTransaction>> MatchExpenses(MainContext context, int currencyId, decimal discountPercentage,
         List<Transaction> transactions)
     {
         var debitsByKey = transactions.Where(x => x.Amount < 0)
-            .ToLookup(x => (Day: x.Created.Date, Amount: -x.Amount));
+            .ToLookup(x => (
+                Day: x.Created.Date,
+                Amount: discountPercentage > 0m ? Math.Round(-x.Amount * (1m - discountPercentage), 2) : -x.Amount));
         if (debitsByKey.Count == 0)
             return [];
 
