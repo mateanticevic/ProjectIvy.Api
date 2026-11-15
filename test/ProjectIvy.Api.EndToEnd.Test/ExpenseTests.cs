@@ -234,15 +234,20 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
             await db.SaveChangesAsync();
         }
 
-        async Task<JsonElement> GetListedTransactionsAsync()
+        async Task<JsonElement> GetListedTransactionsAsync(string query = "")
         {
-            var expenses = (await GetAsync()).GetProperty("items").EnumerateArray();
+            var expenses = (await GetAsync(query)).GetProperty("items").EnumerateArray();
             return Assert.Single(expenses).GetProperty("transactions");
         }
 
         Assert.Empty((await GetListedTransactionsAsync()).EnumerateArray());
+        Assert.Empty((await GetListedTransactionsAsync("?hasTransactions=false")).EnumerateArray());
+        Assert.Equal(0, (await GetAsync("?hasTransactions=true")).GetProperty("count").GetInt32());
+
         await UploadTransactionsAsync(account.ValueId, source, csv);
         var linked = Assert.Single((await GetListedTransactionsAsync()).EnumerateArray());
+        Assert.Single((await GetListedTransactionsAsync("?hasTransactions=true")).EnumerateArray());
+        Assert.Equal(0, (await GetAsync("?hasTransactions=false")).GetProperty("count").GetInt32());
         Assert.Equal(-12m, linked.GetProperty("amount").GetDecimal());
         Assert.Equal(purchaseDay, linked.GetProperty("created").GetDateTime().Date);
 

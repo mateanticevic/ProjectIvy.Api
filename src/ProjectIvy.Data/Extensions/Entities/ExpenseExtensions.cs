@@ -92,6 +92,8 @@ public static class ExpenseExtensions
                     .WhereIf(b.Month, x => b.Month.Contains(x.Date.Month))
                     .WhereIf(b.HasLinkedFiles.HasValue, x => !(b.HasLinkedFiles.Value ^ x.ExpenseFiles.Any()))
                     .WhereIf(b.HasPoi.HasValue, x => !(b.HasPoi.Value ^ x.PoiId.HasValue))
+                    .WhereIf(b.HasTransactions.HasValue, x => x.ExpenseTransactions.Any(link =>
+                        link.Transaction.Account.UserId == x.UserId) == b.HasTransactions.Value)
                     .WhereIf(b.NeedsReview.HasValue, x => !(b.NeedsReview.Value ^ x.NeedsReview))
                     .WhereIf(!string.IsNullOrWhiteSpace(b.Description), x => x.Comment.Contains(b.Description))
                     .WhereIf(b.AmountFrom.HasValue, x => x.Amount >= b.AmountFrom)

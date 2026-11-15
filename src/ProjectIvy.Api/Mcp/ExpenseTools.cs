@@ -64,13 +64,15 @@ public class ExpenseTools
                                                       [Description("End date")] DateTime? to,
                                                       [Description("Page number")] int page = 1,
                                                       [Description("Page size")] int pageSize = 20,
-                                                      [Description("Type ID")] string typeId = null)
+                                                      [Description("Type ID")] string typeId = null,
+                                                      [Description("True for expenses with linked transactions, false for expenses without links, or null for both")] bool? hasTransactions = null)
     {
         try
         {
             var binding = new ExpenseGetBinding()
             {
                 From = from,
+                HasTransactions = hasTransactions,
                 Page = page,
                 PageSize = pageSize,
                 To = to ?? DateTime.UtcNow,

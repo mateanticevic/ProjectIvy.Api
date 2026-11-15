@@ -34,6 +34,8 @@ public class ExpenseGetBinding : FilteredPagedBinding, IOrderable<ExpenseSort>, 
 
     public bool? HasPoi { get; set; }
 
+    public bool? HasTransactions { get; set; }
+
     public IEnumerable<int> Month { get; set; }
 
     public bool? NeedsReview { get; set; }
