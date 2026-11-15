@@ -300,6 +300,134 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
         Assert.Equal(existing.Id, (await dbAfter.ExpenseTransactions.SingleAsync()).TransactionId);
     }
 
+    [Fact]
+    public async Task ImportMatchesParentAmountAndRequiresUniquenessAcrossCurrencies()
+    {
+        var purchaseDay = new DateTime(2026, 2, 12);
+        var account = await SeedImportAccountAsync();
+        var userId = _session.User.Id;
+        await _session.SeedExpenseAsync(userId, "parent-only", purchaseDay, 25m);
+        await _session.SeedExpenseAsync(userId, "same-match", purchaseDay, 14m);
+        await _session.SeedExpenseAsync(userId, "direct-candidate", purchaseDay, 19m);
+        await _session.SeedExpenseAsync(userId, "parent-candidate", purchaseDay, 19m);
+        await _session.SeedExpenseAsync(userId, "two-debits", purchaseDay, 21m);
+
+        using (var db = _session.OpenDatabase())
+        {
+            var otherCurrency = new Currency { Code = "USD", ValueId = "usd", Name = "US Dollar", Symbol = "$" };
+            db.Currencies.Add(otherCurrency);
+            var expenses = await db.Expenses.ToDictionaryAsync(x => x.ValueId);
+            expenses["parent-only"].Currency = otherCurrency;
+            expenses["parent-candidate"].Currency = otherCurrency;
+            foreach (var (id, amount) in new[] { ("parent-only", 12m), ("same-match", 14m),
+                         ("parent-candidate", 19m), ("two-debits", 22m) })
+            {
+                expenses[id].ParentCurrencyId = account.CurrencyId;
+                expenses[id].ParentAmount = amount;
+            }
+            await db.SaveChangesAsync();
+        }
+
+        const string csv = """
+            Datum,Referencija,Opis,Uplata,Isplata,Saldo,Valuta
+            12.02.2026,1,Parent amount,0,12,100,EUR
+            12.02.2026,2,Same direct and parent amount,0,14,100,EUR
+            12.02.2026,3,Two expense candidates,0,19,100,EUR
+            12.02.2026,4,Direct amount,0,21,100,EUR
+            12.02.2026,5,Parent alternative,0,22,100,EUR
+            """;
+        await UploadTransactionsAsync(account.ValueId, TransactionSource.ZabaBank, csv);
+
+        using var dbAfter = _session.OpenDatabase();
+        var links = await dbAfter.ExpenseTransactions
+            .Select(x => new { x.Expense.ValueId, x.Transaction.Amount })
+            .ToDictionaryAsync(x => x.ValueId, x => x.Amount);
+        Assert.Equal(2, links.Count);
+        Assert.Equal(-12m, links["parent-only"]);
+        Assert.Equal(-14m, links["same-match"]);
+        Assert.Equal(5, await dbAfter.Transactions.CountAsync(x => x.AccountId == account.Id));
+    }
+
+    [Fact]
+    public async Task LinkTransactionsReportsNewLinksAndAllRemainingUnlinkedTransactions()
+    {
+        var purchaseDay = new DateTime(2026, 2, 12);
+        var account = await SeedImportAccountAsync();
+        var userId = _session.User.Id;
+        await _session.SeedExpenseAsync(userId, "match", purchaseDay, 12m);
+        await _session.SeedExpenseAsync(userId, "ambiguous", purchaseDay, 20m);
+        await _session.SeedExpenseAsync(userId, "already-linked", purchaseDay.AddDays(-1), 40m);
+        await _session.SeedExpenseAsync(userId, "potential-expense-link", purchaseDay, 40m);
+        await _session.SeedExpenseAsync(userId, "potential-income-link", purchaseDay, 50m);
+
+        Transaction NewTransaction(decimal amount, int hour = 10) =>
+            new() { AccountId = account.Id, Created = purchaseDay.AddHours(hour), Amount = amount };
+
+        var matching = NewTransaction(-12m);
+        var expenseLinked = NewTransaction(-40m);
+        var incomeLinked = NewTransaction(-50m);
+        using (var db = _session.OpenDatabase())
+        {
+            db.Transactions.AddRange(matching, NewTransaction(-20m), NewTransaction(-20m, 11),
+                NewTransaction(-33m), NewTransaction(15m), NewTransaction(0m), expenseLinked, incomeLinked);
+            var linkedExpense = await db.Expenses.SingleAsync(x => x.ValueId == "already-linked");
+            db.ExpenseTransactions.Add(new ExpenseTransaction { Expense = linkedExpense, Transaction = expenseLinked });
+            db.IncomeTransactions.Add(new IncomeTransaction
+            {
+                Transaction = incomeLinked,
+                Income = new Income
+                {
+                    UserId = userId, ValueId = "linked-income", CurrencyId = _session.CurrencyId, Amount = 50m,
+                    Date = purchaseDay, Created = purchaseDay, Modified = purchaseDay,
+                    IncomeSource = new IncomeSource { UserId = userId, ValueId = "test-source", Name = "Test source" },
+                    IncomeType = new IncomeType { ValueId = "test-type", Name = "Test type" }
+                }
+            });
+            await db.SaveChangesAsync();
+        }
+
+        var url = $"/account/{account.ValueId}/transaction/link";
+        using (var response = await _client.PostAsync(url, null))
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var counts = await response.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.Equal(1, counts.GetProperty("linkedCount").GetInt32());
+            Assert.Equal(5, counts.GetProperty("unlinkedCount").GetInt32());
+            Assert.Equal(8, counts.GetProperty("totalTransactionCount").GetInt32());
+        }
+
+        using (var response = await _client.PostAsync(url, null))
+        {
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            var counts = await response.Content.ReadFromJsonAsync<JsonElement>();
+            Assert.Equal(0, counts.GetProperty("linkedCount").GetInt32());
+            Assert.Equal(5, counts.GetProperty("unlinkedCount").GetInt32());
+            Assert.Equal(8, counts.GetProperty("totalTransactionCount").GetInt32());
+        }
+
+        using var dbAfter = _session.OpenDatabase();
+        var links = await dbAfter.ExpenseTransactions
+            .Select(x => new { x.Expense.ValueId, x.TransactionId })
+            .ToDictionaryAsync(x => x.ValueId, x => x.TransactionId);
+        Assert.Equal(2, links.Count);
+        Assert.Equal(matching.Id, links["match"]);
+        Assert.Equal(expenseLinked.Id, links["already-linked"]);
+        Assert.Equal((int?)incomeLinked.Id, (await dbAfter.IncomeTransactions.SingleAsync()).TransactionId);
+    }
+
+    [Fact]
+    public async Task LinkTransactionsReturnsNotFoundForMissingOrOtherUsersAccount()
+    {
+        var account = await SeedImportAccountAsync();
+        using var otherClient = _session.Factory!.CreateUserClient(_session.OtherUser.Email);
+
+        using var foreign = await otherClient.PostAsync($"/account/{account.ValueId}/transaction/link", null);
+        Assert.Equal(HttpStatusCode.NotFound, foreign.StatusCode);
+
+        using var missing = await _client.PostAsync("/account/missing/transaction/link", null);
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
     private async Task<Account> SeedImportAccountAsync()
     {
         using var db = _session.OpenDatabase();

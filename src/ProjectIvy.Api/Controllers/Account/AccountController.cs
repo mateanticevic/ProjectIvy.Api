@@ -78,6 +78,10 @@ public class AccountController : BaseController<AccountController>
         return Ok();
     }
 
+    [HttpPost("{accountId}/transaction/link")]
+    public async Task<Model.View.Account.TransactionLinkResult> LinkTransactions(string accountId)
+        => await _accountHandler.LinkTransactions(accountId);
+
     [HttpPut("{accountId}")]
     public async Task<IActionResult> Put(string accountId, [FromBody] AccountBinding binding)
     {

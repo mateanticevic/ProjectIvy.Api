@@ -33,7 +33,9 @@ public static class ExpenseExtensions
     }
 
     public static IQueryable<Expense> WhereUnlinked(this IQueryable<Expense> query, int currencyId, DateTime from, DateTime to)
-        => query.Where(x => x.CurrencyId == currencyId && x.Date >= from && x.Date <= to
+        => query.Where(x => (x.CurrencyId == currencyId
+                || (x.ParentCurrencyId == currencyId && x.ParentAmount.HasValue))
+            && x.Date >= from && x.Date <= to
             && !x.ExpenseTransactions.Any());
 
     public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)

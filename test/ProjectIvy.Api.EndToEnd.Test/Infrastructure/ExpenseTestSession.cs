@@ -37,7 +37,7 @@ public sealed class ExpenseTestSession : IAsyncDisposable
             _deploymentAttempted = true;
             await Task.Run(() => SqlServerDatabase.Deploy(_fixture.SnapshotPath, ConnectionString,
                 _fixture.Container.GetConnectionString(), _database));
-            // The committed snapshot predates these columns. Supplement only the disposable test database
+            // The committed snapshot predates these mappings. Supplement only the disposable test database
             // until the snapshot is explicitly refreshed from the current database schema.
             using (var db = OpenDatabase())
                 await db.Database.ExecuteSqlRawAsync("""
@@ -46,6 +46,27 @@ public sealed class ExpenseTestSession : IAsyncDisposable
 
                     IF COL_LENGTH('[Finance].[Transaction]', 'ValueId') IS NULL
                         ALTER TABLE [Finance].[Transaction] ADD [ValueId] uniqueidentifier NOT NULL DEFAULT NEWID();
+
+                    IF COL_LENGTH('[Finance].[Income]', 'ValueId') IS NULL
+                        ALTER TABLE [Finance].[Income] ADD [ValueId] nvarchar(50) NULL;
+
+                    IF COL_LENGTH('[Finance].[Income]', 'SalaryId') IS NULL
+                        ALTER TABLE [Finance].[Income] ADD [SalaryId] int NULL;
+
+                    IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[Finance].[IncomeSource]')
+                        AND name = 'IsCompany' AND default_object_id = 0)
+                        ALTER TABLE [Finance].[IncomeSource] ADD DEFAULT (0) FOR [IsCompany];
+
+                    IF EXISTS (SELECT 1 FROM sys.columns WHERE object_id = OBJECT_ID('[Finance].[IncomeSource]')
+                        AND name = 'IsPerson' AND default_object_id = 0)
+                        ALTER TABLE [Finance].[IncomeSource] ADD DEFAULT (0) FOR [IsPerson];
+
+                    IF OBJECT_ID('[Finance].[IncomeTransaction]', 'U') IS NULL
+                        CREATE TABLE [Finance].[IncomeTransaction] (
+                            [IncomeId] int NOT NULL REFERENCES [Finance].[Income] ([Id]),
+                            [TransactionId] int NOT NULL REFERENCES [Finance].[Transaction] ([Id]),
+                            PRIMARY KEY ([IncomeId], [TransactionId])
+                        );
                     """);
             await SeedAsync();
             _environment = new TestEnvironment(ConnectionString);

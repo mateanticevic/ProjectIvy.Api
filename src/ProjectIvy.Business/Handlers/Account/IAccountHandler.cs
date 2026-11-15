@@ -23,6 +23,8 @@ public interface IAccountHandler
 
     Task<PagedView<View.Transaction>> GetTransactions(string accountValueId, FilteredPagedBinding b);
 
+    Task<View.TransactionLinkResult> LinkTransactions(string accountValueId);
+
     Task ProcessHacTransactions(string accountKey, string csv);
 
     Task ProcessOtpBankTransactions(string accountKey, string csv);

@@ -208,6 +208,32 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                                          .ToPagedViewAsync(b);
     }
 
+    public async Task<View.TransactionLinkResult> LinkTransactions(string accountValueId)
+    {
+        using var context = GetMainContext();
+        using var transaction = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var account = await context.Accounts.WhereUser(UserId)
+            .Where(x => x.ValueId == accountValueId)
+            .Select(x => new { x.Id, x.CurrencyId })
+            .SingleOrDefaultAsync() ?? throw new ResourceNotFoundException();
+
+        var accountTransactions = context.Transactions.Where(x => x.AccountId == account.Id);
+        var totalTransactionCount = await accountTransactions.CountAsync();
+        var unlinked = accountTransactions.WhereUnlinked(context);
+        var unlinkedCount = await unlinked.CountAsync();
+        var debits = await unlinked.Where(x => x.Amount < 0).AsTracking().ToListAsync();
+        var links = await MatchExpenses(context, account.CurrencyId, debits);
+
+        context.ExpenseTransactions.AddRange(links);
+        await context.SaveChangesAsync();
+        await transaction.CommitAsync();
+
+        if (links.Count > 0)
+            ClearCache();
+
+        return new View.TransactionLinkResult(links.Count, unlinkedCount - links.Count, totalTransactionCount);
+    }
+
     private IEnumerable<string> ParseCsvLine(string line, char separator = ',')
     {
         var sb = new StringBuilder();
@@ -277,29 +303,33 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
     private async Task<List<ExpenseTransaction>> MatchExpenses(MainContext context, int currencyId,
         List<Transaction> transactions)
     {
-        var uniqueDebits = transactions.Where(x => x.Amount < 0)
-            .GroupBy(x => (Day: x.Created.Date, Amount: -x.Amount))
-            .Where(x => x.Count() == 1)
-            .ToDictionary(x => x.Key, x => x.Single());
+        var debitsByKey = transactions.Where(x => x.Amount < 0)
+            .ToLookup(x => (Day: x.Created.Date, Amount: -x.Amount));
+        if (debitsByKey.Count == 0)
+            return [];
 
-        var links = new List<ExpenseTransaction>();
-        if (uniqueDebits.Count == 0)
-            return links;
-
-        var firstDay = uniqueDebits.Keys.Min(x => x.Day);
-        var lastDayEnd = uniqueDebits.Keys.Max(x => x.Day).AddTicks(TimeSpan.TicksPerDay - 1);
+        var firstDay = debitsByKey.Min(x => x.Key.Day);
+        var lastDayEnd = debitsByKey.Max(x => x.Key.Day).AddTicks(TimeSpan.TicksPerDay - 1);
         var expenses = await context.Expenses.WhereUser(UserId)
             .WhereUnlinked(currencyId, firstDay, lastDayEnd)
-            .Select(x => new { x.Id, x.Amount, x.Date })
+            .Select(x => new { x.Id, x.Date, x.CurrencyId, x.Amount, x.ParentCurrencyId, x.ParentAmount })
             .ToListAsync();
 
-        foreach (var group in expenses.GroupBy(x => (Day: x.Date.Date, x.Amount)))
-        {
-            if (group.Count() == 1 && uniqueDebits.TryGetValue(group.Key, out var transaction))
-                links.Add(new ExpenseTransaction { ExpenseId = group.Single().Id, Transaction = transaction });
-        }
+        var directKeys = expenses.Where(x => x.CurrencyId == currencyId)
+            .Select(x => (x.Id, Key: (Day: x.Date.Date, x.Amount)));
+        var parentKeys = expenses.Where(x => x.ParentCurrencyId == currencyId && x.ParentAmount.HasValue)
+            .Select(x => (x.Id, Key: (Day: x.Date.Date, Amount: x.ParentAmount.Value)));
+        var matchingKeys = directKeys.Union(parentKeys)
+            .Where(x => debitsByKey.Contains(x.Key))
+            .ToList();
+        var keysByExpense = matchingKeys.ToLookup(x => x.Id, x => x.Key);
 
-        return links;
+        return matchingKeys.GroupBy(x => x.Key)
+            .Where(x => x.Count() == 1 && debitsByKey[x.Key].Count() == 1)
+            .Select(x => x.Single())
+            .Where(x => keysByExpense[x.Id].Count() == 1)
+            .Select(x => new ExpenseTransaction { ExpenseId = x.Id, Transaction = debitsByKey[x.Key].Single() })
+            .ToList();
     }
 
     private async Task<List<Transaction>> ReadHacTransactions(MainContext context, int accountId, string csv)
