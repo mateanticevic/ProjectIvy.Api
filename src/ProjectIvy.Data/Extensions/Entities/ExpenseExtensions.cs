@@ -32,6 +32,10 @@ public static class ExpenseExtensions
                     .ThenInclude(link => link.Transaction);
     }
 
+    public static IQueryable<Expense> WhereUnlinked(this IQueryable<Expense> query, int currencyId, DateTime from, DateTime to)
+        => query.Where(x => x.CurrencyId == currencyId && x.Date >= from && x.Date <= to
+            && !x.ExpenseTransactions.Any());
+
     public static IOrderedQueryable<Expense> OrderBy(this IQueryable<Expense> query, ExpenseGetBinding binding)
     {
         switch (binding.OrderBy)

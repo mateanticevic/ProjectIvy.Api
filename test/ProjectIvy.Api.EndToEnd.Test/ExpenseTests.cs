@@ -4,6 +4,8 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using ProjectIvy.Api.EndToEnd.Test.Infrastructure;
 using ProjectIvy.Model.Binding.Expense;
+using ProjectIvy.Model.Constants.Database;
+using ProjectIvy.Model.Database.Main.Common;
 using ProjectIvy.Model.Database.Main.Finance;
 using Xunit;
 
@@ -213,6 +215,109 @@ public sealed class ExpenseTests(SqlServerFixture fixture) : IAsyncLifetime
 
         using var dbAfter = _session.OpenDatabase();
         Assert.Equal(3, await dbAfter.Transactions.CountAsync());
+    }
+
+    [Theory]
+    [InlineData(TransactionSource.Hac, "Header\r\n;Lunch;;13.02.2026 11:30:00;12.02.2026 11:30:00;;;Toll;;0;12;100\r\n")]
+    [InlineData(TransactionSource.OtpBank, "Header\r\n,13.02.2026,Lunch 12/02/2026 11:30,-12,100\r\n")]
+    [InlineData(TransactionSource.Revolut, "Header\nCARD_PAYMENT,Current,2026-02-12 11:30:00,2026-02-13 11:30:00,Lunch,-12,0,EUR,COMPLETED,100\n")]
+    [InlineData(TransactionSource.ZabaBank, "Datum,Referencija,Opis,Uplata,Isplata,Saldo,Valuta\n12.02.2026,ref,Lunch,0,12,100,EUR\n")]
+    public async Task ImportLinksMatchingExpenseAndReuploadAddsNoRows(TransactionSource source, string csv)
+    {
+        var purchaseDay = new DateTime(2026, 2, 12);
+        var account = await SeedImportAccountAsync();
+        await _session.SeedExpenseAsync(_session.User.Id, "lunch", purchaseDay, 12m);
+        using (var db = _session.OpenDatabase())
+        {
+            var expense = await db.Expenses.SingleAsync(x => x.ValueId == "lunch");
+            expense.DatePaid = purchaseDay.AddDays(2);
+            await db.SaveChangesAsync();
+        }
+
+        async Task<JsonElement> GetListedTransactionsAsync()
+        {
+            var expenses = (await GetAsync()).GetProperty("items").EnumerateArray();
+            return Assert.Single(expenses).GetProperty("transactions");
+        }
+
+        Assert.Empty((await GetListedTransactionsAsync()).EnumerateArray());
+        await UploadTransactionsAsync(account.ValueId, source, csv);
+        var linked = Assert.Single((await GetListedTransactionsAsync()).EnumerateArray());
+        Assert.Equal(-12m, linked.GetProperty("amount").GetDecimal());
+        Assert.Equal(purchaseDay, linked.GetProperty("created").GetDateTime().Date);
+
+        await UploadTransactionsAsync(account.ValueId, source, csv);
+        using var dbAfter = _session.OpenDatabase();
+        var transaction = await dbAfter.Transactions.SingleAsync(x => x.AccountId == account.Id);
+        Assert.Equal(transaction.ValueId, linked.GetProperty("id").GetString());
+        Assert.Equal(transaction.Id, (await dbAfter.ExpenseTransactions.SingleAsync()).TransactionId);
+    }
+
+    [Fact]
+    public async Task ImportLeavesIneligibleAndAmbiguousDebitsUnlinked()
+    {
+        var purchaseDay = new DateTime(2026, 2, 12);
+        var account = await SeedImportAccountAsync();
+        var userId = _session.User.Id;
+        await _session.SeedExpenseAsync(userId, "currency", purchaseDay, 11m);
+        await _session.SeedExpenseAsync(userId, "amount", purchaseDay, 22m);
+        await _session.SeedExpenseAsync(userId, "day", purchaseDay.AddDays(1), 30m);
+        await _session.SeedExpenseAsync(userId, "credit", purchaseDay, 40m);
+        await _session.SeedExpenseAsync(_session.OtherUser.Id, "other-user", purchaseDay, 50m);
+        await _session.SeedExpenseAsync(userId, "linked", purchaseDay, 60m);
+        await _session.SeedExpenseAsync(userId, "duplicate-expense-1", purchaseDay, 70m);
+        await _session.SeedExpenseAsync(userId, "duplicate-expense-2", purchaseDay, 70m);
+        await _session.SeedExpenseAsync(userId, "duplicate-debit", purchaseDay, 80m);
+
+        var existing = new Transaction { AccountId = account.Id, Amount = -60m, Created = purchaseDay.AddDays(-1) };
+        using (var db = _session.OpenDatabase())
+        {
+            var otherCurrency = new Currency { Code = "USD", ValueId = "usd", Name = "US Dollar", Symbol = "$" };
+            db.Currencies.Add(otherCurrency);
+            (await db.Expenses.SingleAsync(x => x.ValueId == "currency")).Currency = otherCurrency;
+            (await db.Expenses.SingleAsync(x => x.ValueId == "day")).DatePaid = purchaseDay;
+            var linkedExpense = await db.Expenses.SingleAsync(x => x.ValueId == "linked");
+            db.ExpenseTransactions.Add(new ExpenseTransaction { Expense = linkedExpense, Transaction = existing });
+            await db.SaveChangesAsync();
+        }
+
+        const string csv = """
+            Datum,Referencija,Opis,Uplata,Isplata,Saldo,Valuta
+            12.02.2026,1,Currency mismatch,0,11,100,EUR
+            12.02.2026,2,Amount mismatch,0,21,100,EUR
+            12.02.2026,3,Day mismatch,0,30,100,EUR
+            12.02.2026,4,Credit,40,0,100,EUR
+            12.02.2026,5,Other user,0,50,100,EUR
+            12.02.2026,6,Already linked,0,60,100,EUR
+            12.02.2026,7,Two expenses,0,70,100,EUR
+            12.02.2026,8,First debit,0,80,100,EUR
+            12.02.2026,9,Second debit,0,80,100,EUR
+            """;
+        await UploadTransactionsAsync(account.ValueId, TransactionSource.ZabaBank, csv);
+
+        using var dbAfter = _session.OpenDatabase();
+        Assert.Equal(10, await dbAfter.Transactions.CountAsync(x => x.AccountId == account.Id));
+        Assert.Equal(existing.Id, (await dbAfter.ExpenseTransactions.SingleAsync()).TransactionId);
+    }
+
+    private async Task<Account> SeedImportAccountAsync()
+    {
+        using var db = _session.OpenDatabase();
+        var account = new Account
+        {
+            UserId = _session.User.Id, ValueId = "1", Name = "Import account",
+            CurrencyId = _session.CurrencyId, Active = true
+        };
+        db.Accounts.Add(account);
+        await db.SaveChangesAsync();
+        return account;
+    }
+
+    private async Task UploadTransactionsAsync(string accountId, TransactionSource source, string csv)
+    {
+        using var content = new StringContent(csv, System.Text.Encoding.UTF8, "text/csv");
+        using var response = await _client.PostAsync($"/account/{accountId}/transaction/import?transactionSource={source}", content);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
     [Fact]

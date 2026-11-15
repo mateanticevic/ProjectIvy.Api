@@ -1,11 +1,15 @@
-﻿using System.Globalization;
+﻿using System.Data;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using ProjectIvy.Business.Exceptions;
+using ProjectIvy.Business.Handlers.Expense;
 using ProjectIvy.Business.MapExtensions;
+using ProjectIvy.Data.DbContexts;
 using ProjectIvy.Data.Extensions;
 using ProjectIvy.Data.Extensions.Entities;
 using ProjectIvy.Model.Binding;
@@ -19,7 +23,8 @@ namespace ProjectIvy.Business.Handlers.Account;
 
 public class AccountHandler : Handler<AccountHandler>, IAccountHandler
 {
-    public AccountHandler(IHandlerContext<AccountHandler> context) : base(context)
+    public AccountHandler(IHandlerContext<AccountHandler> context, IMemoryCache memoryCache)
+        : base(context, memoryCache, nameof(ExpenseHandler))
     {
     }
 
@@ -235,12 +240,70 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
         yield return sb.ToString();
     }
 
-    public async Task ProcessHacTransactions(string accountKey, string csv)
+    public Task ProcessHacTransactions(string accountKey, string csv)
+        => ImportTransactions(accountKey, csv, ReadHacTransactions);
+
+    public Task ProcessOtpBankTransactions(string accountKey, string csv)
+        => ImportTransactions(accountKey, csv, ReadOtpBankTransactions);
+
+    public Task ProcessZabaBankTransactions(string accountKey, string csv)
+        => ImportTransactions(accountKey, csv, ReadZabaBankTransactions);
+
+    public Task ProcessRevolutTransactions(string accountKey, string csv)
+        => ImportTransactions(accountKey, csv, ReadRevolutTransactions);
+
+    private async Task ImportTransactions(string accountKey, string csv,
+        Func<MainContext, int, string, Task<List<Transaction>>> readTransactions)
     {
         using var context = GetMainContext();
-        int accountId = (await context.Accounts.WhereUser(UserId)
-                                        .GetIdAsync(accountKey)).Value;
+        using var import = await context.Database.BeginTransactionAsync(IsolationLevel.Serializable);
+        var account = await context.Accounts.WhereUser(UserId)
+            .Where(x => x.ValueId == accountKey)
+            .Select(x => new { x.Id, x.CurrencyId })
+            .SingleAsync();
 
+        var transactions = await readTransactions(context, account.Id, csv);
+        var links = await MatchExpenses(context, account.CurrencyId, transactions);
+
+        context.Transactions.AddRange(transactions);
+        context.ExpenseTransactions.AddRange(links);
+        await context.SaveChangesAsync();
+        await import.CommitAsync();
+
+        if (links.Count > 0)
+            ClearCache();
+    }
+
+    private async Task<List<ExpenseTransaction>> MatchExpenses(MainContext context, int currencyId,
+        List<Transaction> transactions)
+    {
+        var uniqueDebits = transactions.Where(x => x.Amount < 0)
+            .GroupBy(x => (Day: x.Created.Date, Amount: -x.Amount))
+            .Where(x => x.Count() == 1)
+            .ToDictionary(x => x.Key, x => x.Single());
+
+        var links = new List<ExpenseTransaction>();
+        if (uniqueDebits.Count == 0)
+            return links;
+
+        var firstDay = uniqueDebits.Keys.Min(x => x.Day);
+        var lastDayEnd = uniqueDebits.Keys.Max(x => x.Day).AddTicks(TimeSpan.TicksPerDay - 1);
+        var expenses = await context.Expenses.WhereUser(UserId)
+            .WhereUnlinked(currencyId, firstDay, lastDayEnd)
+            .Select(x => new { x.Id, x.Amount, x.Date })
+            .ToListAsync();
+
+        foreach (var group in expenses.GroupBy(x => (Day: x.Date.Date, x.Amount)))
+        {
+            if (group.Count() == 1 && uniqueDebits.TryGetValue(group.Key, out var transaction))
+                links.Add(new ExpenseTransaction { ExpenseId = group.Single().Id, Transaction = transaction });
+        }
+
+        return links;
+    }
+
+    private async Task<List<Transaction>> ReadHacTransactions(MainContext context, int accountId, string csv)
+    {
         var transactions = new List<Transaction>();
         foreach (string item in csv.Split("\r\n").Skip(1).Reverse().Skip(1))
         {
@@ -271,27 +334,18 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
                 transaction.Description = $"{parts[1]} [{parts[7]}]";
             }
 
-            transactions.Add(transaction);
-        }
-
-        foreach (var transaction in transactions)
-        {
             if (await context.Transactions.AnyAsync(x => x.Created == transaction.Created
                                             && x.Amount == transaction.Amount
                                             && x.AccountId == accountId))
                 continue;
-            await context.Transactions.AddAsync(transaction);
+            transactions.Add(transaction);
         }
 
-        await context.SaveChangesAsync();
+        return transactions;
     }
 
-    public async Task ProcessOtpBankTransactions(string accountKey, string csv)
+    private async Task<List<Transaction>> ReadOtpBankTransactions(MainContext context, int accountId, string csv)
     {
-        using var context = GetMainContext();
-        int accountId = (await context.Accounts.WhereUser(UserId)
-                                        .GetIdAsync(accountKey)).Value;
-
         var transactions = new List<Transaction>();
         foreach (string item in csv.Split("\r\n").Skip(1))
         {
@@ -322,27 +376,18 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             if (match.Success)
                 transaction.Completed = DateTime.ParseExact(parts[1], "dd.MM.yyyy", CultureInfo.InvariantCulture);
 
-            transactions.Add(transaction);
-        }
-
-        foreach (var transaction in transactions)
-        {
             if (await context.Transactions.AnyAsync(x => x.Created == transaction.Created
                                             && x.Description == transaction.Description
                                             && x.AccountId == accountId))
                 continue;
-            await context.Transactions.AddAsync(transaction);
+            transactions.Add(transaction);
         }
 
-        await context.SaveChangesAsync();
+        return transactions;
     }
 
-    public async Task ProcessZabaBankTransactions(string accountKey, string csv)
+    private async Task<List<Transaction>> ReadZabaBankTransactions(MainContext context, int accountId, string csv)
     {
-        using var context = GetMainContext();
-        int accountId = (await context.Accounts.WhereUser(UserId)
-                                        .GetIdAsync(accountKey)).Value;
-
         var transactions = new List<Transaction>();
         // Columns: Datum, Referencija, Opis, Uplata, Isplata, Saldo, Valuta.
         foreach (string item in csv.Split('\n').Skip(1))
@@ -379,16 +424,11 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             transactions.Add(transaction);
         }
 
-        await context.Transactions.AddRangeAsync(transactions);
-        await context.SaveChangesAsync();
+        return transactions;
     }
 
-    public async Task ProcessRevolutTransactions(string accountKey, string csv)
+    private async Task<List<Transaction>> ReadRevolutTransactions(MainContext context, int accountId, string csv)
     {
-        using var context = GetMainContext();
-        int accountId = (await context.Accounts.WhereUser(UserId)
-                                        .GetIdAsync(accountKey)).Value;
-
         var transactions = new List<Transaction>();
         var existingTimestamps = await context.Transactions.Where(x => x.AccountId == accountId)
                                                            .Select(x => x.Created)
@@ -428,8 +468,7 @@ public class AccountHandler : Handler<AccountHandler>, IAccountHandler
             transactions.Add(transaction);
         }
 
-        await context.Transactions.AddRangeAsync(transactions);
-        await context.SaveChangesAsync();
+        return transactions;
     }
 
     public async Task Update(string accountValueId, AccountBinding binding)
